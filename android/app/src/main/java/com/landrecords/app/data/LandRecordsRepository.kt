@@ -38,16 +38,27 @@ class LandRecordsRepository(private val db: AppDatabase) {
 
     suspend fun propertyById(id: Long) = db.propertyDao().byId(id)
 
-    /**
-     * File a fetched record for [surveyId] + [type]. The on-device WebView capture
-     * (print-to-PDF / byte fetch) plugs into [pdfPath]/[sourcePath] later; today this
-     * records the metadata so the library reflects the fetch immediately.
-     */
-    suspend fun saveFetchedRecord(surveyId: Long, type: RecordType, docCount: Int) {
+    /** A one-shot snapshot of a survey plus its owning property, for filing a capture. */
+    suspend fun snapshot(surveyId: Long): Pair<SurveyEntity, PropertyEntity>? {
+        val survey = db.surveyDao().byIdOnce(surveyId) ?: return null
+        val property = db.propertyDao().byId(survey.propertyId) ?: return null
+        return survey to property
+    }
+
+    /** File a captured record: record the filed PDF + raw-HTML source paths and doc count. */
+    suspend fun saveFetchedRecord(
+        surveyId: Long,
+        type: RecordType,
+        docCount: Int,
+        pdfPath: String? = null,
+        sourcePath: String? = null,
+    ) {
         val existing = db.recordDao().find(surveyId, type.name)
         val row = (existing ?: RecordEntity(surveyId = surveyId, type = type)).copy(
             docCount = docCount,
             fetchedAt = System.currentTimeMillis(),
+            pdfPath = pdfPath ?: existing?.pdfPath,
+            sourcePath = sourcePath ?: existing?.sourcePath,
         )
         db.recordDao().upsert(row)
     }

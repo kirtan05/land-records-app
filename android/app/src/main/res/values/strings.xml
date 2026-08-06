@@ -72,6 +72,10 @@
     <string name="fetch_step_pdf_en">Building the PDF</string>
     <string name="fetch_step_file_gu">લાઇબ્રેરીમાં ફાઇલ કરી રહ્યાં છીએ</string>
     <string name="fetch_step_file_en">Filing in your library</string>
+    <string name="save_failed_gu">સાચવી શકાયું નહીં</string>
+    <string name="save_failed_en">Couldn\'t save the record</string>
+    <string name="action_retry_gu">ફરી પ્રયાસ કરો</string>
+    <string name="action_retry_en">Retry</string>
 
     <!-- Add / Edit property -->
     <string name="survey_numbers_gu">સર્વે નંબર</string>

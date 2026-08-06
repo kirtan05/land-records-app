@@ -4,23 +4,31 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.landrecords.app.data.LandRecordsRepository
 import com.landrecords.app.data.model.RecordType
+import com.landrecords.app.data.storage.LibraryWriter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 
 data class FetchInfo(
     val surveyNo: String,
+    val surveyNorm: String,
     val district: String,
     val taluka: String,
     val village: String,
+    val districtGu: String,
+    val talukaGu: String,
+    val villageGu: String,
 )
+
+/** Where a capture is in its lifecycle; the last three map to the Saving screen's steps. */
+enum class FetchPhase { SOLVING, READING, BUILDING, FILING, DONE, ERROR }
 
 class FetchViewModel(
     private val repo: LandRecordsRepository,
-    surveyId: Long,
+    private val writer: LibraryWriter,
+    private val surveyId: Long,
 ) : ViewModel() {
 
     val info: StateFlow<FetchInfo?> = repo.observeSurvey(surveyId).map { survey ->
@@ -28,18 +36,41 @@ class FetchViewModel(
         val prop = repo.propertyById(survey.propertyId)
         FetchInfo(
             surveyNo = survey.surveyNo,
+            surveyNorm = survey.normalized,
             district = prop?.district ?: "",
             taluka = prop?.taluka ?: "",
             village = prop?.village ?: "",
+            districtGu = prop?.let { it.districtGu.ifBlank { it.district } } ?: "",
+            talukaGu = prop?.let { it.talukaGu.ifBlank { it.taluka } } ?: "",
+            villageGu = prop?.let { it.villageGu.ifBlank { it.village } } ?: "",
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), null)
 
-    /** Record the fetch once the capture completes. Doc counts firm up when the real
-     *  on-device capture (print-to-PDF / VF-7/12 byte fetch) is wired in. */
-    fun fileResult(surveyId: Long, type: RecordType, onDone: () -> Unit) {
-        viewModelScope.launch {
-            repo.saveFetchedRecord(surveyId, type, docCount = 1)
-            onDone()
+    val phase = MutableStateFlow(FetchPhase.SOLVING)
+    var errorMessage: String? = null
+        private set
+
+    fun setPhase(p: FetchPhase) { phase.value = p }
+
+    /**
+     * File a captured record into the visible library tree and record it in Room.
+     * Returns true on success. Doc count firms up per type once the multi-doc capture
+     * (VF-7/12 combine, deeds) is wired; a single Integrated PDF counts as 1.
+     */
+    suspend fun fileCapture(type: RecordType, pdfBytes: ByteArray, rawHtml: String): Boolean {
+        return try {
+            val snap = repo.snapshot(surveyId) ?: error("Survey not found")
+            val (survey, prop) = snap
+            val filed = writer.writeRecord(
+                district = prop.district, taluka = prop.taluka, village = prop.village,
+                surveyNo = survey.surveyNo, type = type, pdfBytes = pdfBytes, rawHtml = rawHtml,
+            )
+            repo.saveFetchedRecord(surveyId, type, docCount = 1, pdfPath = filed.pdfPath, sourcePath = filed.sourcePath)
+            true
+        } catch (e: Exception) {
+            errorMessage = e.message ?: "Could not save the record"
+            phase.value = FetchPhase.ERROR
+            false
         }
     }
 }

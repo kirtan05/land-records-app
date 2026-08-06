@@ -34,6 +34,9 @@ interface SurveyDao {
     @Query("SELECT * FROM surveys WHERE id = :id")
     fun observeById(id: Long): Flow<SurveyEntity?>
 
+    @Query("SELECT * FROM surveys WHERE id = :id")
+    suspend fun byIdOnce(id: Long): SurveyEntity?
+
     @Query("SELECT * FROM surveys WHERE surveyNo LIKE '%' || :q || '%' ORDER BY normalized")
     fun search(q: String): Flow<List<SurveyEntity>>
 

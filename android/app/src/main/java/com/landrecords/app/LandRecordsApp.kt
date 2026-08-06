@@ -14,6 +14,10 @@ class LandRecordsApp : Application() {
 
     val appState: AppState by lazy { AppState(this) }
 
+    val libraryWriter: com.landrecords.app.data.storage.LibraryWriter by lazy {
+        com.landrecords.app.data.storage.LibraryWriter(this)
+    }
+
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
