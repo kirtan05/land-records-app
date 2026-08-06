@@ -31,7 +31,9 @@ class LibraryWriter(private val context: Context) {
         pdfBytes: ByteArray,
         rawHtml: String,
     ): Filed = withContext(Dispatchers.IO) {
-        val relDir = "$district/$taluka/$village/Survey ${surveyNo.trim()}"
+        // Sanitize the survey number for a folder name — a '/' would nest folders (845/અ).
+        val safeSurvey = surveyNo.trim().replace('/', '_')
+        val relDir = "$district/$taluka/$village/Survey $safeSurvey"
         val pdfName = LandRecordsStorage.pdfName(type)
         val htmlName = ".source/${type.name.lowercase()}.html"
 

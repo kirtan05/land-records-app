@@ -5,6 +5,7 @@ import android.graphics.pdf.PdfDocument
 import android.view.View
 import android.webkit.WebView
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
@@ -24,6 +25,13 @@ object WebViewCapture {
     private const val PAGE_W = 842
     private const val PAGE_H = 595
     private const val MARGIN = 18 // ~6mm
+
+    /**
+     * Lay the record out at a desktop-width CSS viewport (like Chrome printing landscape
+     * A4) so the wide 7/12 tables don't reflow into dozens of tall phone-width pages.
+     * Matches the offline render that produces ~4 pages.
+     */
+    private const val LAYOUT_CSS_WIDTH = 1123
 
     /** Evaluate [js] on the main thread and return its (unquoted) string result. */
     suspend fun eval(webView: WebView, js: String): String = withContext(Dispatchers.Main) {
@@ -50,21 +58,28 @@ object WebViewCapture {
      * fitting the laid-out width to the printable page width.
      */
     suspend fun toPdfBytes(webView: WebView): ByteArray = withContext(Dispatchers.Main) {
-        val contentWidthPx = max(webView.width, 1)
-        val contentHeightPx = max((webView.contentHeight * webView.resources.displayMetrics.density).toInt(), webView.height)
+        val density = webView.resources.displayMetrics.density
+        // With useWideViewPort=false the CSS viewport = viewWidthPx / density, so laying the
+        // view out at LAYOUT_CSS_WIDTH*density forces a 1123px CSS layout that fills the page.
+        webView.settings.useWideViewPort = false
+        webView.settings.loadWithOverviewMode = false
+        val layoutWidthPx = (LAYOUT_CSS_WIDTH * density).toInt().coerceAtLeast(1)
 
-        val printableW = PAGE_W - 2 * MARGIN
-        val printableH = PAGE_H - 2 * MARGIN
-        val scale = printableW.toFloat() / contentWidthPx
-        val pageContentPx = (printableH / scale).toInt().coerceAtLeast(1)
-        val pageCount = ceil(contentHeightPx.toFloat() / pageContentPx).toInt().coerceIn(1, 60)
-
-        // Lay the WebView out at its full content height so draw() paints everything.
+        // Measure at the desktop width so the content reflows to it, then learn its height.
         webView.measure(
-            View.MeasureSpec.makeMeasureSpec(contentWidthPx, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(contentHeightPx, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(layoutWidthPx, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
         )
-        webView.layout(0, 0, contentWidthPx, contentHeightPx)
+        webView.layout(0, 0, layoutWidthPx, webView.measuredHeight)
+        // Give the reflow a beat, then re-measure the true content height.
+        delay(250)
+        val contentHeightPx = max((webView.contentHeight * density).toInt(), webView.measuredHeight)
+        webView.layout(0, 0, layoutWidthPx, contentHeightPx)
+
+        // Full-bleed width map: the desktop-width layout scales to the whole page width.
+        val scale = (PAGE_W - 2 * MARGIN).toFloat() / layoutWidthPx
+        val pageContentPx = ((PAGE_H - 2 * MARGIN) / scale).toInt().coerceAtLeast(1)
+        val pageCount = ceil(contentHeightPx.toFloat() / pageContentPx).toInt().coerceIn(1, 40)
 
         val doc = PdfDocument()
         for (i in 0 until pageCount) {

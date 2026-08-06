@@ -31,6 +31,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.R
 import com.landrecords.app.data.db.RecordEntity
 import com.landrecords.app.data.model.RecordType
+import com.landrecords.app.data.storage.LibraryAccess
 import com.landrecords.app.ui.components.BlueprintHeader
 import com.landrecords.app.ui.components.DashedButton
 import com.landrecords.app.ui.components.MetaChip
@@ -53,11 +54,10 @@ fun SurveyDetailScreen(
     justAddedType: RecordType?,
     onBack: () -> Unit,
     onFetch: (Long, RecordType) -> Unit,
-    onView: (RecordEntity) -> Unit,
-    onShare: (RecordEntity) -> Unit,
-    onRegenerate: (RecordEntity) -> Unit,
+    onRegenerate: (Long, RecordType) -> Unit,
 ) {
     val app = landApp()
+    val context = androidx.compose.ui.platform.LocalContext.current
     val vm: SurveyDetailViewModel = viewModel(
         factory = viewModelFactory { initializer { SurveyDetailViewModel(app.repository, surveyId) } },
     )
@@ -114,9 +114,15 @@ fun SurveyDetailScreen(
                     asOfGu = record?.asOf ?: "",
                     asOfLatin = (record?.asOf ?: "").guToLatinDigits(),
                     justAdded = type == justAddedType,
-                    onView = { record?.let(onView) },
-                    onRegenerate = { record?.let(onRegenerate) },
-                    onShare = { record?.let(onShare) },
+                    onView = {
+                        val ok = LibraryAccess.view(context, record?.pdfPath)
+                        if (!ok) android.widget.Toast.makeText(context, "Can't open this file", android.widget.Toast.LENGTH_SHORT).show()
+                    },
+                    onRegenerate = { onRegenerate(surveyId, type) },
+                    onShare = {
+                        val ok = LibraryAccess.share(context, record?.pdfPath)
+                        if (!ok) android.widget.Toast.makeText(context, "Nothing to share yet", android.widget.Toast.LENGTH_SHORT).show()
+                    },
                     onGet = { onFetch(surveyId, type) },
                 )
             }

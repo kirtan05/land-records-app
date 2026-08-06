@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.landrecords.app.data.model.RecordType
 import com.landrecords.app.ui.fetch.FetchScreen
+import com.landrecords.app.ui.fetch.RegenerateScreen
 import com.landrecords.app.ui.library.LibraryScreen
 import com.landrecords.app.ui.property.AddPropertyScreen
 import com.landrecords.app.ui.settings.SettingsScreen
@@ -24,11 +25,13 @@ private object Routes {
     const val LIBRARY = "library"
     const val SURVEY = "survey/{surveyId}?justAdded={justAdded}"
     const val FETCH = "fetch/{surveyId}/{recordType}"
+    const val REGEN = "regen/{surveyId}/{recordType}"
     const val ADD = "add_property"
     const val SETTINGS = "settings"
 
     fun survey(id: Long, justAdded: String? = null) = "survey/$id?justAdded=${justAdded ?: ""}"
     fun fetch(id: Long, type: RecordType) = "fetch/$id/${type.name}"
+    fun regen(id: Long, type: RecordType) = "regen/$id/${type.name}"
 }
 
 @Composable
@@ -67,10 +70,19 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
                 justAddedType = justAdded,
                 onBack = { navController.popBackStack() },
                 onFetch = { sid, type -> navController.navigate(Routes.fetch(sid, type)) },
-                onView = {},
-                onShare = {},
-                onRegenerate = {},
+                onRegenerate = { sid, type -> navController.navigate(Routes.regen(sid, type)) },
             )
+        }
+        composable(
+            Routes.REGEN,
+            arguments = listOf(
+                navArgument("surveyId") { type = NavType.LongType },
+                navArgument("recordType") { type = NavType.StringType },
+            ),
+        ) { entry ->
+            val id = entry.arguments?.getLong("surveyId") ?: return@composable
+            val type = RecordType.valueOf(entry.arguments?.getString("recordType") ?: return@composable)
+            RegenerateScreen(surveyId = id, recordType = type, onDone = { navController.popBackStack() })
         }
         composable(
             Routes.FETCH,

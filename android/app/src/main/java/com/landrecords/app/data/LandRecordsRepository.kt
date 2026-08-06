@@ -38,6 +38,9 @@ class LandRecordsRepository(private val db: AppDatabase) {
 
     suspend fun propertyById(id: Long) = db.propertyDao().byId(id)
 
+    suspend fun recordFor(surveyId: Long, type: RecordType): RecordEntity? =
+        db.recordDao().find(surveyId, type.name)
+
     /** A one-shot snapshot of a survey plus its owning property, for filing a capture. */
     suspend fun snapshot(surveyId: Long): Pair<SurveyEntity, PropertyEntity>? {
         val survey = db.surveyDao().byIdOnce(surveyId) ?: return null

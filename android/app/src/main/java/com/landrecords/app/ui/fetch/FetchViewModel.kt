@@ -36,7 +36,9 @@ class FetchViewModel(
         val prop = repo.propertyById(survey.propertyId)
         FetchInfo(
             surveyNo = survey.surveyNo,
-            surveyNorm = survey.normalized,
+            // Match against the human survey number ("845/અ", "901/p") — AnyRoR's option text
+            // uses a slash, not the stored "_" token. norm() in the injector handles digits/પ→p.
+            surveyNorm = survey.surveyNo,
             district = prop?.district ?: "",
             taluka = prop?.taluka ?: "",
             village = prop?.village ?: "",
@@ -51,6 +53,11 @@ class FetchViewModel(
         private set
 
     fun setPhase(p: FetchPhase) { phase.value = p }
+
+    fun fail(message: String) {
+        errorMessage = message
+        phase.value = FetchPhase.ERROR
+    }
 
     /**
      * File a captured record into the visible library tree and record it in Room.

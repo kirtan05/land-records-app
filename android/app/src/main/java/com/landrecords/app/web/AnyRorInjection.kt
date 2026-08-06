@@ -85,11 +85,33 @@ object AnyRorInjection {
         .breadcrumb, #myBtn, .alert-danger, header, nav, .navbar, footer, #__bot_banner { display:none !important; }
     """
 
+    /**
+     * Forces a desktop-width viewport so the record reflows wide (like Chrome printing
+     * landscape A4) instead of into dozens of tall phone-width pages. Paired with
+     * WebViewCapture.LAYOUT_CSS_WIDTH.
+     */
+    fun wideViewportJs(): String = """
+    (function(){
+      try {
+        document.querySelectorAll('meta[name=viewport]').forEach(function(m){ m.remove(); });
+        var m = document.createElement('meta'); m.name='viewport'; m.content='width=1123';
+        document.head.appendChild(m);
+        var s = document.getElementById('__lr_wide'); if(!s){ s=document.createElement('style'); s.id='__lr_wide'; document.head.appendChild(s); }
+        s.innerHTML = 'html,body{width:1123px !important;min-width:1123px !important;overflow-x:visible !important;}';
+      } catch(e) {}
+    })();
+    """.trimIndent()
+
     /** Injects the print CSS and strips empty rows/tables/sections (format.mjs DOM pass). */
     fun cleanupJs(): String = """
     (function(){
       try {
         var s = document.createElement('style'); s.innerHTML = `$CLEANUP_CSS`; document.head.appendChild(s);
+        // Drop the spotlight artifacts and the cascade FORM so only the record prints.
+        var sc = document.getElementById('__lr_spot_css'); if (sc) sc.remove();
+        document.querySelectorAll('.lr-ring').forEach(function(e){ e.classList.remove('lr-ring'); });
+        [document.getElementById('${AnyRor.Ids.RECORD_TYPE}'), document.getElementById('${AnyRor.Ids.GET_DETAIL_BUTTON}')]
+          .forEach(function(el){ if(el){ var p = el.closest('.panel,.Div-Border-Side-New,fieldset,form'); if(p) p.style.display='none'; } });
         var blank = function(t){ return (t||'').replace(/[\s\-—_.]/g,'') === ''; };
         document.querySelectorAll('table').forEach(function(t){
           Array.from(t.rows).forEach(function(r){ if(!r.querySelector('th') && blank(r.textContent)){ r.remove(); } });
@@ -108,16 +130,21 @@ object AnyRorInjection {
     """.trimIndent()
 
     /**
-     * Reports the survey-detail result state so the app knows when to capture:
-     * returns "READY" once the detail markup is present, else "WAIT".
+     * Reports whether the actual 7/12 record has loaded (not just the cascade form, which
+     * also uses .Div-Border-Side-New panels + the word "સર્વે"). Keys off record-only content
+     * like ખાતેદાર / કબ્જેદાર / "ગામ નમૂનો ૭/૧૨". Returns 'READY', 'NOTFOUND', or 'WAIT'.
      */
     fun detailReadyJs(): String = """
     (function(){
       try {
-        var hasDetail = /InfoSurveyNoDetail/i.test(location.href)
-          || document.querySelector('.Div-Border-Side-New, .panel-primary') != null;
-        var hasSurvey = /સરવે|Survey No|સર્વે/i.test(document.body ? document.body.innerText : '');
-        return (hasDetail && hasSurvey) ? 'READY' : 'WAIT';
+        var t = document.body ? document.body.innerText : '';
+        // Record content wins: the integrated page shows "Record Not Found" inside EMPTY
+        // subsections (court cases / tax), so only treat the WHOLE page as not-found when
+        // there is no actual record content anywhere.
+        var hasRecord = /ખાતેદાર|કબ્જેદાર|ગામ\s*નમૂનો|ગામ\s*નમુનો|ખેતીની\s*જમીન|જમીનની\s*વિગત|મ્યુટેશન|હક્ક\s*પત્રક|સત્તાપ્રકાર/.test(t);
+        if (hasRecord) return 'READY';
+        if (/Record Not Found|No Record Found|રેકોર્ડ મળ્યો નથી|માહિતી ઉપલબ્ધ નથી/i.test(t)) return 'NOTFOUND';
+        return 'WAIT';
       } catch(e) { return 'WAIT'; }
     })();
     """.trimIndent()
@@ -129,16 +156,29 @@ object AnyRorInjection {
     fun dimSpotlightJs(): String = """
     (function(){
       try {
-        if (document.getElementById('__lr_dim')) return;
-        var style = document.createElement('style'); style.id='__lr_dim';
-        style.innerHTML = 'body *{opacity:.38 !important;} .lr-spot,.lr-spot *{opacity:1 !important;}'
-          + '.lr-spot{outline:3px solid #B4531B;outline-offset:3px;border-radius:12px;background:#FBFCFB !important;}';
-        document.head.appendChild(style);
+        if (!document.getElementById('__lr_spot_css')) {
+          var style = document.createElement('style'); style.id='__lr_spot_css';
+          // Ring only — NO dimming scrim (a scrim greys out the submit button; and opacity
+          // on descendants compounds through nesting and whites the page out).
+          style.innerHTML = '.lr-ring{outline:3px solid #B4531B !important;outline-offset:3px;border-radius:10px !important;}';
+          document.head.appendChild(style);
+        }
         var btn = document.getElementById('${AnyRor.Ids.GET_DETAIL_BUTTON}');
-        [btn, document.querySelector('img[src*="captcha" i]'), document.querySelector('img[src*="Captcha" i]'),
-         document.querySelector('input[id*="captcha" i]'), document.querySelector('input[id*="txtCaptcha" i]')]
-          .forEach(function(el){ if(el){ var p = el.closest('div,td,tr,form')||el; p.classList.add('lr-spot'); }});
-        if (btn) btn.addEventListener('click', function(){ try{ AndroidCapture.onSubmit(); }catch(e){} });
+        var capImg = document.querySelector('img[src*="captcha" i]');
+        var inp = document.querySelector('input[id*="captcha" i]')
+          || document.querySelector('input[id*="txtCaptcha" i]')
+          || (capImg && capImg.closest('div,td,table,form') || document).querySelector('input[type=text]');
+        if (capImg) capImg.classList.add('lr-ring');
+        if (inp) inp.classList.add('lr-ring');
+        if (btn) btn.classList.add('lr-ring');
+        if (inp) inp.scrollIntoView({block:'center'}); else if (btn) btn.scrollIntoView({block:'center'});
+        function fire(){ try{ AndroidCapture.onSubmit(); }catch(e){} }
+        // Cover every way the user might submit: button click, Enter in the code box, form submit.
+        if (btn && !btn.dataset.lrHook) { btn.dataset.lrHook='1'; btn.addEventListener('click', fire); }
+        if (inp && !inp.dataset.lrHook) { inp.dataset.lrHook='1';
+          inp.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.keyCode===13) fire(); }); }
+        var f = (btn && btn.form) || (inp && inp.form);
+        if (f && !f.dataset.lrHook) { f.dataset.lrHook='1'; f.addEventListener('submit', fire); }
       } catch(e) {}
     })();
     """.trimIndent()

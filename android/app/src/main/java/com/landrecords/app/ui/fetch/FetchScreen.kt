@@ -71,6 +71,7 @@ fun FetchScreen(
     var webRef by remember { mutableStateOf<WebView?>(null) }
     var pageLoaded by remember { mutableIntStateOf(0) }
     var awaitingDetail by remember { mutableStateOf(false) }
+    var submitPageLoaded by remember { mutableIntStateOf(-1) }
     var captureRunning by remember { mutableStateOf(false) }
 
     val surveyDropId = when (recordType) {
@@ -86,26 +87,47 @@ fun FetchScreen(
         if (captureRunning) return@LaunchedEffect
 
         if (awaitingDetail) {
-            val ready = WebViewCapture.eval(wv, AnyRorInjection.detailReadyJs())
-            if (ready.contains("READY")) {
-                captureRunning = true
-                vm.setPhase(FetchPhase.READING)
-                WebViewCapture.eval(wv, AnyRorInjection.cleanupJs())
-                delay(700)
-                val html = WebViewCapture.rawHtml(wv)
-                vm.setPhase(FetchPhase.BUILDING)
-                val pdf = WebViewCapture.toPdfBytes(wv)
-                vm.setPhase(FetchPhase.FILING)
-                val ok = vm.fileCapture(recordType, pdf, html)
-                if (ok) {
-                    vm.setPhase(FetchPhase.DONE)
-                    delay(450)
-                    onDone()
+            // Only look for the result AFTER the submit's postback has loaded a new page —
+            // otherwise we'd capture the form the instant the button/Enter fires.
+            if (pageLoaded <= submitPageLoaded) return@LaunchedEffect
+            // Poll a few seconds — the detail DOM can render a beat after onPageFinished.
+            var ready = WebViewCapture.eval(wv, AnyRorInjection.detailReadyJs())
+            var tries = 0
+            while (ready.contains("WAIT") && tries < 8) {
+                delay(500)
+                ready = WebViewCapture.eval(wv, AnyRorInjection.detailReadyJs())
+                tries++
+            }
+            when {
+                ready.contains("READY") -> {
+                    captureRunning = true
+                    vm.setPhase(FetchPhase.READING)
+                    WebViewCapture.eval(wv, AnyRorInjection.cleanupJs())
+                    val html = WebViewCapture.rawHtml(wv)
+                    vm.setPhase(FetchPhase.BUILDING)
+                    // Force the desktop-width layout, let it reflow, then paginate.
+                    WebViewCapture.eval(wv, AnyRorInjection.wideViewportJs())
+                    delay(900)
+                    val pdf = WebViewCapture.toPdfBytes(wv)
+                    vm.setPhase(FetchPhase.FILING)
+                    val ok = vm.fileCapture(recordType, pdf, html)
+                    if (ok) {
+                        vm.setPhase(FetchPhase.DONE)
+                        delay(450)
+                        onDone()
+                    }
+                    captureRunning = false
                 }
-                captureRunning = false
-            } else {
-                // Wrong code or page not ready yet — re-spotlight so the user can retry.
-                WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
+                ready.contains("NOTFOUND") -> {
+                    captureRunning = true
+                    vm.fail("No record found for this survey. Check the survey number, or the code you typed.")
+                }
+                else -> {
+                    // Postback returned the form again (usually a wrong CAPTCHA) — re-arm for retry.
+                    awaitingDetail = false
+                    submitPageLoaded = -1
+                    WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
+                }
             }
         } else {
             val step = WebViewCapture.eval(
@@ -163,7 +185,12 @@ fun FetchScreen(
                     addJavascriptInterface(object {
                         @JavascriptInterface
                         fun onSubmit() {
-                            post { awaitingDetail = true }
+                            post {
+                                if (!awaitingDetail) {
+                                    submitPageLoaded = pageLoaded
+                                    awaitingDetail = true
+                                }
+                            }
                         }
                     }, "AndroidCapture")
                     webViewClient = object : WebViewClient() {
@@ -192,6 +219,7 @@ fun FetchScreen(
             onRetry = {
                 vm.setPhase(FetchPhase.SOLVING)
                 awaitingDetail = false
+                submitPageLoaded = -1
                 captureRunning = false
                 webRef?.reload()
             },
