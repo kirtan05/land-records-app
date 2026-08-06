@@ -35,20 +35,19 @@ class LibraryWriter(private val context: Context) {
         val safeSurvey = surveyNo.trim().replace('/', '_')
         val relDir = "$district/$taluka/$village/Survey $safeSurvey"
         val pdfName = LandRecordsStorage.pdfName(type)
-        val htmlName = ".source/${type.name.lowercase()}.html"
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val pdfUri = writeViaMediaStore("$relDir", pdfName, "application/pdf", pdfBytes)
-            val htmlUri = writeViaMediaStore("$relDir/.source", "${type.name.lowercase()}.html", "text/html", rawHtml.toByteArray())
-            Filed(pdfUri, htmlUri)
+        // The raw HTML (re-render source) lives in app-internal storage — MediaStore doesn't
+        // reliably index hidden ".source" folders, and internal File access is dependable.
+        val sourceDir = File(context.filesDir, "source/$district/$taluka/$village/$safeSurvey").apply { mkdirs() }
+        val sourceFile = File(sourceDir, "${type.name.lowercase()}.html").apply { writeText(rawHtml) }
+
+        val pdfPath = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            writeViaMediaStore(relDir, pdfName, "application/pdf", pdfBytes)
         } else {
-            val base = File(LandRecordsStorage.libraryRoot(), relDir)
-            base.mkdirs()
-            val pdf = File(base, pdfName).apply { writeBytes(pdfBytes) }
-            val src = File(base, ".source").apply { mkdirs() }
-            File(src, "${type.name.lowercase()}.html").writeText(rawHtml)
-            Filed(pdf.absolutePath, File(src, htmlName).absolutePath)
+            val base = File(LandRecordsStorage.libraryRoot(), relDir).apply { mkdirs() }
+            File(base, pdfName).apply { writeBytes(pdfBytes) }.absolutePath
         }
+        Filed(pdfPath, sourceFile.absolutePath)
     }
 
     private fun writeViaMediaStore(relSubDir: String, name: String, mime: String, bytes: ByteArray): String {

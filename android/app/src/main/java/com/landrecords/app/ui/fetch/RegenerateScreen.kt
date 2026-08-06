@@ -77,9 +77,7 @@ fun RegenerateScreen(
         val wv = webRef ?: return@LaunchedEffect
         done = true
         vm.setPhase(FetchPhase.BUILDING)
-        WebViewCapture.eval(wv, AnyRorInjection.wideViewportJs())
-        delay(900)
-        val pdf = WebViewCapture.toPdfBytes(wv)
+        val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
         vm.setPhase(FetchPhase.FILING)
         val ok = vm.fileCapture(recordType, pdf, html!!)
         if (ok) {

@@ -91,7 +91,7 @@ fun FetchScreen(
             // otherwise we'd capture the form the instant the button/Enter fires.
             if (pageLoaded <= submitPageLoaded) return@LaunchedEffect
             // Poll a few seconds — the detail DOM can render a beat after onPageFinished.
-            var ready = WebViewCapture.eval(wv, AnyRorInjection.detailReadyJs())
+                var ready = WebViewCapture.eval(wv, AnyRorInjection.detailReadyJs())
             var tries = 0
             while (ready.contains("WAIT") && tries < 8) {
                 delay(500)
@@ -105,10 +105,7 @@ fun FetchScreen(
                     WebViewCapture.eval(wv, AnyRorInjection.cleanupJs())
                     val html = WebViewCapture.rawHtml(wv)
                     vm.setPhase(FetchPhase.BUILDING)
-                    // Force the desktop-width layout, let it reflow, then paginate.
-                    WebViewCapture.eval(wv, AnyRorInjection.wideViewportJs())
-                    delay(900)
-                    val pdf = WebViewCapture.toPdfBytes(wv)
+                    val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
                     vm.setPhase(FetchPhase.FILING)
                     val ok = vm.fileCapture(recordType, pdf, html)
                     if (ok) {

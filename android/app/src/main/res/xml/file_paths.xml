@@ -3,5 +3,6 @@
     <!-- The visible library tree: Documents/LandRecords/… -->
     <external-path name="documents" path="Documents/" />
     <external-files-path name="app_files" path="." />
+    <files-path name="internal" path="." />
     <cache-path name="cache" path="." />
 </paths>

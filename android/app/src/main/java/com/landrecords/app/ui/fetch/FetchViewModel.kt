@@ -73,8 +73,10 @@ class FetchViewModel(
                 surveyNo = survey.surveyNo, type = type, pdfBytes = pdfBytes, rawHtml = rawHtml,
             )
             repo.saveFetchedRecord(surveyId, type, docCount = 1, pdfPath = filed.pdfPath, sourcePath = filed.sourcePath)
+            android.util.Log.i("LR", "fileCapture OK: pdf='${filed.pdfPath}' source='${filed.sourcePath}' (${pdfBytes.size} bytes)")
             true
         } catch (e: Exception) {
+            android.util.Log.e("LR", "fileCapture FAILED", e)
             errorMessage = e.message ?: "Could not save the record"
             phase.value = FetchPhase.ERROR
             false

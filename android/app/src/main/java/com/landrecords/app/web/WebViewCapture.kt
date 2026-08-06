@@ -9,6 +9,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
+import java.io.File
 import kotlin.coroutines.resume
 import kotlin.math.ceil
 import kotlin.math.max
@@ -32,6 +33,24 @@ object WebViewCapture {
      * Matches the offline render that produces ~4 pages.
      */
     private const val LAYOUT_CSS_WIDTH = 1123
+
+    /**
+     * Render the loaded WebView to a PDF. Prefers Chrome's real print engine (page-break
+     * aware, matches the desktop output); falls back to the canvas paginator only if the
+     * platform blocks the print bridge.
+     */
+    suspend fun renderPdf(webView: WebView, cacheDir: File): ByteArray {
+        PrintPdf.toPdfBytes(webView, cacheDir)?.let {
+            if (it.isNotEmpty()) {
+                android.util.Log.i("LR", "renderPdf: using PRINT ENGINE (${it.size} bytes)")
+                return it
+            }
+        }
+        android.util.Log.w("LR", "renderPdf: print engine unavailable — using CANVAS fallback")
+        eval(webView, AnyRorInjection.wideViewportJs())
+        delay(900)
+        return toPdfBytes(webView)
+    }
 
     /** Evaluate [js] on the main thread and return its (unquoted) string result. */
     suspend fun eval(webView: WebView, js: String): String = withContext(Dispatchers.Main) {

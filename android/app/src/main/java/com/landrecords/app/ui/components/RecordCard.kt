@@ -55,27 +55,26 @@ fun RecordCard(
     val lang = LocalLang.current
     val held = docCount > 0
     val lineColor = Land.colors.line // hoisted for the non-composable drawBehind below
-    Row(
+    val railColor = if (held) Land.colors.accent else Land.colors.line
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min)
             .clip(LandShape.card)
             .background(Land.colors.surface)
-            .border(1.dp, Land.colors.line, LandShape.card),
+            .border(1.dp, Land.colors.line, LandShape.card)
+            // 3dp left rail, painted the full (real) card height — no IntrinsicSize needed.
+            .drawBehind {
+                drawRect(
+                    color = railColor,
+                    size = androidx.compose.ui.geometry.Size(3.dp.toPx(), size.height),
+                )
+            },
     ) {
-        // 3dp rail
-        Box(
-            Modifier
-                .width(3.dp)
-                .fillMaxHeight()
-                .background(if (held) Land.colors.accent else Land.colors.line),
-        )
-        Column(Modifier.fillMaxWidth()) {
-            Row(
-                Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp, top = 14.dp, bottom = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                Column(Modifier.weight(1f)) {
+        Row(
+            Modifier.fillMaxWidth().padding(start = 15.dp, end = 15.dp, top = 14.dp, bottom = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Column(Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(type.label(), style = LandType.bodyStrong, color = Land.colors.ink)
                         if (justAdded) JustAddedBadge()
@@ -146,7 +145,6 @@ fun RecordCard(
             }
         }
     }
-}
 
 @Composable
 private fun JustAddedBadge() {

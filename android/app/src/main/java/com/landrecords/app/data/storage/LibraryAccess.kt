@@ -18,10 +18,10 @@ import java.io.File
 object LibraryAccess {
 
     fun contentUriFor(context: Context, path: String?): Uri? {
-        if (path.isNullOrBlank()) return null
+        if (path.isNullOrBlank()) { android.util.Log.w("LR", "contentUriFor: path is null/blank"); return null }
         if (path.startsWith("/")) {
             val file = File(path)
-            if (!file.exists()) return null
+            if (!file.exists()) { android.util.Log.w("LR", "contentUriFor: file missing $path"); return null }
             return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
         }
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
@@ -42,11 +42,17 @@ object LibraryAccess {
                 return ContentUris.withAppendedId(collection, id)
             }
         }
+        android.util.Log.w("LR", "contentUriFor: no MediaStore match for relDir='$relDir' name='$name'")
         return null
     }
 
     /** Read a saved file's bytes back (used to re-render a PDF from stored .source HTML). */
     fun readBytes(context: Context, path: String?): ByteArray? {
+        if (path.isNullOrBlank()) return null
+        if (path.startsWith("/")) {
+            return runCatching { File(path).takeIf { it.exists() }?.readBytes() }.getOrNull()
+                .also { if (it == null) android.util.Log.w("LR", "readBytes: file missing $path") }
+        }
         val uri = contentUriFor(context, path) ?: return null
         return runCatching { context.contentResolver.openInputStream(uri)?.use { it.readBytes() } }.getOrNull()
     }
