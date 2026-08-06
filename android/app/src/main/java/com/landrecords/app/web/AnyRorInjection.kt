@@ -32,15 +32,18 @@ object AnyRorInjection {
     (function(){
       try {
         function norm(s){ return (s||'').replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
-          .replace(/પ/g,'p').replace(/\s+/g,'').toLowerCase(); }
-        function unset(sel){ if(!sel) return true; var v=(sel.value||'').trim(); return v===''||v==='0'||v==='-1'; }
-        function pick(sel, wantText){
+          .replace(/પ/g,'p').replace(/[~\s]+/g,'').toLowerCase(); }
+        // Survey token: the leading number before any separator, e.g. "851 ~~" -> "851".
+        function coreTok(s){ var m = norm(s).match(/^[0-9a-z\/અ-૱]+/); return m ? m[0] : norm(s); }
+        function pick(sel, wantText, exact){
           var want=norm(wantText); var best=null;
-          Array.from(sel.options).forEach(function(o){ var t=norm(o.text);
-            if(t && (t===want || t.indexOf(want)>=0 || want.indexOf(t)>=0)) if(!best) best=o; });
+          Array.from(sel.options).forEach(function(o){ if(best) return; var t=norm(o.text);
+            var hit = exact ? (coreTok(o.text)===want) : (t===want || t.indexOf(want)>=0);
+            if(t && hit) best=o; });
           if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
           return false;
         }
+        function unset(sel){ if(!sel) return true; var v=(sel.value||'').trim(); return v===''||v==='0'||v==='-1'; }
         var rt=document.getElementById('${AnyRor.Ids.RECORD_TYPE}');
         if(rt && (rt.value||'')!=='$recordValue'){ rt.value='$recordValue'; rt.dispatchEvent(new Event('change',{bubbles:true})); return 'RT'; }
         var dist=document.getElementById('${AnyRor.Ids.DISTRICT}');

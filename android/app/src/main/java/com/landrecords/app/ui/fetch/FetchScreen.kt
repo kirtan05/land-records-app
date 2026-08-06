@@ -116,9 +116,12 @@ fun FetchScreen(
                     surveyNorm = i.surveyNorm, surveyDropId = surveyDropId,
                 ),
             )
-            // Any real selection triggers an ASP.NET postback → a new pageLoaded fires this
-            // effect again for the next step. When the cascade is set, spotlight the CAPTCHA.
-            if (step.contains("READY")) {
+            // District/taluka/village selections post back → a new pageLoaded re-runs this
+            // effect for the next step. The survey (last dropdown) does NOT post back, so
+            // spotlight as soon as it's selected ('SUR') or the cascade is fully set ('READY').
+            // dimSpotlight is idempotent, so a following postback re-spotlighting is harmless.
+            if (step.contains("READY") || step.contains("SUR")) {
+                delay(600)
                 WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
             }
         }
