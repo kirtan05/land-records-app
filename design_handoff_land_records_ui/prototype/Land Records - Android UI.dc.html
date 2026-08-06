@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#eceae4;font-family:'IBM Plex Sans',system-ui,sans-serif}
+a{color:#2a5f52;text-decoration:none}a:hover{color:#1d423a}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 20px}
+.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}
+.dv-opts{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}
+.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.3 system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-card{max-width:100%;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);overflow:hidden}
+.dv-opt:target .dv-oid{background:#2a5f52;color:#fff}
+.dv-next{margin:22px 0 0;font:12px/1.5 system-ui,sans-serif;color:rgba(0,0,0,.5)}
+[data-dir="a"]{--bg:#F6F2E9;--surf:#FFFDF8;--surf2:#EFE9DB;--ink:#1C1A15;--ink2:#5A5346;--ink3:#8C8474;--line:#DBD1BD;--hair:#E8E0CF;--acc:#2E5D50;--accsoft:#E2EAE4;--onacc:#FBF9F3;--seal:#9C3B1B}
+[data-dir="a"][data-theme="dark"]{--bg:#14130F;--surf:#1D1B16;--surf2:#24211A;--ink:#F2EDE1;--ink2:#B3AC9B;--ink3:#7E7768;--line:#35301F;--hair:#2B2820;--acc:#7FB29F;--accsoft:#1E2B26;--onacc:#0F1512;--seal:#D08258}
+[data-dir="b"]{--bg:#E9EEEC;--surf:#FBFCFB;--surf2:#DFE6E4;--ink:#0F1614;--ink2:#4B5754;--ink3:#7C8785;--line:#C9D3D0;--hair:#DCE3E1;--acc:#B4531B;--accsoft:#F7E7DA;--onacc:#FFF9F4;--blue:#2B4652}
+[data-dir="b"][data-theme="dark"]{--bg:#0D1214;--surf:#151B1E;--surf2:#1E2629;--ink:#E9EEEE;--ink2:#A2AFB0;--ink3:#6F7C7E;--line:#283336;--hair:#212A2D;--acc:#E58A55;--accsoft:#2A1C13;--onacc:#150D07;--blue:#9FC2CF}
+@keyframes scin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes barfill{from{width:8%}to{width:97%}}
+@keyframes softpulse{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes ring{0%,100%{box-shadow:0 0 0 3px var(--accsoft)}50%{box-shadow:0 0 0 7px var(--accsoft)}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
+</style>
+</helmet>
+
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Cadastre (<a class="dv-oid" href="#1b">1b</a>) taken forward — three densities, plus a language chooser (ગુ / ગુ+EN / EN) in the header and Settings</span></div>
+<div class="dv-opts">
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a>Comfy — dad-first. One survey per row, 15sp body, 56dp buttons.</div>
+<div class="dv-card" style="background:#DFE6E4;padding:20px">
+<dc-import name="CadastrePhone" density="comfy" theme="light" lang="both" hint-size="406px,860px"></dc-import>
+</div>
+</div>
+<div class="dv-opt" id="2b">
+<div class="dv-olabel"><a class="dv-oid" href="#2b">2b</a>Default — 2-up parcel tiles, as <a class="dv-oid" href="#1b">1b</a>. Shown in Gujarati-only.</div>
+<div class="dv-card" style="background:#DFE6E4;padding:20px">
+<dc-import name="CadastrePhone" density="default" theme="light" lang="gu" hint-size="406px,860px"></dc-import>
+</div>
+</div>
+<div class="dv-opt" id="2c">
+<div class="dv-olabel"><a class="dv-oid" href="#2c">2c</a>Compact — more surveys per screen. Shown dark, English-first.</div>
+<div class="dv-card" style="background:#1E2629;padding:20px">
+<dc-import name="CadastrePhone" density="compact" theme="dark" lang="en" hint-size="406px,860px"></dc-import>
+</div>
+</div>
+</div>
+<p class="dv-next">Try next: "go with <a class="dv-oid" href="#2a">2a</a>" · "2a but keep the 2-up tiles" · "make English the default and Gujarati the helper everywhere" · "add the in-app PDF viewer + share sheet"</p>
+</section>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Two directions — clickable, light + dark, real Bharoda data</span></div>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a">
+<div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Ledger — warm record paper, hairline rules, a margin column of survey numerals. Browse = a register page.</div>
+<div class="dv-card" style="background:#EDE8DC;padding:20px;display:flex;gap:20px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:6px">
+<div onClick="{{ aSetLight }}" style="cursor:pointer;font:500 10.5px 'IBM Plex Sans';letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border:1px solid #C9BFA8;border-radius:4px;background:#FFFDF8;color:#1C1A15">Light</div>
+<div onClick="{{ aSetDark }}" style="cursor:pointer;font:500 10.5px 'IBM Plex Sans';letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border:1px solid #35301F;border-radius:4px;background:#14130F;color:#F2EDE1">Dark</div>
+<div onClick="{{ aGoLibrary }}" style="cursor:pointer;font:500 10.5px 'IBM Plex Sans';letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border:1px dashed #C9BFA8;border-radius:4px;color:#5A5346">Reset</div>
+</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" width="{{ pw }}" height="{{ ph }}" dark="{{ aDark }}" hint-size="406px,860px">
+<div data-dir="a" data-theme="{{ aTheme }}" style="min-height:100%;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans','Noto Sans Gujarati',system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+
+<sc-if value="{{ aIsLibrary }}" hint-placeholder-val="{{ true }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:24px">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:18px 20px 14px">
+    <div>
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:19px;font-weight:600;line-height:1.25">તમારા જમીન રેકોર્ડ</div>
+      <div style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin-top:5px">Your land records</div>
+    </div>
+    <div onClick="{{ aGoSettings }}" style="cursor:pointer;width:34px;height:34px;border:1px solid var(--line);border-radius:6px;background:var(--surf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px" style-active="background:var(--surf2)">
+      <div style="width:14px;height:1.5px;background:var(--ink2)"></div>
+      <div style="width:14px;height:1.5px;background:var(--ink2)"></div>
+      <div style="width:14px;height:1.5px;background:var(--ink2)"></div>
+    </div>
+  </div>
+
+  <div style="margin:0 20px;display:flex;align-items:center;gap:10px;height:42px;padding:0 13px;background:var(--surf);border:1px solid var(--line);border-radius:6px">
+    <div style="width:11px;height:11px;border:1.5px solid var(--ink3);border-radius:50%;flex:none"></div>
+    <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;color:var(--ink3)">સર્વે નંબર કે ગામ શોધો<span style="font-family:'IBM Plex Sans'"> · Search</span></div>
+  </div>
+
+  <div style="padding:18px 20px 0">
+    <div style="display:flex;align-items:baseline;gap:6px;color:var(--ink3)"><span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:10.5px">તાજેતરમાં</span><span style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase">· Recent</span></div>
+    <div style="display:flex;gap:8px;margin-top:9px;overflow:hidden">
+      <sc-for list="{{ aRecents }}" as="r" hint-placeholder-count="3">
+        <div onClick="{{ r.open }}" style="cursor:pointer;flex:none;border:1px solid var(--line);border-radius:5px;background:var(--surf);padding:7px 11px 8px" style-active="background:var(--surf2)">
+          <div style="font-family:'Newsreader',serif;font-size:16px;line-height:1.1">{{ r.no }}</div>
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:10px;color:var(--ink3);margin-top:2px">{{ r.vil }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="margin:18px 20px 0;background:var(--surf);border:1px solid var(--line);border-radius:6px;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 13px;background:var(--surf2);border-bottom:1px solid var(--line)">
+      <span style="color:var(--ink3)"><span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:10.5px">ગુજરાત</span><span style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase"> · Gujarat</span></span>
+      <span style="font-size:10px;color:var(--ink3)">2 જિલ્લા · 2 districts</span>
+    </div>
+
+    <div style="padding:11px 13px 3px;display:flex;align-items:baseline;gap:7px">
+      <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14px;font-weight:600">આણંદ</span>
+      <span style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Anand</span>
+    </div>
+    <div style="margin:0 13px 0 22px;border-left:1px solid var(--hair);padding-left:13px">
+      <div style="padding:3px 0 6px;display:flex;align-items:baseline;gap:7px">
+        <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12.5px;color:var(--ink2)">ઉમરેઠ</span>
+        <span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)">Umreth</span>
+      </div>
+
+      <div onClick="{{ aTogB }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px 9px 0;border-top:1px solid var(--hair)" style-active="opacity:.7">
+        <div style="flex:1">
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:15px;font-weight:600">ભરોડા</div>
+          <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Bharoda · 9 surveys</div>
+        </div>
+        <div style="font-family:'Newsreader',serif;font-size:15px;color:var(--acc)">{{ aCountB }}</div>
+        <div style="width:7px;height:7px;border-right:1.5px solid var(--ink3);border-bottom:1.5px solid var(--ink3);transform:rotate(45deg);margin-right:4px;margin-bottom:2px"></div>
+      </div>
+
+      <sc-if value="{{ aOpenB }}" hint-placeholder-val="{{ true }}">
+      <div style="border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg)">
+        <sc-for list="{{ aSurveys }}" as="s" hint-placeholder-count="9">
+          <div onClick="{{ s.open }}" style="cursor:pointer;display:grid;grid-template-columns:76px 1fr;border-bottom:1px solid var(--hair)" style-active="background:var(--surf2)">
+            <div style="padding:11px 8px 11px 4px;border-right:1px solid var(--hair);display:flex;align-items:center;justify-content:flex-end">
+              <span style="font-family:'Newsreader',serif;font-size:21px;font-weight:500;letter-spacing:-.01em">{{ s.no }}</span>
+            </div>
+            <div style="padding:9px 10px 10px 12px;display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div style="display:flex;align-items:baseline;gap:6px">
+                <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12.5px;font-variant-numeric:tabular-nums">{{ s.area }}</span>
+                <span style="font-size:9.5px;color:var(--ink3);letter-spacing:.04em">{{ s.areaLat }}</span>
+              </div>
+              <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.tenure }}</div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:1px">
+                <sc-for list="{{ s.chips }}" as="c" hint-placeholder-count="3">
+                  <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:9.5px;line-height:1;padding:4px 6px;border:1px solid var(--line);border-radius:3px;color:var(--ink2);background:var(--surf)">{{ c.t }}</div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <div onClick="{{ aTogS }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:9px 10px 9px 0;border-top:1px solid var(--hair)" style-active="opacity:.7">
+        <div style="flex:1">
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:15px;font-weight:600;color:var(--ink2)">સુંદલપુરા</div>
+          <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Sundalpura · queued</div>
+        </div>
+        <div style="font-size:10px;color:var(--ink3);border:1px dashed var(--line);border-radius:3px;padding:3px 6px">૫ બાકી</div>
+      </div>
+      <sc-if value="{{ aOpenS }}">
+      <div style="border-top:1px solid var(--line);background:var(--bg);padding:10px 10px 12px 0;display:flex;flex-wrap:wrap;gap:6px">
+        <sc-for list="{{ queued5 }}" as="q" hint-placeholder-count="5">
+          <div style="font-family:'Newsreader',serif;font-size:14px;padding:5px 9px;border:1px dashed var(--line);border-radius:4px;color:var(--ink2)">{{ q.no }}</div>
+        </sc-for>
+        <div onClick="{{ aStartFetch }}" style="cursor:pointer;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:6px 10px;border:1px solid var(--acc);border-radius:4px;color:var(--acc)">Get records</div>
+      </div>
+      </sc-if>
+    </div>
+
+    <div style="padding:12px 13px 3px;display:flex;align-items:baseline;gap:7px;border-top:1px solid var(--hair);margin-top:8px">
+      <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14px;font-weight:600">ખેડા</span>
+      <span style="font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Kheda</span>
+    </div>
+    <div style="margin:0 13px 12px 22px;border-left:1px solid var(--hair);padding-left:13px">
+      <div style="padding:3px 0 6px;display:flex;align-items:baseline;gap:7px">
+        <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12.5px;color:var(--ink2)">નડિયાદ ગ્રામ્ય</span>
+        <span style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)">Nadiad Gramya</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--hair)">
+        <div style="flex:1">
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:15px;font-weight:600;color:var(--ink2)">વળેટવા</div>
+          <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Valetva · survey 41 queued</div>
+        </div>
+        <div style="font-size:10px;color:var(--ink3);border:1px dashed var(--line);border-radius:3px;padding:3px 6px">૧ બાકી</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:16px 20px 0">
+    <div onClick="{{ aGoAdd }}" style="cursor:pointer;height:48px;border-radius:6px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;gap:9px" style-active="opacity:.85">
+      <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14.5px;font-weight:600">મિલકત ઉમેરો</span>
+      <span style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.75">Add property</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ aIsSurvey }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:28px">
+  <div style="display:flex;align-items:center;gap:12px;padding:16px 20px 6px">
+    <div onClick="{{ aGoLibrary }}" style="cursor:pointer;width:32px;height:32px;border:1px solid var(--line);border-radius:6px;background:var(--surf);display:flex;align-items:center;justify-content:center" style-active="background:var(--surf2)">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;color:var(--ink3)">આણંદ › ઉમરેઠ › ભરોડા</div>
+  </div>
+
+  <div style="padding:6px 20px 0">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:8px">
+      <div>
+        <div style="display:flex;align-items:baseline;gap:6px;color:var(--ink3)"><span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:10.5px">સર્વે નંબર</span><span style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase">· Survey no.</span></div>
+        <div style="font-family:'Newsreader',serif;font-size:44px;font-weight:500;line-height:1.02;letter-spacing:-.02em;margin-top:2px">{{ aSel.no }}</div>
+      </div>
+      <div style="text-align:right;padding-bottom:5px">
+        <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12px;color:var(--ink2)">ભરોડા</div>
+        <div style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Bharoda</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;border-left:1px solid var(--hair);border-right:1px solid var(--hair);border-bottom:1px solid var(--hair);background:var(--surf)">
+      <sc-for list="{{ aMeta }}" as="m" hint-placeholder-count="5">
+        <div style="padding:9px 11px;border-bottom:1px solid var(--hair);border-right:1px solid var(--hair)">
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:9.5px;color:var(--ink3)">{{ m.labGu }} <span style="font-family:'IBM Plex Sans';letter-spacing:.06em;text-transform:uppercase">{{ m.labEn }}</span></div>
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13.5px;margin-top:3px;font-variant-numeric:tabular-nums">{{ m.val }}</div>
+          <div style="font-size:9.5px;color:var(--ink3);margin-top:1px">{{ m.valEn }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:18px 20px 0">
+    <div style="display:flex;align-items:baseline;gap:6px;color:var(--ink3);margin-bottom:9px"><span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:10.5px">રેકોર્ડ</span><span style="font-size:9.5px;letter-spacing:.16em;text-transform:uppercase">· Records</span></div>
+    <sc-for list="{{ aRecords }}" as="r" hint-placeholder-count="4">
+      <div style="border:1px solid var(--line);border-radius:6px;background:var(--surf);margin-bottom:10px;overflow:hidden">
+        <div style="display:flex;gap:12px;padding:12px 13px 10px">
+          <div style="flex:1;min-width:0">
+            <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14px;font-weight:600;line-height:1.35">{{ r.gu }}</div>
+            <div style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:3px">{{ r.en }}</div>
+            <sc-if value="{{ r.fresh }}">
+              <div style="display:inline-block;margin-top:7px;font-family:'Noto Sans Gujarati',sans-serif;font-size:9.5px;padding:3px 7px;border-radius:3px;background:var(--accsoft);color:var(--acc)">હમણાં ઉમેર્યું · Just added</div>
+            </sc-if>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-family:'Newsreader',serif;font-size:22px;line-height:1;color:{{ r.countColor }}">{{ r.count }}</div>
+            <div style="font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-top:5px">{{ r.countEn }}</div>
+          </div>
+        </div>
+        <sc-if value="{{ r.has }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:0 13px 10px;font-family:'Noto Sans Gujarati',sans-serif;font-size:10.5px;color:var(--ink2)">ની સ્થિતિએ {{ r.asOf }} <span style="font-family:'IBM Plex Sans';color:var(--ink3)">· as of {{ r.asOfEn }}</span></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--hair)">
+            <div style="cursor:pointer;padding:10px 4px;text-align:center" style-active="background:var(--surf2)">
+              <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12px;color:var(--acc);font-weight:600">જુઓ</div>
+              <div style="font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">View</div>
+            </div>
+            <div style="cursor:pointer;padding:10px 4px;text-align:center;border-left:1px solid var(--hair)" style-active="background:var(--surf2)">
+              <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12px">ફરી PDF</div>
+              <div style="font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Re-generate</div>
+            </div>
+            <div style="cursor:pointer;padding:10px 4px;text-align:center;border-left:1px solid var(--hair)" style-active="background:var(--surf2)">
+              <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12px">શેર</div>
+              <div style="font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Share</div>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ r.missing }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 13px;border-top:1px dashed var(--line);background:var(--surf2)">
+            <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:10.5px;color:var(--ink3)">હજી મેળવ્યું નથી · not fetched</span>
+            <div onClick="{{ r.get }}" style="cursor:pointer;padding:7px 12px;border:1px solid var(--acc);border-radius:4px;display:flex;align-items:baseline;gap:6px" style-active="background:var(--accsoft)">
+              <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11.5px;color:var(--acc);font-weight:600">મેળવો</span>
+              <span style="font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);opacity:.7">Get record</span>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+
+    <div onClick="{{ aStartFetch }}" style="cursor:pointer;margin-top:4px;height:46px;border:1px solid var(--acc);border-radius:6px;display:flex;align-items:center;justify-content:center;gap:9px;color:var(--acc)" style-active="background:var(--accsoft)">
+      <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14px;font-weight:600">વધુ રેકોર્ડ મેળવો</span>
+      <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.7">Get more records</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ aIsFetch }}">
+<div style="animation:scin .22s ease-out both;min-height:100%;background:var(--surf2)">
+  <div style="display:flex;align-items:center;gap:11px;padding:14px 16px;background:var(--bg);border-bottom:1px solid var(--line)">
+    <div onClick="{{ aGoSurvey }}" style="cursor:pointer;width:30px;height:30px;border:1px solid var(--line);border-radius:6px;background:var(--surf);display:flex;align-items:center;justify-content:center">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div style="flex:1">
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;font-weight:600">રેકોર્ડ મેળવો · ૨૨૧/p</div>
+      <div style="font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">anyror.gujarat.gov.in</div>
+    </div>
+  </div>
+
+  <div style="background:var(--acc);color:var(--onacc);padding:11px 16px 12px">
+    <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;line-height:1.4">નીચે દેખાતો કોડ લખો અને 'Get Record Detail' દબાવો</div>
+    <div style="font-size:10.5px;opacity:.8;margin-top:3px">Type the code shown below, then tap Get Record Detail — we do the rest.</div>
+  </div>
+
+  <div style="background:#ffffff;color:#20211e;margin:0;padding:0 0 20px">
+    <div style="opacity:.32;padding:12px 14px 0">
+      <div style="height:26px;background:#1f4b6e;border-radius:2px;display:flex;align-items:center;padding:0 8px;color:#fff;font-size:9.5px;letter-spacing:.08em">AnyRoR @ Anywhere — Revenue Department, Gujarat</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <div style="flex:1;height:20px;background:#e8edf1;border-radius:2px"></div>
+        <div style="flex:1;height:20px;background:#e8edf1;border-radius:2px"></div>
+        <div style="flex:1;height:20px;background:#e8edf1;border-radius:2px"></div>
+      </div>
+    </div>
+
+    <div style="opacity:.42;padding:12px 14px 0">
+      <sc-for list="{{ prefill }}" as="p" hint-placeholder-count="5">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <div style="width:84px;font-size:9.5px;color:#5c6360;text-align:right">{{ p.lab }}</div>
+          <div style="flex:1;height:28px;border:1px solid #c8cfcb;border-radius:2px;background:#f2f4f3;display:flex;align-items:center;justify-content:space-between;padding:0 8px">
+            <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px">{{ p.val }}</span>
+            <span style="font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:#8a918e;border:1px solid #d5dbd8;border-radius:2px;padding:2px 4px">auto</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="margin:14px 12px 0;padding:14px 12px 16px;border:1px solid #d8dedb;border-radius:6px;background:#fbfcfb;animation:ring 2.4s ease-in-out infinite">
+      <div style="font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#6c7370">Enter verification code</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:9px">
+        <div style="width:118px;height:44px;border:1px solid #c8cfcb;border-radius:3px;background:linear-gradient(105deg,#eef1ef,#e2e7e4);display:flex;align-items:center;justify-content:center;letter-spacing:.22em;font-family:'Newsreader',serif;font-size:23px;font-style:italic;color:#3a423f;text-decoration:line-through;text-decoration-color:rgba(0,0,0,.12)">4K7Q2</div>
+        <div style="flex:1;height:44px;border:1.5px solid var(--acc);border-radius:3px;background:#fff;display:flex;align-items:center;padding:0 10px;gap:2px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:17px;letter-spacing:.14em;color:#20211e">4K7</span>
+          <span style="width:1.5px;height:20px;background:var(--acc);animation:softpulse 1.1s steps(1,end) infinite"></span>
+        </div>
+      </div>
+      <div onClick="{{ aSubmit }}" style="cursor:pointer;margin-top:13px;height:46px;border-radius:4px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;letter-spacing:.01em" style-active="opacity:.85">Get Record Detail</div>
+    </div>
+
+    <div style="opacity:.3;padding:14px 14px 0">
+      <div style="height:9px;background:#e8edf1;border-radius:2px;margin-bottom:6px"></div>
+      <div style="height:9px;background:#e8edf1;border-radius:2px;width:72%;margin-bottom:6px"></div>
+      <div style="height:9px;background:#e8edf1;border-radius:2px;width:54%"></div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ aIsSaving }}">
+<div style="animation:scin .2s ease-out both;min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 28px;background:var(--bg)">
+  <div style="font-family:'Newsreader',serif;font-size:15px;color:var(--ink3);letter-spacing:.02em">221/p · ભરોડા</div>
+  <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:20px;font-weight:600;line-height:1.35;margin-top:10px">તમારી લાઇબ્રેરીમાં સાચવી રહ્યાં છીએ…</div>
+  <div style="font-size:11.5px;color:var(--ink3);margin-top:6px;letter-spacing:.04em">Saving to your library…</div>
+  <div style="height:4px;background:var(--surf2);border-radius:2px;margin-top:22px;overflow:hidden">
+    <div style="height:100%;background:var(--acc);animation:barfill 2.2s ease-out both"></div>
+  </div>
+  <div style="margin-top:20px;display:flex;flex-direction:column;gap:11px">
+    <sc-for list="{{ savingSteps }}" as="st" hint-placeholder-count="3">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:6px;height:6px;border-radius:50%;background:var(--acc)"></div>
+        <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12.5px;color:var(--ink2)">{{ st.gu }}</div>
+        <div style="font-size:10px;color:var(--ink3);letter-spacing:.04em">{{ st.en }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="margin-top:26px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">Documents/LandRecords/Anand/Umreth/Bharoda/Survey 221_P</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ aIsAdd }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:28px">
+  <div style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px">
+    <div onClick="{{ aGoLibrary }}" style="cursor:pointer;width:32px;height:32px;border:1px solid var(--line);border-radius:6px;background:var(--surf);display:flex;align-items:center;justify-content:center">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div>
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:16px;font-weight:600">મિલકત ઉમેરો</div>
+      <div style="font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Add property</div>
+    </div>
+  </div>
+  <div style="margin:0 20px;border:1px solid var(--line);border-radius:6px;background:var(--surf);overflow:hidden">
+    <sc-for list="{{ pickers }}" as="p" hint-placeholder-count="4">
+      <div style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px 13px;border-bottom:1px solid var(--hair)" style-active="background:var(--surf2)">
+        <div style="width:74px">
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;color:var(--ink3)">{{ p.labGu }}</div>
+          <div style="font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:1px">{{ p.labEn }}</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14.5px;font-weight:600">{{ p.valGu }}</div>
+          <div style="font-size:9.5px;color:var(--ink3);letter-spacing:.06em">{{ p.valEn }}</div>
+        </div>
+        <div style="width:7px;height:7px;border-right:1.5px solid var(--ink3);border-bottom:1.5px solid var(--ink3);transform:rotate(-45deg)"></div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding:18px 20px 0">
+    <div style="display:flex;align-items:baseline;gap:6px;color:var(--ink3)"><span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:10.5px">સર્વે નંબર</span><span style="font-size:9.5px;letter-spacing:.14em;text-transform:uppercase">· Survey numbers</span></div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:10px">
+      <sc-for list="{{ aChips }}" as="c" hint-placeholder-count="9">
+        <div style="display:flex;align-items:center;gap:7px;padding:6px 8px 6px 10px;border:1px solid var(--line);border-radius:4px;background:var(--surf)">
+          <span style="font-family:'Newsreader',serif;font-size:15px">{{ c.no }}</span>
+          <div onClick="{{ c.remove }}" style="cursor:pointer;width:15px;height:15px;border-radius:3px;background:var(--surf2);display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:11px;line-height:1">×</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <input value="{{ aInput }}" onChange="{{ aInputChange }}" placeholder="સર્વે નંબર ઉમેરો · Add survey number" style="flex:1;height:44px;border:1px solid var(--line);border-radius:6px;background:var(--surf);color:var(--ink);padding:0 12px;font-family:'IBM Plex Sans','Noto Sans Gujarati',sans-serif;font-size:13px;outline:none">
+      <div onClick="{{ aAddChip }}" style="cursor:pointer;width:60px;height:44px;border:1px solid var(--acc);border-radius:6px;color:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;font-weight:600" style-active="background:var(--accsoft)">ઉમેરો</div>
+    </div>
+    <div onClick="{{ aGoLibrary }}" style="cursor:pointer;margin-top:18px;height:48px;border-radius:6px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;gap:9px" style-active="opacity:.85">
+      <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14.5px;font-weight:600">સાચવો</span>
+      <span style="font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.75">Save</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ aIsSettings }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:28px">
+  <div style="display:flex;align-items:center;gap:12px;padding:16px 20px 12px">
+    <div onClick="{{ aGoLibrary }}" style="cursor:pointer;width:32px;height:32px;border:1px solid var(--line);border-radius:6px;background:var(--surf);display:flex;align-items:center;justify-content:center">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div>
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:16px;font-weight:600">સેટિંગ્સ</div>
+      <div style="font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Settings</div>
+    </div>
+  </div>
+  <div style="margin:0 20px;border:1px solid var(--line);border-radius:6px;background:var(--surf);overflow:hidden">
+    <div style="padding:13px;border-bottom:1px solid var(--hair)">
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;color:var(--ink3)">સંગ્રહ સ્થાન · Storage location</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:5px">Documents/LandRecords</div>
+      <div style="font-size:10px;color:var(--ink3);margin-top:4px">Visible in Files · backs up to Drive</div>
+    </div>
+    <div style="padding:13px;border-bottom:1px solid var(--hair)">
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;color:var(--ink3);margin-bottom:8px">થીમ · Theme</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <div onClick="{{ aSetLight }}" style="cursor:pointer;padding:9px 0;text-align:center;border:1px solid var(--line);border-radius:4px;font-size:12px;background:{{ aLightBg }}">Light · દિવસ</div>
+        <div onClick="{{ aSetDark }}" style="cursor:pointer;padding:9px 0;text-align:center;border:1px solid var(--line);border-radius:4px;font-size:12px;background:{{ aDarkBg }}">Dark · રાત્રિ</div>
+      </div>
+    </div>
+    <sc-for list="{{ settingsRows }}" as="s" hint-placeholder-count="3">
+      <div style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px;border-bottom:1px solid var(--hair)" style-active="background:var(--surf2)">
+        <div style="flex:1">
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13.5px">{{ s.gu }}</div>
+          <div style="font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-top:2px">{{ s.en }}</div>
+        </div>
+        <div style="width:7px;height:7px;border-right:1.5px solid var(--ink3);border-bottom:1.5px solid var(--ink3);transform:rotate(-45deg)"></div>
+      </div>
+    </sc-for>
+    <div style="padding:13px;font-size:10px;color:var(--ink3);letter-spacing:.06em">Land Records 0.1 · sideloaded · for family use</div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+</div>
+
+<div data-dir="a" data-theme="light" style="width:300px;background:var(--surf);border:1px solid var(--line);border-radius:6px;padding:16px 16px 18px;color:var(--ink)">
+  <div style="font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)">Design tokens · Ledger</div>
+  <div style="display:flex;gap:5px;margin-top:12px">
+    <div style="flex:1;height:34px;border-radius:4px;background:#F6F2E9;border:1px solid var(--line)"></div>
+    <div style="flex:1;height:34px;border-radius:4px;background:#FFFDF8;border:1px solid var(--line)"></div>
+    <div style="flex:1;height:34px;border-radius:4px;background:#1C1A15"></div>
+    <div style="flex:1;height:34px;border-radius:4px;background:#2E5D50"></div>
+    <div style="flex:1;height:34px;border-radius:4px;background:#9C3B1B"></div>
+  </div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.85;color:var(--ink2);margin-top:12px">
+    paper #F6F2E9 · card #FFFDF8<br>
+    ink #1C1A15 · ink2 #5A5346 · ink3 #8C8474<br>
+    rule #DBD1BD · hair #E8E0CF<br>
+    green #2E5D50 · oxide #9C3B1B<br>
+    dark: bg #14130F · card #1D1B16 · ink #F2EDE1<br>
+    dark: rule #35301F · green #7FB29F
+  </div>
+  <div style="height:1px;background:var(--hair);margin:14px 0"></div>
+  <div style="font-size:11px;line-height:1.7;color:var(--ink2)">
+    <b style="color:var(--ink)">Type</b> — Newsreader 500 (survey numerals, counts) · IBM Plex Sans 400/600 (UI, Latin helper) · Noto Sans Gujarati 400/600 (data).<br>
+    <b style="color:var(--ink)">Scale</b> — 44 / 21 / 19 / 15 / 14 / 12.5 / 11 / 10 sp. Helper lines 9.5–10.5 sp, .10–.16em tracking, uppercase.<br>
+    <b style="color:var(--ink)">Radius</b> — card 6 · chip 3 · field 6 · button 6 dp.<br>
+    <b style="color:var(--ink)">Spacing</b> — 4dp base; screen padding 20 · card padding 13 · list gap 10.<br>
+    <b style="color:var(--ink)">Ledger row</b> — 76dp numeral column, 1px vertical hair rule, 1px row rule; no elevation anywhere (rules instead of shadows).<br>
+    <b style="color:var(--ink)">Chip</b> — 3dp radius, 9.5sp, 4/6 padding, 1px rule.<br>
+    <b style="color:var(--ink)">Banner</b> — full-bleed green, 11/12 padding, Gujarati 13sp over English 10.5sp @ 80% alpha.
+  </div>
+</div>
+</div>
+</div>
+
+<div class="dv-opt" id="1b">
+<div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Cadastre — cool survey-slate, parcel tiles on a dashed plot outline, mono numerals, ochre marker accent.</div>
+<div class="dv-card" style="background:#DFE6E4;padding:20px;display:flex;gap:20px;align-items:flex-start">
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;gap:6px">
+<div onClick="{{ bSetLight }}" style="cursor:pointer;font:500 10.5px 'IBM Plex Mono';letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border:1px solid #C9D3D0;border-radius:6px;background:#FBFCFB;color:#0F1614">Light</div>
+<div onClick="{{ bSetDark }}" style="cursor:pointer;font:500 10.5px 'IBM Plex Mono';letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border:1px solid #283336;border-radius:6px;background:#0D1214;color:#E9EEEE">Dark</div>
+<div onClick="{{ bGoLibrary }}" style="cursor:pointer;font:500 10.5px 'IBM Plex Mono';letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border:1px dashed #C9D3D0;border-radius:6px;color:#4B5754">Reset</div>
+</div>
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" width="{{ pw }}" height="{{ ph }}" dark="{{ bDark }}" hint-size="406px,860px">
+<div data-dir="b" data-theme="{{ bTheme }}" style="min-height:100%;background:var(--bg);color:var(--ink);font-family:'Space Grotesk','Noto Sans Gujarati',system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+
+<sc-if value="{{ bIsLibrary }}" hint-placeholder-val="{{ true }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:24px">
+  <div style="background:var(--surf);border-bottom:1px solid var(--line);padding:16px 18px 14px;background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);background-size:22px 22px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div>
+        <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.02em">તમારા જમીન રેકોર્ડ</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:5px">Your land records · 15 surveys</div>
+      </div>
+      <div onClick="{{ bGoSettings }}" style="cursor:pointer;width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px" style-active="background:var(--surf2)">
+        <div style="width:14px;height:1.5px;background:var(--ink2)"></div>
+        <div style="width:14px;height:1.5px;background:var(--ink2)"></div>
+        <div style="width:14px;height:1.5px;background:var(--ink2)"></div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;height:42px;padding:0 13px;background:var(--surf);border:1px solid var(--line);border-radius:10px;margin-top:14px">
+      <div style="width:11px;height:11px;border:1.5px solid var(--ink3);border-radius:50%;flex:none"></div>
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;color:var(--ink3)">સર્વે નંબર કે ગામ શોધો</div>
+    </div>
+  </div>
+
+  <div style="padding:14px 18px 0;display:flex;align-items:center;gap:7px;overflow:hidden">
+    <sc-for list="{{ bPath }}" as="p" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;gap:7px;flex:none">
+        <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;padding:5px 9px;border-radius:20px;background:{{ p.bg }};color:{{ p.fg }};border:1px solid var(--line)">{{ p.t }}</div>
+        <sc-if value="{{ p.more }}"><div style="width:10px;height:1px;background:var(--line)"></div></sc-if>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding:12px 18px 0;display:flex;gap:8px">
+    <sc-for list="{{ bVillages }}" as="v" hint-placeholder-count="3">
+      <div onClick="{{ v.pick }}" style="cursor:pointer;flex:1;border:1px solid {{ v.border }};border-radius:10px;background:{{ v.bg }};padding:9px 10px" style-active="opacity:.8">
+        <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;font-weight:600;color:{{ v.fg }}">{{ v.gu }}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-top:3px">{{ v.sub }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding:16px 18px 0">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)">Surveys · સર્વે</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--ink3)">{{ bCount }}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <sc-for list="{{ bTiles }}" as="t" hint-placeholder-count="9">
+        <div onClick="{{ t.open }}" style="cursor:pointer;position:relative;background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:11px 11px 10px" style-active="background:var(--surf2)">
+          <div style="position:absolute;left:5px;top:5px;right:5px;bottom:5px;border:1px dashed var(--hair);border-radius:8px"></div>
+          <div style="position:relative">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:17px;font-weight:500;letter-spacing:-.02em">{{ t.no }}</div>
+            <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;margin-top:5px;font-variant-numeric:tabular-nums">{{ t.area }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink3);margin-top:1px">{{ t.areaLat }}</div>
+            <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:10px;color:var(--ink2);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.tenure }}</div>
+            <div style="display:flex;gap:4px;margin-top:9px">
+              <sc-for list="{{ t.stamps }}" as="s" hint-placeholder-count="4">
+                <div style="width:22px;height:20px;border-radius:4px;border:1px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.02em">{{ s.t }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:16px 18px 0">
+    <div onClick="{{ bGoAdd }}" style="cursor:pointer;height:50px;border-radius:12px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;gap:9px" style-active="opacity:.85">
+      <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:15px;font-weight:600">મિલકત ઉમેરો</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.8">Add property</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ bIsSurvey }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:28px">
+  <div style="background:var(--surf);border-bottom:1px solid var(--line);padding:14px 18px 16px;background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);background-size:22px 22px">
+    <div style="display:flex;align-items:center;gap:11px">
+      <div onClick="{{ bGoLibrary }}" style="cursor:pointer;width:32px;height:32px;border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center" style-active="background:var(--surf2)">
+        <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+      </div>
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;color:var(--ink3)">આણંદ › ઉમરેઠ › ભરોડા</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:12px;margin-top:14px">
+      <div style="position:relative;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:12px 14px 11px">
+        <div style="position:absolute;left:5px;top:5px;right:5px;bottom:5px;border:1px dashed var(--line);border-radius:8px"></div>
+        <div style="position:relative">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)">Survey</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:32px;font-weight:500;letter-spacing:-.03em;line-height:1.1;margin-top:2px">{{ bSel.no }}</div>
+        </div>
+      </div>
+      <div style="padding-bottom:6px">
+        <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;font-weight:600">ભરોડા</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Bharoda · Umreth</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:14px 18px 0;display:flex;flex-wrap:wrap;gap:7px">
+    <sc-for list="{{ bMeta }}" as="m" hint-placeholder-count="5">
+      <div style="border:1px solid var(--line);border-radius:8px;background:var(--surf);padding:7px 10px 8px">
+        <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:9px;color:var(--ink3)">{{ m.labGu }}</div>
+        <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12.5px;margin-top:2px;font-variant-numeric:tabular-nums">{{ m.val }}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink3);margin-top:1px">{{ m.valEn }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding:18px 18px 0">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">Records · રેકોર્ડ</div>
+    <sc-for list="{{ bRecords }}" as="r" hint-placeholder-count="4">
+      <div style="border:1px solid var(--line);border-radius:12px;background:var(--surf);margin-bottom:10px;overflow:hidden">
+        <div style="display:flex;gap:12px;padding:12px 13px 11px">
+          <div style="width:3px;border-radius:2px;background:{{ r.rail }};flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14px;font-weight:600;line-height:1.35">{{ r.gu }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin-top:3px">{{ r.en }}</div>
+            <sc-if value="{{ r.fresh }}">
+              <div style="display:inline-block;margin-top:7px;font-family:'Noto Sans Gujarati',sans-serif;font-size:9.5px;padding:3px 7px;border-radius:20px;background:var(--accsoft);color:var(--acc)">હમણાં ઉમેર્યું · Just added</div>
+            </sc-if>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:19px;line-height:1;color:{{ r.countColor }}">{{ r.count }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-top:5px">{{ r.countEn }}</div>
+          </div>
+        </div>
+        <sc-if value="{{ r.has }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:0 13px 11px 28px;font-family:'Noto Sans Gujarati',sans-serif;font-size:10.5px;color:var(--ink2)">ની સ્થિતિએ {{ r.asOf }} <span style="font-family:'IBM Plex Mono',monospace;color:var(--ink3)">· {{ r.asOfEn }}</span></div>
+          <div style="display:flex;gap:7px;padding:0 13px 12px 28px">
+            <div style="cursor:pointer;padding:8px 14px;border-radius:20px;background:var(--acc);color:var(--onacc);font-family:'Noto Sans Gujarati',sans-serif;font-size:11.5px;font-weight:600" style-active="opacity:.85">જુઓ · View</div>
+            <div style="cursor:pointer;padding:8px 12px;border-radius:20px;border:1px solid var(--line);font-family:'Noto Sans Gujarati',sans-serif;font-size:11.5px;color:var(--ink2)" style-active="background:var(--surf2)">ફરી PDF</div>
+            <div style="cursor:pointer;padding:8px 12px;border-radius:20px;border:1px solid var(--line);font-family:'Noto Sans Gujarati',sans-serif;font-size:11.5px;color:var(--ink2)" style-active="background:var(--surf2)">શેર</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ r.missing }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px 11px 28px;border-top:1px dashed var(--line);background:var(--bg)">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)">Not fetched yet</span>
+            <div onClick="{{ r.get }}" style="cursor:pointer;padding:8px 14px;border-radius:20px;border:1px solid var(--acc);color:var(--acc);font-family:'Noto Sans Gujarati',sans-serif;font-size:11.5px;font-weight:600" style-active="background:var(--accsoft)">મેળવો · Get</div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+    <div onClick="{{ bStartFetch }}" style="cursor:pointer;margin-top:4px;height:48px;border:1px dashed var(--acc);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:9px;color:var(--acc)" style-active="background:var(--accsoft)">
+      <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14px;font-weight:600">વધુ રેકોર્ડ મેળવો</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.75">Get more</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ bIsFetch }}">
+<div style="animation:scin .22s ease-out both;min-height:100%;background:var(--surf2)">
+  <div style="display:flex;align-items:center;gap:11px;padding:14px 16px;background:var(--surf);border-bottom:1px solid var(--line)">
+    <div onClick="{{ bGoSurvey }}" style="cursor:pointer;width:30px;height:30px;border:1px solid var(--line);border-radius:9px;background:var(--surf);display:flex;align-items:center;justify-content:center">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div style="flex:1">
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;font-weight:600">રેકોર્ડ મેળવો · 221/p</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;color:var(--ink3);margin-top:2px">anyror.gujarat.gov.in</div>
+    </div>
+  </div>
+
+  <div style="background:var(--acc);color:var(--onacc);padding:11px 16px 12px">
+    <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;line-height:1.4">નીચે દેખાતો કોડ લખો અને 'Get Record Detail' દબાવો</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;opacity:.85;margin-top:4px">Type the code below, then tap Get Record Detail</div>
+  </div>
+
+  <div style="background:#ffffff;color:#20211e;padding:0 0 20px">
+    <div style="opacity:.32;padding:12px 14px 0">
+      <div style="height:26px;background:#1f4b6e;border-radius:2px;display:flex;align-items:center;padding:0 8px;color:#fff;font-size:9.5px;letter-spacing:.08em">AnyRoR @ Anywhere — Revenue Department, Gujarat</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <div style="flex:1;height:20px;background:#e8edf1;border-radius:2px"></div>
+        <div style="flex:1;height:20px;background:#e8edf1;border-radius:2px"></div>
+        <div style="flex:1;height:20px;background:#e8edf1;border-radius:2px"></div>
+      </div>
+    </div>
+    <div style="opacity:.42;padding:12px 14px 0">
+      <sc-for list="{{ prefill }}" as="p" hint-placeholder-count="5">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <div style="width:84px;font-size:9.5px;color:#5c6360;text-align:right">{{ p.lab }}</div>
+          <div style="flex:1;height:28px;border:1px solid #c8cfcb;border-radius:2px;background:#f2f4f3;display:flex;align-items:center;justify-content:space-between;padding:0 8px">
+            <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px">{{ p.val }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:#8a918e;border:1px solid #d5dbd8;border-radius:2px;padding:2px 4px">auto</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin:14px 12px 0;padding:14px 12px 16px;border:1px solid #d8dedb;border-radius:12px;background:#fbfcfb;animation:ring 2.4s ease-in-out infinite">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#6c7370">Enter verification code</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:9px">
+        <div style="width:118px;height:44px;border:1px solid #c8cfcb;border-radius:8px;background:linear-gradient(105deg,#eef1ef,#e2e7e4);display:flex;align-items:center;justify-content:center;letter-spacing:.22em;font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;font-style:italic;color:#3a423f">4K7Q2</div>
+        <div style="flex:1;height:44px;border:1.5px solid var(--acc);border-radius:8px;background:#fff;display:flex;align-items:center;padding:0 10px;gap:2px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:17px;letter-spacing:.14em;color:#20211e">4K7</span>
+          <span style="width:1.5px;height:20px;background:var(--acc);animation:softpulse 1.1s steps(1,end) infinite"></span>
+        </div>
+      </div>
+      <div onClick="{{ bSubmit }}" style="cursor:pointer;margin-top:13px;height:46px;border-radius:10px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600" style-active="opacity:.85">Get Record Detail</div>
+    </div>
+    <div style="opacity:.3;padding:14px 14px 0">
+      <div style="height:9px;background:#e8edf1;border-radius:2px;margin-bottom:6px"></div>
+      <div style="height:9px;background:#e8edf1;border-radius:2px;width:72%;margin-bottom:6px"></div>
+      <div style="height:9px;background:#e8edf1;border-radius:2px;width:54%"></div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ bIsSaving }}">
+<div style="animation:scin .2s ease-out both;min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 26px;background:var(--bg)">
+  <div style="position:relative;border:1px solid var(--line);border-radius:14px;background:var(--surf);padding:20px 18px 20px">
+    <div style="position:absolute;left:6px;top:6px;right:6px;bottom:6px;border:1px dashed var(--hair);border-radius:10px"></div>
+    <div style="position:relative">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)">221/p · Bharoda</div>
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:19px;font-weight:600;line-height:1.35;margin-top:10px">તમારી લાઇબ્રેરીમાં સાચવી રહ્યાં છીએ…</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--ink3);margin-top:6px">Saving to your library…</div>
+      <div style="height:4px;background:var(--surf2);border-radius:2px;margin-top:20px;overflow:hidden">
+        <div style="height:100%;background:var(--acc);animation:barfill 2.2s ease-out both"></div>
+      </div>
+      <div style="margin-top:18px;display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ savingSteps }}" as="st" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:5px;height:5px;border-radius:1px;background:var(--acc)"></div>
+            <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:12px;color:var(--ink2)">{{ st.gu }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3)">{{ st.en }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.06em;color:var(--ink3);margin-top:14px;text-align:center">Documents/LandRecords/Anand/Umreth/Bharoda/Survey 221_P</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ bIsAdd }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:28px">
+  <div style="display:flex;align-items:center;gap:12px;padding:16px 18px 14px">
+    <div onClick="{{ bGoLibrary }}" style="cursor:pointer;width:32px;height:32px;border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div>
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:16px;font-weight:700">મિલકત ઉમેરો</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Add property</div>
+    </div>
+  </div>
+  <div style="margin:0 18px;display:flex;flex-direction:column;gap:8px">
+    <sc-for list="{{ pickers }}" as="p" hint-placeholder-count="4">
+      <div style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 13px;border:1px solid var(--line);border-radius:10px;background:var(--surf)" style-active="background:var(--surf2)">
+        <div style="width:70px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">{{ p.labEn }}</div>
+        <div style="flex:1">
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:14.5px;font-weight:600">{{ p.valGu }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);margin-top:1px">{{ p.valEn }}</div>
+        </div>
+        <div style="width:7px;height:7px;border-right:1.5px solid var(--ink3);border-bottom:1.5px solid var(--ink3);transform:rotate(-45deg)"></div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="padding:18px 18px 0">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)">Survey numbers · સર્વે નંબર</div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:10px">
+      <sc-for list="{{ bChips }}" as="c" hint-placeholder-count="9">
+        <div style="display:flex;align-items:center;gap:7px;padding:6px 8px 6px 11px;border:1px solid var(--line);border-radius:20px;background:var(--surf)">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:13px">{{ c.no }}</span>
+          <div onClick="{{ c.remove }}" style="cursor:pointer;width:16px;height:16px;border-radius:50%;background:var(--surf2);display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:11px;line-height:1">×</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <input value="{{ bInput }}" onChange="{{ bInputChange }}" placeholder="સર્વે નંબર ઉમેરો · Add survey number" style="flex:1;height:46px;border:1px solid var(--line);border-radius:10px;background:var(--surf);color:var(--ink);padding:0 13px;font-family:'Space Grotesk','Noto Sans Gujarati',sans-serif;font-size:13px;outline:none">
+      <div onClick="{{ bAddChip }}" style="cursor:pointer;width:62px;height:46px;border:1px solid var(--acc);border-radius:10px;color:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Noto Sans Gujarati',sans-serif;font-size:13px;font-weight:600" style-active="background:var(--accsoft)">ઉમેરો</div>
+    </div>
+    <div onClick="{{ bGoLibrary }}" style="cursor:pointer;margin-top:18px;height:50px;border-radius:12px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;gap:9px" style-active="opacity:.85">
+      <span style="font-family:'Noto Sans Gujarati',sans-serif;font-size:15px;font-weight:600">સાચવો</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;opacity:.8">Save</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ bIsSettings }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:28px">
+  <div style="display:flex;align-items:center;gap:12px;padding:16px 18px 14px">
+    <div onClick="{{ bGoLibrary }}" style="cursor:pointer;width:32px;height:32px;border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div>
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:16px;font-weight:700">સેટિંગ્સ</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Settings</div>
+    </div>
+  </div>
+  <div style="margin:0 18px;display:flex;flex-direction:column;gap:8px">
+    <div style="border:1px solid var(--line);border-radius:10px;background:var(--surf);padding:13px">
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;color:var(--ink3)">સંગ્રહ સ્થાન · Storage location</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;margin-top:6px">Documents/LandRecords</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);margin-top:4px">Visible in Files · backs up to Drive</div>
+    </div>
+    <div style="border:1px solid var(--line);border-radius:10px;background:var(--surf);padding:13px">
+      <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:11px;color:var(--ink3);margin-bottom:9px">થીમ · Theme</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <div onClick="{{ bSetLight }}" style="cursor:pointer;padding:9px 0;text-align:center;border:1px solid var(--line);border-radius:20px;font-size:12px;background:{{ bLightBg }}">Light · દિવસ</div>
+        <div onClick="{{ bSetDark }}" style="cursor:pointer;padding:9px 0;text-align:center;border:1px solid var(--line);border-radius:20px;font-size:12px;background:{{ bDarkBg }}">Dark · રાત્રિ</div>
+      </div>
+    </div>
+    <sc-for list="{{ settingsRows }}" as="s" hint-placeholder-count="3">
+      <div style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--surf)" style-active="background:var(--surf2)">
+        <div style="flex:1">
+          <div style="font-family:'Noto Sans Gujarati',sans-serif;font-size:13.5px">{{ s.gu }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-top:2px">{{ s.en }}</div>
+        </div>
+        <div style="width:7px;height:7px;border-right:1.5px solid var(--ink3);border-bottom:1.5px solid var(--ink3);transform:rotate(-45deg)"></div>
+      </div>
+    </sc-for>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);padding:4px 2px">Land Records 0.1 · sideloaded · for family use</div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+</div>
+
+<div data-dir="b" data-theme="light" style="width:300px;background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:16px 16px 18px;color:var(--ink)">
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)">Design tokens · Cadastre</div>
+  <div style="display:flex;gap:5px;margin-top:12px">
+    <div style="flex:1;height:34px;border-radius:6px;background:#E9EEEC;border:1px solid var(--line)"></div>
+    <div style="flex:1;height:34px;border-radius:6px;background:#FBFCFB;border:1px solid var(--line)"></div>
+    <div style="flex:1;height:34px;border-radius:6px;background:#0F1614"></div>
+    <div style="flex:1;height:34px;border-radius:6px;background:#B4531B"></div>
+    <div style="flex:1;height:34px;border-radius:6px;background:#2B4652"></div>
+  </div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.85;color:var(--ink2);margin-top:12px">
+    field #E9EEEC · card #FBFCFB<br>
+    ink #0F1614 · ink2 #4B5754 · ink3 #7C8785<br>
+    line #C9D3D0 · hair #DCE3E1<br>
+    ochre #B4531B · slate #2B4652<br>
+    dark: bg #0D1214 · card #151B1E · ink #E9EEEE<br>
+    dark: line #283336 · ochre #E58A55
+  </div>
+  <div style="height:1px;background:var(--hair);margin:14px 0"></div>
+  <div style="font-size:11px;line-height:1.7;color:var(--ink2)">
+    <b style="color:var(--ink)">Type</b> — Space Grotesk 600/700 (headings) · IBM Plex Mono 400/500 (survey numbers, all Latin metadata) · Noto Sans Gujarati 400/600 (data).<br>
+    <b style="color:var(--ink)">Scale</b> — 32 / 20 / 17 / 15 / 14 / 12.5 / 11 / 9 sp. Mono labels 8.5–10sp, .10–.16em, uppercase.<br>
+    <b style="color:var(--ink)">Radius</b> — tile 12 · card 12 · pill 20 · field 10 · icon button 10 dp.<br>
+    <b style="color:var(--ink)">Spacing</b> — 4dp base; screen padding 18 · tile padding 11 · grid gap 10.<br>
+    <b style="color:var(--ink)">Parcel tile</b> — 1px outer border + 1px dashed inset at 5dp = the plot outline. 2-col grid. Stamp strip: 22×20 slots, filled = held, hollow = missing.<br>
+    <b style="color:var(--ink)">Header</b> — 22dp blueprint grid (1px hairlines) over card surface.<br>
+    <b style="color:var(--ink)">Banner</b> — full-bleed ochre, Gujarati 13sp over mono 10sp @ 85% alpha.
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+<p class="dv-next">Try next: "go with <a class="dv-oid" href="#1a">1a</a> but use <a class="dv-oid" href="#1b">1b</a>'s parcel tiles for the survey list" · "make <a class="dv-oid" href="#1a">1a</a>'s header quieter and drop Recents" · "show the PDF viewer + share sheet screens"</p>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1100,&quot;height&quot;:1000},&quot;startTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;showTokens&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+const GUD = ['૦','૧','૨','૩','૪','૫','૬','૭','૮','૯'];
+const gu = n => String(n).split('').map(c => /[0-9]/.test(c) ? GUD[+c] : c).join('');
+
+const SURVEYS = [
+  { no:'221/p', area:'૩-૩૧-૮૪', areaLat:'3-31-84', assess:'૨૪.૬૯', assessLat:'24.69', tenure:'બીન ખેતી પ્રિપાત્ર', tenureEn:'Non-agri eligible', use:'ખેતીલાયક', useEn:'Agricultural', vf:10, cases:14 },
+  { no:'222/1', area:'૦-૩૦-૩પ', areaLat:'0-30-35', assess:'૨.૧૨', assessLat:'2.12', tenure:'જુની શરત (જુ.શ)', tenureEn:'Old tenure', use:'ખેતીલાયક', useEn:'Agricultural', vf:null, cases:2 },
+  { no:'222/2/p', cases:9 },
+  { no:'222/3/p1', cases:1 },
+  { no:'222/3/p2', cases:0 },
+  { no:'226/p1', cases:0 },
+  { no:'228/p1/p', cases:2 },
+  { no:'229/p', cases:1 },
+  { no:'230/p1/p3', area:'૦-૪૭-૦૪', areaLat:'0-47-04', assess:'૩.૪૮', assessLat:'3.48', tenure:'જુની શરત (જુ.શ)', tenureEn:'Old tenure', cases:0 },
+];
+const QUEUED_S = ['906','845/અ','851','901/p','902'];
+const AS_OF = '૧૨ જુલાઈ ૨૦૨૬';
+const AS_OF_EN = '12 Jul 2026';
+
+const norm = s => ({
+  no: s.no,
+  area: s.area || '—',
+  areaLat: s.areaLat ? s.areaLat + ' હે-આ-ચોમી' : '',
+  assess: s.assess || '—',
+  assessLat: s.assessLat || '',
+  tenure: s.tenure || '',
+  tenureEn: s.tenureEn || '',
+  use: s.use || '—',
+  useEn: s.useEn || '',
+  vf: s.vf || null,
+  cases: s.cases || 0,
+});
+
+class Component extends DCLogic {
+  state = {
+    a: { screen:'library', theme:null, openB:true, openS:false, survey:'221/p', deeds:false, input:'', chips:SURVEYS.map(s => s.no) },
+    b: { screen:'library', theme:null, village:'bharoda', survey:'221/p', deeds:false, input:'', chips:SURVEYS.map(s => s.no) },
+  };
+
+  componentWillUnmount() { clearTimeout(this._ta); clearTimeout(this._tb); }
+
+  set(d, patch) { this.setState(s => ({ [d]: Object.assign({}, s[d], patch) })); }
+
+  submit(d) {
+    this.set(d, { screen:'saving' });
+    clearTimeout(this['_t' + d]);
+    this['_t' + d] = setTimeout(() => this.set(d, { screen:'survey', survey:'221/p', deeds:true }), 2300);
+  }
+
+  records(d, s, deeds) {
+    const get = () => this.set(d, { screen:'fetch' });
+    const mk = (gujarati, en, has, count, countEn, extra) => Object.assign({
+      gu: gujarati, en, has, missing: !has,
+      count: has ? count : '—', countEn: has ? countEn : 'not fetched',
+      countColor: has ? 'var(--ink)' : 'var(--ink3)',
+      rail: has ? 'var(--acc)' : 'var(--line)',
+      asOf: AS_OF, asOfEn: AS_OF_EN, fresh: false, get,
+    }, extra || {});
+    return [
+      mk('સંકલિત સર્વે રેકોર્ડ', 'Integrated Survey Record (7/12)', true, '૧', '1 document'),
+      mk('જૂનું સ્કેન થયેલ ૭/૧૨', 'Old Scanned VF-7/12', true, s.vf ? gu(s.vf) : '✓', s.vf ? s.vf + ' period scans' : 'scanned pages'),
+      mk('નોંધાયેલ દસ્તાવેજ', 'Registered Deeds', deeds, '૩', '3 deed documents', { fresh: deeds }),
+      mk('જમીન કેસ (iRCMS)', 'Land Cases (iRCMS)', s.cases > 0, gu(s.cases), s.cases + ' cases'),
+    ];
+  }
+
+  meta(s) {
+    return [
+      { labGu:'કુલ ક્ષેત્રફળ', labEn:'Total area', val:s.area, valEn:s.areaLat },
+      { labGu:'આકાર', labEn:'Assessment', val:s.assess, valEn:s.assessLat },
+      { labGu:'સત્તાપ્રકાર', labEn:'Tenure', val:s.tenure, valEn:s.tenureEn },
+      { labGu:'જમીનનો ઉપયોગ', labEn:'Land use', val:s.use, valEn:s.useEn },
+      { labGu:'ની સ્થિતિએ', labEn:'As of', val:AS_OF, valEn:AS_OF_EN },
+    ];
+  }
+
+  chipsFor(d) {
+    return this.state[d].chips.map(no => ({
+      no,
+      remove: () => this.set(d, { chips: this.state[d].chips.filter(x => x !== no) }),
+    }));
+  }
+
+  view(d) {
+    const st = this.state[d];
+    const theme = st.theme || (this.props.startTheme || 'light');
+    const list = SURVEYS.map(norm);
+    const sel = list.find(x => x.no === st.survey) || list[0];
+    const open = no => () => this.set(d, { screen:'survey', survey:no });
+    return {
+      Theme: theme,
+      Dark: theme === 'dark',
+      IsLibrary: st.screen === 'library',
+      IsSurvey: st.screen === 'survey',
+      IsFetch: st.screen === 'fetch',
+      IsSaving: st.screen === 'saving',
+      IsAdd: st.screen === 'add',
+      IsSettings: st.screen === 'settings',
+      Sel: sel,
+      Meta: this.meta(sel),
+      Records: this.records(d, sel, st.deeds),
+      Chips: this.chipsFor(d),
+      Input: st.input,
+      LightBg: theme === 'light' ? 'var(--accsoft)' : 'transparent',
+      DarkBg: theme === 'dark' ? 'var(--accsoft)' : 'transparent',
+      OpenB: st.openB,
+      OpenS: st.openS,
+      CountB: gu(9),
+      Surveys: list.map(s => Object.assign({}, s, {
+        open: open(s.no),
+        chips: [
+          { t: 'સંકલિત ✓' },
+          { t: s.vf ? 'સ્કેન ×' + gu(s.vf) : 'સ્કેન ✓' },
+          { t: s.cases ? 'કેસ ×' + gu(s.cases) : 'કેસ —' },
+        ],
+      })),
+      GoLibrary: () => this.set(d, { screen:'library' }),
+      GoSurvey: () => this.set(d, { screen:'survey' }),
+      GoSettings: () => this.set(d, { screen:'settings' }),
+      GoAdd: () => this.set(d, { screen:'add' }),
+      StartFetch: () => this.set(d, { screen:'fetch' }),
+      Submit: () => this.submit(d),
+      SetLight: () => this.set(d, { theme:'light' }),
+      SetDark: () => this.set(d, { theme:'dark' }),
+      TogB: () => this.set(d, { openB: !st.openB }),
+      TogS: () => this.set(d, { openS: !st.openS }),
+      AddChip: () => { const v = st.input.trim(); if (v) this.set(d, { chips: st.chips.concat([v]), input:'' }); },
+      InputChange: e => this.set(d, { input: e.target.value }),
+      Recents: ['221/p','229/p','222/1'].map(no => ({ no, vil:'ભરોડા', open: open(no) })),
+    };
+  }
+
+  bLibrary() {
+    const st = this.state.b;
+    const v = st.village;
+    const active = (on, tint) => on ? (tint || 'var(--acc)') : 'var(--surf)';
+    const villages = [
+      { key:'bharoda', gu:'ભરોડા', sub:'Bharoda · 9' },
+      { key:'sundalpura', gu:'સુંદલપુરા', sub:'Sundalpura · 5' },
+      { key:'valetva', gu:'વળેટવા', sub:'Valetva · 1' },
+    ].map(x => ({
+      gu: x.gu, sub: x.sub,
+      bg: v === x.key ? 'var(--accsoft)' : 'var(--surf)',
+      border: v === x.key ? 'var(--acc)' : 'var(--line)',
+      fg: v === x.key ? 'var(--acc)' : 'var(--ink)',
+      pick: () => this.set('b', { village: x.key }),
+    }));
+    const stamp = (t, on, n) => ({
+      t: n && n > 1 ? t + gu(n) : t,
+      bg: on ? 'var(--accsoft)' : 'transparent',
+      bd: on ? 'var(--acc)' : 'var(--line)',
+      fg: on ? 'var(--acc)' : 'var(--ink3)',
+    });
+    let tiles;
+    if (v === 'bharoda') {
+      tiles = SURVEYS.map(norm).map(s => ({
+        no: s.no, area: s.area, areaLat: s.areaLat, tenure: s.tenure,
+        open: () => this.set('b', { screen:'survey', survey:s.no }),
+        stamps: [stamp('I', true), stamp('V', true, s.vf), stamp('D', false), stamp('C', s.cases > 0, s.cases)],
+      }));
+    } else {
+      const nos = v === 'sundalpura' ? QUEUED_S : ['41'];
+      tiles = nos.map(no => ({
+        no, area: 'રેકોર્ડ બાકી', areaLat: 'no records yet', tenure: 'મેળવવાનું બાકી · queued',
+        open: () => this.set('b', { screen:'fetch' }),
+        stamps: [stamp('I', false), stamp('V', false), stamp('D', false), stamp('C', false)],
+      }));
+    }
+    const path = v === 'valetva'
+      ? ['ગુજરાત','ખેડા','નડિયાદ ગ્રામ્ય','વળેટવા']
+      : ['ગુજરાત','આણંદ','ઉમરેઠ', v === 'bharoda' ? 'ભરોડા' : 'સુંદલપુરા'];
+    return {
+      Path: path.map((t, i) => ({
+        t,
+        more: i !== path.length - 1,
+        bg: i === path.length - 1 ? 'var(--acc)' : 'var(--surf)',
+        fg: i === path.length - 1 ? 'var(--onacc)' : 'var(--ink2)',
+      })),
+      Villages: villages,
+      Tiles: tiles,
+      Count: gu(tiles.length) + ' · ' + tiles.length,
+    };
+  }
+
+  renderVals() {
+    const out = {
+      pw: 390, ph: 844,
+      queued5: QUEUED_S.map(no => ({ no })),
+      savingSteps: [
+        { gu:'પાનું વાંચી રહ્યાં છીએ', en:'reading the page' },
+        { gu:'PDF બનાવી રહ્યાં છીએ', en:'building the PDF' },
+        { gu:'લાઇબ્રેરીમાં ફાઇલ કરી રહ્યાં છીએ', en:'filing in your library' },
+      ],
+      prefill: [
+        { lab:'Record type', val:'સંકલિત સર્વે રેકોર્ડ (7/12)' },
+        { lab:'District', val:'આણંદ · Anand' },
+        { lab:'Taluka', val:'ઉમરેઠ · Umreth' },
+        { lab:'Village', val:'ભરોડા · Bharoda' },
+        { lab:'Survey no.', val:'221/p' },
+      ],
+      pickers: [
+        { labGu:'રાજ્ય', labEn:'State', valGu:'ગુજરાત', valEn:'Gujarat' },
+        { labGu:'જિલ્લો', labEn:'District', valGu:'આણંદ', valEn:'Anand' },
+        { labGu:'તાલુકો', labEn:'Taluka', valGu:'ઉમરેઠ', valEn:'Umreth' },
+        { labGu:'ગામ', labEn:'Village', valGu:'ભરોડા', valEn:'Bharoda' },
+      ],
+      settingsRows: [
+        { gu:'બેકઅપ અને નિકાસ', en:'Backup & export' },
+        { gu:'PDF લેઆઉટ', en:'PDF layout · re-generate all' },
+        { gu:'એપ વિશે', en:'About' },
+      ],
+    };
+    for (const d of ['a','b']) {
+      const v = this.view(d);
+      for (const k in v) out[d + k] = v[k];
+    }
+    const bl = this.bLibrary();
+    for (const k in bl) out['b' + k] = bl[k];
+    if (this.props.showTokens === false) out.hideTokens = true;
+    return out;
+  }
+}
+
+</script>
+</body>
+</html>

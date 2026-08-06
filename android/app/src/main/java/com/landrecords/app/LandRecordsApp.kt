@@ -12,6 +12,8 @@ class LandRecordsApp : Application() {
 
     val repository: LandRecordsRepository by lazy { LandRecordsRepository(AppDatabase.get(this)) }
 
+    val appState: AppState by lazy { AppState(this) }
+
     private val appScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {

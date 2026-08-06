@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Placeholder neutrals until the approved design tokens land. Slight warm-earth bias. -->
-    <color name="window_background">#FBF9F4</color>
-    <color name="ic_launcher_background">#2E5D50</color>
+    <!-- Cadastre design tokens: field bg (light) + surveyor-ochre launcher. -->
+    <color name="window_background">#E9EEEC</color>
+    <color name="ic_launcher_background">#B4531B</color>
 </resources>

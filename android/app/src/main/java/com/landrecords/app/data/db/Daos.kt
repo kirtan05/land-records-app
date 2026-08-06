@@ -25,6 +25,9 @@ interface PropertyDao {
 
 @Dao
 interface SurveyDao {
+    @Query("SELECT * FROM surveys ORDER BY propertyId, normalized")
+    fun observeAll(): Flow<List<SurveyEntity>>
+
     @Query("SELECT * FROM surveys WHERE propertyId = :propertyId ORDER BY normalized")
     fun observeForProperty(propertyId: Long): Flow<List<SurveyEntity>>
 
@@ -40,8 +43,15 @@ interface SurveyDao {
 
 @Dao
 interface RecordDao {
+    @Query("SELECT * FROM records ORDER BY surveyId")
+    fun observeAll(): Flow<List<RecordEntity>>
+
     @Query("SELECT * FROM records WHERE surveyId = :surveyId ORDER BY type")
     fun observeForSurvey(surveyId: Long): Flow<List<RecordEntity>>
+
+    // Match by the stored converter value (RecordType.name) to avoid a converter on a query param.
+    @Query("SELECT * FROM records WHERE surveyId = :surveyId AND type = :typeName LIMIT 1")
+    suspend fun find(surveyId: Long, typeName: String): RecordEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(record: RecordEntity): Long

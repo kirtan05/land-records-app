@@ -6,6 +6,13 @@ import com.landrecords.app.data.db.RecordEntity
 import com.landrecords.app.data.db.SurveyEntity
 import com.landrecords.app.data.model.RecordType
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+
+/** A survey plus the document count of each record type it holds (0 = missing). */
+data class SurveyWithCounts(
+    val survey: SurveyEntity,
+    val counts: Map<RecordType, Int>,
+)
 
 /**
  * Single point of truth for the library data. On first run it seeds the surveys we already have
@@ -19,6 +26,31 @@ class LandRecordsRepository(private val db: AppDatabase) {
     fun observeSurvey(surveyId: Long): Flow<SurveyEntity?> = db.surveyDao().observeById(surveyId)
     fun observeRecords(surveyId: Long): Flow<List<RecordEntity>> = db.recordDao().observeForSurvey(surveyId)
     fun searchSurveys(query: String): Flow<List<SurveyEntity>> = db.surveyDao().search(query)
+
+    /** Every survey with its per-type document counts — drives the Library. */
+    fun observeAllSurveyCards(): Flow<List<SurveyWithCounts>> =
+        combine(db.surveyDao().observeAll(), db.recordDao().observeAll()) { surveys, records ->
+            val byS = records.groupBy { it.surveyId }
+            surveys.map { s ->
+                SurveyWithCounts(s, byS[s.id].orEmpty().associate { it.type to it.docCount })
+            }
+        }
+
+    suspend fun propertyById(id: Long) = db.propertyDao().byId(id)
+
+    /**
+     * File a fetched record for [surveyId] + [type]. The on-device WebView capture
+     * (print-to-PDF / byte fetch) plugs into [pdfPath]/[sourcePath] later; today this
+     * records the metadata so the library reflects the fetch immediately.
+     */
+    suspend fun saveFetchedRecord(surveyId: Long, type: RecordType, docCount: Int) {
+        val existing = db.recordDao().find(surveyId, type.name)
+        val row = (existing ?: RecordEntity(surveyId = surveyId, type = type)).copy(
+            docCount = docCount,
+            fetchedAt = System.currentTimeMillis(),
+        )
+        db.recordDao().upsert(row)
+    }
 
     suspend fun seedIfEmpty() {
         if (db.propertyDao().count() > 0) return

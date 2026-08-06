@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#DFE6E4}
+a{color:#B4531B;text-decoration:none}a:hover{color:#8d400f}
+[data-dir="b"]{--bg:#E9EEEC;--surf:#FBFCFB;--surf2:#DFE6E4;--ink:#0F1614;--ink2:#4B5754;--ink3:#7C8785;--line:#C9D3D0;--hair:#DCE3E1;--acc:#B4531B;--accsoft:#F7E7DA;--onacc:#FFF9F4}
+[data-dir="b"][data-theme="dark"]{--bg:#0D1214;--surf:#151B1E;--surf2:#1E2629;--ink:#E9EEEE;--ink2:#A2AFB0;--ink3:#6F7C7E;--line:#283336;--hair:#212A2D;--acc:#E58A55;--accsoft:#2A1C13;--onacc:#150D07}
+[data-den="comfy"]{--cols:1fr;--pad:20px;--gap:12px;--tpad:15px;--tno:24px;--h1:22px;--body:15px;--meta:13px;--mini:11px;--btn:56px}
+[data-den="default"]{--cols:1fr 1fr;--pad:18px;--gap:10px;--tpad:11px;--tno:17px;--h1:20px;--body:13.5px;--meta:11px;--mini:9.5px;--btn:50px}
+[data-den="compact"]{--cols:1fr 1fr;--pad:15px;--gap:8px;--tpad:9px;--tno:15px;--h1:18px;--body:12.5px;--meta:10px;--mini:9px;--btn:46px}
+@keyframes scin{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes barfill{from{width:8%}to{width:97%}}
+@keyframes softpulse{0%,100%{opacity:.45}50%{opacity:1}}
+@keyframes ring{0%,100%{box-shadow:0 0 0 3px var(--accsoft)}50%{box-shadow:0 0 0 7px var(--accsoft)}}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}}
+</style>
+</helmet>
+
+<x-import component-from-global-scope="AndroidDevice" from="./android-frame.jsx" width="{{ pw }}" height="{{ ph }}" dark="{{ dark }}" hint-size="406px,860px">
+<div data-dir="b" data-theme="{{ theme }}" data-den="{{ den }}" style="min-height:100%;background:var(--bg);color:var(--ink);font-family:'Space Grotesk','Noto Sans Gujarati',system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+
+<sc-if value="{{ isLibrary }}" hint-placeholder-val="{{ true }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:24px">
+  <div style="background:var(--surf);border-bottom:1px solid var(--line);padding:16px var(--pad) 14px;background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);background-size:22px 22px">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+      <div style="min-width:0">
+        <div style="font-size:var(--h1);font-weight:700;letter-spacing:-.02em;line-height:1.25">{{ t.title }}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:5px">{{ t.titleSub }}</div>
+      </div>
+      <div style="display:flex;gap:7px;flex:none">
+        <div onClick="{{ cycleLang }}" style="cursor:pointer;height:36px;padding:0 11px;border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;color:var(--ink2)" style-active="background:var(--surf2)">{{ langLabel }}</div>
+        <div onClick="{{ goSettings }}" style="cursor:pointer;width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px" style-active="background:var(--surf2)">
+          <div style="width:14px;height:1.5px;background:var(--ink2)"></div>
+          <div style="width:14px;height:1.5px;background:var(--ink2)"></div>
+          <div style="width:14px;height:1.5px;background:var(--ink2)"></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 13px;background:var(--surf);border:1px solid var(--line);border-radius:10px;margin-top:14px">
+      <div style="width:11px;height:11px;border:1.5px solid var(--ink3);border-radius:50%;flex:none"></div>
+      <div style="font-size:var(--body);color:var(--ink3)">{{ t.search }}</div>
+    </div>
+  </div>
+
+  <div style="padding:14px var(--pad) 0;display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+    <sc-for list="{{ path }}" as="p" hint-placeholder-count="4">
+      <div style="display:flex;align-items:center;gap:7px;flex:none">
+        <div style="font-size:var(--meta);padding:5px 9px;border-radius:20px;background:{{ p.bg }};color:{{ p.fg }};border:1px solid var(--line)">{{ p.t }}</div>
+        <sc-if value="{{ p.more }}"><div style="width:10px;height:1px;background:var(--line)"></div></sc-if>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding:12px var(--pad) 0;display:flex;gap:8px">
+    <sc-for list="{{ villages }}" as="v" hint-placeholder-count="3">
+      <div onClick="{{ v.pick }}" style="cursor:pointer;flex:1;border:1px solid {{ v.border }};border-radius:10px;background:{{ v.bg }};padding:9px 10px" style-active="opacity:.8">
+        <div style="font-size:var(--body);font-weight:600;color:{{ v.fg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.name }}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-top:3px">{{ v.sub }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding:16px var(--pad) 0">
+    <div style="display:flex;align-items:baseline;justify-content:space-between">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)">{{ t.surveys }}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);color:var(--ink3)">{{ count }}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:var(--cols);gap:var(--gap);margin-top:10px">
+      <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="9">
+        <div onClick="{{ t.open }}" style="cursor:pointer;position:relative;background:var(--surf);border:1px solid var(--line);border-radius:12px;padding:var(--tpad)" style-active="background:var(--surf2)">
+          <div style="position:absolute;left:5px;top:5px;right:5px;bottom:5px;border:1px dashed var(--hair);border-radius:8px"></div>
+          <div style="position:relative">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--tno);font-weight:500;letter-spacing:-.02em">{{ t.no }}</div>
+            <div style="font-size:var(--meta);margin-top:5px;font-variant-numeric:tabular-nums">{{ t.area }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);color:var(--ink3);margin-top:1px">{{ t.areaSub }}</div>
+            <div style="font-size:var(--meta);color:var(--ink2);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.tenure }}</div>
+            <div style="display:flex;gap:4px;flex-wrap:nowrap;margin-top:9px">
+              <sc-for list="{{ t.stamps }}" as="s" hint-placeholder-count="4">
+                <div style="width:23px;height:21px;border-radius:4px;border:1px solid {{ s.bd }};background:{{ s.bg }};color:{{ s.fg }};display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:8.5px;flex:none">{{ s.t }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="padding:16px var(--pad) 0">
+    <div onClick="{{ goAdd }}" style="cursor:pointer;height:var(--btn);border-radius:12px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;gap:9px" style-active="opacity:.85">
+      <span style="font-size:var(--body);font-weight:600">{{ t.addProperty }}</span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.12em;text-transform:uppercase;opacity:.8">{{ t.addPropertySub }}</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSurvey }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:28px">
+  <div style="background:var(--surf);border-bottom:1px solid var(--line);padding:14px var(--pad) 16px;background-image:linear-gradient(var(--hair) 1px,transparent 1px),linear-gradient(90deg,var(--hair) 1px,transparent 1px);background-size:22px 22px">
+    <div style="display:flex;align-items:center;gap:11px">
+      <div onClick="{{ goLibrary }}" style="cursor:pointer;width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center" style-active="background:var(--surf2)">
+        <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+      </div>
+      <div style="font-size:var(--meta);color:var(--ink3)">{{ crumb }}</div>
+    </div>
+    <div style="display:flex;align-items:flex-end;gap:12px;margin-top:14px">
+      <div style="position:relative;border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:12px 14px 11px">
+        <div style="position:absolute;left:5px;top:5px;right:5px;bottom:5px;border:1px dashed var(--line);border-radius:8px"></div>
+        <div style="position:relative">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)">{{ t.survey }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:34px;font-weight:500;letter-spacing:-.03em;line-height:1.1;margin-top:2px">{{ sel.no }}</div>
+        </div>
+      </div>
+      <div style="padding-bottom:6px">
+        <div style="font-size:var(--body);font-weight:600">{{ villageName }}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:2px">{{ villageSub }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="padding:14px var(--pad) 0;display:flex;flex-wrap:wrap;gap:7px">
+    <sc-for list="{{ meta }}" as="m" hint-placeholder-count="5">
+      <div style="border:1px solid var(--line);border-radius:8px;background:var(--surf);padding:7px 10px 8px">
+        <div style="font-size:var(--mini);color:var(--ink3)">{{ m.lab }}</div>
+        <div style="font-size:var(--meta);margin-top:2px;font-variant-numeric:tabular-nums">{{ m.val }}</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);color:var(--ink3);margin-top:1px">{{ m.valSub }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="padding:18px var(--pad) 0">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">{{ t.records }}</div>
+    <sc-for list="{{ records }}" as="r" hint-placeholder-count="4">
+      <div style="border:1px solid var(--line);border-radius:12px;background:var(--surf);margin-bottom:10px;overflow:hidden">
+        <div style="display:flex;gap:12px;padding:12px 13px 11px">
+          <div style="width:3px;border-radius:2px;background:{{ r.rail }};flex:none"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:var(--body);font-weight:600;line-height:1.35">{{ r.name }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.09em;text-transform:uppercase;color:var(--ink3);margin-top:3px">{{ r.nameSub }}</div>
+            <sc-if value="{{ r.fresh }}">
+              <div style="display:inline-block;margin-top:7px;font-size:var(--mini);padding:3px 8px;border-radius:20px;background:var(--accsoft);color:var(--acc)">{{ t.justAdded }}</div>
+            </sc-if>
+          </div>
+          <div style="text-align:right;flex:none">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;line-height:1;color:{{ r.countColor }}">{{ r.count }}</div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-top:5px">{{ r.countSub }}</div>
+          </div>
+        </div>
+        <sc-if value="{{ r.has }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:0 13px 11px 28px;font-size:var(--meta);color:var(--ink2)">{{ r.asOf }}</div>
+          <div style="display:flex;gap:7px;padding:0 13px 12px 28px;flex-wrap:wrap">
+            <div style="cursor:pointer;padding:9px 15px;border-radius:20px;background:var(--acc);color:var(--onacc);font-size:var(--meta);font-weight:600" style-active="opacity:.85">{{ t.view }}</div>
+            <div style="cursor:pointer;padding:9px 13px;border-radius:20px;border:1px solid var(--line);font-size:var(--meta);color:var(--ink2)" style-active="background:var(--surf2)">{{ t.regen }}</div>
+            <div style="cursor:pointer;padding:9px 13px;border-radius:20px;border:1px solid var(--line);font-size:var(--meta);color:var(--ink2)" style-active="background:var(--surf2)">{{ t.share }}</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ r.missing }}">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px 11px 28px;border-top:1px dashed var(--line);background:var(--bg)">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)">{{ t.notFetched }}</span>
+            <div onClick="{{ r.get }}" style="cursor:pointer;padding:9px 15px;border-radius:20px;border:1px solid var(--acc);color:var(--acc);font-size:var(--meta);font-weight:600" style-active="background:var(--accsoft)">{{ t.get }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-for>
+    <div onClick="{{ startFetch }}" style="cursor:pointer;margin-top:4px;height:var(--btn);border:1px dashed var(--acc);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:9px;color:var(--acc)" style-active="background:var(--accsoft)">
+      <span style="font-size:var(--body);font-weight:600">{{ t.getMore }}</span>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFetch }}">
+<div style="animation:scin .22s ease-out both;min-height:100%;background:var(--surf2)">
+  <div style="display:flex;align-items:center;gap:11px;padding:14px 16px;background:var(--surf);border-bottom:1px solid var(--line)">
+    <div onClick="{{ goSurvey }}" style="cursor:pointer;width:32px;height:32px;border:1px solid var(--line);border-radius:9px;background:var(--surf);display:flex;align-items:center;justify-content:center">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div style="flex:1">
+      <div style="font-size:var(--body);font-weight:600">{{ t.getRecordFor }}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.06em;color:var(--ink3);margin-top:2px">anyror.gujarat.gov.in</div>
+    </div>
+  </div>
+
+  <div style="background:var(--acc);color:var(--onacc);padding:12px 16px 13px">
+    <div style="font-size:var(--body);line-height:1.4">{{ t.banner }}</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);opacity:.85;margin-top:4px">{{ t.bannerSub }}</div>
+  </div>
+
+  <div style="background:#ffffff;color:#20211e;padding:0 0 20px">
+    <div style="opacity:.3;padding:12px 14px 0">
+      <div style="height:26px;background:#1f4b6e;border-radius:2px;display:flex;align-items:center;padding:0 8px;color:#fff;font-size:9.5px;letter-spacing:.08em">AnyRoR @ Anywhere — Revenue Department, Gujarat</div>
+      <div style="display:flex;gap:6px;margin-top:8px">
+        <div style="flex:1;height:20px;background:#e8edf1;border-radius:2px"></div>
+        <div style="flex:1;height:20px;background:#e8edf1;border-radius:2px"></div>
+        <div style="flex:1;height:20px;background:#e8edf1;border-radius:2px"></div>
+      </div>
+    </div>
+    <div style="opacity:.42;padding:12px 14px 0">
+      <sc-for list="{{ prefill }}" as="p" hint-placeholder-count="5">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <div style="width:84px;font-size:9.5px;color:#5c6360;text-align:right">{{ p.lab }}</div>
+          <div style="flex:1;height:28px;border:1px solid #c8cfcb;border-radius:2px;background:#f2f4f3;display:flex;align-items:center;justify-content:space-between;padding:0 8px">
+            <span style="font-size:11px">{{ p.val }}</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:7.5px;letter-spacing:.1em;text-transform:uppercase;color:#8a918e;border:1px solid #d5dbd8;border-radius:2px;padding:2px 4px">auto</span>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin:14px 12px 0;padding:14px 12px 16px;border:1px solid #d8dedb;border-radius:12px;background:#fbfcfb;animation:ring 2.4s ease-in-out infinite">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#6c7370">Enter verification code</div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:9px">
+        <div style="width:118px;height:46px;border:1px solid #c8cfcb;border-radius:8px;background:linear-gradient(105deg,#eef1ef,#e2e7e4);display:flex;align-items:center;justify-content:center;letter-spacing:.22em;font-size:23px;font-weight:600;font-style:italic;color:#3a423f">4K7Q2</div>
+        <div style="flex:1;height:46px;border:1.5px solid var(--acc);border-radius:8px;background:#fff;display:flex;align-items:center;padding:0 10px;gap:2px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:18px;letter-spacing:.14em;color:#20211e">4K7</span>
+          <span style="width:1.5px;height:21px;background:var(--acc);animation:softpulse 1.1s steps(1,end) infinite"></span>
+        </div>
+      </div>
+      <div onClick="{{ submit }}" style="cursor:pointer;margin-top:13px;height:48px;border-radius:10px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;font-size:14.5px;font-weight:600" style-active="opacity:.85">Get Record Detail</div>
+    </div>
+    <div style="opacity:.3;padding:14px 14px 0">
+      <div style="height:9px;background:#e8edf1;border-radius:2px;margin-bottom:6px"></div>
+      <div style="height:9px;background:#e8edf1;border-radius:2px;width:72%;margin-bottom:6px"></div>
+      <div style="height:9px;background:#e8edf1;border-radius:2px;width:54%"></div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSaving }}">
+<div style="animation:scin .2s ease-out both;min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 24px;background:var(--bg)">
+  <div style="position:relative;border:1px solid var(--line);border-radius:14px;background:var(--surf);padding:20px 18px">
+    <div style="position:absolute;left:6px;top:6px;right:6px;bottom:6px;border:1px dashed var(--hair);border-radius:10px"></div>
+    <div style="position:relative">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)">221/p · Bharoda</div>
+      <div style="font-size:var(--h1);font-weight:600;line-height:1.35;margin-top:10px">{{ t.saving }}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--meta);color:var(--ink3);margin-top:6px">{{ t.savingSub }}</div>
+      <div style="height:4px;background:var(--surf2);border-radius:2px;margin-top:20px;overflow:hidden">
+        <div style="height:100%;background:var(--acc);animation:barfill 2.2s ease-out both"></div>
+      </div>
+      <div style="margin-top:18px;display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{ steps }}" as="st" hint-placeholder-count="3">
+          <div style="display:flex;align-items:center;gap:9px">
+            <div style="width:5px;height:5px;border-radius:1px;background:var(--acc)"></div>
+            <div style="font-size:var(--meta);color:var(--ink2)">{{ st.t }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);margin-top:14px;text-align:center">Documents/LandRecords/Anand/Umreth/Bharoda/Survey 221_P</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAdd }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:28px">
+  <div style="display:flex;align-items:center;gap:12px;padding:16px var(--pad) 14px">
+    <div onClick="{{ goLibrary }}" style="cursor:pointer;width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div>
+      <div style="font-size:var(--h1);font-weight:700">{{ t.addProperty }}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px">{{ t.addPropertySub }}</div>
+    </div>
+  </div>
+  <div style="margin:0 var(--pad);display:flex;flex-direction:column;gap:8px">
+    <sc-for list="{{ pickers }}" as="p" hint-placeholder-count="4">
+      <div style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--surf)" style-active="background:var(--surf2)">
+        <div style="width:72px;font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)">{{ p.lab }}</div>
+        <div style="flex:1">
+          <div style="font-size:var(--body);font-weight:600">{{ p.val }}</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);color:var(--ink3);margin-top:1px">{{ p.valSub }}</div>
+        </div>
+        <div style="width:7px;height:7px;border-right:1.5px solid var(--ink3);border-bottom:1.5px solid var(--ink3);transform:rotate(-45deg)"></div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="padding:18px var(--pad) 0">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)">{{ t.surveyNumbers }}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:10px">
+      <sc-for list="{{ chips }}" as="c" hint-placeholder-count="9">
+        <div style="display:flex;align-items:center;gap:7px;padding:7px 8px 7px 11px;border:1px solid var(--line);border-radius:20px;background:var(--surf)">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:var(--meta)">{{ c.no }}</span>
+          <div onClick="{{ c.remove }}" style="cursor:pointer;width:18px;height:18px;border-radius:50%;background:var(--surf2);display:flex;align-items:center;justify-content:center;color:var(--ink3);font-size:11px;line-height:1">×</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <input value="{{ input }}" onChange="{{ inputChange }}" placeholder="{{ t.addSurvey }}" style="flex:1;height:48px;border:1px solid var(--line);border-radius:10px;background:var(--surf);color:var(--ink);padding:0 13px;font-family:'Space Grotesk','Noto Sans Gujarati',sans-serif;font-size:13.5px;outline:none">
+      <div onClick="{{ addChip }}" style="cursor:pointer;width:66px;height:48px;border:1px solid var(--acc);border-radius:10px;color:var(--acc);display:flex;align-items:center;justify-content:center;font-size:var(--body);font-weight:600" style-active="background:var(--accsoft)">{{ t.add }}</div>
+    </div>
+    <div onClick="{{ goLibrary }}" style="cursor:pointer;margin-top:18px;height:var(--btn);border-radius:12px;background:var(--acc);color:var(--onacc);display:flex;align-items:center;justify-content:center;font-size:var(--body);font-weight:600" style-active="opacity:.85">{{ t.save }}</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSettings }}">
+<div style="animation:scin .22s ease-out both;padding-bottom:28px">
+  <div style="display:flex;align-items:center;gap:12px;padding:16px var(--pad) 14px">
+    <div onClick="{{ goLibrary }}" style="cursor:pointer;width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:var(--surf);display:flex;align-items:center;justify-content:center">
+      <div style="width:8px;height:8px;border-left:1.5px solid var(--ink2);border-bottom:1.5px solid var(--ink2);transform:rotate(45deg);margin-left:3px"></div>
+    </div>
+    <div>
+      <div style="font-size:var(--h1);font-weight:700">{{ t.settings }}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-top:2px">Settings</div>
+    </div>
+  </div>
+  <div style="margin:0 var(--pad);display:flex;flex-direction:column;gap:8px">
+    <div style="border:1px solid var(--line);border-radius:10px;background:var(--surf);padding:13px">
+      <div style="font-size:var(--meta);color:var(--ink3);margin-bottom:9px">{{ t.language }}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+        <div onClick="{{ setLangGu }}" style="cursor:pointer;padding:10px 0;text-align:center;border:1px solid var(--line);border-radius:20px;font-size:var(--meta);background:{{ guBg }}">ગુજરાતી</div>
+        <div onClick="{{ setLangBoth }}" style="cursor:pointer;padding:10px 0;text-align:center;border:1px solid var(--line);border-radius:20px;font-size:var(--meta);background:{{ bothBg }}">બંને · Both</div>
+        <div onClick="{{ setLangEn }}" style="cursor:pointer;padding:10px 0;text-align:center;border:1px solid var(--line);border-radius:20px;font-size:var(--meta);background:{{ enBg }}">English</div>
+      </div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);color:var(--ink3);margin-top:9px">Land data stays in Gujarati — this changes the app's own labels.</div>
+    </div>
+    <div style="border:1px solid var(--line);border-radius:10px;background:var(--surf);padding:13px">
+      <div style="font-size:var(--meta);color:var(--ink3)">{{ t.storage }}</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;margin-top:6px">Documents/LandRecords</div>
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:var(--mini);color:var(--ink3);margin-top:4px">Visible in Files · backs up to Drive</div>
+    </div>
+    <div style="border:1px solid var(--line);border-radius:10px;background:var(--surf);padding:13px">
+      <div style="font-size:var(--meta);color:var(--ink3);margin-bottom:9px">{{ t.theme }}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+        <div onClick="{{ setLight }}" style="cursor:pointer;padding:10px 0;text-align:center;border:1px solid var(--line);border-radius:20px;font-size:var(--meta);background:{{ lightBg }}">{{ t.light }}</div>
+        <div onClick="{{ setDark }}" style="cursor:pointer;padding:10px 0;text-align:center;border:1px solid var(--line);border-radius:20px;font-size:var(--meta);background:{{ darkBg }}">{{ t.dark }}</div>
+      </div>
+    </div>
+    <sc-for list="{{ settingsRows }}" as="s" hint-placeholder-count="3">
+      <div style="cursor:pointer;display:flex;align-items:center;gap:12px;padding:14px 13px;border:1px solid var(--line);border-radius:10px;background:var(--surf)" style-active="background:var(--surf2)">
+        <div style="flex:1;font-size:var(--body)">{{ s.t }}</div>
+        <div style="width:7px;height:7px;border-right:1.5px solid var(--ink3);border-bottom:1.5px solid var(--ink3);transform:rotate(-45deg)"></div>
+      </div>
+    </sc-for>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);padding:4px 2px">Land Records 0.1 · sideloaded · for family use</div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:420,&quot;height&quot;:880},&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfy&quot;,&quot;default&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;default&quot;,&quot;tsType&quot;:&quot;'comfy' | 'default' | 'compact'&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;both&quot;,&quot;gu&quot;,&quot;en&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;'both' | 'gu' | 'en'&quot;}}">
+const GUD = ['૦','૧','૨','૩','૪','૫','૬','૭','૮','૯'];
+const gu = n => String(n).split('').map(c => /[0-9]/.test(c) ? GUD[+c] : c).join('');
+
+const SURVEYS = [
+  { no:'221/p', area:'૩-૩૧-૮૪', areaLat:'3-31-84', assess:'૨૪.૬૯', assessLat:'24.69', tenure:'બીન ખેતી પ્રિપાત્ર', tenureEn:'Non-agri eligible', use:'ખેતીલાયક', useEn:'Agricultural', vf:10, cases:14 },
+  { no:'222/1', area:'૦-૩૦-૩પ', areaLat:'0-30-35', assess:'૨.૧૨', assessLat:'2.12', tenure:'જુની શરત (જુ.શ)', tenureEn:'Old tenure', use:'ખેતીલાયક', useEn:'Agricultural', vf:null, cases:2 },
+  { no:'222/2/p', cases:9 },
+  { no:'222/3/p1', cases:1 },
+  { no:'222/3/p2', cases:0 },
+  { no:'226/p1', cases:0 },
+  { no:'228/p1/p', cases:2 },
+  { no:'229/p', cases:1 },
+  { no:'230/p1/p3', area:'૦-૪૭-૦૪', areaLat:'0-47-04', assess:'૩.૪૮', assessLat:'3.48', tenure:'જુની શરત (જુ.શ)', tenureEn:'Old tenure', cases:0 },
+];
+const QUEUED = { sundalpura:['906','845/અ','851','901/p','902'], valetva:['41'] };
+const AS_OF = '૧૨ જુલાઈ ૨૦૨૬';
+const AS_OF_EN = '12 Jul 2026';
+
+class Component extends DCLogic {
+  state = { screen:'library', village:'bharoda', survey:'221/p', deeds:false, input:'', chips:SURVEYS.map(s => s.no), theme:null, lang:null };
+
+  componentWillUnmount() { clearTimeout(this._t); }
+  set(patch) { this.setState(patch); }
+
+  get lang() { return this.state.lang || this.props.lang || 'both'; }
+
+  /** label pair: app chrome. gu = Gujarati, en = English */
+  L(g, e) {
+    const l = this.lang;
+    if (l === 'gu') return g;
+    if (l === 'en') return e;
+    return g + ' · ' + e;
+  }
+  /** data value: Gujarati numerals are the source of truth; Latin is the helper */
+  V(g, lat) {
+    const l = this.lang;
+    if (l === 'en') return { p: lat || g, s: '' };
+    if (l === 'gu') return { p: g, s: '' };
+    return { p: g, s: lat || '' };
+  }
+
+  submit() {
+    this.set({ screen:'saving' });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.set({ screen:'survey', village:'bharoda', survey:'221/p', deeds:true }), 2300);
+  }
+
+  strings() {
+    const l = this.lang;
+    return {
+      title: l === 'en' ? 'Your land records' : 'તમારા જમીન રેકોર્ડ',
+      titleSub: l === 'both' ? 'Your land records · 15 surveys' : (l === 'gu' ? '૧૫ સર્વે' : '15 surveys'),
+      search: l === 'en' ? 'Search survey number or village' : 'સર્વે નંબર કે ગામ શોધો',
+      surveys: l === 'en' ? 'Surveys' : 'સર્વે · Surveys',
+      records: l === 'en' ? 'Records' : 'રેકોર્ડ · Records',
+      survey: l === 'en' ? 'Survey' : 'સર્વે',
+      addProperty: this.L('મિલકત ઉમેરો', 'Add property'),
+      addPropertySub: l === 'both' ? 'Add property' : '',
+      getMore: this.L('વધુ રેકોર્ડ મેળવો', 'Get more records'),
+      view: this.L('જુઓ', 'View'),
+      regen: this.L('ફરી PDF', 'Re-generate PDF'),
+      share: this.L('શેર', 'Share'),
+      get: this.L('મેળવો', 'Get record'),
+      notFetched: l === 'gu' ? 'હજી મેળવ્યું નથી' : 'Not fetched yet',
+      justAdded: this.L('હમણાં ઉમેર્યું', 'Just added'),
+      save: this.L('સાચવો', 'Save'),
+      add: this.L('ઉમેરો', 'Add'),
+      addSurvey: this.L('સર્વે નંબર ઉમેરો', 'Add survey number'),
+      surveyNumbers: l === 'en' ? 'Survey numbers' : 'સર્વે નંબર · Survey numbers',
+      settings: this.L('સેટિંગ્સ', 'Settings'),
+      language: this.L('ભાષા', 'Language'),
+      theme: this.L('થીમ', 'Theme'),
+      light: this.L('દિવસ', 'Light'),
+      dark: this.L('રાત્રિ', 'Dark'),
+      storage: this.L('સંગ્રહ સ્થાન', 'Storage location'),
+      banner: l === 'en' ? 'Type the code shown below, then tap Get Record Detail' : "નીચે દેખાતો કોડ લખો અને 'Get Record Detail' દબાવો",
+      bannerSub: l === 'both' ? 'Type the code below, then tap Get Record Detail' : (l === 'gu' ? '' : 'This is the only step you have to do'),
+      saving: l === 'en' ? 'Saving to your library…' : 'તમારી લાઇબ્રેરીમાં સાચવી રહ્યાં છીએ…',
+      savingSub: l === 'both' ? 'Saving to your library…' : '',
+      getRecordFor: this.L('રેકોર્ડ મેળવો', 'Get record') + ' · 221/p',
+    };
+  }
+
+  renderVals() {
+    const st = this.state;
+    const t = this.strings();
+    const l = this.lang;
+    const theme = st.theme || this.props.theme || 'light';
+    const den = this.props.density || 'default';
+    const vil = st.village;
+    const sel = SURVEYS.find(s => s.no === st.survey) || SURVEYS[0];
+
+    const stamp = (ch, on, n) => ({
+      t: n && n > 1 ? ch + (l === 'en' ? n : gu(n)) : ch,
+      bg: on ? 'var(--accsoft)' : 'transparent',
+      bd: on ? 'var(--acc)' : 'var(--line)',
+      fg: on ? 'var(--acc)' : 'var(--ink3)',
+    });
+
+    let tiles;
+    if (vil === 'bharoda') {
+      tiles = SURVEYS.map(s => {
+        const a = this.V(s.area || '—', s.areaLat ? s.areaLat + ' ha-a-m²' : '');
+        return {
+          no: s.no, area: a.p, areaSub: a.s,
+          tenure: s.tenure ? (l === 'en' ? s.tenureEn : s.tenure) : '',
+          open: () => this.set({ screen:'survey', survey:s.no }),
+          stamps: [stamp('I', true), stamp('V', true, s.vf), stamp('D', false), stamp('C', s.cases > 0, s.cases)],
+        };
+      });
+    } else {
+      tiles = (QUEUED[vil] || []).map(no => ({
+        no, area: this.L('રેકોર્ડ બાકી', 'No records yet'), areaSub: '',
+        tenure: this.L('મેળવવાનું બાકી', 'queued'),
+        open: () => this.set({ screen:'fetch' }),
+        stamps: [stamp('I', false), stamp('V', false), stamp('D', false), stamp('C', false)],
+      }));
+    }
+
+    const villageMeta = {
+      bharoda: { gu:'ભરોડા', en:'Bharoda', n:9, dist:['ગુજરાત','આણંદ','ઉમરેઠ','ભરોડા'], distEn:['Gujarat','Anand','Umreth','Bharoda'], sub:'Bharoda · Umreth' },
+      sundalpura: { gu:'સુંદલપુરા', en:'Sundalpura', n:5, dist:['ગુજરાત','આણંદ','ઉમરેઠ','સુંદલપુરા'], distEn:['Gujarat','Anand','Umreth','Sundalpura'], sub:'Sundalpura · Umreth' },
+      valetva: { gu:'વળેટવા', en:'Valetva', n:1, dist:['ગુજરાત','ખેડા','નડિયાદ ગ્રામ્ય','વળેટવા'], distEn:['Gujarat','Kheda','Nadiad Gramya','Valetva'], sub:'Valetva · Nadiad Gramya' },
+    };
+    const vm = villageMeta[vil];
+    const pathArr = l === 'en' ? vm.distEn : vm.dist;
+
+    const mkRecord = (g, e, has, count, countEn, extra) => Object.assign({
+      name: l === 'en' ? e : g,
+      nameSub: l === 'gu' ? '' : (l === 'en' ? '' : e),
+      has, missing: !has,
+      count: has ? count : '—',
+      countSub: has ? countEn : (l === 'gu' ? 'બાકી' : 'none'),
+      countColor: has ? 'var(--ink)' : 'var(--ink3)',
+      rail: has ? 'var(--acc)' : 'var(--line)',
+      asOf: l === 'en' ? ('As of ' + AS_OF_EN) : (l === 'gu' ? ('ની સ્થિતિએ ' + AS_OF) : ('ની સ્થિતિએ ' + AS_OF + ' · ' + AS_OF_EN)),
+      fresh: false,
+      get: () => this.set({ screen:'fetch' }),
+    }, extra || {});
+
+    const num = n => l === 'en' ? String(n) : gu(n);
+    const records = [
+      mkRecord('સંકલિત સર્વે રેકોર્ડ', 'Integrated Survey Record (7/12)', true, num(1), '1 document'),
+      mkRecord('જૂનું સ્કેન થયેલ ૭/૧૨', 'Old Scanned VF-7/12', true, sel.vf ? num(sel.vf) : '✓', sel.vf ? sel.vf + ' period scans' : 'scanned pages'),
+      mkRecord('નોંધાયેલ દસ્તાવેજ', 'Registered Deeds', st.deeds, num(3), '3 deed documents', { fresh: st.deeds }),
+      mkRecord('જમીન કેસ (iRCMS)', 'Land Cases (iRCMS)', sel.cases > 0, num(sel.cases), sel.cases + ' cases'),
+    ];
+
+    const metaItem = (g, e, valGu, valLat) => {
+      const v = this.V(valGu || '—', valLat || '');
+      return { lab: l === 'en' ? e : g, val: v.p, valSub: v.s };
+    };
+
+    return {
+      pw: 390, ph: 844, t, theme, den, dark: theme === 'dark',
+      isLibrary: st.screen === 'library', isSurvey: st.screen === 'survey', isFetch: st.screen === 'fetch',
+      isSaving: st.screen === 'saving', isAdd: st.screen === 'add', isSettings: st.screen === 'settings',
+      langLabel: l === 'gu' ? 'ગુ' : (l === 'en' ? 'EN' : 'ગુ/EN'),
+      cycleLang: () => this.set({ lang: l === 'both' ? 'gu' : (l === 'gu' ? 'en' : 'both') }),
+      setLangGu: () => this.set({ lang:'gu' }), setLangEn: () => this.set({ lang:'en' }), setLangBoth: () => this.set({ lang:'both' }),
+      guBg: l === 'gu' ? 'var(--accsoft)' : 'transparent',
+      enBg: l === 'en' ? 'var(--accsoft)' : 'transparent',
+      bothBg: l === 'both' ? 'var(--accsoft)' : 'transparent',
+      lightBg: theme === 'light' ? 'var(--accsoft)' : 'transparent',
+      darkBg: theme === 'dark' ? 'var(--accsoft)' : 'transparent',
+      setLight: () => this.set({ theme:'light' }), setDark: () => this.set({ theme:'dark' }),
+      path: pathArr.map((x, i) => ({
+        t: x, more: i !== pathArr.length - 1,
+        bg: i === pathArr.length - 1 ? 'var(--acc)' : 'var(--surf)',
+        fg: i === pathArr.length - 1 ? 'var(--onacc)' : 'var(--ink2)',
+      })),
+      villages: ['bharoda','sundalpura','valetva'].map(k => ({
+        name: l === 'en' ? villageMeta[k].en : villageMeta[k].gu,
+        sub: l === 'en' ? villageMeta[k].n + ' surveys' : villageMeta[k].en + ' · ' + villageMeta[k].n,
+        bg: vil === k ? 'var(--accsoft)' : 'var(--surf)',
+        border: vil === k ? 'var(--acc)' : 'var(--line)',
+        fg: vil === k ? 'var(--acc)' : 'var(--ink)',
+        pick: () => this.set({ village: k }),
+      })),
+      tiles,
+      count: (l === 'en' ? tiles.length : gu(tiles.length)) + (l === 'en' ? ' surveys' : ' સર્વે'),
+      sel, crumb: pathArr.slice(1).join(' › '),
+      villageName: l === 'en' ? vm.en : vm.gu, villageSub: vm.sub,
+      meta: [
+        metaItem('કુલ ક્ષેત્રફળ', 'Total area', sel.area, sel.areaLat ? sel.areaLat + ' ha-a-m²' : ''),
+        metaItem('આકાર', 'Assessment', sel.assess, sel.assessLat),
+        metaItem('સત્તાપ્રકાર', 'Tenure', sel.tenure, sel.tenureEn),
+        metaItem('જમીનનો ઉપયોગ', 'Land use', sel.use, sel.useEn),
+        metaItem('ની સ્થિતિએ', 'As of', AS_OF, AS_OF_EN),
+      ],
+      records,
+      chips: st.chips.map(no => ({ no, remove: () => this.set({ chips: st.chips.filter(x => x !== no) }) })),
+      input: st.input,
+      inputChange: e => this.set({ input: e.target.value }),
+      addChip: () => { const v = st.input.trim(); if (v) this.set({ chips: st.chips.concat([v]), input:'' }); },
+      goLibrary: () => this.set({ screen:'library' }),
+      goSurvey: () => this.set({ screen:'survey' }),
+      goSettings: () => this.set({ screen:'settings' }),
+      goAdd: () => this.set({ screen:'add' }),
+      startFetch: () => this.set({ screen:'fetch' }),
+      submit: () => this.submit(),
+      steps: [
+        { t: this.L('પાનું વાંચી રહ્યાં છીએ', 'Reading the page') },
+        { t: this.L('PDF બનાવી રહ્યાં છીએ', 'Building the PDF') },
+        { t: this.L('લાઇબ્રેરીમાં ફાઇલ કરી રહ્યાં છીએ', 'Filing in your library') },
+      ],
+      prefill: [
+        { lab:'Record type', val: l === 'en' ? 'Integrated Survey Record (7/12)' : 'સંકલિત સર્વે રેકોર્ડ (7/12)' },
+        { lab:'District', val: l === 'en' ? 'Anand' : 'આણંદ · Anand' },
+        { lab:'Taluka', val: l === 'en' ? 'Umreth' : 'ઉમરેઠ · Umreth' },
+        { lab:'Village', val: l === 'en' ? 'Bharoda' : 'ભરોડા · Bharoda' },
+        { lab:'Survey no.', val:'221/p' },
+      ],
+      pickers: [
+        { lab:'State', val: l === 'en' ? 'Gujarat' : 'ગુજરાત', valSub: l === 'both' ? 'Gujarat' : '' },
+        { lab:'District', val: l === 'en' ? 'Anand' : 'આણંદ', valSub: l === 'both' ? 'Anand' : '' },
+        { lab:'Taluka', val: l === 'en' ? 'Umreth' : 'ઉમરેઠ', valSub: l === 'both' ? 'Umreth' : '' },
+        { lab:'Village', val: l === 'en' ? 'Bharoda' : 'ભરોડા', valSub: l === 'both' ? 'Bharoda' : '' },
+      ],
+      settingsRows: [
+        { t: this.L('બેકઅપ અને નિકાસ', 'Backup & export') },
+        { t: this.L('PDF લેઆઉટ', 'PDF layout · re-generate all') },
+        { t: this.L('એપ વિશે', 'About') },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

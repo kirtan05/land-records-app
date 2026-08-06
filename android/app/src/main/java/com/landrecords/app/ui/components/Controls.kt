@@ -1,0 +1,150 @@
+package com.landrecords.app.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.landrecords.app.ui.theme.Land
+import com.landrecords.app.ui.theme.LandShape
+import com.landrecords.app.ui.theme.LandSize
+import com.landrecords.app.ui.theme.LandType
+
+/** Bordered square icon button (back / settings / add), radius 10, no ripple. */
+@Composable
+fun SquareIconButton(
+    icon: ImageVector,
+    onClick: () -> Unit,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    size: Dp = LandSize.iconButton,
+) {
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(LandShape.iconButton)
+            .background(if (pressed) Land.colors.surfaceAlt else Land.colors.surface)
+            .border(1.dp, Land.colors.line, LandShape.iconButton)
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(icon, contentDescription = contentDescription, tint = Land.colors.ink2, modifier = Modifier.size(20.dp))
+    }
+}
+
+/** Header pill that shows the language badge (ગુ / ગુ/EN / EN) and cycles on tap. */
+@Composable
+fun LanguagePill(badge: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    Box(
+        modifier = modifier
+            .size(width = 56.dp, height = LandSize.iconButton)
+            .clip(LandShape.iconButton)
+            .background(if (pressed) Land.colors.surfaceAlt else Land.colors.surface)
+            .border(1.dp, Land.colors.line, LandShape.iconButton)
+            .clickable(interactionSource = interaction, indication = null, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(badge, style = LandType.label, color = Land.colors.ink2)
+    }
+}
+
+/** A removable survey-number chip: mono 13, radius 20, with an 18dp × on surfaceAlt. */
+@Composable
+fun RemovableChip(text: String, onRemove: () -> Unit, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .clip(LandShape.pill)
+            .background(Land.colors.surface)
+            .border(1.dp, Land.colors.line, LandShape.pill)
+            .padding(start = 12.dp, end = 6.dp, top = 6.dp, bottom = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(text, style = LandType.metaMono, color = Land.colors.ink)
+        Box(
+            modifier = Modifier
+                .size(18.dp)
+                .clip(RoundedCornerShape(9.dp))
+                .background(Land.colors.surfaceAlt)
+                .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onRemove),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(Icons.Outlined.Close, contentDescription = "Remove", tint = Land.colors.ink2, modifier = Modifier.size(12.dp))
+        }
+    }
+}
+
+/** A village switcher card: name + "Latin · count" helper; selected = accentSoft/accent. */
+@Composable
+fun VillageCard(
+    name: String,
+    helper: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .clip(LandShape.field)
+            .background(if (selected) Land.colors.accentSoft else Land.colors.surface)
+            .border(1.dp, if (selected) Land.colors.accent else Land.colors.line, LandShape.field)
+            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClick)
+            .padding(horizontal = 12.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        Text(name, style = LandType.bodyStrong, color = if (selected) Land.colors.accent else Land.colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        Text(helper, style = LandType.label, color = if (selected) Land.colors.accent else Land.colors.ink3, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+/** A segmented row of selectable pills (language / theme in Settings). */
+@Composable
+fun SegmentedPills(
+    options: List<String>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        options.forEachIndexed { i, label ->
+            val selected = i == selectedIndex
+            Box(
+                modifier = Modifier
+                    .clip(LandShape.pill)
+                    .background(if (selected) Land.colors.accentSoft else Color.Transparent)
+                    .border(1.dp, if (selected) Land.colors.accent else Land.colors.line, LandShape.pill)
+                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onSelect(i) }
+                    .padding(horizontal = 16.dp, vertical = 9.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(label, style = LandType.body, color = if (selected) Land.colors.accent else Land.colors.ink2)
+            }
+        }
+    }
+}
