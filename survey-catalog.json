@@ -1,0 +1,7681 @@
+{
+  "village": "Bharoda",
+  "count": 1535,
+  "rows": [
+    {
+      "normalized": "0g1",
+      "value": "0g૧ ~~ ",
+      "display": "0g૧ ~~"
+    },
+    {
+      "normalized": "0g2",
+      "value": "0g૨ ~~ ",
+      "display": "0g૨ ~~"
+    },
+    {
+      "normalized": "0g3",
+      "value": "0g૩ ~~ ",
+      "display": "0g૩ ~~"
+    },
+    {
+      "normalized": "0g4",
+      "value": "0g૪ ~~ ",
+      "display": "0g૪ ~~"
+    },
+    {
+      "normalized": "0g6",
+      "value": "0g૬ ~~ ",
+      "display": "0g૬ ~~"
+    },
+    {
+      "normalized": "0g7",
+      "value": "0g૭ ~~ ",
+      "display": "0g૭ ~~"
+    },
+    {
+      "normalized": "0g8",
+      "value": "0g૮ ~~ ",
+      "display": "0g૮ ~~"
+    },
+    {
+      "normalized": "0g9",
+      "value": "0g૯ ~~ ",
+      "display": "0g૯ ~~"
+    },
+    {
+      "normalized": "0gp",
+      "value": "0gપ ~~ ",
+      "display": "0gપ ~~"
+    },
+    {
+      "normalized": "1",
+      "value": "1 ~~ ",
+      "display": "1 ~~"
+    },
+    {
+      "normalized": "2/1/1/p",
+      "value": "2/૧/૧/p ~~ ",
+      "display": "2/૧/૧/p ~~"
+    },
+    {
+      "normalized": "2/1/p1/p",
+      "value": "2/૧/p૧/p ~~ ",
+      "display": "2/૧/p૧/p ~~"
+    },
+    {
+      "normalized": "2/1/p2",
+      "value": "2/૧/p૨ ~~ ",
+      "display": "2/૧/p૨ ~~"
+    },
+    {
+      "normalized": "2/2",
+      "value": "2/૨ ~~ ",
+      "display": "2/૨ ~~"
+    },
+    {
+      "normalized": "2/2/2",
+      "value": "2/૨/૨ ~~ ",
+      "display": "2/૨/૨ ~~"
+    },
+    {
+      "normalized": "2/3",
+      "value": "2/૩ ~~ ",
+      "display": "2/૩ ~~"
+    },
+    {
+      "normalized": "2/4",
+      "value": "2/૪ ~~ ",
+      "display": "2/૪ ~~"
+    },
+    {
+      "normalized": "2/6",
+      "value": "2/૬ ~~ ",
+      "display": "2/૬ ~~"
+    },
+    {
+      "normalized": "2/p",
+      "value": "2/પ ~~ ",
+      "display": "2/પ ~~"
+    },
+    {
+      "normalized": "3",
+      "value": "3 ~~ ",
+      "display": "3 ~~"
+    },
+    {
+      "normalized": "4",
+      "value": "4 ~~ ",
+      "display": "4 ~~"
+    },
+    {
+      "normalized": "5/1",
+      "value": "5/૧ ~~ ",
+      "display": "5/૧ ~~"
+    },
+    {
+      "normalized": "5/2",
+      "value": "5/૨ ~~ ",
+      "display": "5/૨ ~~"
+    },
+    {
+      "normalized": "6/1/અ",
+      "value": "6/૧/અ ~~ ",
+      "display": "6/૧/અ ~~"
+    },
+    {
+      "normalized": "6/1/બ",
+      "value": "6/૧/બ ~~ ",
+      "display": "6/૧/બ ~~"
+    },
+    {
+      "normalized": "6/2",
+      "value": "6/૨ ~~ ",
+      "display": "6/૨ ~~"
+    },
+    {
+      "normalized": "6/3",
+      "value": "6/૩ ~~ ",
+      "display": "6/૩ ~~"
+    },
+    {
+      "normalized": "6/4",
+      "value": "6/૪ ~~ ",
+      "display": "6/૪ ~~"
+    },
+    {
+      "normalized": "7",
+      "value": "7 ~~ ",
+      "display": "7 ~~"
+    },
+    {
+      "normalized": "8",
+      "value": "8 ~~ ",
+      "display": "8 ~~"
+    },
+    {
+      "normalized": "9",
+      "value": "9 ~~ ",
+      "display": "9 ~~"
+    },
+    {
+      "normalized": "10",
+      "value": "10 ~~ ",
+      "display": "10 ~~"
+    },
+    {
+      "normalized": "11/p1",
+      "value": "11/p૧ ~~ ",
+      "display": "11/p૧ ~~"
+    },
+    {
+      "normalized": "11/p2",
+      "value": "11/p૨ ~~ ",
+      "display": "11/p૨ ~~"
+    },
+    {
+      "normalized": "11/p3",
+      "value": "11/p૩ ~~ ",
+      "display": "11/p૩ ~~"
+    },
+    {
+      "normalized": "11/p4",
+      "value": "11/p૪ ~~ ",
+      "display": "11/p૪ ~~"
+    },
+    {
+      "normalized": "12",
+      "value": "12 ~~ ",
+      "display": "12 ~~"
+    },
+    {
+      "normalized": "13",
+      "value": "13 ~~ ",
+      "display": "13 ~~"
+    },
+    {
+      "normalized": "14/1",
+      "value": "14/૧ ~~ ",
+      "display": "14/૧ ~~"
+    },
+    {
+      "normalized": "14/2/1",
+      "value": "14/૨/૧ ~~ ",
+      "display": "14/૨/૧ ~~"
+    },
+    {
+      "normalized": "14/2/2",
+      "value": "14/૨/૨ ~~ ",
+      "display": "14/૨/૨ ~~"
+    },
+    {
+      "normalized": "14/2/3",
+      "value": "14/૨/૩ ~~ ",
+      "display": "14/૨/૩ ~~"
+    },
+    {
+      "normalized": "14/3",
+      "value": "14/૩ ~~ ",
+      "display": "14/૩ ~~"
+    },
+    {
+      "normalized": "15/1",
+      "value": "15/૧ ~~ ",
+      "display": "15/૧ ~~"
+    },
+    {
+      "normalized": "15/2",
+      "value": "15/૨ ~~ ",
+      "display": "15/૨ ~~"
+    },
+    {
+      "normalized": "16",
+      "value": "16 ~~ ",
+      "display": "16 ~~"
+    },
+    {
+      "normalized": "16/અ",
+      "value": "16/અ ~~ ",
+      "display": "16/અ ~~"
+    },
+    {
+      "normalized": "17/1",
+      "value": "17/૧ ~~ ",
+      "display": "17/૧ ~~"
+    },
+    {
+      "normalized": "17/2",
+      "value": "17/૨ ~~ ",
+      "display": "17/૨ ~~"
+    },
+    {
+      "normalized": "18/1",
+      "value": "18/૧ ~~ ",
+      "display": "18/૧ ~~"
+    },
+    {
+      "normalized": "18/1/1",
+      "value": "18/૧/૧ ~~ ",
+      "display": "18/૧/૧ ~~"
+    },
+    {
+      "normalized": "18/1અ",
+      "value": "18/૧અ ~~ ",
+      "display": "18/૧અ ~~"
+    },
+    {
+      "normalized": "18/1બ",
+      "value": "18/૧બ ~~ ",
+      "display": "18/૧બ ~~"
+    },
+    {
+      "normalized": "18/2",
+      "value": "18/૨ ~~ ",
+      "display": "18/૨ ~~"
+    },
+    {
+      "normalized": "19",
+      "value": "19 ~~ ",
+      "display": "19 ~~"
+    },
+    {
+      "normalized": "20/1",
+      "value": "20/૧ ~~ ",
+      "display": "20/૧ ~~"
+    },
+    {
+      "normalized": "20/2",
+      "value": "20/૨ ~~ ",
+      "display": "20/૨ ~~"
+    },
+    {
+      "normalized": "21/1",
+      "value": "21/૧ ~~ ",
+      "display": "21/૧ ~~"
+    },
+    {
+      "normalized": "21/2",
+      "value": "21/૨ ~~ ",
+      "display": "21/૨ ~~"
+    },
+    {
+      "normalized": "22/1",
+      "value": "22/૧ ~~ ",
+      "display": "22/૧ ~~"
+    },
+    {
+      "normalized": "22/2",
+      "value": "22/૨ ~~ ",
+      "display": "22/૨ ~~"
+    },
+    {
+      "normalized": "23",
+      "value": "23 ~~ ",
+      "display": "23 ~~"
+    },
+    {
+      "normalized": "24/1",
+      "value": "24/૧ ~~ ",
+      "display": "24/૧ ~~"
+    },
+    {
+      "normalized": "24/2",
+      "value": "24/૨ ~~ ",
+      "display": "24/૨ ~~"
+    },
+    {
+      "normalized": "24/3",
+      "value": "24/૩ ~~ ",
+      "display": "24/૩ ~~"
+    },
+    {
+      "normalized": "25",
+      "value": "25 ~~ ",
+      "display": "25 ~~"
+    },
+    {
+      "normalized": "26/p1",
+      "value": "26/p૧ ~~ ",
+      "display": "26/p૧ ~~"
+    },
+    {
+      "normalized": "26/p2",
+      "value": "26/p૨ ~~ ",
+      "display": "26/p૨ ~~"
+    },
+    {
+      "normalized": "27",
+      "value": "27 ~~ ",
+      "display": "27 ~~"
+    },
+    {
+      "normalized": "28",
+      "value": "28 ~~ ",
+      "display": "28 ~~"
+    },
+    {
+      "normalized": "29/1/p",
+      "value": "29/૧/p ~~ ",
+      "display": "29/૧/p ~~"
+    },
+    {
+      "normalized": "29/2",
+      "value": "29/૨ ~~ ",
+      "display": "29/૨ ~~"
+    },
+    {
+      "normalized": "29/3/p",
+      "value": "29/૩/p ~~ ",
+      "display": "29/૩/p ~~"
+    },
+    {
+      "normalized": "29/4",
+      "value": "29/૪ ~~ ",
+      "display": "29/૪ ~~"
+    },
+    {
+      "normalized": "29/6",
+      "value": "29/૬ ~~ ",
+      "display": "29/૬ ~~"
+    },
+    {
+      "normalized": "29/7",
+      "value": "29/૭ ~~ ",
+      "display": "29/૭ ~~"
+    },
+    {
+      "normalized": "29/p",
+      "value": "29/પ ~~ ",
+      "display": "29/પ ~~"
+    },
+    {
+      "normalized": "30/1",
+      "value": "30/૧ ~~ ",
+      "display": "30/૧ ~~"
+    },
+    {
+      "normalized": "30/2",
+      "value": "30/૨ ~~ ",
+      "display": "30/૨ ~~"
+    },
+    {
+      "normalized": "31",
+      "value": "31 ~~ ",
+      "display": "31 ~~"
+    },
+    {
+      "normalized": "32/1",
+      "value": "32/૧ ~~ ",
+      "display": "32/૧ ~~"
+    },
+    {
+      "normalized": "32/2",
+      "value": "32/૨ ~~ ",
+      "display": "32/૨ ~~"
+    },
+    {
+      "normalized": "32/3",
+      "value": "32/૩ ~~ ",
+      "display": "32/૩ ~~"
+    },
+    {
+      "normalized": "32/4",
+      "value": "32/૪ ~~ ",
+      "display": "32/૪ ~~"
+    },
+    {
+      "normalized": "32/p",
+      "value": "32/પ ~~ ",
+      "display": "32/પ ~~"
+    },
+    {
+      "normalized": "33",
+      "value": "33 ~~ ",
+      "display": "33 ~~"
+    },
+    {
+      "normalized": "34/1",
+      "value": "34/૧ ~~ ",
+      "display": "34/૧ ~~"
+    },
+    {
+      "normalized": "34/2",
+      "value": "34/૨ ~~ ",
+      "display": "34/૨ ~~"
+    },
+    {
+      "normalized": "34/3",
+      "value": "34/૩ ~~ ",
+      "display": "34/૩ ~~"
+    },
+    {
+      "normalized": "34/4",
+      "value": "34/૪ ~~ ",
+      "display": "34/૪ ~~"
+    },
+    {
+      "normalized": "35/1",
+      "value": "35/૧ ~~ ",
+      "display": "35/૧ ~~"
+    },
+    {
+      "normalized": "35/2",
+      "value": "35/૨ ~~ ",
+      "display": "35/૨ ~~"
+    },
+    {
+      "normalized": "36",
+      "value": "36 ~~ ",
+      "display": "36 ~~"
+    },
+    {
+      "normalized": "36/p1",
+      "value": "36/p૧ ~~ ",
+      "display": "36/p૧ ~~"
+    },
+    {
+      "normalized": "37/p",
+      "value": "37/p ~~ ",
+      "display": "37/p ~~"
+    },
+    {
+      "normalized": "38",
+      "value": "38 ~~ ",
+      "display": "38 ~~"
+    },
+    {
+      "normalized": "39",
+      "value": "39 ~~ ",
+      "display": "39 ~~"
+    },
+    {
+      "normalized": "40/1/અ",
+      "value": "40/૧/અ ~~ ",
+      "display": "40/૧/અ ~~"
+    },
+    {
+      "normalized": "40/1/ક",
+      "value": "40/૧/ક ~~ ",
+      "display": "40/૧/ક ~~"
+    },
+    {
+      "normalized": "40/1/ફ",
+      "value": "40/૧/ફ ~~ ",
+      "display": "40/૧/ફ ~~"
+    },
+    {
+      "normalized": "40/1/બ",
+      "value": "40/૧/બ ~~ ",
+      "display": "40/૧/બ ~~"
+    },
+    {
+      "normalized": "40/1/હ",
+      "value": "40/૧/હ ~~ ",
+      "display": "40/૧/હ ~~"
+    },
+    {
+      "normalized": "40/1ઈ",
+      "value": "40/૧ઈ ~~ ",
+      "display": "40/૧ઈ ~~"
+    },
+    {
+      "normalized": "40/1ગ",
+      "value": "40/૧ગ ~~ ",
+      "display": "40/૧ગ ~~"
+    },
+    {
+      "normalized": "40/1ડ",
+      "value": "40/૧ડ ~~ ",
+      "display": "40/૧ડ ~~"
+    },
+    {
+      "normalized": "40/2",
+      "value": "40/૨ ~~ ",
+      "display": "40/૨ ~~"
+    },
+    {
+      "normalized": "40/3",
+      "value": "40/૩ ~~ ",
+      "display": "40/૩ ~~"
+    },
+    {
+      "normalized": "41",
+      "value": "41 ~~ ",
+      "display": "41 ~~"
+    },
+    {
+      "normalized": "42/1/ક",
+      "value": "42/૧/ક ~~ ",
+      "display": "42/૧/ક ~~"
+    },
+    {
+      "normalized": "42/1/ગ",
+      "value": "42/૧/ગ ~~ ",
+      "display": "42/૧/ગ ~~"
+    },
+    {
+      "normalized": "42/1/ડ",
+      "value": "42/૧/ડ ~~ ",
+      "display": "42/૧/ડ ~~"
+    },
+    {
+      "normalized": "42/1/ફ",
+      "value": "42/૧/ફ ~~ ",
+      "display": "42/૧/ફ ~~"
+    },
+    {
+      "normalized": "42/1અ",
+      "value": "42/૧અ ~~ ",
+      "display": "42/૧અ ~~"
+    },
+    {
+      "normalized": "42/1બ",
+      "value": "42/૧બ ~~ ",
+      "display": "42/૧બ ~~"
+    },
+    {
+      "normalized": "42/2",
+      "value": "42/૨ ~~ ",
+      "display": "42/૨ ~~"
+    },
+    {
+      "normalized": "43",
+      "value": "43 ~~ ",
+      "display": "43 ~~"
+    },
+    {
+      "normalized": "44/1",
+      "value": "44/૧ ~~ ",
+      "display": "44/૧ ~~"
+    },
+    {
+      "normalized": "44/2",
+      "value": "44/૨ ~~ ",
+      "display": "44/૨ ~~"
+    },
+    {
+      "normalized": "45",
+      "value": "45 ~~ ",
+      "display": "45 ~~"
+    },
+    {
+      "normalized": "46",
+      "value": "46 ~~ ",
+      "display": "46 ~~"
+    },
+    {
+      "normalized": "47/p",
+      "value": "47/p ~~ ",
+      "display": "47/p ~~"
+    },
+    {
+      "normalized": "48/1",
+      "value": "48/૧ ~~ ",
+      "display": "48/૧ ~~"
+    },
+    {
+      "normalized": "48/2",
+      "value": "48/૨ ~~ ",
+      "display": "48/૨ ~~"
+    },
+    {
+      "normalized": "48/3",
+      "value": "48/૩ ~~ ",
+      "display": "48/૩ ~~"
+    },
+    {
+      "normalized": "48/4/p",
+      "value": "48/૪/p ~~ ",
+      "display": "48/૪/p ~~"
+    },
+    {
+      "normalized": "48/6",
+      "value": "48/૬ ~~ ",
+      "display": "48/૬ ~~"
+    },
+    {
+      "normalized": "48/pઅ",
+      "value": "48/પઅ ~~ ",
+      "display": "48/પઅ ~~"
+    },
+    {
+      "normalized": "48/pબ",
+      "value": "48/પબ ~~ ",
+      "display": "48/પબ ~~"
+    },
+    {
+      "normalized": "49",
+      "value": "49 ~~ ",
+      "display": "49 ~~"
+    },
+    {
+      "normalized": "50/1",
+      "value": "50/૧ ~~ ",
+      "display": "50/૧ ~~"
+    },
+    {
+      "normalized": "50/2",
+      "value": "50/૨ ~~ ",
+      "display": "50/૨ ~~"
+    },
+    {
+      "normalized": "51/p",
+      "value": "51/p ~~ ",
+      "display": "51/p ~~"
+    },
+    {
+      "normalized": "52",
+      "value": "52 ~~ ",
+      "display": "52 ~~"
+    },
+    {
+      "normalized": "52અ",
+      "value": "52અ ~~ ",
+      "display": "52અ ~~"
+    },
+    {
+      "normalized": "53/1",
+      "value": "53/૧ ~~ ",
+      "display": "53/૧ ~~"
+    },
+    {
+      "normalized": "53/2",
+      "value": "53/૨ ~~ ",
+      "display": "53/૨ ~~"
+    },
+    {
+      "normalized": "53/3",
+      "value": "53/૩ ~~ ",
+      "display": "53/૩ ~~"
+    },
+    {
+      "normalized": "54/1",
+      "value": "54/૧ ~~ ",
+      "display": "54/૧ ~~"
+    },
+    {
+      "normalized": "54/2/p",
+      "value": "54/૨/p ~~ ",
+      "display": "54/૨/p ~~"
+    },
+    {
+      "normalized": "55/1",
+      "value": "55/૧ ~~ ",
+      "display": "55/૧ ~~"
+    },
+    {
+      "normalized": "55/2",
+      "value": "55/૨ ~~ ",
+      "display": "55/૨ ~~"
+    },
+    {
+      "normalized": "56",
+      "value": "56 ~~ ",
+      "display": "56 ~~"
+    },
+    {
+      "normalized": "57/1",
+      "value": "57/૧ ~~ ",
+      "display": "57/૧ ~~"
+    },
+    {
+      "normalized": "57/2",
+      "value": "57/૨ ~~ ",
+      "display": "57/૨ ~~"
+    },
+    {
+      "normalized": "58/p1",
+      "value": "58/p૧ ~~ ",
+      "display": "58/p૧ ~~"
+    },
+    {
+      "normalized": "58/p2",
+      "value": "58/p૨ ~~ ",
+      "display": "58/p૨ ~~"
+    },
+    {
+      "normalized": "58/p3",
+      "value": "58/p૩ ~~ ",
+      "display": "58/p૩ ~~"
+    },
+    {
+      "normalized": "58/p4",
+      "value": "58/p૪ ~~ ",
+      "display": "58/p૪ ~~"
+    },
+    {
+      "normalized": "59",
+      "value": "59 ~~ ",
+      "display": "59 ~~"
+    },
+    {
+      "normalized": "60/1",
+      "value": "60/૧ ~~ ",
+      "display": "60/૧ ~~"
+    },
+    {
+      "normalized": "60/2",
+      "value": "60/૨ ~~ ",
+      "display": "60/૨ ~~"
+    },
+    {
+      "normalized": "61/p1",
+      "value": "61/p૧ ~~ ",
+      "display": "61/p૧ ~~"
+    },
+    {
+      "normalized": "61/p2",
+      "value": "61/p૨ ~~ ",
+      "display": "61/p૨ ~~"
+    },
+    {
+      "normalized": "62/1",
+      "value": "62/૧ ~~ ",
+      "display": "62/૧ ~~"
+    },
+    {
+      "normalized": "62/2",
+      "value": "62/૨ ~~ ",
+      "display": "62/૨ ~~"
+    },
+    {
+      "normalized": "63/p",
+      "value": "63/p ~~ ",
+      "display": "63/p ~~"
+    },
+    {
+      "normalized": "64/1",
+      "value": "64/૧ ~~ ",
+      "display": "64/૧ ~~"
+    },
+    {
+      "normalized": "64/2",
+      "value": "64/૨ ~~ ",
+      "display": "64/૨ ~~"
+    },
+    {
+      "normalized": "64/3",
+      "value": "64/૩ ~~ ",
+      "display": "64/૩ ~~"
+    },
+    {
+      "normalized": "65/1/1",
+      "value": "65/૧/૧ ~~ ",
+      "display": "65/૧/૧ ~~"
+    },
+    {
+      "normalized": "65/1/2",
+      "value": "65/૧/૨ ~~ ",
+      "display": "65/૧/૨ ~~"
+    },
+    {
+      "normalized": "65/2",
+      "value": "65/૨ ~~ ",
+      "display": "65/૨ ~~"
+    },
+    {
+      "normalized": "66/1",
+      "value": "66/૧ ~~ ",
+      "display": "66/૧ ~~"
+    },
+    {
+      "normalized": "66/2",
+      "value": "66/૨ ~~ ",
+      "display": "66/૨ ~~"
+    },
+    {
+      "normalized": "67/1",
+      "value": "67/૧ ~~ ",
+      "display": "67/૧ ~~"
+    },
+    {
+      "normalized": "67/2",
+      "value": "67/૨ ~~ ",
+      "display": "67/૨ ~~"
+    },
+    {
+      "normalized": "68/1",
+      "value": "68/૧ ~~ ",
+      "display": "68/૧ ~~"
+    },
+    {
+      "normalized": "68/2",
+      "value": "68/૨ ~~ ",
+      "display": "68/૨ ~~"
+    },
+    {
+      "normalized": "68/3",
+      "value": "68/૩ ~~ ",
+      "display": "68/૩ ~~"
+    },
+    {
+      "normalized": "68/4",
+      "value": "68/૪ ~~ ",
+      "display": "68/૪ ~~"
+    },
+    {
+      "normalized": "68/6",
+      "value": "68/૬ ~~ ",
+      "display": "68/૬ ~~"
+    },
+    {
+      "normalized": "68/7",
+      "value": "68/૭ ~~ ",
+      "display": "68/૭ ~~"
+    },
+    {
+      "normalized": "68/p",
+      "value": "68/પ ~~ ",
+      "display": "68/પ ~~"
+    },
+    {
+      "normalized": "69/p1",
+      "value": "69/p૧ ~~ ",
+      "display": "69/p૧ ~~"
+    },
+    {
+      "normalized": "69/p2",
+      "value": "69/p૨ ~~ ",
+      "display": "69/p૨ ~~"
+    },
+    {
+      "normalized": "70",
+      "value": "70 ~~ ",
+      "display": "70 ~~"
+    },
+    {
+      "normalized": "71",
+      "value": "71 ~~ ",
+      "display": "71 ~~"
+    },
+    {
+      "normalized": "72/1",
+      "value": "72/૧ ~~ ",
+      "display": "72/૧ ~~"
+    },
+    {
+      "normalized": "72/2",
+      "value": "72/૨ ~~ ",
+      "display": "72/૨ ~~"
+    },
+    {
+      "normalized": "73",
+      "value": "73 ~~ ",
+      "display": "73 ~~"
+    },
+    {
+      "normalized": "74/p1",
+      "value": "74/p૧ ~~ ",
+      "display": "74/p૧ ~~"
+    },
+    {
+      "normalized": "74/p2",
+      "value": "74/p૨ ~~ ",
+      "display": "74/p૨ ~~"
+    },
+    {
+      "normalized": "75/1",
+      "value": "75/૧ ~~ ",
+      "display": "75/૧ ~~"
+    },
+    {
+      "normalized": "75/2",
+      "value": "75/૨ ~~ ",
+      "display": "75/૨ ~~"
+    },
+    {
+      "normalized": "75/3/p1",
+      "value": "75/૩/p૧ ~~ ",
+      "display": "75/૩/p૧ ~~"
+    },
+    {
+      "normalized": "75/3p2",
+      "value": "75/૩p૨ ~~ ",
+      "display": "75/૩p૨ ~~"
+    },
+    {
+      "normalized": "75/4",
+      "value": "75/૪ ~~ ",
+      "display": "75/૪ ~~"
+    },
+    {
+      "normalized": "76",
+      "value": "76 ~~ ",
+      "display": "76 ~~"
+    },
+    {
+      "normalized": "77/1",
+      "value": "77/૧ ~~ ",
+      "display": "77/૧ ~~"
+    },
+    {
+      "normalized": "77/2",
+      "value": "77/૨ ~~ ",
+      "display": "77/૨ ~~"
+    },
+    {
+      "normalized": "78/1",
+      "value": "78/૧ ~~ ",
+      "display": "78/૧ ~~"
+    },
+    {
+      "normalized": "78/2",
+      "value": "78/૨ ~~ ",
+      "display": "78/૨ ~~"
+    },
+    {
+      "normalized": "78/3",
+      "value": "78/૩ ~~ ",
+      "display": "78/૩ ~~"
+    },
+    {
+      "normalized": "79",
+      "value": "79 ~~ ",
+      "display": "79 ~~"
+    },
+    {
+      "normalized": "80",
+      "value": "80 ~~ ",
+      "display": "80 ~~"
+    },
+    {
+      "normalized": "81",
+      "value": "81 ~~ ",
+      "display": "81 ~~"
+    },
+    {
+      "normalized": "82",
+      "value": "82 ~~ ",
+      "display": "82 ~~"
+    },
+    {
+      "normalized": "83",
+      "value": "83 ~~ ",
+      "display": "83 ~~"
+    },
+    {
+      "normalized": "84",
+      "value": "84 ~~ ",
+      "display": "84 ~~"
+    },
+    {
+      "normalized": "85",
+      "value": "85 ~~ ",
+      "display": "85 ~~"
+    },
+    {
+      "normalized": "86/1/p",
+      "value": "86/૧/p ~~ ",
+      "display": "86/૧/p ~~"
+    },
+    {
+      "normalized": "86/2",
+      "value": "86/૨ ~~ ",
+      "display": "86/૨ ~~"
+    },
+    {
+      "normalized": "86/3",
+      "value": "86/૩ ~~ ",
+      "display": "86/૩ ~~"
+    },
+    {
+      "normalized": "86/4/p",
+      "value": "86/૪/p ~~ ",
+      "display": "86/૪/p ~~"
+    },
+    {
+      "normalized": "86/p",
+      "value": "86/પ ~~ ",
+      "display": "86/પ ~~"
+    },
+    {
+      "normalized": "87/p",
+      "value": "87/p ~~ ",
+      "display": "87/p ~~"
+    },
+    {
+      "normalized": "88/1/1",
+      "value": "88/૧/૧ ~~ ",
+      "display": "88/૧/૧ ~~"
+    },
+    {
+      "normalized": "88/1/2",
+      "value": "88/૧/૨ ~~ ",
+      "display": "88/૧/૨ ~~"
+    },
+    {
+      "normalized": "88/2",
+      "value": "88/૨ ~~ ",
+      "display": "88/૨ ~~"
+    },
+    {
+      "normalized": "88/3",
+      "value": "88/૩ ~~ ",
+      "display": "88/૩ ~~"
+    },
+    {
+      "normalized": "89",
+      "value": "89 ~~ ",
+      "display": "89 ~~"
+    },
+    {
+      "normalized": "90/1",
+      "value": "90/૧ ~~ ",
+      "display": "90/૧ ~~"
+    },
+    {
+      "normalized": "90/2",
+      "value": "90/૨ ~~ ",
+      "display": "90/૨ ~~"
+    },
+    {
+      "normalized": "91/1/1",
+      "value": "91/૧/૧ ~~ ",
+      "display": "91/૧/૧ ~~"
+    },
+    {
+      "normalized": "91/1/2",
+      "value": "91/૧/૨ ~~ ",
+      "display": "91/૧/૨ ~~"
+    },
+    {
+      "normalized": "91/2",
+      "value": "91/૨ ~~ ",
+      "display": "91/૨ ~~"
+    },
+    {
+      "normalized": "92/1અ",
+      "value": "92/૧અ ~~ ",
+      "display": "92/૧અ ~~"
+    },
+    {
+      "normalized": "92/1ક",
+      "value": "92/૧ક ~~ ",
+      "display": "92/૧ક ~~"
+    },
+    {
+      "normalized": "92/2/p",
+      "value": "92/૨/p ~~ ",
+      "display": "92/૨/p ~~"
+    },
+    {
+      "normalized": "92/p",
+      "value": "92/p ~~ ",
+      "display": "92/p ~~"
+    },
+    {
+      "normalized": "93",
+      "value": "93 ~~ ",
+      "display": "93 ~~"
+    },
+    {
+      "normalized": "94/p",
+      "value": "94/p ~~ ",
+      "display": "94/p ~~"
+    },
+    {
+      "normalized": "95/p",
+      "value": "95/p ~~ ",
+      "display": "95/p ~~"
+    },
+    {
+      "normalized": "96",
+      "value": "96 ~~ ",
+      "display": "96 ~~"
+    },
+    {
+      "normalized": "97",
+      "value": "97 ~~ ",
+      "display": "97 ~~"
+    },
+    {
+      "normalized": "98/1/p",
+      "value": "98/૧/p ~~ ",
+      "display": "98/૧/p ~~"
+    },
+    {
+      "normalized": "98/2/p1",
+      "value": "98/૨/p૧ ~~ ",
+      "display": "98/૨/p૧ ~~"
+    },
+    {
+      "normalized": "98/2/p2",
+      "value": "98/૨/p૨ ~~ ",
+      "display": "98/૨/p૨ ~~"
+    },
+    {
+      "normalized": "98/2/p3",
+      "value": "98/૨/p૩ ~~ ",
+      "display": "98/૨/p૩ ~~"
+    },
+    {
+      "normalized": "98/3",
+      "value": "98/૩ ~~ ",
+      "display": "98/૩ ~~"
+    },
+    {
+      "normalized": "99",
+      "value": "99 ~~ ",
+      "display": "99 ~~"
+    },
+    {
+      "normalized": "100/1/બ",
+      "value": "100/૧/બ ~~ ",
+      "display": "100/૧/બ ~~"
+    },
+    {
+      "normalized": "100/2",
+      "value": "100/૨ ~~ ",
+      "display": "100/૨ ~~"
+    },
+    {
+      "normalized": "100/3",
+      "value": "100/૩ ~~ ",
+      "display": "100/૩ ~~"
+    },
+    {
+      "normalized": "100/4",
+      "value": "100/૪ ~~ ",
+      "display": "100/૪ ~~"
+    },
+    {
+      "normalized": "101/2અ",
+      "value": "101/૨અ ~~ ",
+      "display": "101/૨અ ~~"
+    },
+    {
+      "normalized": "101/બ/3",
+      "value": "101/બ/૩ ~~ ",
+      "display": "101/બ/૩ ~~"
+    },
+    {
+      "normalized": "101/બ/4/p",
+      "value": "101/બ/૪/p ~~ ",
+      "display": "101/બ/૪/p ~~"
+    },
+    {
+      "normalized": "102/1/p1",
+      "value": "102/૧/p૧ ~~ ",
+      "display": "102/૧/p૧ ~~"
+    },
+    {
+      "normalized": "102/1/p2",
+      "value": "102/૧/p૨ ~~ ",
+      "display": "102/૧/p૨ ~~"
+    },
+    {
+      "normalized": "102/2/1અ",
+      "value": "102/૨/૧અ ~~ ",
+      "display": "102/૨/૧અ ~~"
+    },
+    {
+      "normalized": "102/2/1બ",
+      "value": "102/૨/૧બ ~~ ",
+      "display": "102/૨/૧બ ~~"
+    },
+    {
+      "normalized": "102/2/pઅ",
+      "value": "102/૨/pઅ ~~ ",
+      "display": "102/૨/pઅ ~~"
+    },
+    {
+      "normalized": "102/2/pબ",
+      "value": "102/૨/pબ ~~ ",
+      "display": "102/૨/pબ ~~"
+    },
+    {
+      "normalized": "103/1/p",
+      "value": "103/૧/p ~~ ",
+      "display": "103/૧/p ~~"
+    },
+    {
+      "normalized": "103/2/p1/p",
+      "value": "103/૨/p૧/p ~~ ",
+      "display": "103/૨/p૧/p ~~"
+    },
+    {
+      "normalized": "103/2/p2",
+      "value": "103/૨/p૨ ~~ ",
+      "display": "103/૨/p૨ ~~"
+    },
+    {
+      "normalized": "104",
+      "value": "104 ~~ ",
+      "display": "104 ~~"
+    },
+    {
+      "normalized": "105",
+      "value": "105 ~~ ",
+      "display": "105 ~~"
+    },
+    {
+      "normalized": "106/1",
+      "value": "106/૧ ~~ ",
+      "display": "106/૧ ~~"
+    },
+    {
+      "normalized": "106/2",
+      "value": "106/૨ ~~ ",
+      "display": "106/૨ ~~"
+    },
+    {
+      "normalized": "106/3",
+      "value": "106/૩ ~~ ",
+      "display": "106/૩ ~~"
+    },
+    {
+      "normalized": "107/p1",
+      "value": "107/p૧ ~~ ",
+      "display": "107/p૧ ~~"
+    },
+    {
+      "normalized": "107/p2",
+      "value": "107/p૨ ~~ ",
+      "display": "107/p૨ ~~"
+    },
+    {
+      "normalized": "107/p3",
+      "value": "107/p૩ ~~ ",
+      "display": "107/p૩ ~~"
+    },
+    {
+      "normalized": "107/p4",
+      "value": "107/p૪ ~~ ",
+      "display": "107/p૪ ~~"
+    },
+    {
+      "normalized": "107/p6",
+      "value": "107/p૬ ~~ ",
+      "display": "107/p૬ ~~"
+    },
+    {
+      "normalized": "107/p7",
+      "value": "107/p૭ ~~ ",
+      "display": "107/p૭ ~~"
+    },
+    {
+      "normalized": "107/pp",
+      "value": "107/pપ ~~ ",
+      "display": "107/pપ ~~"
+    },
+    {
+      "normalized": "108/1/p1",
+      "value": "108/૧/p૧ ~~ ",
+      "display": "108/૧/p૧ ~~"
+    },
+    {
+      "normalized": "108/1/p2",
+      "value": "108/૧/p૨ ~~ ",
+      "display": "108/૧/p૨ ~~"
+    },
+    {
+      "normalized": "108/2",
+      "value": "108/૨ ~~ ",
+      "display": "108/૨ ~~"
+    },
+    {
+      "normalized": "109",
+      "value": "109 ~~ ",
+      "display": "109 ~~"
+    },
+    {
+      "normalized": "110/1",
+      "value": "110/૧ ~~ ",
+      "display": "110/૧ ~~"
+    },
+    {
+      "normalized": "110/2",
+      "value": "110/૨ ~~ ",
+      "display": "110/૨ ~~"
+    },
+    {
+      "normalized": "110/2p",
+      "value": "110/૨p ~~ ",
+      "display": "110/૨p ~~"
+    },
+    {
+      "normalized": "111/1",
+      "value": "111/૧ ~~ ",
+      "display": "111/૧ ~~"
+    },
+    {
+      "normalized": "111/2",
+      "value": "111/૨ ~~ ",
+      "display": "111/૨ ~~"
+    },
+    {
+      "normalized": "112/1અ",
+      "value": "112/૧અ ~~ ",
+      "display": "112/૧અ ~~"
+    },
+    {
+      "normalized": "112/1બ",
+      "value": "112/૧બ ~~ ",
+      "display": "112/૧બ ~~"
+    },
+    {
+      "normalized": "112/2અ/p",
+      "value": "112/૨અ/p ~~ ",
+      "display": "112/૨અ/p ~~"
+    },
+    {
+      "normalized": "112/બ",
+      "value": "112/બ ~~ ",
+      "display": "112/બ ~~"
+    },
+    {
+      "normalized": "113/3ક",
+      "value": "113/૩ક ~~ ",
+      "display": "113/૩ક ~~"
+    },
+    {
+      "normalized": "113/અ/1/1",
+      "value": "113/અ/૧/૧ ~~ ",
+      "display": "113/અ/૧/૧ ~~"
+    },
+    {
+      "normalized": "113/અ/1/2",
+      "value": "113/અ/૧/૨ ~~ ",
+      "display": "113/અ/૧/૨ ~~"
+    },
+    {
+      "normalized": "113/ક/4/p",
+      "value": "113/ક/૪/p ~~ ",
+      "display": "113/ક/૪/p ~~"
+    },
+    {
+      "normalized": "113/બ",
+      "value": "113/બ ~~ ",
+      "display": "113/બ ~~"
+    },
+    {
+      "normalized": "114/1",
+      "value": "114/૧ ~~ ",
+      "display": "114/૧ ~~"
+    },
+    {
+      "normalized": "114/2",
+      "value": "114/૨ ~~ ",
+      "display": "114/૨ ~~"
+    },
+    {
+      "normalized": "114/3",
+      "value": "114/૩ ~~ ",
+      "display": "114/૩ ~~"
+    },
+    {
+      "normalized": "115/1",
+      "value": "115/૧ ~~ ",
+      "display": "115/૧ ~~"
+    },
+    {
+      "normalized": "115/2",
+      "value": "115/૨ ~~ ",
+      "display": "115/૨ ~~"
+    },
+    {
+      "normalized": "115/3",
+      "value": "115/૩ ~~ ",
+      "display": "115/૩ ~~"
+    },
+    {
+      "normalized": "116",
+      "value": "116 ~~ ",
+      "display": "116 ~~"
+    },
+    {
+      "normalized": "117/p",
+      "value": "117/p ~~ ",
+      "display": "117/p ~~"
+    },
+    {
+      "normalized": "118/p1",
+      "value": "118/p૧ ~~ ",
+      "display": "118/p૧ ~~"
+    },
+    {
+      "normalized": "118/p2",
+      "value": "118/p૨ ~~ ",
+      "display": "118/p૨ ~~"
+    },
+    {
+      "normalized": "119/1/p",
+      "value": "119/૧/p ~~ ",
+      "display": "119/૧/p ~~"
+    },
+    {
+      "normalized": "119/2/p",
+      "value": "119/૨/p ~~ ",
+      "display": "119/૨/p ~~"
+    },
+    {
+      "normalized": "120/1",
+      "value": "120/૧ ~~ ",
+      "display": "120/૧ ~~"
+    },
+    {
+      "normalized": "120/2/p",
+      "value": "120/૨/p ~~ ",
+      "display": "120/૨/p ~~"
+    },
+    {
+      "normalized": "121",
+      "value": "121 ~~ ",
+      "display": "121 ~~"
+    },
+    {
+      "normalized": "121/p1",
+      "value": "121/p૧ ~~ ",
+      "display": "121/p૧ ~~"
+    },
+    {
+      "normalized": "122/1",
+      "value": "122/૧ ~~ ",
+      "display": "122/૧ ~~"
+    },
+    {
+      "normalized": "122/2",
+      "value": "122/૨ ~~ ",
+      "display": "122/૨ ~~"
+    },
+    {
+      "normalized": "123/1",
+      "value": "123/૧ ~~ ",
+      "display": "123/૧ ~~"
+    },
+    {
+      "normalized": "123/2",
+      "value": "123/૨ ~~ ",
+      "display": "123/૨ ~~"
+    },
+    {
+      "normalized": "124",
+      "value": "124 ~~ ",
+      "display": "124 ~~"
+    },
+    {
+      "normalized": "125/1/p",
+      "value": "125/૧/p ~~ ",
+      "display": "125/૧/p ~~"
+    },
+    {
+      "normalized": "125/2",
+      "value": "125/૨ ~~ ",
+      "display": "125/૨ ~~"
+    },
+    {
+      "normalized": "125/3",
+      "value": "125/૩ ~~ ",
+      "display": "125/૩ ~~"
+    },
+    {
+      "normalized": "126/1",
+      "value": "126/૧ ~~ ",
+      "display": "126/૧ ~~"
+    },
+    {
+      "normalized": "126/2",
+      "value": "126/૨ ~~ ",
+      "display": "126/૨ ~~"
+    },
+    {
+      "normalized": "126/3",
+      "value": "126/૩ ~~ ",
+      "display": "126/૩ ~~"
+    },
+    {
+      "normalized": "126/4",
+      "value": "126/૪ ~~ ",
+      "display": "126/૪ ~~"
+    },
+    {
+      "normalized": "126/p",
+      "value": "126/પ ~~ ",
+      "display": "126/પ ~~"
+    },
+    {
+      "normalized": "127",
+      "value": "127 ~~ ",
+      "display": "127 ~~"
+    },
+    {
+      "normalized": "128/1",
+      "value": "128/૧ ~~ ",
+      "display": "128/૧ ~~"
+    },
+    {
+      "normalized": "128/2",
+      "value": "128/૨ ~~ ",
+      "display": "128/૨ ~~"
+    },
+    {
+      "normalized": "128/3",
+      "value": "128/૩ ~~ ",
+      "display": "128/૩ ~~"
+    },
+    {
+      "normalized": "128/4",
+      "value": "128/૪ ~~ ",
+      "display": "128/૪ ~~"
+    },
+    {
+      "normalized": "129/1",
+      "value": "129/૧ ~~ ",
+      "display": "129/૧ ~~"
+    },
+    {
+      "normalized": "129/2",
+      "value": "129/૨ ~~ ",
+      "display": "129/૨ ~~"
+    },
+    {
+      "normalized": "129/3",
+      "value": "129/૩ ~~ ",
+      "display": "129/૩ ~~"
+    },
+    {
+      "normalized": "129/4",
+      "value": "129/૪ ~~ ",
+      "display": "129/૪ ~~"
+    },
+    {
+      "normalized": "129/p",
+      "value": "129/પ ~~ ",
+      "display": "129/પ ~~"
+    },
+    {
+      "normalized": "130",
+      "value": "130 ~~ ",
+      "display": "130 ~~"
+    },
+    {
+      "normalized": "131/1અ",
+      "value": "131/૧અ ~~ ",
+      "display": "131/૧અ ~~"
+    },
+    {
+      "normalized": "131/1બ",
+      "value": "131/૧બ ~~ ",
+      "display": "131/૧બ ~~"
+    },
+    {
+      "normalized": "131/2",
+      "value": "131/૨ ~~ ",
+      "display": "131/૨ ~~"
+    },
+    {
+      "normalized": "131/3/p",
+      "value": "131/૩/p ~~ ",
+      "display": "131/૩/p ~~"
+    },
+    {
+      "normalized": "131/4/p1",
+      "value": "131/૪/p૧ ~~ ",
+      "display": "131/૪/p૧ ~~"
+    },
+    {
+      "normalized": "131/4/p2",
+      "value": "131/૪/p૨ ~~ ",
+      "display": "131/૪/p૨ ~~"
+    },
+    {
+      "normalized": "131/4/p3",
+      "value": "131/૪/p૩ ~~ ",
+      "display": "131/૪/p૩ ~~"
+    },
+    {
+      "normalized": "132/1",
+      "value": "132/૧ ~~ ",
+      "display": "132/૧ ~~"
+    },
+    {
+      "normalized": "132/2",
+      "value": "132/૨ ~~ ",
+      "display": "132/૨ ~~"
+    },
+    {
+      "normalized": "133/1",
+      "value": "133/૧ ~~ ",
+      "display": "133/૧ ~~"
+    },
+    {
+      "normalized": "133/2",
+      "value": "133/૨ ~~ ",
+      "display": "133/૨ ~~"
+    },
+    {
+      "normalized": "133/3",
+      "value": "133/૩ ~~ ",
+      "display": "133/૩ ~~"
+    },
+    {
+      "normalized": "133/4",
+      "value": "133/૪ ~~ ",
+      "display": "133/૪ ~~"
+    },
+    {
+      "normalized": "134/1/p",
+      "value": "134/૧/p ~~ ",
+      "display": "134/૧/p ~~"
+    },
+    {
+      "normalized": "134/2",
+      "value": "134/૨ ~~ ",
+      "display": "134/૨ ~~"
+    },
+    {
+      "normalized": "134/3",
+      "value": "134/૩ ~~ ",
+      "display": "134/૩ ~~"
+    },
+    {
+      "normalized": "135/1",
+      "value": "135/૧ ~~ ",
+      "display": "135/૧ ~~"
+    },
+    {
+      "normalized": "135/2",
+      "value": "135/૨ ~~ ",
+      "display": "135/૨ ~~"
+    },
+    {
+      "normalized": "136/p",
+      "value": "136/p ~~ ",
+      "display": "136/p ~~"
+    },
+    {
+      "normalized": "137",
+      "value": "137 ~~ ",
+      "display": "137 ~~"
+    },
+    {
+      "normalized": "138",
+      "value": "138 ~~ ",
+      "display": "138 ~~"
+    },
+    {
+      "normalized": "139",
+      "value": "139 ~~ ",
+      "display": "139 ~~"
+    },
+    {
+      "normalized": "140/1",
+      "value": "140/૧ ~~ ",
+      "display": "140/૧ ~~"
+    },
+    {
+      "normalized": "140/2/1",
+      "value": "140/૨/૧ ~~ ",
+      "display": "140/૨/૧ ~~"
+    },
+    {
+      "normalized": "140/2/2",
+      "value": "140/૨/૨ ~~ ",
+      "display": "140/૨/૨ ~~"
+    },
+    {
+      "normalized": "140/3",
+      "value": "140/૩ ~~ ",
+      "display": "140/૩ ~~"
+    },
+    {
+      "normalized": "141/1+2",
+      "value": "141/૧+૨ ~~ ",
+      "display": "141/૧+૨ ~~"
+    },
+    {
+      "normalized": "142/1",
+      "value": "142/૧ ~~ ",
+      "display": "142/૧ ~~"
+    },
+    {
+      "normalized": "142/2",
+      "value": "142/૨ ~~ ",
+      "display": "142/૨ ~~"
+    },
+    {
+      "normalized": "143/1",
+      "value": "143/૧ ~~ ",
+      "display": "143/૧ ~~"
+    },
+    {
+      "normalized": "143/2",
+      "value": "143/૨ ~~ ",
+      "display": "143/૨ ~~"
+    },
+    {
+      "normalized": "143/3/p1",
+      "value": "143/૩/p૧ ~~ ",
+      "display": "143/૩/p૧ ~~"
+    },
+    {
+      "normalized": "143/3/p2",
+      "value": "143/૩/p૨ ~~ ",
+      "display": "143/૩/p૨ ~~"
+    },
+    {
+      "normalized": "144/1",
+      "value": "144/૧ ~~ ",
+      "display": "144/૧ ~~"
+    },
+    {
+      "normalized": "144/2",
+      "value": "144/૨ ~~ ",
+      "display": "144/૨ ~~"
+    },
+    {
+      "normalized": "145/1",
+      "value": "145/૧ ~~ ",
+      "display": "145/૧ ~~"
+    },
+    {
+      "normalized": "145/2/1",
+      "value": "145/૨/૧ ~~ ",
+      "display": "145/૨/૧ ~~"
+    },
+    {
+      "normalized": "145/2/2",
+      "value": "145/૨/૨ ~~ ",
+      "display": "145/૨/૨ ~~"
+    },
+    {
+      "normalized": "145/3",
+      "value": "145/૩ ~~ ",
+      "display": "145/૩ ~~"
+    },
+    {
+      "normalized": "146",
+      "value": "146 ~~ ",
+      "display": "146 ~~"
+    },
+    {
+      "normalized": "147/1",
+      "value": "147/૧ ~~ ",
+      "display": "147/૧ ~~"
+    },
+    {
+      "normalized": "147/2",
+      "value": "147/૨ ~~ ",
+      "display": "147/૨ ~~"
+    },
+    {
+      "normalized": "148/1",
+      "value": "148/૧ ~~ ",
+      "display": "148/૧ ~~"
+    },
+    {
+      "normalized": "148/2",
+      "value": "148/૨ ~~ ",
+      "display": "148/૨ ~~"
+    },
+    {
+      "normalized": "148/2/p",
+      "value": "148/૨/p ~~ ",
+      "display": "148/૨/p ~~"
+    },
+    {
+      "normalized": "149/1",
+      "value": "149/૧ ~~ ",
+      "display": "149/૧ ~~"
+    },
+    {
+      "normalized": "149/2",
+      "value": "149/૨ ~~ ",
+      "display": "149/૨ ~~"
+    },
+    {
+      "normalized": "150/1",
+      "value": "150/૧ ~~ ",
+      "display": "150/૧ ~~"
+    },
+    {
+      "normalized": "150/2",
+      "value": "150/૨ ~~ ",
+      "display": "150/૨ ~~"
+    },
+    {
+      "normalized": "151/1",
+      "value": "151/૧ ~~ ",
+      "display": "151/૧ ~~"
+    },
+    {
+      "normalized": "151/2",
+      "value": "151/૨ ~~ ",
+      "display": "151/૨ ~~"
+    },
+    {
+      "normalized": "152",
+      "value": "152 ~~ ",
+      "display": "152 ~~"
+    },
+    {
+      "normalized": "153/1",
+      "value": "153/૧ ~~ ",
+      "display": "153/૧ ~~"
+    },
+    {
+      "normalized": "153/2",
+      "value": "153/૨ ~~ ",
+      "display": "153/૨ ~~"
+    },
+    {
+      "normalized": "153/3",
+      "value": "153/૩ ~~ ",
+      "display": "153/૩ ~~"
+    },
+    {
+      "normalized": "154",
+      "value": "154 ~~ ",
+      "display": "154 ~~"
+    },
+    {
+      "normalized": "154/p",
+      "value": "154/p ~~ ",
+      "display": "154/p ~~"
+    },
+    {
+      "normalized": "155/1અ",
+      "value": "155/૧અ ~~ ",
+      "display": "155/૧અ ~~"
+    },
+    {
+      "normalized": "155/1બ",
+      "value": "155/૧બ ~~ ",
+      "display": "155/૧બ ~~"
+    },
+    {
+      "normalized": "155/2અ",
+      "value": "155/૨અ ~~ ",
+      "display": "155/૨અ ~~"
+    },
+    {
+      "normalized": "155/3",
+      "value": "155/૩ ~~ ",
+      "display": "155/૩ ~~"
+    },
+    {
+      "normalized": "155/4",
+      "value": "155/૪ ~~ ",
+      "display": "155/૪ ~~"
+    },
+    {
+      "normalized": "156/1",
+      "value": "156/૧ ~~ ",
+      "display": "156/૧ ~~"
+    },
+    {
+      "normalized": "156/2",
+      "value": "156/૨ ~~ ",
+      "display": "156/૨ ~~"
+    },
+    {
+      "normalized": "157/1",
+      "value": "157/૧ ~~ ",
+      "display": "157/૧ ~~"
+    },
+    {
+      "normalized": "157/2/p1",
+      "value": "157/૨/p૧ ~~ ",
+      "display": "157/૨/p૧ ~~"
+    },
+    {
+      "normalized": "157/2/p2",
+      "value": "157/૨/p૨ ~~ ",
+      "display": "157/૨/p૨ ~~"
+    },
+    {
+      "normalized": "158",
+      "value": "158 ~~ ",
+      "display": "158 ~~"
+    },
+    {
+      "normalized": "159",
+      "value": "159 ~~ ",
+      "display": "159 ~~"
+    },
+    {
+      "normalized": "160/1",
+      "value": "160/૧ ~~ ",
+      "display": "160/૧ ~~"
+    },
+    {
+      "normalized": "160/2",
+      "value": "160/૨ ~~ ",
+      "display": "160/૨ ~~"
+    },
+    {
+      "normalized": "160/3/p1",
+      "value": "160/૩/p૧ ~~ ",
+      "display": "160/૩/p૧ ~~"
+    },
+    {
+      "normalized": "160/3/p2",
+      "value": "160/૩/p૨ ~~ ",
+      "display": "160/૩/p૨ ~~"
+    },
+    {
+      "normalized": "161/1",
+      "value": "161/૧ ~~ ",
+      "display": "161/૧ ~~"
+    },
+    {
+      "normalized": "161/2",
+      "value": "161/૨ ~~ ",
+      "display": "161/૨ ~~"
+    },
+    {
+      "normalized": "162/1",
+      "value": "162/૧ ~~ ",
+      "display": "162/૧ ~~"
+    },
+    {
+      "normalized": "162/2",
+      "value": "162/૨ ~~ ",
+      "display": "162/૨ ~~"
+    },
+    {
+      "normalized": "162/3",
+      "value": "162/૩ ~~ ",
+      "display": "162/૩ ~~"
+    },
+    {
+      "normalized": "162/4",
+      "value": "162/૪ ~~ ",
+      "display": "162/૪ ~~"
+    },
+    {
+      "normalized": "162/6",
+      "value": "162/૬ ~~ ",
+      "display": "162/૬ ~~"
+    },
+    {
+      "normalized": "162/p",
+      "value": "162/પ ~~ ",
+      "display": "162/પ ~~"
+    },
+    {
+      "normalized": "163/p2",
+      "value": "163/p૨ ~~ ",
+      "display": "163/p૨ ~~"
+    },
+    {
+      "normalized": "163p1",
+      "value": "163p૧ ~~ ",
+      "display": "163p૧ ~~"
+    },
+    {
+      "normalized": "164",
+      "value": "164 ~~ ",
+      "display": "164 ~~"
+    },
+    {
+      "normalized": "165/p",
+      "value": "165/p ~~ ",
+      "display": "165/p ~~"
+    },
+    {
+      "normalized": "166/1",
+      "value": "166/૧ ~~ ",
+      "display": "166/૧ ~~"
+    },
+    {
+      "normalized": "166/2",
+      "value": "166/૨ ~~ ",
+      "display": "166/૨ ~~"
+    },
+    {
+      "normalized": "166/3",
+      "value": "166/૩ ~~ ",
+      "display": "166/૩ ~~"
+    },
+    {
+      "normalized": "167/1",
+      "value": "167/૧ ~~ ",
+      "display": "167/૧ ~~"
+    },
+    {
+      "normalized": "167/2",
+      "value": "167/૨ ~~ ",
+      "display": "167/૨ ~~"
+    },
+    {
+      "normalized": "168",
+      "value": "168 ~~ ",
+      "display": "168 ~~"
+    },
+    {
+      "normalized": "169",
+      "value": "169 ~~ ",
+      "display": "169 ~~"
+    },
+    {
+      "normalized": "170",
+      "value": "170 ~~ ",
+      "display": "170 ~~"
+    },
+    {
+      "normalized": "171/1",
+      "value": "171/૧ ~~ ",
+      "display": "171/૧ ~~"
+    },
+    {
+      "normalized": "171/2/p1",
+      "value": "171/૨/p૧ ~~ ",
+      "display": "171/૨/p૧ ~~"
+    },
+    {
+      "normalized": "171/2/p2",
+      "value": "171/૨/p૨ ~~ ",
+      "display": "171/૨/p૨ ~~"
+    },
+    {
+      "normalized": "172/1",
+      "value": "172/૧ ~~ ",
+      "display": "172/૧ ~~"
+    },
+    {
+      "normalized": "172/2",
+      "value": "172/૨ ~~ ",
+      "display": "172/૨ ~~"
+    },
+    {
+      "normalized": "173",
+      "value": "173 ~~ ",
+      "display": "173 ~~"
+    },
+    {
+      "normalized": "174",
+      "value": "174 ~~ ",
+      "display": "174 ~~"
+    },
+    {
+      "normalized": "175",
+      "value": "175 ~~ ",
+      "display": "175 ~~"
+    },
+    {
+      "normalized": "176",
+      "value": "176 ~~ ",
+      "display": "176 ~~"
+    },
+    {
+      "normalized": "177/1",
+      "value": "177/૧ ~~ ",
+      "display": "177/૧ ~~"
+    },
+    {
+      "normalized": "177/2",
+      "value": "177/૨ ~~ ",
+      "display": "177/૨ ~~"
+    },
+    {
+      "normalized": "177/3",
+      "value": "177/૩ ~~ ",
+      "display": "177/૩ ~~"
+    },
+    {
+      "normalized": "178/1",
+      "value": "178/૧ ~~ ",
+      "display": "178/૧ ~~"
+    },
+    {
+      "normalized": "179/1",
+      "value": "179/૧ ~~ ",
+      "display": "179/૧ ~~"
+    },
+    {
+      "normalized": "179/2",
+      "value": "179/૨ ~~ ",
+      "display": "179/૨ ~~"
+    },
+    {
+      "normalized": "180",
+      "value": "180 ~~ ",
+      "display": "180 ~~"
+    },
+    {
+      "normalized": "181",
+      "value": "181 ~~ ",
+      "display": "181 ~~"
+    },
+    {
+      "normalized": "182/p1",
+      "value": "182/p૧ ~~ ",
+      "display": "182/p૧ ~~"
+    },
+    {
+      "normalized": "182/p2",
+      "value": "182/p૨ ~~ ",
+      "display": "182/p૨ ~~"
+    },
+    {
+      "normalized": "183",
+      "value": "183 ~~ ",
+      "display": "183 ~~"
+    },
+    {
+      "normalized": "184/1",
+      "value": "184/૧ ~~ ",
+      "display": "184/૧ ~~"
+    },
+    {
+      "normalized": "184/2",
+      "value": "184/૨ ~~ ",
+      "display": "184/૨ ~~"
+    },
+    {
+      "normalized": "185/1",
+      "value": "185/૧ ~~ ",
+      "display": "185/૧ ~~"
+    },
+    {
+      "normalized": "185/2",
+      "value": "185/૨ ~~ ",
+      "display": "185/૨ ~~"
+    },
+    {
+      "normalized": "185/3",
+      "value": "185/૩ ~~ ",
+      "display": "185/૩ ~~"
+    },
+    {
+      "normalized": "185/4",
+      "value": "185/૪ ~~ ",
+      "display": "185/૪ ~~"
+    },
+    {
+      "normalized": "186/1",
+      "value": "186/૧ ~~ ",
+      "display": "186/૧ ~~"
+    },
+    {
+      "normalized": "186/2",
+      "value": "186/૨ ~~ ",
+      "display": "186/૨ ~~"
+    },
+    {
+      "normalized": "187/1",
+      "value": "187/૧ ~~ ",
+      "display": "187/૧ ~~"
+    },
+    {
+      "normalized": "187/2",
+      "value": "187/૨ ~~ ",
+      "display": "187/૨ ~~"
+    },
+    {
+      "normalized": "187/3",
+      "value": "187/૩ ~~ ",
+      "display": "187/૩ ~~"
+    },
+    {
+      "normalized": "187/4",
+      "value": "187/૪ ~~ ",
+      "display": "187/૪ ~~"
+    },
+    {
+      "normalized": "187/p",
+      "value": "187/પ ~~ ",
+      "display": "187/પ ~~"
+    },
+    {
+      "normalized": "188/1",
+      "value": "188/૧ ~~ ",
+      "display": "188/૧ ~~"
+    },
+    {
+      "normalized": "188/2",
+      "value": "188/૨ ~~ ",
+      "display": "188/૨ ~~"
+    },
+    {
+      "normalized": "188/3",
+      "value": "188/૩ ~~ ",
+      "display": "188/૩ ~~"
+    },
+    {
+      "normalized": "188/4",
+      "value": "188/૪ ~~ ",
+      "display": "188/૪ ~~"
+    },
+    {
+      "normalized": "188/p",
+      "value": "188/પ ~~ ",
+      "display": "188/પ ~~"
+    },
+    {
+      "normalized": "189/1",
+      "value": "189/૧ ~~ ",
+      "display": "189/૧ ~~"
+    },
+    {
+      "normalized": "189/2",
+      "value": "189/૨ ~~ ",
+      "display": "189/૨ ~~"
+    },
+    {
+      "normalized": "190/1",
+      "value": "190/૧ ~~ ",
+      "display": "190/૧ ~~"
+    },
+    {
+      "normalized": "190/2",
+      "value": "190/૨ ~~ ",
+      "display": "190/૨ ~~"
+    },
+    {
+      "normalized": "190/3",
+      "value": "190/૩ ~~ ",
+      "display": "190/૩ ~~"
+    },
+    {
+      "normalized": "190/4",
+      "value": "190/૪ ~~ ",
+      "display": "190/૪ ~~"
+    },
+    {
+      "normalized": "190/6",
+      "value": "190/૬ ~~ ",
+      "display": "190/૬ ~~"
+    },
+    {
+      "normalized": "190/p",
+      "value": "190/પ ~~ ",
+      "display": "190/પ ~~"
+    },
+    {
+      "normalized": "191/1",
+      "value": "191/૧ ~~ ",
+      "display": "191/૧ ~~"
+    },
+    {
+      "normalized": "191/2",
+      "value": "191/૨ ~~ ",
+      "display": "191/૨ ~~"
+    },
+    {
+      "normalized": "191/3/p",
+      "value": "191/૩/p ~~ ",
+      "display": "191/૩/p ~~"
+    },
+    {
+      "normalized": "191/4",
+      "value": "191/૪ ~~ ",
+      "display": "191/૪ ~~"
+    },
+    {
+      "normalized": "192/1અ",
+      "value": "192/૧અ ~~ ",
+      "display": "192/૧અ ~~"
+    },
+    {
+      "normalized": "192/2/p",
+      "value": "192/૨/p ~~ ",
+      "display": "192/૨/p ~~"
+    },
+    {
+      "normalized": "192/2અ+1બ",
+      "value": "192/૨અ+૧બ ~~ ",
+      "display": "192/૨અ+૧બ ~~"
+    },
+    {
+      "normalized": "193/1",
+      "value": "193/૧ ~~ ",
+      "display": "193/૧ ~~"
+    },
+    {
+      "normalized": "193/2",
+      "value": "193/૨ ~~ ",
+      "display": "193/૨ ~~"
+    },
+    {
+      "normalized": "194/1",
+      "value": "194/૧ ~~ ",
+      "display": "194/૧ ~~"
+    },
+    {
+      "normalized": "194/2",
+      "value": "194/૨ ~~ ",
+      "display": "194/૨ ~~"
+    },
+    {
+      "normalized": "195",
+      "value": "195 ~~ ",
+      "display": "195 ~~"
+    },
+    {
+      "normalized": "196/1",
+      "value": "196/૧ ~~ ",
+      "display": "196/૧ ~~"
+    },
+    {
+      "normalized": "196/2",
+      "value": "196/૨ ~~ ",
+      "display": "196/૨ ~~"
+    },
+    {
+      "normalized": "196/3/p",
+      "value": "196/૩/p ~~ ",
+      "display": "196/૩/p ~~"
+    },
+    {
+      "normalized": "196/4/p",
+      "value": "196/૪/p ~~ ",
+      "display": "196/૪/p ~~"
+    },
+    {
+      "normalized": "196/p",
+      "value": "196/પ ~~ ",
+      "display": "196/પ ~~"
+    },
+    {
+      "normalized": "197/1/p1",
+      "value": "197/૧/p૧ ~~ ",
+      "display": "197/૧/p૧ ~~"
+    },
+    {
+      "normalized": "197/1/p2",
+      "value": "197/૧/p૨ ~~ ",
+      "display": "197/૧/p૨ ~~"
+    },
+    {
+      "normalized": "197/1/p3",
+      "value": "197/૧/p૩ ~~ ",
+      "display": "197/૧/p૩ ~~"
+    },
+    {
+      "normalized": "197/1/p4",
+      "value": "197/૧/p૪ ~~ ",
+      "display": "197/૧/p૪ ~~"
+    },
+    {
+      "normalized": "197/1/pp",
+      "value": "197/૧/pપ ~~ ",
+      "display": "197/૧/pપ ~~"
+    },
+    {
+      "normalized": "197/2/p1",
+      "value": "197/૨/p૧ ~~ ",
+      "display": "197/૨/p૧ ~~"
+    },
+    {
+      "normalized": "197/2/p2",
+      "value": "197/૨/p૨ ~~ ",
+      "display": "197/૨/p૨ ~~"
+    },
+    {
+      "normalized": "197/3",
+      "value": "197/૩ ~~ ",
+      "display": "197/૩ ~~"
+    },
+    {
+      "normalized": "197/4",
+      "value": "197/૪ ~~ ",
+      "display": "197/૪ ~~"
+    },
+    {
+      "normalized": "198/1",
+      "value": "198/૧ ~~ ",
+      "display": "198/૧ ~~"
+    },
+    {
+      "normalized": "198/2",
+      "value": "198/૨ ~~ ",
+      "display": "198/૨ ~~"
+    },
+    {
+      "normalized": "198/3",
+      "value": "198/૩ ~~ ",
+      "display": "198/૩ ~~"
+    },
+    {
+      "normalized": "199",
+      "value": "199 ~~ ",
+      "display": "199 ~~"
+    },
+    {
+      "normalized": "200/p1",
+      "value": "200/p૧ ~~ ",
+      "display": "200/p૧ ~~"
+    },
+    {
+      "normalized": "200/p2",
+      "value": "200/p૨ ~~ ",
+      "display": "200/p૨ ~~"
+    },
+    {
+      "normalized": "200/p3",
+      "value": "200/p૩ ~~ ",
+      "display": "200/p૩ ~~"
+    },
+    {
+      "normalized": "201/1",
+      "value": "201/૧ ~~ ",
+      "display": "201/૧ ~~"
+    },
+    {
+      "normalized": "201/2",
+      "value": "201/૨ ~~ ",
+      "display": "201/૨ ~~"
+    },
+    {
+      "normalized": "201/3",
+      "value": "201/૩ ~~ ",
+      "display": "201/૩ ~~"
+    },
+    {
+      "normalized": "201/4",
+      "value": "201/૪ ~~ ",
+      "display": "201/૪ ~~"
+    },
+    {
+      "normalized": "202/1",
+      "value": "202/૧ ~~ ",
+      "display": "202/૧ ~~"
+    },
+    {
+      "normalized": "202/2",
+      "value": "202/૨ ~~ ",
+      "display": "202/૨ ~~"
+    },
+    {
+      "normalized": "202/3",
+      "value": "202/૩ ~~ ",
+      "display": "202/૩ ~~"
+    },
+    {
+      "normalized": "203/1",
+      "value": "203/૧ ~~ ",
+      "display": "203/૧ ~~"
+    },
+    {
+      "normalized": "203/p1",
+      "value": "203/p૧ ~~ ",
+      "display": "203/p૧ ~~"
+    },
+    {
+      "normalized": "203/p2",
+      "value": "203/p૨ ~~ ",
+      "display": "203/p૨ ~~"
+    },
+    {
+      "normalized": "203/p3",
+      "value": "203/p૩ ~~ ",
+      "display": "203/p૩ ~~"
+    },
+    {
+      "normalized": "203/p4",
+      "value": "203/p૪ ~~ ",
+      "display": "203/p૪ ~~"
+    },
+    {
+      "normalized": "203/pp",
+      "value": "203/pપ ~~ ",
+      "display": "203/pપ ~~"
+    },
+    {
+      "normalized": "204",
+      "value": "204 ~~ ",
+      "display": "204 ~~"
+    },
+    {
+      "normalized": "205",
+      "value": "205 ~~ ",
+      "display": "205 ~~"
+    },
+    {
+      "normalized": "206/1",
+      "value": "206/૧ ~~ ",
+      "display": "206/૧ ~~"
+    },
+    {
+      "normalized": "206/2",
+      "value": "206/૨ ~~ ",
+      "display": "206/૨ ~~"
+    },
+    {
+      "normalized": "207/1",
+      "value": "207/૧ ~~ ",
+      "display": "207/૧ ~~"
+    },
+    {
+      "normalized": "207/1/p",
+      "value": "207/૧/p ~~ ",
+      "display": "207/૧/p ~~"
+    },
+    {
+      "normalized": "207/2",
+      "value": "207/૨ ~~ ",
+      "display": "207/૨ ~~"
+    },
+    {
+      "normalized": "208",
+      "value": "208 ~~ ",
+      "display": "208 ~~"
+    },
+    {
+      "normalized": "209",
+      "value": "209 ~~ ",
+      "display": "209 ~~"
+    },
+    {
+      "normalized": "210",
+      "value": "210 ~~ ",
+      "display": "210 ~~"
+    },
+    {
+      "normalized": "211/p1",
+      "value": "211/p૧ ~~ ",
+      "display": "211/p૧ ~~"
+    },
+    {
+      "normalized": "211/p2",
+      "value": "211/p૨ ~~ ",
+      "display": "211/p૨ ~~"
+    },
+    {
+      "normalized": "212",
+      "value": "212 ~~ ",
+      "display": "212 ~~"
+    },
+    {
+      "normalized": "213/1/p3",
+      "value": "213/૧/p૩ ~~ ",
+      "display": "213/૧/p૩ ~~"
+    },
+    {
+      "normalized": "213/1p",
+      "value": "213/૧p ~~ ",
+      "display": "213/૧p ~~"
+    },
+    {
+      "normalized": "213/1p2",
+      "value": "213/૧p૨ ~~ ",
+      "display": "213/૧p૨ ~~"
+    },
+    {
+      "normalized": "213/2",
+      "value": "213/૨ ~~ ",
+      "display": "213/૨ ~~"
+    },
+    {
+      "normalized": "213/3",
+      "value": "213/૩ ~~ ",
+      "display": "213/૩ ~~"
+    },
+    {
+      "normalized": "213/4",
+      "value": "213/૪ ~~ ",
+      "display": "213/૪ ~~"
+    },
+    {
+      "normalized": "213/6",
+      "value": "213/૬ ~~ ",
+      "display": "213/૬ ~~"
+    },
+    {
+      "normalized": "213/p/અબ",
+      "value": "213/પ/અબ ~~ ",
+      "display": "213/પ/અબ ~~"
+    },
+    {
+      "normalized": "214/1",
+      "value": "214/૧ ~~ ",
+      "display": "214/૧ ~~"
+    },
+    {
+      "normalized": "214/2",
+      "value": "214/૨ ~~ ",
+      "display": "214/૨ ~~"
+    },
+    {
+      "normalized": "215",
+      "value": "215 ~~ ",
+      "display": "215 ~~"
+    },
+    {
+      "normalized": "216",
+      "value": "216 ~~ ",
+      "display": "216 ~~"
+    },
+    {
+      "normalized": "217",
+      "value": "217 ~~ ",
+      "display": "217 ~~"
+    },
+    {
+      "normalized": "218/1",
+      "value": "218/૧ ~~ ",
+      "display": "218/૧ ~~"
+    },
+    {
+      "normalized": "218/2",
+      "value": "218/૨ ~~ ",
+      "display": "218/૨ ~~"
+    },
+    {
+      "normalized": "218/3",
+      "value": "218/૩ ~~ ",
+      "display": "218/૩ ~~"
+    },
+    {
+      "normalized": "219/1/p",
+      "value": "219/૧/p ~~ ",
+      "display": "219/૧/p ~~"
+    },
+    {
+      "normalized": "219/2",
+      "value": "219/૨ ~~ ",
+      "display": "219/૨ ~~"
+    },
+    {
+      "normalized": "220/1/p",
+      "value": "220/૧/p ~~ ",
+      "display": "220/૧/p ~~"
+    },
+    {
+      "normalized": "220/2/p",
+      "value": "220/૨/p ~~ ",
+      "display": "220/૨/p ~~"
+    },
+    {
+      "normalized": "220/3",
+      "value": "220/૩ ~~ ",
+      "display": "220/૩ ~~"
+    },
+    {
+      "normalized": "220/4",
+      "value": "220/૪ ~~ ",
+      "display": "220/૪ ~~"
+    },
+    {
+      "normalized": "220/6/1",
+      "value": "220/૬/૧ ~~ ",
+      "display": "220/૬/૧ ~~"
+    },
+    {
+      "normalized": "220/6/2",
+      "value": "220/૬/૨ ~~ ",
+      "display": "220/૬/૨ ~~"
+    },
+    {
+      "normalized": "220/7",
+      "value": "220/૭ ~~ ",
+      "display": "220/૭ ~~"
+    },
+    {
+      "normalized": "220/p",
+      "value": "220/પ ~~ ",
+      "display": "220/પ ~~"
+    },
+    {
+      "normalized": "221/p",
+      "value": "221/p ~~ ",
+      "display": "221/p ~~"
+    },
+    {
+      "normalized": "222/1",
+      "value": "222/૧ ~~ ",
+      "display": "222/૧ ~~"
+    },
+    {
+      "normalized": "222/2/p",
+      "value": "222/૨/p ~~ ",
+      "display": "222/૨/p ~~"
+    },
+    {
+      "normalized": "222/3/p1",
+      "value": "222/૩/p૧ ~~ ",
+      "display": "222/૩/p૧ ~~"
+    },
+    {
+      "normalized": "222/3/p2",
+      "value": "222/૩/p૨ ~~ ",
+      "display": "222/૩/p૨ ~~"
+    },
+    {
+      "normalized": "223",
+      "value": "223 ~~ ",
+      "display": "223 ~~"
+    },
+    {
+      "normalized": "224/1",
+      "value": "224/૧ ~~ ",
+      "display": "224/૧ ~~"
+    },
+    {
+      "normalized": "224/2",
+      "value": "224/૨ ~~ ",
+      "display": "224/૨ ~~"
+    },
+    {
+      "normalized": "224/2/અ/બ/p",
+      "value": "224/૨/અ/બ/p ~~ ",
+      "display": "224/૨/અ/બ/p ~~"
+    },
+    {
+      "normalized": "225",
+      "value": "225 ~~ ",
+      "display": "225 ~~"
+    },
+    {
+      "normalized": "226/p1",
+      "value": "226/p૧ ~~ ",
+      "display": "226/p૧ ~~"
+    },
+    {
+      "normalized": "226/p2",
+      "value": "226/p૨ ~~ ",
+      "display": "226/p૨ ~~"
+    },
+    {
+      "normalized": "227",
+      "value": "227 ~~ ",
+      "display": "227 ~~"
+    },
+    {
+      "normalized": "228/p1/p",
+      "value": "228/p૧/p ~~ ",
+      "display": "228/p૧/p ~~"
+    },
+    {
+      "normalized": "229/p",
+      "value": "229/p ~~ ",
+      "display": "229/p ~~"
+    },
+    {
+      "normalized": "230/p1",
+      "value": "230/p૧ ~~ ",
+      "display": "230/p૧ ~~"
+    },
+    {
+      "normalized": "230/p1/p1",
+      "value": "230/p૧/p૧ ~~ ",
+      "display": "230/p૧/p૧ ~~"
+    },
+    {
+      "normalized": "230/p1/p2",
+      "value": "230/p૧/p૨ ~~ ",
+      "display": "230/p૧/p૨ ~~"
+    },
+    {
+      "normalized": "230/p1/p3",
+      "value": "230/p૧/p૩ ~~ ",
+      "display": "230/p૧/p૩ ~~"
+    },
+    {
+      "normalized": "230/p2",
+      "value": "230/p૨ ~~ ",
+      "display": "230/p૨ ~~"
+    },
+    {
+      "normalized": "231/1",
+      "value": "231/૧ ~~ ",
+      "display": "231/૧ ~~"
+    },
+    {
+      "normalized": "231/2",
+      "value": "231/૨ ~~ ",
+      "display": "231/૨ ~~"
+    },
+    {
+      "normalized": "232/1",
+      "value": "232/૧ ~~ ",
+      "display": "232/૧ ~~"
+    },
+    {
+      "normalized": "232/2/p1",
+      "value": "232/૨/p૧ ~~ ",
+      "display": "232/૨/p૧ ~~"
+    },
+    {
+      "normalized": "232/2/p1/p1",
+      "value": "232/૨/p૧/p૧ ~~ ",
+      "display": "232/૨/p૧/p૧ ~~"
+    },
+    {
+      "normalized": "232/2/p2",
+      "value": "232/૨/p૨ ~~ ",
+      "display": "232/૨/p૨ ~~"
+    },
+    {
+      "normalized": "233",
+      "value": "233 ~~ ",
+      "display": "233 ~~"
+    },
+    {
+      "normalized": "234p1",
+      "value": "234p૧ ~~ ",
+      "display": "234p૧ ~~"
+    },
+    {
+      "normalized": "234p2",
+      "value": "234p૨ ~~ ",
+      "display": "234p૨ ~~"
+    },
+    {
+      "normalized": "235/1",
+      "value": "235/૧ ~~ ",
+      "display": "235/૧ ~~"
+    },
+    {
+      "normalized": "235/2",
+      "value": "235/૨ ~~ ",
+      "display": "235/૨ ~~"
+    },
+    {
+      "normalized": "236/1",
+      "value": "236/૧ ~~ ",
+      "display": "236/૧ ~~"
+    },
+    {
+      "normalized": "236/1/p1",
+      "value": "236/૧/p૧ ~~ ",
+      "display": "236/૧/p૧ ~~"
+    },
+    {
+      "normalized": "236/1/p2",
+      "value": "236/૧/p૨ ~~ ",
+      "display": "236/૧/p૨ ~~"
+    },
+    {
+      "normalized": "236/2",
+      "value": "236/૨ ~~ ",
+      "display": "236/૨ ~~"
+    },
+    {
+      "normalized": "236/2/p1",
+      "value": "236/૨/p૧ ~~ ",
+      "display": "236/૨/p૧ ~~"
+    },
+    {
+      "normalized": "237/1",
+      "value": "237/૧ ~~ ",
+      "display": "237/૧ ~~"
+    },
+    {
+      "normalized": "237/2",
+      "value": "237/૨ ~~ ",
+      "display": "237/૨ ~~"
+    },
+    {
+      "normalized": "237/3",
+      "value": "237/૩ ~~ ",
+      "display": "237/૩ ~~"
+    },
+    {
+      "normalized": "238/1",
+      "value": "238/૧ ~~ ",
+      "display": "238/૧ ~~"
+    },
+    {
+      "normalized": "238/2/p1",
+      "value": "238/૨/p૧ ~~ ",
+      "display": "238/૨/p૧ ~~"
+    },
+    {
+      "normalized": "238/2/p2",
+      "value": "238/૨/p૨ ~~ ",
+      "display": "238/૨/p૨ ~~"
+    },
+    {
+      "normalized": "238/2/p3",
+      "value": "238/૨/p૩ ~~ ",
+      "display": "238/૨/p૩ ~~"
+    },
+    {
+      "normalized": "238/2/p4",
+      "value": "238/૨/p૪ ~~ ",
+      "display": "238/૨/p૪ ~~"
+    },
+    {
+      "normalized": "239/1/p2",
+      "value": "239/૧/p૨ ~~ ",
+      "display": "239/૧/p૨ ~~"
+    },
+    {
+      "normalized": "239/1p",
+      "value": "239/૧p ~~ ",
+      "display": "239/૧p ~~"
+    },
+    {
+      "normalized": "239/2",
+      "value": "239/૨ ~~ ",
+      "display": "239/૨ ~~"
+    },
+    {
+      "normalized": "239/p3",
+      "value": "239/p૩ ~~ ",
+      "display": "239/p૩ ~~"
+    },
+    {
+      "normalized": "240/1",
+      "value": "240/૧ ~~ ",
+      "display": "240/૧ ~~"
+    },
+    {
+      "normalized": "240/1/1",
+      "value": "240/૧/૧ ~~ ",
+      "display": "240/૧/૧ ~~"
+    },
+    {
+      "normalized": "240/1/2",
+      "value": "240/૧/૨ ~~ ",
+      "display": "240/૧/૨ ~~"
+    },
+    {
+      "normalized": "240/2/1",
+      "value": "240/૨/૧ ~~ ",
+      "display": "240/૨/૧ ~~"
+    },
+    {
+      "normalized": "240/2/2",
+      "value": "240/૨/૨ ~~ ",
+      "display": "240/૨/૨ ~~"
+    },
+    {
+      "normalized": "240/2/3",
+      "value": "240/૨/૩ ~~ ",
+      "display": "240/૨/૩ ~~"
+    },
+    {
+      "normalized": "241/1",
+      "value": "241/૧ ~~ ",
+      "display": "241/૧ ~~"
+    },
+    {
+      "normalized": "241/2",
+      "value": "241/૨ ~~ ",
+      "display": "241/૨ ~~"
+    },
+    {
+      "normalized": "242",
+      "value": "242 ~~ ",
+      "display": "242 ~~"
+    },
+    {
+      "normalized": "243/p",
+      "value": "243/p ~~ ",
+      "display": "243/p ~~"
+    },
+    {
+      "normalized": "244/1",
+      "value": "244/૧ ~~ ",
+      "display": "244/૧ ~~"
+    },
+    {
+      "normalized": "244/2",
+      "value": "244/૨ ~~ ",
+      "display": "244/૨ ~~"
+    },
+    {
+      "normalized": "245",
+      "value": "245 ~~ ",
+      "display": "245 ~~"
+    },
+    {
+      "normalized": "246/1",
+      "value": "246/૧ ~~ ",
+      "display": "246/૧ ~~"
+    },
+    {
+      "normalized": "246/2",
+      "value": "246/૨ ~~ ",
+      "display": "246/૨ ~~"
+    },
+    {
+      "normalized": "247/1+3બ/p1",
+      "value": "247/૧+૩બ/p૧ ~~ ",
+      "display": "247/૧+૩બ/p૧ ~~"
+    },
+    {
+      "normalized": "247/1+3બ/p1/p1",
+      "value": "247/૧+૩બ/p૧/p૧ ~~ ",
+      "display": "247/૧+૩બ/p૧/p૧ ~~"
+    },
+    {
+      "normalized": "247/1+3બ/p1/p2",
+      "value": "247/૧+૩બ/p૧/p૨ ~~ ",
+      "display": "247/૧+૩બ/p૧/p૨ ~~"
+    },
+    {
+      "normalized": "247/1+3બ/p2",
+      "value": "247/૧+૩બ/p૨ ~~ ",
+      "display": "247/૧+૩બ/p૨ ~~"
+    },
+    {
+      "normalized": "247/2",
+      "value": "247/૨ ~~ ",
+      "display": "247/૨ ~~"
+    },
+    {
+      "normalized": "247/3/અ",
+      "value": "247/૩/અ ~~ ",
+      "display": "247/૩/અ ~~"
+    },
+    {
+      "normalized": "248/1",
+      "value": "248/૧ ~~ ",
+      "display": "248/૧ ~~"
+    },
+    {
+      "normalized": "248/2",
+      "value": "248/૨ ~~ ",
+      "display": "248/૨ ~~"
+    },
+    {
+      "normalized": "249/1",
+      "value": "249/૧ ~~ ",
+      "display": "249/૧ ~~"
+    },
+    {
+      "normalized": "249/2",
+      "value": "249/૨ ~~ ",
+      "display": "249/૨ ~~"
+    },
+    {
+      "normalized": "249/3",
+      "value": "249/૩ ~~ ",
+      "display": "249/૩ ~~"
+    },
+    {
+      "normalized": "250",
+      "value": "250 ~~ ",
+      "display": "250 ~~"
+    },
+    {
+      "normalized": "251",
+      "value": "251 ~~ ",
+      "display": "251 ~~"
+    },
+    {
+      "normalized": "252/1",
+      "value": "252/૧ ~~ ",
+      "display": "252/૧ ~~"
+    },
+    {
+      "normalized": "252/2",
+      "value": "252/૨ ~~ ",
+      "display": "252/૨ ~~"
+    },
+    {
+      "normalized": "253/1/p2",
+      "value": "253/૧/p૨ ~~ ",
+      "display": "253/૧/p૨ ~~"
+    },
+    {
+      "normalized": "253/1p1",
+      "value": "253/૧p૧ ~~ ",
+      "display": "253/૧p૧ ~~"
+    },
+    {
+      "normalized": "253/1p3",
+      "value": "253/૧p૩ ~~ ",
+      "display": "253/૧p૩ ~~"
+    },
+    {
+      "normalized": "253/2",
+      "value": "253/૨ ~~ ",
+      "display": "253/૨ ~~"
+    },
+    {
+      "normalized": "253/3p",
+      "value": "253/૩p ~~ ",
+      "display": "253/૩p ~~"
+    },
+    {
+      "normalized": "254/1",
+      "value": "254/૧ ~~ ",
+      "display": "254/૧ ~~"
+    },
+    {
+      "normalized": "254/2",
+      "value": "254/૨ ~~ ",
+      "display": "254/૨ ~~"
+    },
+    {
+      "normalized": "254/3",
+      "value": "254/૩ ~~ ",
+      "display": "254/૩ ~~"
+    },
+    {
+      "normalized": "255/1",
+      "value": "255/૧ ~~ ",
+      "display": "255/૧ ~~"
+    },
+    {
+      "normalized": "255/2",
+      "value": "255/૨ ~~ ",
+      "display": "255/૨ ~~"
+    },
+    {
+      "normalized": "256/1/p1",
+      "value": "256/૧/p૧ ~~ ",
+      "display": "256/૧/p૧ ~~"
+    },
+    {
+      "normalized": "256/1p",
+      "value": "256/૧p ~~ ",
+      "display": "256/૧p ~~"
+    },
+    {
+      "normalized": "256/2+3/p",
+      "value": "256/૨+૩/p ~~ ",
+      "display": "256/૨+૩/p ~~"
+    },
+    {
+      "normalized": "257/1",
+      "value": "257/૧ ~~ ",
+      "display": "257/૧ ~~"
+    },
+    {
+      "normalized": "257/2",
+      "value": "257/૨ ~~ ",
+      "display": "257/૨ ~~"
+    },
+    {
+      "normalized": "257/2/p",
+      "value": "257/૨/p ~~ ",
+      "display": "257/૨/p ~~"
+    },
+    {
+      "normalized": "258",
+      "value": "258 ~~ ",
+      "display": "258 ~~"
+    },
+    {
+      "normalized": "259/p1/p",
+      "value": "259/p૧/p ~~ ",
+      "display": "259/p૧/p ~~"
+    },
+    {
+      "normalized": "259/p2",
+      "value": "259/p૨ ~~ ",
+      "display": "259/p૨ ~~"
+    },
+    {
+      "normalized": "260/1/p1",
+      "value": "260/૧/p૧ ~~ ",
+      "display": "260/૧/p૧ ~~"
+    },
+    {
+      "normalized": "260/1/p2",
+      "value": "260/૧/p૨ ~~ ",
+      "display": "260/૧/p૨ ~~"
+    },
+    {
+      "normalized": "260/2",
+      "value": "260/૨ ~~ ",
+      "display": "260/૨ ~~"
+    },
+    {
+      "normalized": "261",
+      "value": "261 ~~ ",
+      "display": "261 ~~"
+    },
+    {
+      "normalized": "262",
+      "value": "262 ~~ ",
+      "display": "262 ~~"
+    },
+    {
+      "normalized": "263/1",
+      "value": "263/૧ ~~ ",
+      "display": "263/૧ ~~"
+    },
+    {
+      "normalized": "263/2",
+      "value": "263/૨ ~~ ",
+      "display": "263/૨ ~~"
+    },
+    {
+      "normalized": "263/3",
+      "value": "263/૩ ~~ ",
+      "display": "263/૩ ~~"
+    },
+    {
+      "normalized": "263/4",
+      "value": "263/૪ ~~ ",
+      "display": "263/૪ ~~"
+    },
+    {
+      "normalized": "264/1",
+      "value": "264/૧ ~~ ",
+      "display": "264/૧ ~~"
+    },
+    {
+      "normalized": "264/1/p",
+      "value": "264/૧/p ~~ ",
+      "display": "264/૧/p ~~"
+    },
+    {
+      "normalized": "264/2/p1",
+      "value": "264/૨/p૧ ~~ ",
+      "display": "264/૨/p૧ ~~"
+    },
+    {
+      "normalized": "264/2/p2",
+      "value": "264/૨/p૨ ~~ ",
+      "display": "264/૨/p૨ ~~"
+    },
+    {
+      "normalized": "265",
+      "value": "265 ~~ ",
+      "display": "265 ~~"
+    },
+    {
+      "normalized": "266",
+      "value": "266 ~~ ",
+      "display": "266 ~~"
+    },
+    {
+      "normalized": "267/p",
+      "value": "267/p ~~ ",
+      "display": "267/p ~~"
+    },
+    {
+      "normalized": "267/p1",
+      "value": "267/p૧ ~~ ",
+      "display": "267/p૧ ~~"
+    },
+    {
+      "normalized": "268/1p1",
+      "value": "268/૧p૧ ~~ ",
+      "display": "268/૧p૧ ~~"
+    },
+    {
+      "normalized": "268/2",
+      "value": "268/૨ ~~ ",
+      "display": "268/૨ ~~"
+    },
+    {
+      "normalized": "268/p",
+      "value": "268/p ~~ ",
+      "display": "268/p ~~"
+    },
+    {
+      "normalized": "269/1",
+      "value": "269/૧ ~~ ",
+      "display": "269/૧ ~~"
+    },
+    {
+      "normalized": "269/2/p",
+      "value": "269/૨/p ~~ ",
+      "display": "269/૨/p ~~"
+    },
+    {
+      "normalized": "270/1",
+      "value": "270/૧ ~~ ",
+      "display": "270/૧ ~~"
+    },
+    {
+      "normalized": "270/2/p",
+      "value": "270/૨/p ~~ ",
+      "display": "270/૨/p ~~"
+    },
+    {
+      "normalized": "271/p",
+      "value": "271/p ~~ ",
+      "display": "271/p ~~"
+    },
+    {
+      "normalized": "272/p",
+      "value": "272/p ~~ ",
+      "display": "272/p ~~"
+    },
+    {
+      "normalized": "273/1",
+      "value": "273/૧ ~~ ",
+      "display": "273/૧ ~~"
+    },
+    {
+      "normalized": "273/2",
+      "value": "273/૨ ~~ ",
+      "display": "273/૨ ~~"
+    },
+    {
+      "normalized": "274/1",
+      "value": "274/૧ ~~ ",
+      "display": "274/૧ ~~"
+    },
+    {
+      "normalized": "274/2",
+      "value": "274/૨ ~~ ",
+      "display": "274/૨ ~~"
+    },
+    {
+      "normalized": "274/3",
+      "value": "274/૩ ~~ ",
+      "display": "274/૩ ~~"
+    },
+    {
+      "normalized": "275",
+      "value": "275 ~~ ",
+      "display": "275 ~~"
+    },
+    {
+      "normalized": "276/1",
+      "value": "276/૧ ~~ ",
+      "display": "276/૧ ~~"
+    },
+    {
+      "normalized": "276/1/p",
+      "value": "276/૧/p ~~ ",
+      "display": "276/૧/p ~~"
+    },
+    {
+      "normalized": "276/2",
+      "value": "276/૨ ~~ ",
+      "display": "276/૨ ~~"
+    },
+    {
+      "normalized": "276/3/p",
+      "value": "276/૩/p ~~ ",
+      "display": "276/૩/p ~~"
+    },
+    {
+      "normalized": "276/3/p2",
+      "value": "276/૩/p૨ ~~ ",
+      "display": "276/૩/p૨ ~~"
+    },
+    {
+      "normalized": "277/p1",
+      "value": "277/p૧ ~~ ",
+      "display": "277/p૧ ~~"
+    },
+    {
+      "normalized": "277/p2",
+      "value": "277/p૨ ~~ ",
+      "display": "277/p૨ ~~"
+    },
+    {
+      "normalized": "278/1",
+      "value": "278/૧ ~~ ",
+      "display": "278/૧ ~~"
+    },
+    {
+      "normalized": "278/2",
+      "value": "278/૨ ~~ ",
+      "display": "278/૨ ~~"
+    },
+    {
+      "normalized": "279/1",
+      "value": "279/૧ ~~ ",
+      "display": "279/૧ ~~"
+    },
+    {
+      "normalized": "279/2",
+      "value": "279/૨ ~~ ",
+      "display": "279/૨ ~~"
+    },
+    {
+      "normalized": "279/3",
+      "value": "279/૩ ~~ ",
+      "display": "279/૩ ~~"
+    },
+    {
+      "normalized": "279/4",
+      "value": "279/૪ ~~ ",
+      "display": "279/૪ ~~"
+    },
+    {
+      "normalized": "280/p1",
+      "value": "280/p૧ ~~ ",
+      "display": "280/p૧ ~~"
+    },
+    {
+      "normalized": "280/p2",
+      "value": "280/p૨ ~~ ",
+      "display": "280/p૨ ~~"
+    },
+    {
+      "normalized": "281",
+      "value": "281 ~~ ",
+      "display": "281 ~~"
+    },
+    {
+      "normalized": "282",
+      "value": "282 ~~ ",
+      "display": "282 ~~"
+    },
+    {
+      "normalized": "283",
+      "value": "283 ~~ ",
+      "display": "283 ~~"
+    },
+    {
+      "normalized": "284",
+      "value": "284 ~~ ",
+      "display": "284 ~~"
+    },
+    {
+      "normalized": "285/p1",
+      "value": "285/p૧ ~~ ",
+      "display": "285/p૧ ~~"
+    },
+    {
+      "normalized": "285/p2",
+      "value": "285/p૨ ~~ ",
+      "display": "285/p૨ ~~"
+    },
+    {
+      "normalized": "286",
+      "value": "286 ~~ ",
+      "display": "286 ~~"
+    },
+    {
+      "normalized": "287/1",
+      "value": "287/૧ ~~ ",
+      "display": "287/૧ ~~"
+    },
+    {
+      "normalized": "287/2",
+      "value": "287/૨ ~~ ",
+      "display": "287/૨ ~~"
+    },
+    {
+      "normalized": "288/1",
+      "value": "288/૧ ~~ ",
+      "display": "288/૧ ~~"
+    },
+    {
+      "normalized": "288/2",
+      "value": "288/૨ ~~ ",
+      "display": "288/૨ ~~"
+    },
+    {
+      "normalized": "289/p1",
+      "value": "289/p૧ ~~ ",
+      "display": "289/p૧ ~~"
+    },
+    {
+      "normalized": "289/p2",
+      "value": "289/p૨ ~~ ",
+      "display": "289/p૨ ~~"
+    },
+    {
+      "normalized": "289/p3",
+      "value": "289/p૩ ~~ ",
+      "display": "289/p૩ ~~"
+    },
+    {
+      "normalized": "290/1",
+      "value": "290/૧ ~~ ",
+      "display": "290/૧ ~~"
+    },
+    {
+      "normalized": "290/2",
+      "value": "290/૨ ~~ ",
+      "display": "290/૨ ~~"
+    },
+    {
+      "normalized": "290/3",
+      "value": "290/૩ ~~ ",
+      "display": "290/૩ ~~"
+    },
+    {
+      "normalized": "290/4",
+      "value": "290/૪ ~~ ",
+      "display": "290/૪ ~~"
+    },
+    {
+      "normalized": "290/p",
+      "value": "290/પ ~~ ",
+      "display": "290/પ ~~"
+    },
+    {
+      "normalized": "291/1",
+      "value": "291/૧ ~~ ",
+      "display": "291/૧ ~~"
+    },
+    {
+      "normalized": "291/2",
+      "value": "291/૨ ~~ ",
+      "display": "291/૨ ~~"
+    },
+    {
+      "normalized": "292/p1/p1",
+      "value": "292/p૧/p૧ ~~ ",
+      "display": "292/p૧/p૧ ~~"
+    },
+    {
+      "normalized": "292/p1/p2",
+      "value": "292/p૧/p૨ ~~ ",
+      "display": "292/p૧/p૨ ~~"
+    },
+    {
+      "normalized": "292/p2",
+      "value": "292/p૨ ~~ ",
+      "display": "292/p૨ ~~"
+    },
+    {
+      "normalized": "293/1",
+      "value": "293/૧ ~~ ",
+      "display": "293/૧ ~~"
+    },
+    {
+      "normalized": "293/2",
+      "value": "293/૨ ~~ ",
+      "display": "293/૨ ~~"
+    },
+    {
+      "normalized": "294",
+      "value": "294 ~~ ",
+      "display": "294 ~~"
+    },
+    {
+      "normalized": "295/1",
+      "value": "295/૧ ~~ ",
+      "display": "295/૧ ~~"
+    },
+    {
+      "normalized": "295/2",
+      "value": "295/૨ ~~ ",
+      "display": "295/૨ ~~"
+    },
+    {
+      "normalized": "295/3",
+      "value": "295/૩ ~~ ",
+      "display": "295/૩ ~~"
+    },
+    {
+      "normalized": "296/1",
+      "value": "296/૧ ~~ ",
+      "display": "296/૧ ~~"
+    },
+    {
+      "normalized": "296/2",
+      "value": "296/૨ ~~ ",
+      "display": "296/૨ ~~"
+    },
+    {
+      "normalized": "297/1",
+      "value": "297/૧ ~~ ",
+      "display": "297/૧ ~~"
+    },
+    {
+      "normalized": "297/2/p1",
+      "value": "297/૨/p૧ ~~ ",
+      "display": "297/૨/p૧ ~~"
+    },
+    {
+      "normalized": "297/2/p2",
+      "value": "297/૨/p૨ ~~ ",
+      "display": "297/૨/p૨ ~~"
+    },
+    {
+      "normalized": "298",
+      "value": "298 ~~ ",
+      "display": "298 ~~"
+    },
+    {
+      "normalized": "299/1",
+      "value": "299/૧ ~~ ",
+      "display": "299/૧ ~~"
+    },
+    {
+      "normalized": "299/2",
+      "value": "299/૨ ~~ ",
+      "display": "299/૨ ~~"
+    },
+    {
+      "normalized": "300",
+      "value": "300 ~~ ",
+      "display": "300 ~~"
+    },
+    {
+      "normalized": "301/1",
+      "value": "301/૧ ~~ ",
+      "display": "301/૧ ~~"
+    },
+    {
+      "normalized": "301/2",
+      "value": "301/૨ ~~ ",
+      "display": "301/૨ ~~"
+    },
+    {
+      "normalized": "301/3",
+      "value": "301/૩ ~~ ",
+      "display": "301/૩ ~~"
+    },
+    {
+      "normalized": "302/1",
+      "value": "302/૧ ~~ ",
+      "display": "302/૧ ~~"
+    },
+    {
+      "normalized": "302/2",
+      "value": "302/૨ ~~ ",
+      "display": "302/૨ ~~"
+    },
+    {
+      "normalized": "303",
+      "value": "303 ~~ ",
+      "display": "303 ~~"
+    },
+    {
+      "normalized": "304/1/p",
+      "value": "304/૧/p ~~ ",
+      "display": "304/૧/p ~~"
+    },
+    {
+      "normalized": "304/2",
+      "value": "304/૨ ~~ ",
+      "display": "304/૨ ~~"
+    },
+    {
+      "normalized": "305/p",
+      "value": "305/p ~~ ",
+      "display": "305/p ~~"
+    },
+    {
+      "normalized": "306/p",
+      "value": "306/p ~~ ",
+      "display": "306/p ~~"
+    },
+    {
+      "normalized": "307",
+      "value": "307 ~~ ",
+      "display": "307 ~~"
+    },
+    {
+      "normalized": "308",
+      "value": "308 ~~ ",
+      "display": "308 ~~"
+    },
+    {
+      "normalized": "309/1",
+      "value": "309/૧ ~~ ",
+      "display": "309/૧ ~~"
+    },
+    {
+      "normalized": "309/2",
+      "value": "309/૨ ~~ ",
+      "display": "309/૨ ~~"
+    },
+    {
+      "normalized": "310",
+      "value": "310 ~~ ",
+      "display": "310 ~~"
+    },
+    {
+      "normalized": "311/1",
+      "value": "311/૧ ~~ ",
+      "display": "311/૧ ~~"
+    },
+    {
+      "normalized": "311/2/p1",
+      "value": "311/૨/p૧ ~~ ",
+      "display": "311/૨/p૧ ~~"
+    },
+    {
+      "normalized": "311/2/p2",
+      "value": "311/૨/p૨ ~~ ",
+      "display": "311/૨/p૨ ~~"
+    },
+    {
+      "normalized": "311/3",
+      "value": "311/૩ ~~ ",
+      "display": "311/૩ ~~"
+    },
+    {
+      "normalized": "312/1/p",
+      "value": "312/૧/p ~~ ",
+      "display": "312/૧/p ~~"
+    },
+    {
+      "normalized": "312/2",
+      "value": "312/૨ ~~ ",
+      "display": "312/૨ ~~"
+    },
+    {
+      "normalized": "312/3",
+      "value": "312/૩ ~~ ",
+      "display": "312/૩ ~~"
+    },
+    {
+      "normalized": "312/4",
+      "value": "312/૪ ~~ ",
+      "display": "312/૪ ~~"
+    },
+    {
+      "normalized": "312/6",
+      "value": "312/૬ ~~ ",
+      "display": "312/૬ ~~"
+    },
+    {
+      "normalized": "312/7",
+      "value": "312/૭ ~~ ",
+      "display": "312/૭ ~~"
+    },
+    {
+      "normalized": "312/8/1",
+      "value": "312/૮/૧ ~~ ",
+      "display": "312/૮/૧ ~~"
+    },
+    {
+      "normalized": "312/8/2",
+      "value": "312/૮/૨ ~~ ",
+      "display": "312/૮/૨ ~~"
+    },
+    {
+      "normalized": "312/9",
+      "value": "312/૯ ~~ ",
+      "display": "312/૯ ~~"
+    },
+    {
+      "normalized": "312/10",
+      "value": "312/૧૦ ~~ ",
+      "display": "312/૧૦ ~~"
+    },
+    {
+      "normalized": "312/p",
+      "value": "312/પ ~~ ",
+      "display": "312/પ ~~"
+    },
+    {
+      "normalized": "313/1",
+      "value": "313/૧ ~~ ",
+      "display": "313/૧ ~~"
+    },
+    {
+      "normalized": "313/2",
+      "value": "313/૨ ~~ ",
+      "display": "313/૨ ~~"
+    },
+    {
+      "normalized": "313/3",
+      "value": "313/૩ ~~ ",
+      "display": "313/૩ ~~"
+    },
+    {
+      "normalized": "314/p",
+      "value": "314/p ~~ ",
+      "display": "314/p ~~"
+    },
+    {
+      "normalized": "315/1",
+      "value": "315/૧ ~~ ",
+      "display": "315/૧ ~~"
+    },
+    {
+      "normalized": "315/2/p1",
+      "value": "315/૨/p૧ ~~ ",
+      "display": "315/૨/p૧ ~~"
+    },
+    {
+      "normalized": "315/2/p2",
+      "value": "315/૨/p૨ ~~ ",
+      "display": "315/૨/p૨ ~~"
+    },
+    {
+      "normalized": "316",
+      "value": "316 ~~ ",
+      "display": "316 ~~"
+    },
+    {
+      "normalized": "317/અ1",
+      "value": "317/અ૧ ~~ ",
+      "display": "317/અ૧ ~~"
+    },
+    {
+      "normalized": "317/અ2/p",
+      "value": "317/અ૨/p ~~ ",
+      "display": "317/અ૨/p ~~"
+    },
+    {
+      "normalized": "317/બ",
+      "value": "317/બ ~~ ",
+      "display": "317/બ ~~"
+    },
+    {
+      "normalized": "318/1",
+      "value": "318/૧ ~~ ",
+      "display": "318/૧ ~~"
+    },
+    {
+      "normalized": "318/2",
+      "value": "318/૨ ~~ ",
+      "display": "318/૨ ~~"
+    },
+    {
+      "normalized": "318/3",
+      "value": "318/૩ ~~ ",
+      "display": "318/૩ ~~"
+    },
+    {
+      "normalized": "318/4",
+      "value": "318/૪ ~~ ",
+      "display": "318/૪ ~~"
+    },
+    {
+      "normalized": "318/6",
+      "value": "318/૬ ~~ ",
+      "display": "318/૬ ~~"
+    },
+    {
+      "normalized": "318/7",
+      "value": "318/૭ ~~ ",
+      "display": "318/૭ ~~"
+    },
+    {
+      "normalized": "318/8",
+      "value": "318/૮ ~~ ",
+      "display": "318/૮ ~~"
+    },
+    {
+      "normalized": "318/9",
+      "value": "318/૯ ~~ ",
+      "display": "318/૯ ~~"
+    },
+    {
+      "normalized": "318/10",
+      "value": "318/૧૦ ~~ ",
+      "display": "318/૧૦ ~~"
+    },
+    {
+      "normalized": "318/11",
+      "value": "318/૧૧ ~~ ",
+      "display": "318/૧૧ ~~"
+    },
+    {
+      "normalized": "318/12",
+      "value": "318/૧૨ ~~ ",
+      "display": "318/૧૨ ~~"
+    },
+    {
+      "normalized": "318/p",
+      "value": "318/પ ~~ ",
+      "display": "318/પ ~~"
+    },
+    {
+      "normalized": "319/1",
+      "value": "319/૧ ~~ ",
+      "display": "319/૧ ~~"
+    },
+    {
+      "normalized": "319/2",
+      "value": "319/૨ ~~ ",
+      "display": "319/૨ ~~"
+    },
+    {
+      "normalized": "319/3",
+      "value": "319/૩ ~~ ",
+      "display": "319/૩ ~~"
+    },
+    {
+      "normalized": "319/4",
+      "value": "319/૪ ~~ ",
+      "display": "319/૪ ~~"
+    },
+    {
+      "normalized": "319/6",
+      "value": "319/૬ ~~ ",
+      "display": "319/૬ ~~"
+    },
+    {
+      "normalized": "319/7",
+      "value": "319/૭ ~~ ",
+      "display": "319/૭ ~~"
+    },
+    {
+      "normalized": "319/8",
+      "value": "319/૮ ~~ ",
+      "display": "319/૮ ~~"
+    },
+    {
+      "normalized": "319/p",
+      "value": "319/પ ~~ ",
+      "display": "319/પ ~~"
+    },
+    {
+      "normalized": "320/1",
+      "value": "320/૧ ~~ ",
+      "display": "320/૧ ~~"
+    },
+    {
+      "normalized": "320/2",
+      "value": "320/૨ ~~ ",
+      "display": "320/૨ ~~"
+    },
+    {
+      "normalized": "320/3",
+      "value": "320/૩ ~~ ",
+      "display": "320/૩ ~~"
+    },
+    {
+      "normalized": "321/1",
+      "value": "321/૧ ~~ ",
+      "display": "321/૧ ~~"
+    },
+    {
+      "normalized": "321/2",
+      "value": "321/૨ ~~ ",
+      "display": "321/૨ ~~"
+    },
+    {
+      "normalized": "321/3",
+      "value": "321/૩ ~~ ",
+      "display": "321/૩ ~~"
+    },
+    {
+      "normalized": "321/4",
+      "value": "321/૪ ~~ ",
+      "display": "321/૪ ~~"
+    },
+    {
+      "normalized": "322",
+      "value": "322 ~~ ",
+      "display": "322 ~~"
+    },
+    {
+      "normalized": "323",
+      "value": "323 ~~ ",
+      "display": "323 ~~"
+    },
+    {
+      "normalized": "324/1",
+      "value": "324/૧ ~~ ",
+      "display": "324/૧ ~~"
+    },
+    {
+      "normalized": "324/2",
+      "value": "324/૨ ~~ ",
+      "display": "324/૨ ~~"
+    },
+    {
+      "normalized": "324/3",
+      "value": "324/૩ ~~ ",
+      "display": "324/૩ ~~"
+    },
+    {
+      "normalized": "324/4",
+      "value": "324/૪ ~~ ",
+      "display": "324/૪ ~~"
+    },
+    {
+      "normalized": "324/p",
+      "value": "324/પ ~~ ",
+      "display": "324/પ ~~"
+    },
+    {
+      "normalized": "325/1",
+      "value": "325/૧ ~~ ",
+      "display": "325/૧ ~~"
+    },
+    {
+      "normalized": "325/2",
+      "value": "325/૨ ~~ ",
+      "display": "325/૨ ~~"
+    },
+    {
+      "normalized": "325/3",
+      "value": "325/૩ ~~ ",
+      "display": "325/૩ ~~"
+    },
+    {
+      "normalized": "326",
+      "value": "326 ~~ ",
+      "display": "326 ~~"
+    },
+    {
+      "normalized": "327",
+      "value": "327 ~~ ",
+      "display": "327 ~~"
+    },
+    {
+      "normalized": "328",
+      "value": "328 ~~ ",
+      "display": "328 ~~"
+    },
+    {
+      "normalized": "329",
+      "value": "329 ~~ ",
+      "display": "329 ~~"
+    },
+    {
+      "normalized": "330",
+      "value": "330 ~~ ",
+      "display": "330 ~~"
+    },
+    {
+      "normalized": "331",
+      "value": "331 ~~ ",
+      "display": "331 ~~"
+    },
+    {
+      "normalized": "332",
+      "value": "332 ~~ ",
+      "display": "332 ~~"
+    },
+    {
+      "normalized": "333",
+      "value": "333 ~~ ",
+      "display": "333 ~~"
+    },
+    {
+      "normalized": "334/1/p",
+      "value": "334/૧/p ~~ ",
+      "display": "334/૧/p ~~"
+    },
+    {
+      "normalized": "334/2",
+      "value": "334/૨ ~~ ",
+      "display": "334/૨ ~~"
+    },
+    {
+      "normalized": "334/3",
+      "value": "334/૩ ~~ ",
+      "display": "334/૩ ~~"
+    },
+    {
+      "normalized": "335/1",
+      "value": "335/૧ ~~ ",
+      "display": "335/૧ ~~"
+    },
+    {
+      "normalized": "335/2",
+      "value": "335/૨ ~~ ",
+      "display": "335/૨ ~~"
+    },
+    {
+      "normalized": "335/3/p",
+      "value": "335/૩/p ~~ ",
+      "display": "335/૩/p ~~"
+    },
+    {
+      "normalized": "335/4",
+      "value": "335/૪ ~~ ",
+      "display": "335/૪ ~~"
+    },
+    {
+      "normalized": "336/1",
+      "value": "336/૧ ~~ ",
+      "display": "336/૧ ~~"
+    },
+    {
+      "normalized": "336/2",
+      "value": "336/૨ ~~ ",
+      "display": "336/૨ ~~"
+    },
+    {
+      "normalized": "337/1અ",
+      "value": "337/૧અ ~~ ",
+      "display": "337/૧અ ~~"
+    },
+    {
+      "normalized": "337/1બ",
+      "value": "337/૧બ ~~ ",
+      "display": "337/૧બ ~~"
+    },
+    {
+      "normalized": "337/2",
+      "value": "337/૨ ~~ ",
+      "display": "337/૨ ~~"
+    },
+    {
+      "normalized": "338/1",
+      "value": "338/૧ ~~ ",
+      "display": "338/૧ ~~"
+    },
+    {
+      "normalized": "338/2",
+      "value": "338/૨ ~~ ",
+      "display": "338/૨ ~~"
+    },
+    {
+      "normalized": "338/3",
+      "value": "338/૩ ~~ ",
+      "display": "338/૩ ~~"
+    },
+    {
+      "normalized": "339/1",
+      "value": "339/૧ ~~ ",
+      "display": "339/૧ ~~"
+    },
+    {
+      "normalized": "339/2",
+      "value": "339/૨ ~~ ",
+      "display": "339/૨ ~~"
+    },
+    {
+      "normalized": "340/1",
+      "value": "340/૧ ~~ ",
+      "display": "340/૧ ~~"
+    },
+    {
+      "normalized": "340/2",
+      "value": "340/૨ ~~ ",
+      "display": "340/૨ ~~"
+    },
+    {
+      "normalized": "341/1/p",
+      "value": "341/૧/p ~~ ",
+      "display": "341/૧/p ~~"
+    },
+    {
+      "normalized": "341/2",
+      "value": "341/૨ ~~ ",
+      "display": "341/૨ ~~"
+    },
+    {
+      "normalized": "341/3/p",
+      "value": "341/૩/p ~~ ",
+      "display": "341/૩/p ~~"
+    },
+    {
+      "normalized": "341/4",
+      "value": "341/૪ ~~ ",
+      "display": "341/૪ ~~"
+    },
+    {
+      "normalized": "341/p/p",
+      "value": "341/પ/p ~~ ",
+      "display": "341/પ/p ~~"
+    },
+    {
+      "normalized": "342/1/p2",
+      "value": "342/૧/p૨ ~~ ",
+      "display": "342/૧/p૨ ~~"
+    },
+    {
+      "normalized": "342/1p3",
+      "value": "342/૧p૩ ~~ ",
+      "display": "342/૧p૩ ~~"
+    },
+    {
+      "normalized": "342/2",
+      "value": "342/૨ ~~ ",
+      "display": "342/૨ ~~"
+    },
+    {
+      "normalized": "342/p1",
+      "value": "342/p૧ ~~ ",
+      "display": "342/p૧ ~~"
+    },
+    {
+      "normalized": "343/1",
+      "value": "343/૧ ~~ ",
+      "display": "343/૧ ~~"
+    },
+    {
+      "normalized": "343/2",
+      "value": "343/૨ ~~ ",
+      "display": "343/૨ ~~"
+    },
+    {
+      "normalized": "344/1",
+      "value": "344/૧ ~~ ",
+      "display": "344/૧ ~~"
+    },
+    {
+      "normalized": "344/2/p",
+      "value": "344/૨/p ~~ ",
+      "display": "344/૨/p ~~"
+    },
+    {
+      "normalized": "344/3",
+      "value": "344/૩ ~~ ",
+      "display": "344/૩ ~~"
+    },
+    {
+      "normalized": "345/1",
+      "value": "345/૧ ~~ ",
+      "display": "345/૧ ~~"
+    },
+    {
+      "normalized": "345/2",
+      "value": "345/૨ ~~ ",
+      "display": "345/૨ ~~"
+    },
+    {
+      "normalized": "346",
+      "value": "346 ~~ ",
+      "display": "346 ~~"
+    },
+    {
+      "normalized": "347/1",
+      "value": "347/૧ ~~ ",
+      "display": "347/૧ ~~"
+    },
+    {
+      "normalized": "347/2",
+      "value": "347/૨ ~~ ",
+      "display": "347/૨ ~~"
+    },
+    {
+      "normalized": "348",
+      "value": "348 ~~ ",
+      "display": "348 ~~"
+    },
+    {
+      "normalized": "349/1",
+      "value": "349/૧ ~~ ",
+      "display": "349/૧ ~~"
+    },
+    {
+      "normalized": "349/2",
+      "value": "349/૨ ~~ ",
+      "display": "349/૨ ~~"
+    },
+    {
+      "normalized": "349/3",
+      "value": "349/૩ ~~ ",
+      "display": "349/૩ ~~"
+    },
+    {
+      "normalized": "350/p",
+      "value": "350/p ~~ ",
+      "display": "350/p ~~"
+    },
+    {
+      "normalized": "351/1",
+      "value": "351/૧ ~~ ",
+      "display": "351/૧ ~~"
+    },
+    {
+      "normalized": "351/2",
+      "value": "351/૨ ~~ ",
+      "display": "351/૨ ~~"
+    },
+    {
+      "normalized": "352",
+      "value": "352 ~~ ",
+      "display": "352 ~~"
+    },
+    {
+      "normalized": "353/1",
+      "value": "353/૧ ~~ ",
+      "display": "353/૧ ~~"
+    },
+    {
+      "normalized": "353/1/p1",
+      "value": "353/૧/p૧ ~~ ",
+      "display": "353/૧/p૧ ~~"
+    },
+    {
+      "normalized": "353/2",
+      "value": "353/૨ ~~ ",
+      "display": "353/૨ ~~"
+    },
+    {
+      "normalized": "354",
+      "value": "354 ~~ ",
+      "display": "354 ~~"
+    },
+    {
+      "normalized": "355",
+      "value": "355 ~~ ",
+      "display": "355 ~~"
+    },
+    {
+      "normalized": "356/1",
+      "value": "356/૧ ~~ ",
+      "display": "356/૧ ~~"
+    },
+    {
+      "normalized": "356/2",
+      "value": "356/૨ ~~ ",
+      "display": "356/૨ ~~"
+    },
+    {
+      "normalized": "357/1+2",
+      "value": "357/૧+૨ ~~ ",
+      "display": "357/૧+૨ ~~"
+    },
+    {
+      "normalized": "357/2",
+      "value": "357/૨ ~~ ",
+      "display": "357/૨ ~~"
+    },
+    {
+      "normalized": "357+3p8/1/બ/p",
+      "value": "357+૩પ૮/૧/બ/p ~~ ",
+      "display": "357+૩પ૮/૧/બ/p ~~"
+    },
+    {
+      "normalized": "359",
+      "value": "359 ~~ ",
+      "display": "359 ~~"
+    },
+    {
+      "normalized": "360",
+      "value": "360 ~~ ",
+      "display": "360 ~~"
+    },
+    {
+      "normalized": "361/1/p",
+      "value": "361/૧/p ~~ ",
+      "display": "361/૧/p ~~"
+    },
+    {
+      "normalized": "362",
+      "value": "362 ~~ ",
+      "display": "362 ~~"
+    },
+    {
+      "normalized": "363",
+      "value": "363 ~~ ",
+      "display": "363 ~~"
+    },
+    {
+      "normalized": "364/p1",
+      "value": "364/p૧ ~~ ",
+      "display": "364/p૧ ~~"
+    },
+    {
+      "normalized": "365/2/p",
+      "value": "365/૨/p ~~ ",
+      "display": "365/૨/p ~~"
+    },
+    {
+      "normalized": "365/અ/1/p",
+      "value": "365/અ/૧/p ~~ ",
+      "display": "365/અ/૧/p ~~"
+    },
+    {
+      "normalized": "365/બ",
+      "value": "365/બ ~~ ",
+      "display": "365/બ ~~"
+    },
+    {
+      "normalized": "366/1",
+      "value": "366/૧ ~~ ",
+      "display": "366/૧ ~~"
+    },
+    {
+      "normalized": "366/2",
+      "value": "366/૨ ~~ ",
+      "display": "366/૨ ~~"
+    },
+    {
+      "normalized": "366/3",
+      "value": "366/૩ ~~ ",
+      "display": "366/૩ ~~"
+    },
+    {
+      "normalized": "366/4",
+      "value": "366/૪ ~~ ",
+      "display": "366/૪ ~~"
+    },
+    {
+      "normalized": "366/p",
+      "value": "366/પ ~~ ",
+      "display": "366/પ ~~"
+    },
+    {
+      "normalized": "367/1",
+      "value": "367/૧ ~~ ",
+      "display": "367/૧ ~~"
+    },
+    {
+      "normalized": "367/2",
+      "value": "367/૨ ~~ ",
+      "display": "367/૨ ~~"
+    },
+    {
+      "normalized": "367/3",
+      "value": "367/૩ ~~ ",
+      "display": "367/૩ ~~"
+    },
+    {
+      "normalized": "368/1",
+      "value": "368/૧ ~~ ",
+      "display": "368/૧ ~~"
+    },
+    {
+      "normalized": "368/2",
+      "value": "368/૨ ~~ ",
+      "display": "368/૨ ~~"
+    },
+    {
+      "normalized": "368/3",
+      "value": "368/૩ ~~ ",
+      "display": "368/૩ ~~"
+    },
+    {
+      "normalized": "369/1",
+      "value": "369/૧ ~~ ",
+      "display": "369/૧ ~~"
+    },
+    {
+      "normalized": "369/2",
+      "value": "369/૨ ~~ ",
+      "display": "369/૨ ~~"
+    },
+    {
+      "normalized": "369/3",
+      "value": "369/૩ ~~ ",
+      "display": "369/૩ ~~"
+    },
+    {
+      "normalized": "370/1",
+      "value": "370/૧ ~~ ",
+      "display": "370/૧ ~~"
+    },
+    {
+      "normalized": "370/2",
+      "value": "370/૨ ~~ ",
+      "display": "370/૨ ~~"
+    },
+    {
+      "normalized": "370/3/p",
+      "value": "370/૩/p ~~ ",
+      "display": "370/૩/p ~~"
+    },
+    {
+      "normalized": "371",
+      "value": "371 ~~ ",
+      "display": "371 ~~"
+    },
+    {
+      "normalized": "372/p1/p",
+      "value": "372/p૧/p ~~ ",
+      "display": "372/p૧/p ~~"
+    },
+    {
+      "normalized": "372/p2/p",
+      "value": "372/p૨/p ~~ ",
+      "display": "372/p૨/p ~~"
+    },
+    {
+      "normalized": "373/p",
+      "value": "373/p ~~ ",
+      "display": "373/p ~~"
+    },
+    {
+      "normalized": "374/1",
+      "value": "374/૧ ~~ ",
+      "display": "374/૧ ~~"
+    },
+    {
+      "normalized": "374/2",
+      "value": "374/૨ ~~ ",
+      "display": "374/૨ ~~"
+    },
+    {
+      "normalized": "374/3",
+      "value": "374/૩ ~~ ",
+      "display": "374/૩ ~~"
+    },
+    {
+      "normalized": "375/1",
+      "value": "375/૧ ~~ ",
+      "display": "375/૧ ~~"
+    },
+    {
+      "normalized": "375/2",
+      "value": "375/૨ ~~ ",
+      "display": "375/૨ ~~"
+    },
+    {
+      "normalized": "376/1",
+      "value": "376/૧ ~~ ",
+      "display": "376/૧ ~~"
+    },
+    {
+      "normalized": "376/2",
+      "value": "376/૨ ~~ ",
+      "display": "376/૨ ~~"
+    },
+    {
+      "normalized": "377/1",
+      "value": "377/૧ ~~ ",
+      "display": "377/૧ ~~"
+    },
+    {
+      "normalized": "377/2",
+      "value": "377/૨ ~~ ",
+      "display": "377/૨ ~~"
+    },
+    {
+      "normalized": "378/1",
+      "value": "378/૧ ~~ ",
+      "display": "378/૧ ~~"
+    },
+    {
+      "normalized": "378/2",
+      "value": "378/૨ ~~ ",
+      "display": "378/૨ ~~"
+    },
+    {
+      "normalized": "379/1",
+      "value": "379/૧ ~~ ",
+      "display": "379/૧ ~~"
+    },
+    {
+      "normalized": "379/2",
+      "value": "379/૨ ~~ ",
+      "display": "379/૨ ~~"
+    },
+    {
+      "normalized": "380",
+      "value": "380 ~~ ",
+      "display": "380 ~~"
+    },
+    {
+      "normalized": "381/1+2",
+      "value": "381/૧+૨ ~~ ",
+      "display": "381/૧+૨ ~~"
+    },
+    {
+      "normalized": "381/3",
+      "value": "381/૩ ~~ ",
+      "display": "381/૩ ~~"
+    },
+    {
+      "normalized": "381/4/p",
+      "value": "381/૪/p ~~ ",
+      "display": "381/૪/p ~~"
+    },
+    {
+      "normalized": "382",
+      "value": "382 ~~ ",
+      "display": "382 ~~"
+    },
+    {
+      "normalized": "383",
+      "value": "383 ~~ ",
+      "display": "383 ~~"
+    },
+    {
+      "normalized": "383/1/અ/1",
+      "value": "383/૧/અ/૧ ~~ ",
+      "display": "383/૧/અ/૧ ~~"
+    },
+    {
+      "normalized": "383/અ/2",
+      "value": "383/અ/૨ ~~ ",
+      "display": "383/અ/૨ ~~"
+    },
+    {
+      "normalized": "383/અ/3",
+      "value": "383/અ/૩ ~~ ",
+      "display": "383/અ/૩ ~~"
+    },
+    {
+      "normalized": "384/p1",
+      "value": "384/p૧ ~~ ",
+      "display": "384/p૧ ~~"
+    },
+    {
+      "normalized": "384/p2",
+      "value": "384/p૨ ~~ ",
+      "display": "384/p૨ ~~"
+    },
+    {
+      "normalized": "385/p",
+      "value": "385/p ~~ ",
+      "display": "385/p ~~"
+    },
+    {
+      "normalized": "386",
+      "value": "386 ~~ ",
+      "display": "386 ~~"
+    },
+    {
+      "normalized": "387",
+      "value": "387 ~~ ",
+      "display": "387 ~~"
+    },
+    {
+      "normalized": "388/1",
+      "value": "388/૧ ~~ ",
+      "display": "388/૧ ~~"
+    },
+    {
+      "normalized": "388/2",
+      "value": "388/૨ ~~ ",
+      "display": "388/૨ ~~"
+    },
+    {
+      "normalized": "389/1",
+      "value": "389/૧ ~~ ",
+      "display": "389/૧ ~~"
+    },
+    {
+      "normalized": "389/2",
+      "value": "389/૨ ~~ ",
+      "display": "389/૨ ~~"
+    },
+    {
+      "normalized": "390/1/p",
+      "value": "390/૧/p ~~ ",
+      "display": "390/૧/p ~~"
+    },
+    {
+      "normalized": "390/2",
+      "value": "390/૨ ~~ ",
+      "display": "390/૨ ~~"
+    },
+    {
+      "normalized": "390/3",
+      "value": "390/૩ ~~ ",
+      "display": "390/૩ ~~"
+    },
+    {
+      "normalized": "391/1",
+      "value": "391/૧ ~~ ",
+      "display": "391/૧ ~~"
+    },
+    {
+      "normalized": "391/2",
+      "value": "391/૨ ~~ ",
+      "display": "391/૨ ~~"
+    },
+    {
+      "normalized": "391/3",
+      "value": "391/૩ ~~ ",
+      "display": "391/૩ ~~"
+    },
+    {
+      "normalized": "391/4",
+      "value": "391/૪ ~~ ",
+      "display": "391/૪ ~~"
+    },
+    {
+      "normalized": "392/1",
+      "value": "392/૧ ~~ ",
+      "display": "392/૧ ~~"
+    },
+    {
+      "normalized": "392/2",
+      "value": "392/૨ ~~ ",
+      "display": "392/૨ ~~"
+    },
+    {
+      "normalized": "392/3",
+      "value": "392/૩ ~~ ",
+      "display": "392/૩ ~~"
+    },
+    {
+      "normalized": "392/4",
+      "value": "392/૪ ~~ ",
+      "display": "392/૪ ~~"
+    },
+    {
+      "normalized": "393",
+      "value": "393 ~~ ",
+      "display": "393 ~~"
+    },
+    {
+      "normalized": "394/1",
+      "value": "394/૧ ~~ ",
+      "display": "394/૧ ~~"
+    },
+    {
+      "normalized": "394/2",
+      "value": "394/૨ ~~ ",
+      "display": "394/૨ ~~"
+    },
+    {
+      "normalized": "395/p",
+      "value": "395/p ~~ ",
+      "display": "395/p ~~"
+    },
+    {
+      "normalized": "396/1",
+      "value": "396/૧ ~~ ",
+      "display": "396/૧ ~~"
+    },
+    {
+      "normalized": "396/2",
+      "value": "396/૨ ~~ ",
+      "display": "396/૨ ~~"
+    },
+    {
+      "normalized": "396/3/p1",
+      "value": "396/૩/p૧ ~~ ",
+      "display": "396/૩/p૧ ~~"
+    },
+    {
+      "normalized": "396/3/p2",
+      "value": "396/૩/p૨ ~~ ",
+      "display": "396/૩/p૨ ~~"
+    },
+    {
+      "normalized": "397",
+      "value": "397 ~~ ",
+      "display": "397 ~~"
+    },
+    {
+      "normalized": "398/1/p",
+      "value": "398/૧/p ~~ ",
+      "display": "398/૧/p ~~"
+    },
+    {
+      "normalized": "398/2",
+      "value": "398/૨ ~~ ",
+      "display": "398/૨ ~~"
+    },
+    {
+      "normalized": "399/1",
+      "value": "399/૧ ~~ ",
+      "display": "399/૧ ~~"
+    },
+    {
+      "normalized": "399/2+3p",
+      "value": "399/૨+૩p ~~ ",
+      "display": "399/૨+૩p ~~"
+    },
+    {
+      "normalized": "400/1",
+      "value": "400/૧ ~~ ",
+      "display": "400/૧ ~~"
+    },
+    {
+      "normalized": "400/2",
+      "value": "400/૨ ~~ ",
+      "display": "400/૨ ~~"
+    },
+    {
+      "normalized": "401/1",
+      "value": "401/૧ ~~ ",
+      "display": "401/૧ ~~"
+    },
+    {
+      "normalized": "401/2",
+      "value": "401/૨ ~~ ",
+      "display": "401/૨ ~~"
+    },
+    {
+      "normalized": "401/3",
+      "value": "401/૩ ~~ ",
+      "display": "401/૩ ~~"
+    },
+    {
+      "normalized": "402/1",
+      "value": "402/૧ ~~ ",
+      "display": "402/૧ ~~"
+    },
+    {
+      "normalized": "402/2",
+      "value": "402/૨ ~~ ",
+      "display": "402/૨ ~~"
+    },
+    {
+      "normalized": "402/3",
+      "value": "402/૩ ~~ ",
+      "display": "402/૩ ~~"
+    },
+    {
+      "normalized": "402/4",
+      "value": "402/૪ ~~ ",
+      "display": "402/૪ ~~"
+    },
+    {
+      "normalized": "403/1+2",
+      "value": "403/૧+૨ ~~ ",
+      "display": "403/૧+૨ ~~"
+    },
+    {
+      "normalized": "403/3",
+      "value": "403/૩ ~~ ",
+      "display": "403/૩ ~~"
+    },
+    {
+      "normalized": "404",
+      "value": "404 ~~ ",
+      "display": "404 ~~"
+    },
+    {
+      "normalized": "405/p",
+      "value": "405/p ~~ ",
+      "display": "405/p ~~"
+    },
+    {
+      "normalized": "406/p1",
+      "value": "406/p૧ ~~ ",
+      "display": "406/p૧ ~~"
+    },
+    {
+      "normalized": "406/p2",
+      "value": "406/p૨ ~~ ",
+      "display": "406/p૨ ~~"
+    },
+    {
+      "normalized": "406/અ",
+      "value": "406/અ ~~ ",
+      "display": "406/અ ~~"
+    },
+    {
+      "normalized": "406/બ",
+      "value": "406/બ ~~ ",
+      "display": "406/બ ~~"
+    },
+    {
+      "normalized": "407/1",
+      "value": "407/૧ ~~ ",
+      "display": "407/૧ ~~"
+    },
+    {
+      "normalized": "407/2",
+      "value": "407/૨ ~~ ",
+      "display": "407/૨ ~~"
+    },
+    {
+      "normalized": "407/3",
+      "value": "407/૩ ~~ ",
+      "display": "407/૩ ~~"
+    },
+    {
+      "normalized": "408/1",
+      "value": "408/૧ ~~ ",
+      "display": "408/૧ ~~"
+    },
+    {
+      "normalized": "408/2",
+      "value": "408/૨ ~~ ",
+      "display": "408/૨ ~~"
+    },
+    {
+      "normalized": "409",
+      "value": "409 ~~ ",
+      "display": "409 ~~"
+    },
+    {
+      "normalized": "410/1",
+      "value": "410/૧ ~~ ",
+      "display": "410/૧ ~~"
+    },
+    {
+      "normalized": "410/2",
+      "value": "410/૨ ~~ ",
+      "display": "410/૨ ~~"
+    },
+    {
+      "normalized": "411",
+      "value": "411 ~~ ",
+      "display": "411 ~~"
+    },
+    {
+      "normalized": "412/p1/p",
+      "value": "412/p૧/p ~~ ",
+      "display": "412/p૧/p ~~"
+    },
+    {
+      "normalized": "412/p2",
+      "value": "412/p૨ ~~ ",
+      "display": "412/p૨ ~~"
+    },
+    {
+      "normalized": "412/p3",
+      "value": "412/p૩ ~~ ",
+      "display": "412/p૩ ~~"
+    },
+    {
+      "normalized": "413",
+      "value": "413 ~~ ",
+      "display": "413 ~~"
+    },
+    {
+      "normalized": "414/1",
+      "value": "414/૧ ~~ ",
+      "display": "414/૧ ~~"
+    },
+    {
+      "normalized": "414/2",
+      "value": "414/૨ ~~ ",
+      "display": "414/૨ ~~"
+    },
+    {
+      "normalized": "415",
+      "value": "415 ~~ ",
+      "display": "415 ~~"
+    },
+    {
+      "normalized": "416/1",
+      "value": "416/૧ ~~ ",
+      "display": "416/૧ ~~"
+    },
+    {
+      "normalized": "416/2",
+      "value": "416/૨ ~~ ",
+      "display": "416/૨ ~~"
+    },
+    {
+      "normalized": "417",
+      "value": "417 ~~ ",
+      "display": "417 ~~"
+    },
+    {
+      "normalized": "418/1/p",
+      "value": "418/૧/p ~~ ",
+      "display": "418/૧/p ~~"
+    },
+    {
+      "normalized": "418/2/p",
+      "value": "418/૨/p ~~ ",
+      "display": "418/૨/p ~~"
+    },
+    {
+      "normalized": "419/p1",
+      "value": "419/p૧ ~~ ",
+      "display": "419/p૧ ~~"
+    },
+    {
+      "normalized": "419/p2",
+      "value": "419/p૨ ~~ ",
+      "display": "419/p૨ ~~"
+    },
+    {
+      "normalized": "420/p1",
+      "value": "420/p૧ ~~ ",
+      "display": "420/p૧ ~~"
+    },
+    {
+      "normalized": "420/p2",
+      "value": "420/p૨ ~~ ",
+      "display": "420/p૨ ~~"
+    },
+    {
+      "normalized": "421/1",
+      "value": "421/૧ ~~ ",
+      "display": "421/૧ ~~"
+    },
+    {
+      "normalized": "421/2+3+4+p",
+      "value": "421/૨+૩+૪+પ ~~ ",
+      "display": "421/૨+૩+૪+પ ~~"
+    },
+    {
+      "normalized": "422/1",
+      "value": "422/૧ ~~ ",
+      "display": "422/૧ ~~"
+    },
+    {
+      "normalized": "422/2/p",
+      "value": "422/૨/p ~~ ",
+      "display": "422/૨/p ~~"
+    },
+    {
+      "normalized": "423/1",
+      "value": "423/૧ ~~ ",
+      "display": "423/૧ ~~"
+    },
+    {
+      "normalized": "423/2",
+      "value": "423/૨ ~~ ",
+      "display": "423/૨ ~~"
+    },
+    {
+      "normalized": "423/3",
+      "value": "423/૩ ~~ ",
+      "display": "423/૩ ~~"
+    },
+    {
+      "normalized": "423/4",
+      "value": "423/૪ ~~ ",
+      "display": "423/૪ ~~"
+    },
+    {
+      "normalized": "423/6",
+      "value": "423/૬ ~~ ",
+      "display": "423/૬ ~~"
+    },
+    {
+      "normalized": "423/p/p",
+      "value": "423/પ/p ~~ ",
+      "display": "423/પ/p ~~"
+    },
+    {
+      "normalized": "424/1",
+      "value": "424/૧ ~~ ",
+      "display": "424/૧ ~~"
+    },
+    {
+      "normalized": "424/2",
+      "value": "424/૨ ~~ ",
+      "display": "424/૨ ~~"
+    },
+    {
+      "normalized": "424/3/1/p",
+      "value": "424/૩/૧/p ~~ ",
+      "display": "424/૩/૧/p ~~"
+    },
+    {
+      "normalized": "424/3/p1",
+      "value": "424/૩/p૧ ~~ ",
+      "display": "424/૩/p૧ ~~"
+    },
+    {
+      "normalized": "424/3/p2",
+      "value": "424/૩/p૨ ~~ ",
+      "display": "424/૩/p૨ ~~"
+    },
+    {
+      "normalized": "425/1",
+      "value": "425/૧ ~~ ",
+      "display": "425/૧ ~~"
+    },
+    {
+      "normalized": "425/2",
+      "value": "425/૨ ~~ ",
+      "display": "425/૨ ~~"
+    },
+    {
+      "normalized": "425/3",
+      "value": "425/૩ ~~ ",
+      "display": "425/૩ ~~"
+    },
+    {
+      "normalized": "426/1",
+      "value": "426/૧ ~~ ",
+      "display": "426/૧ ~~"
+    },
+    {
+      "normalized": "426/2/p",
+      "value": "426/૨/p ~~ ",
+      "display": "426/૨/p ~~"
+    },
+    {
+      "normalized": "427",
+      "value": "427 ~~ ",
+      "display": "427 ~~"
+    },
+    {
+      "normalized": "428",
+      "value": "428 ~~ ",
+      "display": "428 ~~"
+    },
+    {
+      "normalized": "429",
+      "value": "429 ~~ ",
+      "display": "429 ~~"
+    },
+    {
+      "normalized": "430/1",
+      "value": "430/૧ ~~ ",
+      "display": "430/૧ ~~"
+    },
+    {
+      "normalized": "430/2/p",
+      "value": "430/૨/p ~~ ",
+      "display": "430/૨/p ~~"
+    },
+    {
+      "normalized": "431",
+      "value": "431 ~~ ",
+      "display": "431 ~~"
+    },
+    {
+      "normalized": "432",
+      "value": "432 ~~ ",
+      "display": "432 ~~"
+    },
+    {
+      "normalized": "433",
+      "value": "433 ~~ ",
+      "display": "433 ~~"
+    },
+    {
+      "normalized": "434/1",
+      "value": "434/૧ ~~ ",
+      "display": "434/૧ ~~"
+    },
+    {
+      "normalized": "434/2",
+      "value": "434/૨ ~~ ",
+      "display": "434/૨ ~~"
+    },
+    {
+      "normalized": "434/3",
+      "value": "434/૩ ~~ ",
+      "display": "434/૩ ~~"
+    },
+    {
+      "normalized": "435/1",
+      "value": "435/૧ ~~ ",
+      "display": "435/૧ ~~"
+    },
+    {
+      "normalized": "435/2",
+      "value": "435/૨ ~~ ",
+      "display": "435/૨ ~~"
+    },
+    {
+      "normalized": "436/1",
+      "value": "436/૧ ~~ ",
+      "display": "436/૧ ~~"
+    },
+    {
+      "normalized": "436/2",
+      "value": "436/૨ ~~ ",
+      "display": "436/૨ ~~"
+    },
+    {
+      "normalized": "437",
+      "value": "437 ~~ ",
+      "display": "437 ~~"
+    },
+    {
+      "normalized": "438",
+      "value": "438 ~~ ",
+      "display": "438 ~~"
+    },
+    {
+      "normalized": "439/1/p",
+      "value": "439/૧/p ~~ ",
+      "display": "439/૧/p ~~"
+    },
+    {
+      "normalized": "439/2",
+      "value": "439/૨ ~~ ",
+      "display": "439/૨ ~~"
+    },
+    {
+      "normalized": "440",
+      "value": "440 ~~ ",
+      "display": "440 ~~"
+    },
+    {
+      "normalized": "441",
+      "value": "441 ~~ ",
+      "display": "441 ~~"
+    },
+    {
+      "normalized": "442/1",
+      "value": "442/૧ ~~ ",
+      "display": "442/૧ ~~"
+    },
+    {
+      "normalized": "442/2",
+      "value": "442/૨ ~~ ",
+      "display": "442/૨ ~~"
+    },
+    {
+      "normalized": "442/3",
+      "value": "442/૩ ~~ ",
+      "display": "442/૩ ~~"
+    },
+    {
+      "normalized": "442/4બ",
+      "value": "442/૪બ ~~ ",
+      "display": "442/૪બ ~~"
+    },
+    {
+      "normalized": "443",
+      "value": "443 ~~ ",
+      "display": "443 ~~"
+    },
+    {
+      "normalized": "444/1",
+      "value": "444/૧ ~~ ",
+      "display": "444/૧ ~~"
+    },
+    {
+      "normalized": "444/2",
+      "value": "444/૨ ~~ ",
+      "display": "444/૨ ~~"
+    },
+    {
+      "normalized": "444/3",
+      "value": "444/૩ ~~ ",
+      "display": "444/૩ ~~"
+    },
+    {
+      "normalized": "445",
+      "value": "445 ~~ ",
+      "display": "445 ~~"
+    },
+    {
+      "normalized": "446/1",
+      "value": "446/૧ ~~ ",
+      "display": "446/૧ ~~"
+    },
+    {
+      "normalized": "446/2",
+      "value": "446/૨ ~~ ",
+      "display": "446/૨ ~~"
+    },
+    {
+      "normalized": "446/3",
+      "value": "446/૩ ~~ ",
+      "display": "446/૩ ~~"
+    },
+    {
+      "normalized": "447",
+      "value": "447 ~~ ",
+      "display": "447 ~~"
+    },
+    {
+      "normalized": "448/p",
+      "value": "448/p ~~ ",
+      "display": "448/p ~~"
+    },
+    {
+      "normalized": "449/p",
+      "value": "449/p ~~ ",
+      "display": "449/p ~~"
+    },
+    {
+      "normalized": "450/1",
+      "value": "450/૧ ~~ ",
+      "display": "450/૧ ~~"
+    },
+    {
+      "normalized": "450/2",
+      "value": "450/૨ ~~ ",
+      "display": "450/૨ ~~"
+    },
+    {
+      "normalized": "450/3",
+      "value": "450/૩ ~~ ",
+      "display": "450/૩ ~~"
+    },
+    {
+      "normalized": "451/1/p",
+      "value": "451/૧/p ~~ ",
+      "display": "451/૧/p ~~"
+    },
+    {
+      "normalized": "451/2",
+      "value": "451/૨ ~~ ",
+      "display": "451/૨ ~~"
+    },
+    {
+      "normalized": "452",
+      "value": "452 ~~ ",
+      "display": "452 ~~"
+    },
+    {
+      "normalized": "453/1",
+      "value": "453/૧ ~~ ",
+      "display": "453/૧ ~~"
+    },
+    {
+      "normalized": "453/2",
+      "value": "453/૨ ~~ ",
+      "display": "453/૨ ~~"
+    },
+    {
+      "normalized": "453/3",
+      "value": "453/૩ ~~ ",
+      "display": "453/૩ ~~"
+    },
+    {
+      "normalized": "454/1",
+      "value": "454/૧ ~~ ",
+      "display": "454/૧ ~~"
+    },
+    {
+      "normalized": "454/2",
+      "value": "454/૨ ~~ ",
+      "display": "454/૨ ~~"
+    },
+    {
+      "normalized": "454/3",
+      "value": "454/૩ ~~ ",
+      "display": "454/૩ ~~"
+    },
+    {
+      "normalized": "455",
+      "value": "455 ~~ ",
+      "display": "455 ~~"
+    },
+    {
+      "normalized": "455/1/અ",
+      "value": "455/૧/અ ~~ ",
+      "display": "455/૧/અ ~~"
+    },
+    {
+      "normalized": "455/1/બ",
+      "value": "455/૧/બ ~~ ",
+      "display": "455/૧/બ ~~"
+    },
+    {
+      "normalized": "455/2",
+      "value": "455/૨ ~~ ",
+      "display": "455/૨ ~~"
+    },
+    {
+      "normalized": "455/3",
+      "value": "455/૩ ~~ ",
+      "display": "455/૩ ~~"
+    },
+    {
+      "normalized": "456",
+      "value": "456 ~~ ",
+      "display": "456 ~~"
+    },
+    {
+      "normalized": "457",
+      "value": "457 ~~ ",
+      "display": "457 ~~"
+    },
+    {
+      "normalized": "458/p",
+      "value": "458/p ~~ ",
+      "display": "458/p ~~"
+    },
+    {
+      "normalized": "459",
+      "value": "459 ~~ ",
+      "display": "459 ~~"
+    },
+    {
+      "normalized": "460/1",
+      "value": "460/૧ ~~ ",
+      "display": "460/૧ ~~"
+    },
+    {
+      "normalized": "460/2",
+      "value": "460/૨ ~~ ",
+      "display": "460/૨ ~~"
+    },
+    {
+      "normalized": "461",
+      "value": "461 ~~ ",
+      "display": "461 ~~"
+    },
+    {
+      "normalized": "462/1",
+      "value": "462/૧ ~~ ",
+      "display": "462/૧ ~~"
+    },
+    {
+      "normalized": "462/2",
+      "value": "462/૨ ~~ ",
+      "display": "462/૨ ~~"
+    },
+    {
+      "normalized": "463/1",
+      "value": "463/૧ ~~ ",
+      "display": "463/૧ ~~"
+    },
+    {
+      "normalized": "463/2",
+      "value": "463/૨ ~~ ",
+      "display": "463/૨ ~~"
+    },
+    {
+      "normalized": "463/3",
+      "value": "463/૩ ~~ ",
+      "display": "463/૩ ~~"
+    },
+    {
+      "normalized": "464/1",
+      "value": "464/૧ ~~ ",
+      "display": "464/૧ ~~"
+    },
+    {
+      "normalized": "464/2",
+      "value": "464/૨ ~~ ",
+      "display": "464/૨ ~~"
+    },
+    {
+      "normalized": "465/1",
+      "value": "465/૧ ~~ ",
+      "display": "465/૧ ~~"
+    },
+    {
+      "normalized": "465/2",
+      "value": "465/૨ ~~ ",
+      "display": "465/૨ ~~"
+    },
+    {
+      "normalized": "466/1",
+      "value": "466/૧ ~~ ",
+      "display": "466/૧ ~~"
+    },
+    {
+      "normalized": "466/2",
+      "value": "466/૨ ~~ ",
+      "display": "466/૨ ~~"
+    },
+    {
+      "normalized": "467/p",
+      "value": "467/p ~~ ",
+      "display": "467/p ~~"
+    },
+    {
+      "normalized": "468/1",
+      "value": "468/૧ ~~ ",
+      "display": "468/૧ ~~"
+    },
+    {
+      "normalized": "468/2",
+      "value": "468/૨ ~~ ",
+      "display": "468/૨ ~~"
+    },
+    {
+      "normalized": "468/3",
+      "value": "468/૩ ~~ ",
+      "display": "468/૩ ~~"
+    },
+    {
+      "normalized": "468/4",
+      "value": "468/૪ ~~ ",
+      "display": "468/૪ ~~"
+    },
+    {
+      "normalized": "469/1",
+      "value": "469/૧ ~~ ",
+      "display": "469/૧ ~~"
+    },
+    {
+      "normalized": "469/2/p",
+      "value": "469/૨/p ~~ ",
+      "display": "469/૨/p ~~"
+    },
+    {
+      "normalized": "470/1",
+      "value": "470/૧ ~~ ",
+      "display": "470/૧ ~~"
+    },
+    {
+      "normalized": "470/2",
+      "value": "470/૨ ~~ ",
+      "display": "470/૨ ~~"
+    },
+    {
+      "normalized": "471",
+      "value": "471 ~~ ",
+      "display": "471 ~~"
+    },
+    {
+      "normalized": "472",
+      "value": "472 ~~ ",
+      "display": "472 ~~"
+    },
+    {
+      "normalized": "473/p",
+      "value": "473/p ~~ ",
+      "display": "473/p ~~"
+    },
+    {
+      "normalized": "474/1",
+      "value": "474/૧ ~~ ",
+      "display": "474/૧ ~~"
+    },
+    {
+      "normalized": "474/2",
+      "value": "474/૨ ~~ ",
+      "display": "474/૨ ~~"
+    },
+    {
+      "normalized": "475/1",
+      "value": "475/૧ ~~ ",
+      "display": "475/૧ ~~"
+    },
+    {
+      "normalized": "475/2/p",
+      "value": "475/૨/p ~~ ",
+      "display": "475/૨/p ~~"
+    },
+    {
+      "normalized": "475/2/p2",
+      "value": "475/૨/p૨ ~~ ",
+      "display": "475/૨/p૨ ~~"
+    },
+    {
+      "normalized": "476/1",
+      "value": "476/૧ ~~ ",
+      "display": "476/૧ ~~"
+    },
+    {
+      "normalized": "476/2",
+      "value": "476/૨ ~~ ",
+      "display": "476/૨ ~~"
+    },
+    {
+      "normalized": "476/3/p",
+      "value": "476/૩/p ~~ ",
+      "display": "476/૩/p ~~"
+    },
+    {
+      "normalized": "477/1",
+      "value": "477/૧ ~~ ",
+      "display": "477/૧ ~~"
+    },
+    {
+      "normalized": "477/2",
+      "value": "477/૨ ~~ ",
+      "display": "477/૨ ~~"
+    },
+    {
+      "normalized": "478",
+      "value": "478 ~~ ",
+      "display": "478 ~~"
+    },
+    {
+      "normalized": "479/1",
+      "value": "479/૧ ~~ ",
+      "display": "479/૧ ~~"
+    },
+    {
+      "normalized": "479/2",
+      "value": "479/૨ ~~ ",
+      "display": "479/૨ ~~"
+    },
+    {
+      "normalized": "480",
+      "value": "480 ~~ ",
+      "display": "480 ~~"
+    },
+    {
+      "normalized": "481",
+      "value": "481 ~~ ",
+      "display": "481 ~~"
+    },
+    {
+      "normalized": "482/1",
+      "value": "482/૧ ~~ ",
+      "display": "482/૧ ~~"
+    },
+    {
+      "normalized": "482/2",
+      "value": "482/૨ ~~ ",
+      "display": "482/૨ ~~"
+    },
+    {
+      "normalized": "482/3",
+      "value": "482/૩ ~~ ",
+      "display": "482/૩ ~~"
+    },
+    {
+      "normalized": "483/p",
+      "value": "483/p ~~ ",
+      "display": "483/p ~~"
+    },
+    {
+      "normalized": "484/1",
+      "value": "484/૧ ~~ ",
+      "display": "484/૧ ~~"
+    },
+    {
+      "normalized": "484/2",
+      "value": "484/૨ ~~ ",
+      "display": "484/૨ ~~"
+    },
+    {
+      "normalized": "485",
+      "value": "485 ~~ ",
+      "display": "485 ~~"
+    },
+    {
+      "normalized": "486",
+      "value": "486 ~~ ",
+      "display": "486 ~~"
+    },
+    {
+      "normalized": "487",
+      "value": "487 ~~ ",
+      "display": "487 ~~"
+    },
+    {
+      "normalized": "488/1",
+      "value": "488/૧ ~~ ",
+      "display": "488/૧ ~~"
+    },
+    {
+      "normalized": "488/2",
+      "value": "488/૨ ~~ ",
+      "display": "488/૨ ~~"
+    },
+    {
+      "normalized": "489/1",
+      "value": "489/૧ ~~ ",
+      "display": "489/૧ ~~"
+    },
+    {
+      "normalized": "489/2",
+      "value": "489/૨ ~~ ",
+      "display": "489/૨ ~~"
+    },
+    {
+      "normalized": "489/3",
+      "value": "489/૩ ~~ ",
+      "display": "489/૩ ~~"
+    },
+    {
+      "normalized": "490/1",
+      "value": "490/૧ ~~ ",
+      "display": "490/૧ ~~"
+    },
+    {
+      "normalized": "490/2",
+      "value": "490/૨ ~~ ",
+      "display": "490/૨ ~~"
+    },
+    {
+      "normalized": "490/3",
+      "value": "490/૩ ~~ ",
+      "display": "490/૩ ~~"
+    },
+    {
+      "normalized": "491/1",
+      "value": "491/૧ ~~ ",
+      "display": "491/૧ ~~"
+    },
+    {
+      "normalized": "491/2",
+      "value": "491/૨ ~~ ",
+      "display": "491/૨ ~~"
+    },
+    {
+      "normalized": "491/3",
+      "value": "491/૩ ~~ ",
+      "display": "491/૩ ~~"
+    },
+    {
+      "normalized": "491/4",
+      "value": "491/૪ ~~ ",
+      "display": "491/૪ ~~"
+    },
+    {
+      "normalized": "491/p",
+      "value": "491/પ ~~ ",
+      "display": "491/પ ~~"
+    },
+    {
+      "normalized": "492",
+      "value": "492 ~~ ",
+      "display": "492 ~~"
+    },
+    {
+      "normalized": "493/1",
+      "value": "493/૧ ~~ ",
+      "display": "493/૧ ~~"
+    },
+    {
+      "normalized": "493/2",
+      "value": "493/૨ ~~ ",
+      "display": "493/૨ ~~"
+    },
+    {
+      "normalized": "493/3/p",
+      "value": "493/૩/p ~~ ",
+      "display": "493/૩/p ~~"
+    },
+    {
+      "normalized": "493/4/p",
+      "value": "493/૪/p ~~ ",
+      "display": "493/૪/p ~~"
+    },
+    {
+      "normalized": "494/1",
+      "value": "494/૧ ~~ ",
+      "display": "494/૧ ~~"
+    },
+    {
+      "normalized": "494/2",
+      "value": "494/૨ ~~ ",
+      "display": "494/૨ ~~"
+    },
+    {
+      "normalized": "495/1/p1",
+      "value": "495/૧/p૧ ~~ ",
+      "display": "495/૧/p૧ ~~"
+    },
+    {
+      "normalized": "495/1/p2",
+      "value": "495/૧/p૨ ~~ ",
+      "display": "495/૧/p૨ ~~"
+    },
+    {
+      "normalized": "495/2/p1",
+      "value": "495/૨/p૧ ~~ ",
+      "display": "495/૨/p૧ ~~"
+    },
+    {
+      "normalized": "495/2/p2",
+      "value": "495/૨/p૨ ~~ ",
+      "display": "495/૨/p૨ ~~"
+    },
+    {
+      "normalized": "495/3/1",
+      "value": "495/૩/૧ ~~ ",
+      "display": "495/૩/૧ ~~"
+    },
+    {
+      "normalized": "495/3/2",
+      "value": "495/૩/૨ ~~ ",
+      "display": "495/૩/૨ ~~"
+    },
+    {
+      "normalized": "495/4/p1",
+      "value": "495/૪/p૧ ~~ ",
+      "display": "495/૪/p૧ ~~"
+    },
+    {
+      "normalized": "495/4/p2",
+      "value": "495/૪/p૨ ~~ ",
+      "display": "495/૪/p૨ ~~"
+    },
+    {
+      "normalized": "495/6",
+      "value": "495/૬ ~~ ",
+      "display": "495/૬ ~~"
+    },
+    {
+      "normalized": "495/7",
+      "value": "495/૭ ~~ ",
+      "display": "495/૭ ~~"
+    },
+    {
+      "normalized": "495/8",
+      "value": "495/૮ ~~ ",
+      "display": "495/૮ ~~"
+    },
+    {
+      "normalized": "495/p/p1",
+      "value": "495/પ/p૧ ~~ ",
+      "display": "495/પ/p૧ ~~"
+    },
+    {
+      "normalized": "495/p/p2",
+      "value": "495/પ/p૨ ~~ ",
+      "display": "495/પ/p૨ ~~"
+    },
+    {
+      "normalized": "496",
+      "value": "496 ~~ ",
+      "display": "496 ~~"
+    },
+    {
+      "normalized": "497/1",
+      "value": "497/૧ ~~ ",
+      "display": "497/૧ ~~"
+    },
+    {
+      "normalized": "497/2",
+      "value": "497/૨ ~~ ",
+      "display": "497/૨ ~~"
+    },
+    {
+      "normalized": "497/3",
+      "value": "497/૩ ~~ ",
+      "display": "497/૩ ~~"
+    },
+    {
+      "normalized": "497/4",
+      "value": "497/૪ ~~ ",
+      "display": "497/૪ ~~"
+    },
+    {
+      "normalized": "498/1+2/p",
+      "value": "498/૧+૨/p ~~ ",
+      "display": "498/૧+૨/p ~~"
+    },
+    {
+      "normalized": "499/1/અ/બ/p",
+      "value": "499/૧/અ/બ/p ~~ ",
+      "display": "499/૧/અ/બ/p ~~"
+    },
+    {
+      "normalized": "499/2અ",
+      "value": "499/૨અ ~~ ",
+      "display": "499/૨અ ~~"
+    },
+    {
+      "normalized": "499/2બ",
+      "value": "499/૨બ ~~ ",
+      "display": "499/૨બ ~~"
+    },
+    {
+      "normalized": "500",
+      "value": "500 ~~ ",
+      "display": "500 ~~"
+    },
+    {
+      "normalized": "501/1",
+      "value": "501/૧ ~~ ",
+      "display": "501/૧ ~~"
+    },
+    {
+      "normalized": "501/2",
+      "value": "501/૨ ~~ ",
+      "display": "501/૨ ~~"
+    },
+    {
+      "normalized": "502/p",
+      "value": "502/p ~~ ",
+      "display": "502/p ~~"
+    },
+    {
+      "normalized": "503/1",
+      "value": "503/૧ ~~ ",
+      "display": "503/૧ ~~"
+    },
+    {
+      "normalized": "503/2",
+      "value": "503/૨ ~~ ",
+      "display": "503/૨ ~~"
+    },
+    {
+      "normalized": "504/1",
+      "value": "504/૧ ~~ ",
+      "display": "504/૧ ~~"
+    },
+    {
+      "normalized": "504/2",
+      "value": "504/૨ ~~ ",
+      "display": "504/૨ ~~"
+    },
+    {
+      "normalized": "505",
+      "value": "505 ~~ ",
+      "display": "505 ~~"
+    },
+    {
+      "normalized": "506/1",
+      "value": "506/૧ ~~ ",
+      "display": "506/૧ ~~"
+    },
+    {
+      "normalized": "506/2",
+      "value": "506/૨ ~~ ",
+      "display": "506/૨ ~~"
+    },
+    {
+      "normalized": "507",
+      "value": "507 ~~ ",
+      "display": "507 ~~"
+    },
+    {
+      "normalized": "508",
+      "value": "508 ~~ ",
+      "display": "508 ~~"
+    },
+    {
+      "normalized": "509/1",
+      "value": "509/૧ ~~ ",
+      "display": "509/૧ ~~"
+    },
+    {
+      "normalized": "509/2",
+      "value": "509/૨ ~~ ",
+      "display": "509/૨ ~~"
+    },
+    {
+      "normalized": "509/3",
+      "value": "509/૩ ~~ ",
+      "display": "509/૩ ~~"
+    },
+    {
+      "normalized": "509/4",
+      "value": "509/૪ ~~ ",
+      "display": "509/૪ ~~"
+    },
+    {
+      "normalized": "509/6/અ",
+      "value": "509/૬/અ ~~ ",
+      "display": "509/૬/અ ~~"
+    },
+    {
+      "normalized": "509/6બ",
+      "value": "509/૬બ ~~ ",
+      "display": "509/૬બ ~~"
+    },
+    {
+      "normalized": "509/7+8/p2",
+      "value": "509/૭+૮/p૨ ~~ ",
+      "display": "509/૭+૮/p૨ ~~"
+    },
+    {
+      "normalized": "509/7+8/p3",
+      "value": "509/૭+૮/p૩ ~~ ",
+      "display": "509/૭+૮/p૩ ~~"
+    },
+    {
+      "normalized": "509/7+8p1",
+      "value": "509/૭+૮p૧ ~~ ",
+      "display": "509/૭+૮p૧ ~~"
+    },
+    {
+      "normalized": "509/p",
+      "value": "509/પ ~~ ",
+      "display": "509/પ ~~"
+    },
+    {
+      "normalized": "510/1/p",
+      "value": "510/૧/p ~~ ",
+      "display": "510/૧/p ~~"
+    },
+    {
+      "normalized": "510/2/p",
+      "value": "510/૨/p ~~ ",
+      "display": "510/૨/p ~~"
+    },
+    {
+      "normalized": "511/1",
+      "value": "511/૧ ~~ ",
+      "display": "511/૧ ~~"
+    },
+    {
+      "normalized": "511/2",
+      "value": "511/૨ ~~ ",
+      "display": "511/૨ ~~"
+    },
+    {
+      "normalized": "511/3",
+      "value": "511/૩ ~~ ",
+      "display": "511/૩ ~~"
+    },
+    {
+      "normalized": "512",
+      "value": "512 ~~ ",
+      "display": "512 ~~"
+    },
+    {
+      "normalized": "513",
+      "value": "513 ~~ ",
+      "display": "513 ~~"
+    },
+    {
+      "normalized": "514/1/p",
+      "value": "514/૧/p ~~ ",
+      "display": "514/૧/p ~~"
+    },
+    {
+      "normalized": "514/2",
+      "value": "514/૨ ~~ ",
+      "display": "514/૨ ~~"
+    },
+    {
+      "normalized": "515",
+      "value": "515 ~~ ",
+      "display": "515 ~~"
+    },
+    {
+      "normalized": "516",
+      "value": "516 ~~ ",
+      "display": "516 ~~"
+    },
+    {
+      "normalized": "517",
+      "value": "517 ~~ ",
+      "display": "517 ~~"
+    },
+    {
+      "normalized": "518",
+      "value": "518 ~~ ",
+      "display": "518 ~~"
+    },
+    {
+      "normalized": "519",
+      "value": "519 ~~ ",
+      "display": "519 ~~"
+    },
+    {
+      "normalized": "520",
+      "value": "520 ~~ ",
+      "display": "520 ~~"
+    },
+    {
+      "normalized": "521/1/1",
+      "value": "521/૧/૧ ~~ ",
+      "display": "521/૧/૧ ~~"
+    },
+    {
+      "normalized": "521/1/2",
+      "value": "521/૧/૨ ~~ ",
+      "display": "521/૧/૨ ~~"
+    },
+    {
+      "normalized": "521/2",
+      "value": "521/૨ ~~ ",
+      "display": "521/૨ ~~"
+    },
+    {
+      "normalized": "522/1",
+      "value": "522/૧ ~~ ",
+      "display": "522/૧ ~~"
+    },
+    {
+      "normalized": "522/2",
+      "value": "522/૨ ~~ ",
+      "display": "522/૨ ~~"
+    },
+    {
+      "normalized": "523/p1",
+      "value": "523/p૧ ~~ ",
+      "display": "523/p૧ ~~"
+    },
+    {
+      "normalized": "523/p2",
+      "value": "523/p૨ ~~ ",
+      "display": "523/p૨ ~~"
+    },
+    {
+      "normalized": "524",
+      "value": "524 ~~ ",
+      "display": "524 ~~"
+    },
+    {
+      "normalized": "525",
+      "value": "525 ~~ ",
+      "display": "525 ~~"
+    },
+    {
+      "normalized": "526/1",
+      "value": "526/૧ ~~ ",
+      "display": "526/૧ ~~"
+    },
+    {
+      "normalized": "526/2",
+      "value": "526/૨ ~~ ",
+      "display": "526/૨ ~~"
+    },
+    {
+      "normalized": "527",
+      "value": "527 ~~ ",
+      "display": "527 ~~"
+    },
+    {
+      "normalized": "528",
+      "value": "528 ~~ ",
+      "display": "528 ~~"
+    },
+    {
+      "normalized": "529/1",
+      "value": "529/૧ ~~ ",
+      "display": "529/૧ ~~"
+    },
+    {
+      "normalized": "529/2",
+      "value": "529/૨ ~~ ",
+      "display": "529/૨ ~~"
+    },
+    {
+      "normalized": "529/3/1",
+      "value": "529/૩/૧ ~~ ",
+      "display": "529/૩/૧ ~~"
+    },
+    {
+      "normalized": "529/3/2",
+      "value": "529/૩/૨ ~~ ",
+      "display": "529/૩/૨ ~~"
+    },
+    {
+      "normalized": "529/4",
+      "value": "529/૪ ~~ ",
+      "display": "529/૪ ~~"
+    },
+    {
+      "normalized": "529/6",
+      "value": "529/૬ ~~ ",
+      "display": "529/૬ ~~"
+    },
+    {
+      "normalized": "529/7",
+      "value": "529/૭ ~~ ",
+      "display": "529/૭ ~~"
+    },
+    {
+      "normalized": "529/p",
+      "value": "529/પ ~~ ",
+      "display": "529/પ ~~"
+    },
+    {
+      "normalized": "530",
+      "value": "530 ~~ ",
+      "display": "530 ~~"
+    },
+    {
+      "normalized": "531/p1/p",
+      "value": "531/p૧/p ~~ ",
+      "display": "531/p૧/p ~~"
+    },
+    {
+      "normalized": "531/p2",
+      "value": "531/p૨ ~~ ",
+      "display": "531/p૨ ~~"
+    },
+    {
+      "normalized": "532/1",
+      "value": "532/૧ ~~ ",
+      "display": "532/૧ ~~"
+    },
+    {
+      "normalized": "532/2/અ/p2",
+      "value": "532/૨/અ/p૨ ~~ ",
+      "display": "532/૨/અ/p૨ ~~"
+    },
+    {
+      "normalized": "532/2/બ",
+      "value": "532/૨/બ ~~ ",
+      "display": "532/૨/બ ~~"
+    },
+    {
+      "normalized": "533",
+      "value": "533 ~~ ",
+      "display": "533 ~~"
+    },
+    {
+      "normalized": "534/p",
+      "value": "534/p ~~ ",
+      "display": "534/p ~~"
+    },
+    {
+      "normalized": "535/1",
+      "value": "535/૧ ~~ ",
+      "display": "535/૧ ~~"
+    },
+    {
+      "normalized": "535/2",
+      "value": "535/૨ ~~ ",
+      "display": "535/૨ ~~"
+    },
+    {
+      "normalized": "536",
+      "value": "536 ~~ ",
+      "display": "536 ~~"
+    },
+    {
+      "normalized": "537",
+      "value": "537 ~~ ",
+      "display": "537 ~~"
+    },
+    {
+      "normalized": "538/1",
+      "value": "538/૧ ~~ ",
+      "display": "538/૧ ~~"
+    },
+    {
+      "normalized": "538/2",
+      "value": "538/૨ ~~ ",
+      "display": "538/૨ ~~"
+    },
+    {
+      "normalized": "539/1",
+      "value": "539/૧ ~~ ",
+      "display": "539/૧ ~~"
+    },
+    {
+      "normalized": "539/2",
+      "value": "539/૨ ~~ ",
+      "display": "539/૨ ~~"
+    },
+    {
+      "normalized": "540/1/p",
+      "value": "540/૧/p ~~ ",
+      "display": "540/૧/p ~~"
+    },
+    {
+      "normalized": "540/2",
+      "value": "540/૨ ~~ ",
+      "display": "540/૨ ~~"
+    },
+    {
+      "normalized": "541",
+      "value": "541 ~~ ",
+      "display": "541 ~~"
+    },
+    {
+      "normalized": "542/1/p",
+      "value": "542/૧/p ~~ ",
+      "display": "542/૧/p ~~"
+    },
+    {
+      "normalized": "542/2",
+      "value": "542/૨ ~~ ",
+      "display": "542/૨ ~~"
+    },
+    {
+      "normalized": "542/3",
+      "value": "542/૩ ~~ ",
+      "display": "542/૩ ~~"
+    },
+    {
+      "normalized": "542/4/p",
+      "value": "542/૪/p ~~ ",
+      "display": "542/૪/p ~~"
+    },
+    {
+      "normalized": "543",
+      "value": "543 ~~ ",
+      "display": "543 ~~"
+    },
+    {
+      "normalized": "544/p2",
+      "value": "544/p૨ ~~ ",
+      "display": "544/p૨ ~~"
+    },
+    {
+      "normalized": "544p/1",
+      "value": "544p/૧ ~~ ",
+      "display": "544p/૧ ~~"
+    },
+    {
+      "normalized": "545/p",
+      "value": "545/p ~~ ",
+      "display": "545/p ~~"
+    },
+    {
+      "normalized": "546",
+      "value": "546 ~~ ",
+      "display": "546 ~~"
+    },
+    {
+      "normalized": "547/p",
+      "value": "547/p ~~ ",
+      "display": "547/p ~~"
+    },
+    {
+      "normalized": "548/1/p",
+      "value": "548/૧/p ~~ ",
+      "display": "548/૧/p ~~"
+    },
+    {
+      "normalized": "548/2/p",
+      "value": "548/૨/p ~~ ",
+      "display": "548/૨/p ~~"
+    },
+    {
+      "normalized": "549/1/અ",
+      "value": "549/૧/અ ~~ ",
+      "display": "549/૧/અ ~~"
+    },
+    {
+      "normalized": "549/1/ક",
+      "value": "549/૧/ક ~~ ",
+      "display": "549/૧/ક ~~"
+    },
+    {
+      "normalized": "549/1/બ",
+      "value": "549/૧/બ ~~ ",
+      "display": "549/૧/બ ~~"
+    },
+    {
+      "normalized": "549/2/અબ",
+      "value": "549/૨/અબ ~~ ",
+      "display": "549/૨/અબ ~~"
+    },
+    {
+      "normalized": "549/3/અ",
+      "value": "549/૩/અ ~~ ",
+      "display": "549/૩/અ ~~"
+    },
+    {
+      "normalized": "549/3/બ",
+      "value": "549/૩/બ ~~ ",
+      "display": "549/૩/બ ~~"
+    },
+    {
+      "normalized": "549/4",
+      "value": "549/૪ ~~ ",
+      "display": "549/૪ ~~"
+    },
+    {
+      "normalized": "550/p",
+      "value": "550/p ~~ ",
+      "display": "550/p ~~"
+    },
+    {
+      "normalized": "551/1+2+3",
+      "value": "551/૧+૨+૩ ~~ ",
+      "display": "551/૧+૨+૩ ~~"
+    },
+    {
+      "normalized": "552/1",
+      "value": "552/૧ ~~ ",
+      "display": "552/૧ ~~"
+    },
+    {
+      "normalized": "552/2",
+      "value": "552/૨ ~~ ",
+      "display": "552/૨ ~~"
+    },
+    {
+      "normalized": "552/3",
+      "value": "552/૩ ~~ ",
+      "display": "552/૩ ~~"
+    },
+    {
+      "normalized": "552/4",
+      "value": "552/૪ ~~ ",
+      "display": "552/૪ ~~"
+    },
+    {
+      "normalized": "552/p",
+      "value": "552/પ ~~ ",
+      "display": "552/પ ~~"
+    },
+    {
+      "normalized": "553/1",
+      "value": "553/૧ ~~ ",
+      "display": "553/૧ ~~"
+    },
+    {
+      "normalized": "553/2",
+      "value": "553/૨ ~~ ",
+      "display": "553/૨ ~~"
+    },
+    {
+      "normalized": "553/3",
+      "value": "553/૩ ~~ ",
+      "display": "553/૩ ~~"
+    },
+    {
+      "normalized": "553/4",
+      "value": "553/૪ ~~ ",
+      "display": "553/૪ ~~"
+    },
+    {
+      "normalized": "553/6",
+      "value": "553/૬ ~~ ",
+      "display": "553/૬ ~~"
+    },
+    {
+      "normalized": "553/p",
+      "value": "553/પ ~~ ",
+      "display": "553/પ ~~"
+    },
+    {
+      "normalized": "554/p1",
+      "value": "554/p૧ ~~ ",
+      "display": "554/p૧ ~~"
+    },
+    {
+      "normalized": "554/p2/p",
+      "value": "554/p૨/p ~~ ",
+      "display": "554/p૨/p ~~"
+    },
+    {
+      "normalized": "554/p2/p+532/2/અ/p3+562/2",
+      "value": "554/p2/p+532/2/અ/p3+562/2 ~~ ",
+      "display": "554/p2/p+532/2/અ/p3+562/2 ~~"
+    },
+    {
+      "normalized": "555",
+      "value": "555 ~~ ",
+      "display": "555 ~~"
+    },
+    {
+      "normalized": "556",
+      "value": "556 ~~ ",
+      "display": "556 ~~"
+    },
+    {
+      "normalized": "557/1",
+      "value": "557/૧ ~~ ",
+      "display": "557/૧ ~~"
+    },
+    {
+      "normalized": "557/2",
+      "value": "557/૨ ~~ ",
+      "display": "557/૨ ~~"
+    },
+    {
+      "normalized": "558",
+      "value": "558 ~~ ",
+      "display": "558 ~~"
+    },
+    {
+      "normalized": "559/1",
+      "value": "559/૧ ~~ ",
+      "display": "559/૧ ~~"
+    },
+    {
+      "normalized": "559/2",
+      "value": "559/૨ ~~ ",
+      "display": "559/૨ ~~"
+    },
+    {
+      "normalized": "560",
+      "value": "560 ~~ ",
+      "display": "560 ~~"
+    },
+    {
+      "normalized": "561",
+      "value": "561 ~~ ",
+      "display": "561 ~~"
+    },
+    {
+      "normalized": "562/1/અ",
+      "value": "562/૧/અ ~~ ",
+      "display": "562/૧/અ ~~"
+    },
+    {
+      "normalized": "562/1ક",
+      "value": "562/૧ક ~~ ",
+      "display": "562/૧ક ~~"
+    },
+    {
+      "normalized": "562/1બ",
+      "value": "562/૧બ ~~ ",
+      "display": "562/૧બ ~~"
+    },
+    {
+      "normalized": "563",
+      "value": "563 ~~ ",
+      "display": "563 ~~"
+    },
+    {
+      "normalized": "564",
+      "value": "564 ~~ ",
+      "display": "564 ~~"
+    },
+    {
+      "normalized": "565/1અ",
+      "value": "565/૧અ ~~ ",
+      "display": "565/૧અ ~~"
+    },
+    {
+      "normalized": "565/2",
+      "value": "565/૨ ~~ ",
+      "display": "565/૨ ~~"
+    },
+    {
+      "normalized": "565/3/અ",
+      "value": "565/૩/અ ~~ ",
+      "display": "565/૩/અ ~~"
+    },
+    {
+      "normalized": "565/3/બ",
+      "value": "565/૩/બ ~~ ",
+      "display": "565/૩/બ ~~"
+    },
+    {
+      "normalized": "566/1",
+      "value": "566/૧ ~~ ",
+      "display": "566/૧ ~~"
+    },
+    {
+      "normalized": "566/2/p",
+      "value": "566/૨/p ~~ ",
+      "display": "566/૨/p ~~"
+    },
+    {
+      "normalized": "566/3",
+      "value": "566/૩ ~~ ",
+      "display": "566/૩ ~~"
+    },
+    {
+      "normalized": "566/4/p",
+      "value": "566/૪/p ~~ ",
+      "display": "566/૪/p ~~"
+    },
+    {
+      "normalized": "567/1/p",
+      "value": "567/૧/p ~~ ",
+      "display": "567/૧/p ~~"
+    },
+    {
+      "normalized": "567/2",
+      "value": "567/૨ ~~ ",
+      "display": "567/૨ ~~"
+    },
+    {
+      "normalized": "567/3",
+      "value": "567/૩ ~~ ",
+      "display": "567/૩ ~~"
+    },
+    {
+      "normalized": "568",
+      "value": "568 ~~ ",
+      "display": "568 ~~"
+    },
+    {
+      "normalized": "569/1",
+      "value": "569/૧ ~~ ",
+      "display": "569/૧ ~~"
+    },
+    {
+      "normalized": "569/2",
+      "value": "569/૨ ~~ ",
+      "display": "569/૨ ~~"
+    },
+    {
+      "normalized": "569/3",
+      "value": "569/૩ ~~ ",
+      "display": "569/૩ ~~"
+    },
+    {
+      "normalized": "570/1",
+      "value": "570/૧ ~~ ",
+      "display": "570/૧ ~~"
+    },
+    {
+      "normalized": "570/2",
+      "value": "570/૨ ~~ ",
+      "display": "570/૨ ~~"
+    },
+    {
+      "normalized": "571/1",
+      "value": "571/૧ ~~ ",
+      "display": "571/૧ ~~"
+    },
+    {
+      "normalized": "571/2",
+      "value": "571/૨ ~~ ",
+      "display": "571/૨ ~~"
+    },
+    {
+      "normalized": "572/1/p",
+      "value": "572/૧/p ~~ ",
+      "display": "572/૧/p ~~"
+    },
+    {
+      "normalized": "572/2",
+      "value": "572/૨ ~~ ",
+      "display": "572/૨ ~~"
+    },
+    {
+      "normalized": "573",
+      "value": "573 ~~ ",
+      "display": "573 ~~"
+    },
+    {
+      "normalized": "574",
+      "value": "574 ~~ ",
+      "display": "574 ~~"
+    },
+    {
+      "normalized": "575/1/p",
+      "value": "575/૧/p ~~ ",
+      "display": "575/૧/p ~~"
+    },
+    {
+      "normalized": "575/2",
+      "value": "575/૨ ~~ ",
+      "display": "575/૨ ~~"
+    },
+    {
+      "normalized": "576/1",
+      "value": "576/૧ ~~ ",
+      "display": "576/૧ ~~"
+    },
+    {
+      "normalized": "576/2/p",
+      "value": "576/૨/p ~~ ",
+      "display": "576/૨/p ~~"
+    },
+    {
+      "normalized": "576/3",
+      "value": "576/૩ ~~ ",
+      "display": "576/૩ ~~"
+    },
+    {
+      "normalized": "577/1",
+      "value": "577/૧ ~~ ",
+      "display": "577/૧ ~~"
+    },
+    {
+      "normalized": "577/2",
+      "value": "577/૨ ~~ ",
+      "display": "577/૨ ~~"
+    },
+    {
+      "normalized": "577/3",
+      "value": "577/૩ ~~ ",
+      "display": "577/૩ ~~"
+    },
+    {
+      "normalized": "578/p",
+      "value": "578/p ~~ ",
+      "display": "578/p ~~"
+    },
+    {
+      "normalized": "579/1",
+      "value": "579/૧ ~~ ",
+      "display": "579/૧ ~~"
+    },
+    {
+      "normalized": "579/2",
+      "value": "579/૨ ~~ ",
+      "display": "579/૨ ~~"
+    },
+    {
+      "normalized": "579/3",
+      "value": "579/૩ ~~ ",
+      "display": "579/૩ ~~"
+    },
+    {
+      "normalized": "580",
+      "value": "580 ~~ ",
+      "display": "580 ~~"
+    },
+    {
+      "normalized": "581/1",
+      "value": "581/૧ ~~ ",
+      "display": "581/૧ ~~"
+    },
+    {
+      "normalized": "581/2",
+      "value": "581/૨ ~~ ",
+      "display": "581/૨ ~~"
+    },
+    {
+      "normalized": "581/3",
+      "value": "581/૩ ~~ ",
+      "display": "581/૩ ~~"
+    },
+    {
+      "normalized": "582/p1",
+      "value": "582/p૧ ~~ ",
+      "display": "582/p૧ ~~"
+    },
+    {
+      "normalized": "582/p2",
+      "value": "582/p૨ ~~ ",
+      "display": "582/p૨ ~~"
+    },
+    {
+      "normalized": "583/1",
+      "value": "583/૧ ~~ ",
+      "display": "583/૧ ~~"
+    },
+    {
+      "normalized": "583/2",
+      "value": "583/૨ ~~ ",
+      "display": "583/૨ ~~"
+    },
+    {
+      "normalized": "583/3",
+      "value": "583/૩ ~~ ",
+      "display": "583/૩ ~~"
+    },
+    {
+      "normalized": "583/4",
+      "value": "583/૪ ~~ ",
+      "display": "583/૪ ~~"
+    },
+    {
+      "normalized": "584/1",
+      "value": "584/૧ ~~ ",
+      "display": "584/૧ ~~"
+    },
+    {
+      "normalized": "584/2",
+      "value": "584/૨ ~~ ",
+      "display": "584/૨ ~~"
+    },
+    {
+      "normalized": "585/1",
+      "value": "585/૧ ~~ ",
+      "display": "585/૧ ~~"
+    },
+    {
+      "normalized": "585/2",
+      "value": "585/૨ ~~ ",
+      "display": "585/૨ ~~"
+    },
+    {
+      "normalized": "585/3",
+      "value": "585/૩ ~~ ",
+      "display": "585/૩ ~~"
+    },
+    {
+      "normalized": "585/4",
+      "value": "585/૪ ~~ ",
+      "display": "585/૪ ~~"
+    },
+    {
+      "normalized": "586/1",
+      "value": "586/૧ ~~ ",
+      "display": "586/૧ ~~"
+    },
+    {
+      "normalized": "586/2",
+      "value": "586/૨ ~~ ",
+      "display": "586/૨ ~~"
+    },
+    {
+      "normalized": "587/1",
+      "value": "587/૧ ~~ ",
+      "display": "587/૧ ~~"
+    },
+    {
+      "normalized": "587/2",
+      "value": "587/૨ ~~ ",
+      "display": "587/૨ ~~"
+    },
+    {
+      "normalized": "588/1+2/p1",
+      "value": "588/૧+૨/p૧ ~~ ",
+      "display": "588/૧+૨/p૧ ~~"
+    },
+    {
+      "normalized": "588/1+2/p2",
+      "value": "588/૧+૨/p૨ ~~ ",
+      "display": "588/૧+૨/p૨ ~~"
+    },
+    {
+      "normalized": "589/p",
+      "value": "589/p ~~ ",
+      "display": "589/p ~~"
+    },
+    {
+      "normalized": "590/1",
+      "value": "590/૧ ~~ ",
+      "display": "590/૧ ~~"
+    },
+    {
+      "normalized": "590/2",
+      "value": "590/૨ ~~ ",
+      "display": "590/૨ ~~"
+    },
+    {
+      "normalized": "591/1+2/p",
+      "value": "591/૧+૨/p ~~ ",
+      "display": "591/૧+૨/p ~~"
+    },
+    {
+      "normalized": "592",
+      "value": "592 ~~ ",
+      "display": "592 ~~"
+    },
+    {
+      "normalized": "593/1",
+      "value": "593/૧ ~~ ",
+      "display": "593/૧ ~~"
+    },
+    {
+      "normalized": "593/2",
+      "value": "593/૨ ~~ ",
+      "display": "593/૨ ~~"
+    },
+    {
+      "normalized": "593/3",
+      "value": "593/૩ ~~ ",
+      "display": "593/૩ ~~"
+    },
+    {
+      "normalized": "594/p",
+      "value": "594/p ~~ ",
+      "display": "594/p ~~"
+    },
+    {
+      "normalized": "595/1",
+      "value": "595/૧ ~~ ",
+      "display": "595/૧ ~~"
+    },
+    {
+      "normalized": "595/2",
+      "value": "595/૨ ~~ ",
+      "display": "595/૨ ~~"
+    },
+    {
+      "normalized": "595/3",
+      "value": "595/૩ ~~ ",
+      "display": "595/૩ ~~"
+    },
+    {
+      "normalized": "596/p",
+      "value": "596/p ~~ ",
+      "display": "596/p ~~"
+    },
+    {
+      "normalized": "597",
+      "value": "597 ~~ ",
+      "display": "597 ~~"
+    },
+    {
+      "normalized": "598/p",
+      "value": "598/p ~~ ",
+      "display": "598/p ~~"
+    },
+    {
+      "normalized": "599/1",
+      "value": "599/૧ ~~ ",
+      "display": "599/૧ ~~"
+    },
+    {
+      "normalized": "599/2/1",
+      "value": "599/૨/૧ ~~ ",
+      "display": "599/૨/૧ ~~"
+    },
+    {
+      "normalized": "599/2/2",
+      "value": "599/૨/૨ ~~ ",
+      "display": "599/૨/૨ ~~"
+    },
+    {
+      "normalized": "599/3/p",
+      "value": "599/૩/p ~~ ",
+      "display": "599/૩/p ~~"
+    },
+    {
+      "normalized": "600",
+      "value": "600 ~~ ",
+      "display": "600 ~~"
+    },
+    {
+      "normalized": "601",
+      "value": "601 ~~ ",
+      "display": "601 ~~"
+    },
+    {
+      "normalized": "602",
+      "value": "602 ~~ ",
+      "display": "602 ~~"
+    },
+    {
+      "normalized": "603/1",
+      "value": "603/૧ ~~ ",
+      "display": "603/૧ ~~"
+    },
+    {
+      "normalized": "603/2",
+      "value": "603/૨ ~~ ",
+      "display": "603/૨ ~~"
+    },
+    {
+      "normalized": "604/1",
+      "value": "604/૧ ~~ ",
+      "display": "604/૧ ~~"
+    },
+    {
+      "normalized": "604/2",
+      "value": "604/૨ ~~ ",
+      "display": "604/૨ ~~"
+    },
+    {
+      "normalized": "604/3",
+      "value": "604/૩ ~~ ",
+      "display": "604/૩ ~~"
+    },
+    {
+      "normalized": "605/1",
+      "value": "605/૧ ~~ ",
+      "display": "605/૧ ~~"
+    },
+    {
+      "normalized": "605/2",
+      "value": "605/૨ ~~ ",
+      "display": "605/૨ ~~"
+    },
+    {
+      "normalized": "606/p",
+      "value": "606/p ~~ ",
+      "display": "606/p ~~"
+    },
+    {
+      "normalized": "607/1",
+      "value": "607/૧ ~~ ",
+      "display": "607/૧ ~~"
+    },
+    {
+      "normalized": "607/2",
+      "value": "607/૨ ~~ ",
+      "display": "607/૨ ~~"
+    },
+    {
+      "normalized": "608",
+      "value": "608 ~~ ",
+      "display": "608 ~~"
+    },
+    {
+      "normalized": "609",
+      "value": "609 ~~ ",
+      "display": "609 ~~"
+    },
+    {
+      "normalized": "610/1",
+      "value": "610/૧ ~~ ",
+      "display": "610/૧ ~~"
+    },
+    {
+      "normalized": "610/2",
+      "value": "610/૨ ~~ ",
+      "display": "610/૨ ~~"
+    },
+    {
+      "normalized": "611/1/1",
+      "value": "611/૧/૧ ~~ ",
+      "display": "611/૧/૧ ~~"
+    },
+    {
+      "normalized": "611/1/2",
+      "value": "611/૧/૨ ~~ ",
+      "display": "611/૧/૨ ~~"
+    },
+    {
+      "normalized": "611/2",
+      "value": "611/૨ ~~ ",
+      "display": "611/૨ ~~"
+    },
+    {
+      "normalized": "611/3",
+      "value": "611/૩ ~~ ",
+      "display": "611/૩ ~~"
+    },
+    {
+      "normalized": "611/4",
+      "value": "611/૪ ~~ ",
+      "display": "611/૪ ~~"
+    },
+    {
+      "normalized": "611/6",
+      "value": "611/૬ ~~ ",
+      "display": "611/૬ ~~"
+    },
+    {
+      "normalized": "611/p/1",
+      "value": "611/પ/૧ ~~ ",
+      "display": "611/પ/૧ ~~"
+    },
+    {
+      "normalized": "611/p/2",
+      "value": "611/પ/૨ ~~ ",
+      "display": "611/પ/૨ ~~"
+    },
+    {
+      "normalized": "612",
+      "value": "612 ~~ ",
+      "display": "612 ~~"
+    },
+    {
+      "normalized": "613/p",
+      "value": "613/p ~~ ",
+      "display": "613/p ~~"
+    },
+    {
+      "normalized": "614/p",
+      "value": "614/p ~~ ",
+      "display": "614/p ~~"
+    },
+    {
+      "normalized": "615",
+      "value": "615 ~~ ",
+      "display": "615 ~~"
+    },
+    {
+      "normalized": "616",
+      "value": "616 ~~ ",
+      "display": "616 ~~"
+    },
+    {
+      "normalized": "617/6/7/12/13/p",
+      "value": "617/૬/૭/૧૨/૧૩/p ~~ ",
+      "display": "617/૬/૭/૧૨/૧૩/p ~~"
+    },
+    {
+      "normalized": "617/p",
+      "value": "617/p ~~ ",
+      "display": "617/p ~~"
+    },
+    {
+      "normalized": "618/1",
+      "value": "618/૧ ~~ ",
+      "display": "618/૧ ~~"
+    },
+    {
+      "normalized": "618/2",
+      "value": "618/૨ ~~ ",
+      "display": "618/૨ ~~"
+    },
+    {
+      "normalized": "619/1",
+      "value": "619/૧ ~~ ",
+      "display": "619/૧ ~~"
+    },
+    {
+      "normalized": "619/2",
+      "value": "619/૨ ~~ ",
+      "display": "619/૨ ~~"
+    },
+    {
+      "normalized": "620/1",
+      "value": "620/૧ ~~ ",
+      "display": "620/૧ ~~"
+    },
+    {
+      "normalized": "620/2",
+      "value": "620/૨ ~~ ",
+      "display": "620/૨ ~~"
+    },
+    {
+      "normalized": "620/3",
+      "value": "620/૩ ~~ ",
+      "display": "620/૩ ~~"
+    },
+    {
+      "normalized": "621",
+      "value": "621 ~~ ",
+      "display": "621 ~~"
+    },
+    {
+      "normalized": "622/1",
+      "value": "622/૧ ~~ ",
+      "display": "622/૧ ~~"
+    },
+    {
+      "normalized": "622/2",
+      "value": "622/૨ ~~ ",
+      "display": "622/૨ ~~"
+    },
+    {
+      "normalized": "622/3",
+      "value": "622/૩ ~~ ",
+      "display": "622/૩ ~~"
+    },
+    {
+      "normalized": "622/4",
+      "value": "622/૪ ~~ ",
+      "display": "622/૪ ~~"
+    },
+    {
+      "normalized": "623/1",
+      "value": "623/૧ ~~ ",
+      "display": "623/૧ ~~"
+    },
+    {
+      "normalized": "623/2",
+      "value": "623/૨ ~~ ",
+      "display": "623/૨ ~~"
+    },
+    {
+      "normalized": "623/3",
+      "value": "623/૩ ~~ ",
+      "display": "623/૩ ~~"
+    },
+    {
+      "normalized": "623/4",
+      "value": "623/૪ ~~ ",
+      "display": "623/૪ ~~"
+    },
+    {
+      "normalized": "624",
+      "value": "624 ~~ ",
+      "display": "624 ~~"
+    },
+    {
+      "normalized": "625",
+      "value": "625 ~~ ",
+      "display": "625 ~~"
+    },
+    {
+      "normalized": "626",
+      "value": "626 ~~ ",
+      "display": "626 ~~"
+    },
+    {
+      "normalized": "627",
+      "value": "627 ~~ ",
+      "display": "627 ~~"
+    },
+    {
+      "normalized": "628/p",
+      "value": "628/p ~~ ",
+      "display": "628/p ~~"
+    },
+    {
+      "normalized": "629",
+      "value": "629 ~~ ",
+      "display": "629 ~~"
+    },
+    {
+      "normalized": "630/p",
+      "value": "630/p ~~ ",
+      "display": "630/p ~~"
+    },
+    {
+      "normalized": "631",
+      "value": "631 ~~ ",
+      "display": "631 ~~"
+    },
+    {
+      "normalized": "632/1/અ",
+      "value": "632/૧/અ ~~ ",
+      "display": "632/૧/અ ~~"
+    },
+    {
+      "normalized": "632/1/બ",
+      "value": "632/૧/બ ~~ ",
+      "display": "632/૧/બ ~~"
+    },
+    {
+      "normalized": "632/2/p",
+      "value": "632/૨/p ~~ ",
+      "display": "632/૨/p ~~"
+    },
+    {
+      "normalized": "633",
+      "value": "633 ~~ ",
+      "display": "633 ~~"
+    },
+    {
+      "normalized": "634",
+      "value": "634 ~~ ",
+      "display": "634 ~~"
+    },
+    {
+      "normalized": "635",
+      "value": "635 ~~ ",
+      "display": "635 ~~"
+    },
+    {
+      "normalized": "636",
+      "value": "636 ~~ ",
+      "display": "636 ~~"
+    },
+    {
+      "normalized": "637/p",
+      "value": "637/p ~~ ",
+      "display": "637/p ~~"
+    },
+    {
+      "normalized": "638",
+      "value": "638 ~~ ",
+      "display": "638 ~~"
+    },
+    {
+      "normalized": "639/p",
+      "value": "639/p ~~ ",
+      "display": "639/p ~~"
+    },
+    {
+      "normalized": "640/p",
+      "value": "640/p ~~ ",
+      "display": "640/p ~~"
+    },
+    {
+      "normalized": "641/1",
+      "value": "641/૧ ~~ ",
+      "display": "641/૧ ~~"
+    },
+    {
+      "normalized": "641/2",
+      "value": "641/૨ ~~ ",
+      "display": "641/૨ ~~"
+    },
+    {
+      "normalized": "641/3",
+      "value": "641/૩ ~~ ",
+      "display": "641/૩ ~~"
+    },
+    {
+      "normalized": "642/1",
+      "value": "642/૧ ~~ ",
+      "display": "642/૧ ~~"
+    },
+    {
+      "normalized": "642/2",
+      "value": "642/૨ ~~ ",
+      "display": "642/૨ ~~"
+    },
+    {
+      "normalized": "642/3",
+      "value": "642/૩ ~~ ",
+      "display": "642/૩ ~~"
+    },
+    {
+      "normalized": "643",
+      "value": "643 ~~ ",
+      "display": "643 ~~"
+    },
+    {
+      "normalized": "644/p1/p",
+      "value": "644/p૧/p ~~ ",
+      "display": "644/p૧/p ~~"
+    },
+    {
+      "normalized": "645",
+      "value": "645 ~~ ",
+      "display": "645 ~~"
+    },
+    {
+      "normalized": "646/p",
+      "value": "646/p ~~ ",
+      "display": "646/p ~~"
+    },
+    {
+      "normalized": "647/p",
+      "value": "647/p ~~ ",
+      "display": "647/p ~~"
+    },
+    {
+      "normalized": "648/1/p",
+      "value": "648/૧/p ~~ ",
+      "display": "648/૧/p ~~"
+    },
+    {
+      "normalized": "648/2",
+      "value": "648/૨ ~~ ",
+      "display": "648/૨ ~~"
+    },
+    {
+      "normalized": "648/3",
+      "value": "648/૩ ~~ ",
+      "display": "648/૩ ~~"
+    },
+    {
+      "normalized": "649",
+      "value": "649 ~~ ",
+      "display": "649 ~~"
+    },
+    {
+      "normalized": "650",
+      "value": "650 ~~ ",
+      "display": "650 ~~"
+    },
+    {
+      "normalized": "651",
+      "value": "651 ~~ ",
+      "display": "651 ~~"
+    },
+    {
+      "normalized": "652/p",
+      "value": "652/p ~~ ",
+      "display": "652/p ~~"
+    },
+    {
+      "normalized": "653",
+      "value": "653 ~~ ",
+      "display": "653 ~~"
+    },
+    {
+      "normalized": "654/p",
+      "value": "654/p ~~ ",
+      "display": "654/p ~~"
+    },
+    {
+      "normalized": "655",
+      "value": "655 ~~ ",
+      "display": "655 ~~"
+    },
+    {
+      "normalized": "656/1/p",
+      "value": "656/૧/p ~~ ",
+      "display": "656/૧/p ~~"
+    },
+    {
+      "normalized": "656/2",
+      "value": "656/૨ ~~ ",
+      "display": "656/૨ ~~"
+    },
+    {
+      "normalized": "657",
+      "value": "657 ~~ ",
+      "display": "657 ~~"
+    },
+    {
+      "normalized": "658",
+      "value": "658 ~~ ",
+      "display": "658 ~~"
+    },
+    {
+      "normalized": "659",
+      "value": "659 ~~ ",
+      "display": "659 ~~"
+    },
+    {
+      "normalized": "660/1",
+      "value": "660/૧ ~~ ",
+      "display": "660/૧ ~~"
+    },
+    {
+      "normalized": "660/2",
+      "value": "660/૨ ~~ ",
+      "display": "660/૨ ~~"
+    },
+    {
+      "normalized": "661/1+3",
+      "value": "661/૧+૩ ~~ ",
+      "display": "661/૧+૩ ~~"
+    },
+    {
+      "normalized": "661/2",
+      "value": "661/૨ ~~ ",
+      "display": "661/૨ ~~"
+    },
+    {
+      "normalized": "661/4",
+      "value": "661/૪ ~~ ",
+      "display": "661/૪ ~~"
+    },
+    {
+      "normalized": "661/6",
+      "value": "661/૬ ~~ ",
+      "display": "661/૬ ~~"
+    },
+    {
+      "normalized": "661/7",
+      "value": "661/૭ ~~ ",
+      "display": "661/૭ ~~"
+    },
+    {
+      "normalized": "661/p",
+      "value": "661/પ ~~ ",
+      "display": "661/પ ~~"
+    },
+    {
+      "normalized": "662",
+      "value": "662 ~~ ",
+      "display": "662 ~~"
+    },
+    {
+      "normalized": "663",
+      "value": "663 ~~ ",
+      "display": "663 ~~"
+    },
+    {
+      "normalized": "664",
+      "value": "664 ~~ ",
+      "display": "664 ~~"
+    },
+    {
+      "normalized": "665",
+      "value": "665 ~~ ",
+      "display": "665 ~~"
+    },
+    {
+      "normalized": "666/1",
+      "value": "666/૧ ~~ ",
+      "display": "666/૧ ~~"
+    },
+    {
+      "normalized": "666/2",
+      "value": "666/૨ ~~ ",
+      "display": "666/૨ ~~"
+    },
+    {
+      "normalized": "667",
+      "value": "667 ~~ ",
+      "display": "667 ~~"
+    },
+    {
+      "normalized": "668",
+      "value": "668 ~~ ",
+      "display": "668 ~~"
+    },
+    {
+      "normalized": "669",
+      "value": "669 ~~ ",
+      "display": "669 ~~"
+    },
+    {
+      "normalized": "670",
+      "value": "670 ~~ ",
+      "display": "670 ~~"
+    },
+    {
+      "normalized": "671",
+      "value": "671 ~~ ",
+      "display": "671 ~~"
+    },
+    {
+      "normalized": "672",
+      "value": "672 ~~ ",
+      "display": "672 ~~"
+    },
+    {
+      "normalized": "673",
+      "value": "673 ~~ ",
+      "display": "673 ~~"
+    },
+    {
+      "normalized": "674",
+      "value": "674 ~~ ",
+      "display": "674 ~~"
+    },
+    {
+      "normalized": "675/p",
+      "value": "675/p ~~ ",
+      "display": "675/p ~~"
+    },
+    {
+      "normalized": "676",
+      "value": "676 ~~ ",
+      "display": "676 ~~"
+    },
+    {
+      "normalized": "677/1/p1",
+      "value": "677/૧/p૧ ~~ ",
+      "display": "677/૧/p૧ ~~"
+    },
+    {
+      "normalized": "677/1/p2",
+      "value": "677/૧/p૨ ~~ ",
+      "display": "677/૧/p૨ ~~"
+    },
+    {
+      "normalized": "677/1/p3",
+      "value": "677/૧/p૩ ~~ ",
+      "display": "677/૧/p૩ ~~"
+    },
+    {
+      "normalized": "677/2",
+      "value": "677/૨ ~~ ",
+      "display": "677/૨ ~~"
+    },
+    {
+      "normalized": "678",
+      "value": "678 ~~ ",
+      "display": "678 ~~"
+    },
+    {
+      "normalized": "679/p",
+      "value": "679/p ~~ ",
+      "display": "679/p ~~"
+    },
+    {
+      "normalized": "680",
+      "value": "680 ~~ ",
+      "display": "680 ~~"
+    },
+    {
+      "normalized": "681/p",
+      "value": "681/p ~~ ",
+      "display": "681/p ~~"
+    },
+    {
+      "normalized": "682/p",
+      "value": "682/p ~~ ",
+      "display": "682/p ~~"
+    },
+    {
+      "normalized": "683/1",
+      "value": "683/૧ ~~ ",
+      "display": "683/૧ ~~"
+    },
+    {
+      "normalized": "683/2",
+      "value": "683/૨ ~~ ",
+      "display": "683/૨ ~~"
+    },
+    {
+      "normalized": "683/3",
+      "value": "683/૩ ~~ ",
+      "display": "683/૩ ~~"
+    },
+    {
+      "normalized": "684",
+      "value": "684 ~~ ",
+      "display": "684 ~~"
+    },
+    {
+      "normalized": "685/1",
+      "value": "685/૧ ~~ ",
+      "display": "685/૧ ~~"
+    },
+    {
+      "normalized": "685/2",
+      "value": "685/૨ ~~ ",
+      "display": "685/૨ ~~"
+    },
+    {
+      "normalized": "685/3",
+      "value": "685/૩ ~~ ",
+      "display": "685/૩ ~~"
+    },
+    {
+      "normalized": "686/1",
+      "value": "686/૧ ~~ ",
+      "display": "686/૧ ~~"
+    },
+    {
+      "normalized": "686/2",
+      "value": "686/૨ ~~ ",
+      "display": "686/૨ ~~"
+    },
+    {
+      "normalized": "687/1/1",
+      "value": "687/૧/૧ ~~ ",
+      "display": "687/૧/૧ ~~"
+    },
+    {
+      "normalized": "687/1/2",
+      "value": "687/૧/૨ ~~ ",
+      "display": "687/૧/૨ ~~"
+    },
+    {
+      "normalized": "687/2",
+      "value": "687/૨ ~~ ",
+      "display": "687/૨ ~~"
+    },
+    {
+      "normalized": "688/p",
+      "value": "688/p ~~ ",
+      "display": "688/p ~~"
+    },
+    {
+      "normalized": "689/1",
+      "value": "689/૧ ~~ ",
+      "display": "689/૧ ~~"
+    },
+    {
+      "normalized": "689/2",
+      "value": "689/૨ ~~ ",
+      "display": "689/૨ ~~"
+    },
+    {
+      "normalized": "689/3",
+      "value": "689/૩ ~~ ",
+      "display": "689/૩ ~~"
+    },
+    {
+      "normalized": "689/4",
+      "value": "689/૪ ~~ ",
+      "display": "689/૪ ~~"
+    },
+    {
+      "normalized": "690/p",
+      "value": "690/p ~~ ",
+      "display": "690/p ~~"
+    },
+    {
+      "normalized": "691/1",
+      "value": "691/૧ ~~ ",
+      "display": "691/૧ ~~"
+    },
+    {
+      "normalized": "691/2/p",
+      "value": "691/૨/p ~~ ",
+      "display": "691/૨/p ~~"
+    },
+    {
+      "normalized": "692/1",
+      "value": "692/૧ ~~ ",
+      "display": "692/૧ ~~"
+    },
+    {
+      "normalized": "692/2",
+      "value": "692/૨ ~~ ",
+      "display": "692/૨ ~~"
+    },
+    {
+      "normalized": "692/3",
+      "value": "692/૩ ~~ ",
+      "display": "692/૩ ~~"
+    },
+    {
+      "normalized": "693",
+      "value": "693 ~~ ",
+      "display": "693 ~~"
+    },
+    {
+      "normalized": "694/1",
+      "value": "694/૧ ~~ ",
+      "display": "694/૧ ~~"
+    },
+    {
+      "normalized": "694/2+694/3p",
+      "value": "694/૨+૬૯૪/૩p ~~ ",
+      "display": "694/૨+૬૯૪/૩p ~~"
+    },
+    {
+      "normalized": "694/3/p2",
+      "value": "694/૩/p૨ ~~ ",
+      "display": "694/૩/p૨ ~~"
+    },
+    {
+      "normalized": "694/4/p1",
+      "value": "694/૪/p૧ ~~ ",
+      "display": "694/૪/p૧ ~~"
+    },
+    {
+      "normalized": "694/4/p2",
+      "value": "694/૪/p૨ ~~ ",
+      "display": "694/૪/p૨ ~~"
+    },
+    {
+      "normalized": "695/p",
+      "value": "695/p ~~ ",
+      "display": "695/p ~~"
+    },
+    {
+      "normalized": "696",
+      "value": "696 ~~ ",
+      "display": "696 ~~"
+    },
+    {
+      "normalized": "697/1",
+      "value": "697/૧ ~~ ",
+      "display": "697/૧ ~~"
+    },
+    {
+      "normalized": "697/2",
+      "value": "697/૨ ~~ ",
+      "display": "697/૨ ~~"
+    },
+    {
+      "normalized": "697/3",
+      "value": "697/૩ ~~ ",
+      "display": "697/૩ ~~"
+    },
+    {
+      "normalized": "697/4",
+      "value": "697/૪ ~~ ",
+      "display": "697/૪ ~~"
+    },
+    {
+      "normalized": "698/1",
+      "value": "698/૧ ~~ ",
+      "display": "698/૧ ~~"
+    },
+    {
+      "normalized": "698/2",
+      "value": "698/૨ ~~ ",
+      "display": "698/૨ ~~"
+    },
+    {
+      "normalized": "699/1",
+      "value": "699/૧ ~~ ",
+      "display": "699/૧ ~~"
+    },
+    {
+      "normalized": "699/2",
+      "value": "699/૨ ~~ ",
+      "display": "699/૨ ~~"
+    },
+    {
+      "normalized": "700/1",
+      "value": "700/૧ ~~ ",
+      "display": "700/૧ ~~"
+    },
+    {
+      "normalized": "700/2",
+      "value": "700/૨ ~~ ",
+      "display": "700/૨ ~~"
+    },
+    {
+      "normalized": "701/1",
+      "value": "701/૧ ~~ ",
+      "display": "701/૧ ~~"
+    },
+    {
+      "normalized": "701/2",
+      "value": "701/૨ ~~ ",
+      "display": "701/૨ ~~"
+    },
+    {
+      "normalized": "702",
+      "value": "702 ~~ ",
+      "display": "702 ~~"
+    }
+  ]
+}

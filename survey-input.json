@@ -1,0 +1,74 @@
+[
+  {
+    "handwritten": "221/P",
+    "normalized": "221/p",
+    "matched": true,
+    "value": "221/p ~~ ",
+    "display": "221/p ~~",
+    "near": []
+  },
+  {
+    "handwritten": "222/1",
+    "normalized": "222/1",
+    "matched": true,
+    "value": "222/૧ ~~ ",
+    "display": "222/૧ ~~",
+    "near": []
+  },
+  {
+    "handwritten": "226/P/1",
+    "normalized": "226/p1",
+    "matched": true,
+    "value": "226/p૧ ~~ ",
+    "display": "226/p૧ ~~",
+    "near": []
+  },
+  {
+    "handwritten": "230/P1/P3",
+    "normalized": "230/p1/p3",
+    "matched": true,
+    "value": "230/p૧/p૩ ~~ ",
+    "display": "230/p૧/p૩ ~~",
+    "near": []
+  },
+  {
+    "handwritten": "222/2/P",
+    "normalized": "222/2/p",
+    "matched": true,
+    "value": "222/૨/p ~~ ",
+    "display": "222/૨/p ~~",
+    "near": []
+  },
+  {
+    "handwritten": "228/P1/P",
+    "normalized": "228/p1/p",
+    "matched": true,
+    "value": "228/p૧/p ~~ ",
+    "display": "228/p૧/p ~~",
+    "near": []
+  },
+  {
+    "handwritten": "222/3/P1",
+    "normalized": "222/3/p1",
+    "matched": true,
+    "value": "222/૩/p૧ ~~ ",
+    "display": "222/૩/p૧ ~~",
+    "near": []
+  },
+  {
+    "handwritten": "222/3/P2",
+    "normalized": "222/3/p2",
+    "matched": true,
+    "value": "222/૩/p૨ ~~ ",
+    "display": "222/૩/p૨ ~~",
+    "near": []
+  },
+  {
+    "handwritten": "229/P",
+    "normalized": "229/p",
+    "matched": true,
+    "value": "229/p ~~ ",
+    "display": "229/p ~~",
+    "near": []
+  }
+]

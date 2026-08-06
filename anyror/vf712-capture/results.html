@@ -1,0 +1,452 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>
+	: Any RoR @ Anywhere :
+</title>
+
+    <noscript>
+        <div style="font-size: 25px; top: 0px; left: 0px; color: White; width: 950px; position: absolute; background-color: #000000; opacity: 0.7; vertical-align: middle; padding-top: 300px; text-align: center; z-index: 1005;">
+            Javascript is disabled.<br />
+            Please Enable browser javascript first and then hit F5.
+        </div>
+    </noscript>
+
+    <script src="../JSCRIPTS/Validation.js"></script>
+    <script src="../js/jquery-1.8.3.min.js"></script>
+
+    <script src="../js/bootstrap.min.js"></script>
+    <link rel="shortcut icon" href="../img/slider-icon/favicon.png"><link href="../css/bootstrap.min.css" rel="stylesheet"><link href="../css/bootstrap-reset.css" rel="stylesheet"><link href="../assets/font-awesome/css/font-awesome.css" rel="stylesheet"><link href="../css/component.css" rel="stylesheet"><link href="../css/style.css" rel="stylesheet"><link href="../css/style-responsive.css" rel="stylesheet"><link href="../css/slick-theme.css" rel="stylesheet"><link href="../css/slick.css" rel="stylesheet">
+
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .slider {
+            width: 80%;
+            margin: 38px auto;
+        }
+
+        .slick-slide {
+            margin: 0px 20px;
+        }
+
+        .slick-prev:before,
+        .slick-next:before {
+            color: black;
+        }
+
+        .slick-slide {
+            transition: all ease-in-out .3s;
+            opacity: .2;
+        }
+
+        .slick-active {
+            opacity: 1.5;
+        }
+
+        #myBtn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: orange;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 4px;
+            opacity: 75%;
+            text-decoration: none;
+        }
+
+            #myBtn:hover {
+                background-color: #555;
+            }
+    </style>
+    
+
+    <script lang="javascript" type="text/javascript">
+        $(document).ready(function () {
+
+        });
+
+        function ShowModel() {
+            $("#myModal2").modal();
+        };
+        $("#myModal2").modal({ backdrop: "static" });
+    </script>
+
+
+    
+    <script>
+        //Get the button
+        var mybutton = document.getElementById("myBtn");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+</head>
+<body>
+     <a id="myBtn" onclick="topFunction()" title="Go to Top">Top</a>
+
+    <script>
+        //Get the button
+        var mybutton = document.getElementById("myBtn");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function () { scrollFunction() };
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+        }
+    </script>
+    <form method="post" action="./InfoOld712Detail.aspx" id="form1">
+<div class="aspNetHidden">
+<input type="hidden" name="ContentPlaceHolder1_ToolkitScriptManager1_HiddenField" id="ContentPlaceHolder1_ToolkitScriptManager1_HiddenField" value="">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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">
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['form1'];
+if (!theForm) {
+    theForm = document.form1;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+
+
+<script src="/WebResource.axd?d=gxaGOZ5bWrVOi--orXYQtpSwzgFTFtVtzehm9PShO7RuPO2YZjLrWjtstt5jvSzEcD-F3Qlnk7BDxL_ovyVMIm23ghwXhmD1_AnCs9BalEg1&amp;t=638901734248157332" type="text/javascript"></script>
+
+
+<script src="/ScriptResource.axd?d=H7TY6PkLw3kk82ZzEOHy0rga7gwaBoOwwMGbe7O1gRxQKBslcb3YkgaPmcUKH5JMV_EcMrYCip_w_EPCQ2uIB8ZnJXiIlRyAqtbUyLA9isF928V8hKXfiJcnI0w6bVGb0&amp;t=ffffffffec54f2d7" type="text/javascript"></script>
+<script src="/ScriptResource.axd?d=wvNkChAzjk2cxavqeFR4Gicg3C3XXgyxe0zeZWK8nwDRcDZ3zr3I0IEIo1DAVmdWpfGEgKD3l9ezpVGhowJ8OBhqJnWZRb2-k9icvx2Lilba29EjEGxakW6z4pUMwzhEv9P2D_-DyFNOjAYjuPukAA2&amp;t=ffffffffec54f2d7" type="text/javascript"></script>
+<div class="aspNetHidden">
+
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="3C3BA009">
+	<input type="hidden" name="__VIEWSTATEENCRYPTED" id="__VIEWSTATEENCRYPTED" value="">
+	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="Isyx3uROXW4JUeNmqFpsvus9+66bzJAVI9J84iRLoyB8DxfccFT1BmrHKp8lhDFUe9BbdDyoZ6tCvzVha/H781PXEEfNtCUBPTMmBzCpUauiBqsXGTW1biZlIvILAcRexfQkpTN5NMANuXy9goFMrRwd6VUKsZKV4lAXRBYPIS307Nliw2Mev6fUMt974DZNEfLWLLGnsysgKL7cTL2JjEnMVd93KsEZyAPz39Y3lX9afPOAgZr5+/TQB0G7oIAxuRKPUnohSPlv9gU0R4wTUmMV5o/GPoW9oCOnhsx0/7UFxqCXsnLgcmIJ2m50CXl+9xlXQB21DnARRVygy8tl/GFIfjrBAu4TPL6r+56l7gDr3apnZaX0S9OPhGD5PHT/vFRr2b0rW5eXyCNpewaZ+g==">
+</div>
+
+        <div>
+            <!--header start-->
+            <header class="head-section">
+                <div class="navbar navbar-default navbar-static-top container-fluid Header-Border">
+                    <div style="box-shadow: 0px 0px 20px 0px #b3e6ff;">
+                        <div class="top-area-h">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                        <span id="lbl_header">&nbsp;</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="navbar-header">
+                                <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button">
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                    <span class="icon-bar"></span>
+                                </button>
+                                <div id="logo">
+                                    <img class="hidden-xs" src="../img/slider-icon/logo.png">
+                                    <img class="hidden-lg hidden-md hidden-sm" src="../img/slider-icon/logo2.png">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            <!--header end-->
+
+            <!--space for top_header start-->
+            
+
+            
+
+    <!--container start-->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row">
+                <ol class="breadcrumb">
+                    <li>
+                        <a id="ContentPlaceHolder1_lnkHome" href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$lnkHome','')">HOME</a>
+                    </li>
+                    <li><a href="../LandRecordRural.aspx">RURAL LAND RECORD</a></li>
+                    <li class="active">OLD VF-7/12</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl00$ContentPlaceHolder1$ToolkitScriptManager1', 'form1', [], [], [], 3600, 'ctl00');
+//]]>
+</script>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <i class="fa fa-files-o pr-10"></i><b>જુના ગામ નમૂના નંબર - ૭/૧૨ ની વિગતો</b>
+                    </div>
+                    <div class="panel-body Border-Side" style="padding: 5px;">
+                        <div class="bs-example">
+                            <div class="form-horizontal" role="form">
+                                <div class="Div-Border-Side-New imgwatermark">
+                                    <div class="form-group" style="margin: 10px 0px 0px;">
+                                        <div class="alert alert-danger" role="alert">
+                                            <strong>
+                                                <span>* અહીં દર્શાવેલ જમીનની વિગતો ફક્ત આપની જાણ માટે જ છે જેને સત્તાવાર નકલ
+                                                    તરીકે ગણવામાં આવશે નહી.<br>
+                                                    આ વિગતો અંગે કોઈ પણ વધારાની માહિતી મેળવવી હોય તો જે તે મામલતદાર કચેરી અથવા
+                                                        કલેક્ટર કચેરીનો સંપર્ક કરવો.</span>
+                                                <br>
+                                                <br>
+                                                <span>** The information provided online is updated, and no physical visit is required for this information.<br>
+                                                    For additional information you may visit respective office.</span>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="Div-Border-Side-New imgwatermark">
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                            <div class="control-label text-success">
+                                                <strong>District (જીલ્લો)</strong>
+                                            </div>
+                                            <div class="control-label">
+                                                <span id="ContentPlaceHolder1_lblDistrict" class="style7" style="font-weight:bold;">આણંદ</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                            <div class="control-label text-success">
+                                                <strong>Taluka (તાલુકો)</strong>
+                                            </div>
+                                            <div class="control-label">
+                                                <span id="ContentPlaceHolder1_lblTaluka" class="style7" style="font-weight:bold;">ઉમરેઠ</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+                                            <div class="control-label text-success">
+                                                <strong>Village (ગામ)</strong>
+                                            </div>
+                                            <div class="control-label">
+                                                <span id="ContentPlaceHolder1_lblVillage" class="style7" style="font-weight:bold;">ભરોડા</span>
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                                
+                                <div class="Div-Border-Side-New imgwatermark">
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                            <div class="control-label">
+                                                <div class="table-responsive">
+                                                    <div>
+	<table cellspacing="0" rules="all" class="table table-bordered table-hover text-primary" border="1" id="ContentPlaceHolder1_gvResult" style="width:100%;border-collapse:collapse;">
+		<tbody><tr class="Heading_Top">
+			<th scope="col">ક્રમ</th><th scope="col">થોક વર્ષ</th><th scope="col">થોક નંબર</th><th scope="col">સરવે/ બ્લોક નંબર</th><th scope="col">જુનો સરવે નંબર</th><th scope="col">PDF સ્ટેટસ</th><th scope="col">&nbsp;</th>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    1
+                                                                </td><td align="center">1993-2004</td><td align="center">6</td><td align="center">221</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$0')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    2
+                                                                </td><td align="center">1985-1993</td><td align="center">6</td><td align="center">221</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$1')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    3
+                                                                </td><td align="center">1971-1981</td><td align="center">3</td><td align="center">221</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$2')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    4
+                                                                </td><td align="center">1960-1971</td><td align="center">3</td><td align="center">221/p</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$3')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    5
+                                                                </td><td align="center">1960-1971</td><td align="center">3</td><td align="center">221/p</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$4')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    6
+                                                                </td><td align="center">1960-1971</td><td align="center">3</td><td align="center">221/p</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$5')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    7
+                                                                </td><td align="center">1950-1960</td><td align="center">3</td><td align="center">221/p</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$6')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    8
+                                                                </td><td align="center">1950-1960</td><td align="center">3</td><td align="center">221/p</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$7')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    9
+                                                                </td><td align="center">1950-1960</td><td align="center">3</td><td align="center">221/p</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$8')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    10
+                                                                </td><td align="center">1930-1950</td><td align="center">3</td><td align="center">221/p</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$9')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    11
+                                                                </td><td align="center">1930-1950</td><td align="center">3</td><td align="center">221/p</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$10')" style="font-weight:bold;">View PDF</a></td>
+		</tr><tr>
+			<td align="left" style="width:10px;">
+                                                                    12
+                                                                </td><td align="center">1930-1950</td><td align="center">3</td><td align="center">221/p</td><td align="center">&nbsp;</td><td align="center">Ok</td><td align="center"><a href="javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$11')" style="font-weight:bold;">View PDF</a></td>
+		</tr>
+	</tbody></table>
+</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="Div-Border-Side-New imgwatermark">
+                                    <div class="form-group" style="margin: 10px 0px 0px;">
+                                        <div class="alert alert-danger" role="alert">
+                                            <strong>
+                                                <span>* અહીં દર્શાવેલ જમીનની વિગતો ફક્ત આપની જાણ માટે જ છે જેને સત્તાવાર નકલ
+                                                    તરીકે ગણવામાં આવશે નહી.<br>
+                                                    આ વિગતો અંગે કોઈ પણ વધારાની માહિતી મેળવવી હોય તો જે તે મામલતદાર કચેરી અથવા
+                                                        કલેક્ટર કચેરીનો સંપર્ક કરવો.</span>
+                                                <br>
+                                                <br>
+                                                <span>** The information provided online is updated, and no physical visit is required for this information.<br>
+                                                    For additional information you may visit respective office.</span>
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                
+
+                                <div class="modal fade" id="myModal2" role="dialog">
+                                    <div class="modal-dialog" style="width: 57%;">
+                                        <div class="modal-content" style="height: 90%">
+                                            <div class="modal-header" style="background-color: #3372ab;">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                
+                                            </div>
+                                            <div class="modal-body">
+                                                
+                                            </div>
+                                            <div class="modal-footer" style="background-color: #3372ab;">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--container end-->
+
+
+            <!--small footer start -->
+            <footer class="footer-small">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="copyright">
+                                Content Owned by Revenue Department, Government of Gujarat
+                                        <br>
+                                © Developed by National Informatics Centre (NIC), Gujarat State Centre, Gandhinagar
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <!--small footer end-->
+
+            <script src="../js/slick.js"></script>
+
+            <script type="text/javascript">
+                $(document).on('ready', function () {
+
+                    $(".vertical").slick({
+                        dots: true,
+                        vertical: false,
+                        slidesToShow: 3,
+                        autoplay: true,
+                        autoplayspeed: 500,
+                        responsive: [
+                        {
+                            breakpoint: 1024,
+                            settings: {
+                                slidesToShow: 3
+                            }
+                        },
+                        {
+                            breakpoint: 600,
+                            settings: {
+                                slidesToShow: 2
+                            }
+                        },
+                        {
+                            breakpoint: 480,
+                            settings: {
+                                slidesToShow: 1
+                            }
+                        }
+                        ]
+                    });
+
+                });
+            </script>
+
+        </div>
+
+    
+
+<script type="text/javascript">
+//<![CDATA[
+(function() {var fn = function() {$get("ContentPlaceHolder1_ToolkitScriptManager1_HiddenField").value = '';Sys.Application.remove_init(fn);};Sys.Application.add_init(fn);})();//]]>
+</script>
+</form>
+
+</body></html>

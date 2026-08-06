@@ -1,0 +1,94 @@
+package com.landrecords.app.data
+
+import com.landrecords.app.data.db.AppDatabase
+import com.landrecords.app.data.db.PropertyEntity
+import com.landrecords.app.data.db.RecordEntity
+import com.landrecords.app.data.db.SurveyEntity
+import com.landrecords.app.data.model.RecordType
+import kotlinx.coroutines.flow.Flow
+
+/**
+ * Single point of truth for the library data. On first run it seeds the surveys we already have
+ * records for (Bharoda) plus the queued ones (Sundalpura, Valetva) so browse works with zero network.
+ * Real fetched records replace/augment these rows as the WebView engine files them.
+ */
+class LandRecordsRepository(private val db: AppDatabase) {
+
+    fun observeProperties(): Flow<List<PropertyEntity>> = db.propertyDao().observeAll()
+    fun observeSurveys(propertyId: Long): Flow<List<SurveyEntity>> = db.surveyDao().observeForProperty(propertyId)
+    fun observeSurvey(surveyId: Long): Flow<SurveyEntity?> = db.surveyDao().observeById(surveyId)
+    fun observeRecords(surveyId: Long): Flow<List<RecordEntity>> = db.recordDao().observeForSurvey(surveyId)
+    fun searchSurveys(query: String): Flow<List<SurveyEntity>> = db.surveyDao().search(query)
+
+    suspend fun seedIfEmpty() {
+        if (db.propertyDao().count() > 0) return
+        seedBharoda()
+        seedQueued("Anand", "આણંદ", "Umreth", "ઉમરેઠ", "Sundalpura", "સુંદલપુરા",
+            listOf("906", "845/અ", "851", "901/p", "902"))
+        seedQueued("Kheda", "ખેડા", "Nadiad Gramya", "નડિયાદ ગ્રામ્ય", "Valetva", "વળેટવા",
+            listOf("41"))
+    }
+
+    private suspend fun seedBharoda() {
+        val propId = db.propertyDao().upsert(
+            PropertyEntity(
+                state = "Gujarat", district = "Anand", taluka = "Umreth", village = "Bharoda",
+                districtGu = "આણંદ", talukaGu = "ઉમરેઠ", villageGu = "ભરોડા",
+            ),
+        )
+        val now = System.currentTimeMillis()
+        // surveyNo, area, assessment, tenure, vf712 pages, ircms cases
+        data class Seed(
+            val no: String, val area: String, val assess: String, val tenure: String,
+            val vf: Int, val cases: Int,
+        )
+        val agri = "ખેતીલાયક"
+        val seeds = listOf(
+            Seed("221/p", "૩-૩૧-૮૪", "૨૪.૬૯", "બીન ખેતી પ્રિપાત્ર", 10, 14),
+            Seed("222/1", "૦-૩૦-૩પ", "૨.૧૨", "જુની શરત (જુ.શ)", 6, 2),
+            Seed("222/2/p", "", "", "જુની શરત (જુ.શ)", 8, 9),
+            Seed("222/3/p1", "", "", "જુની શરત (જુ.શ)", 5, 1),
+            Seed("222/3/p2", "", "", "જુની શરત (જુ.શ)", 5, 0),
+            Seed("226/p1", "", "", "જુની શરત (જુ.શ)", 4, 0),
+            Seed("228/p1/p", "", "", "જુની શરત (જુ.શ)", 6, 2),
+            Seed("229/p", "", "", "જુની શરત (જુ.શ)", 4, 1),
+            Seed("230/p1/p3", "૦-૪૭-૦૪", "૩.૪૮", "જુની શરત (જુ.શ)", 12, 0),
+        )
+        for (s in seeds) {
+            val surveyId = db.surveyDao().upsert(
+                SurveyEntity(
+                    propertyId = propId, surveyNo = s.no, normalized = tokenOf(s.no),
+                    area = s.area, assessment = s.assess, tenure = s.tenure, landUse = agri,
+                ),
+            )
+            db.recordDao().upsert(RecordEntity(surveyId = surveyId, type = RecordType.INTEGRATED,
+                docCount = 1, fetchedAt = now))
+            db.recordDao().upsert(RecordEntity(surveyId = surveyId, type = RecordType.VF712,
+                docCount = s.vf, fetchedAt = now))
+            if (s.cases > 0) {
+                db.recordDao().upsert(RecordEntity(surveyId = surveyId, type = RecordType.IRCMS,
+                    docCount = s.cases, fetchedAt = now))
+            }
+        }
+    }
+
+    private suspend fun seedQueued(
+        district: String, districtGu: String, taluka: String, talukaGu: String,
+        village: String, villageGu: String, surveys: List<String>,
+    ) {
+        val propId = db.propertyDao().upsert(
+            PropertyEntity(
+                state = "Gujarat", district = district, taluka = taluka, village = village,
+                districtGu = districtGu, talukaGu = talukaGu, villageGu = villageGu,
+            ),
+        )
+        for (no in surveys) {
+            db.surveyDao().upsert(
+                SurveyEntity(propertyId = propId, surveyNo = no, normalized = tokenOf(no)),
+            )
+        }
+    }
+
+    private fun tokenOf(surveyNo: String): String =
+        surveyNo.trim().uppercase().replace('/', '_').replace(" ", "")
+}

@@ -1,0 +1,62 @@
+# ================= Android / Gradle =================
+android/local.properties
+**/build/
+.gradle/
+*.iml
+.idea/
+captures/
+*.apk
+*.aab
+*.keystore
+*.jks
+android/app/schemas/
+
+# ================= Node =================
+node_modules/
+npm-debug.log*
+
+# ================= Python =================
+.venv/
+__pycache__/
+*.pyc
+
+# ============ Chrome automation profiles (large, local only) ============
+.chrome-profile/
+.chrome-profile-*/
+
+# ============ SECRETS — WhatsApp/Baileys session creds + personal exports ============
+wa/auth/
+wa/auth-fam/
+wa/auth*/
+wa/export/
+**/creds.json
+*.env
+.env*
+
+# ============ Generated / bulky data (kept locally, not in VCS) ============
+output/
+dist/
+*.zip
+
+# ============ Unrelated files that happen to live here ============
+*.pptx
+quiz_assets/
+quiz_draft.md
+.~lock.*#
+*.kate-swp
+*.kate-swp.*
+
+# ============ Scratch captures / recon dumps ============
+Screenshot_*.png
+prefill.png
+surveynos.jpg
+current-page.html
+recon-page.html
+recon-survey-options.json
+detail-*.pdf
+detail-*.png
+detail-*.html
+test-order*.pdf
+
+# ================= OS =================
+.DS_Store

@@ -1,0 +1,38 @@
+[
+  {
+    "url": "https://anyror.gujarat.gov.in/oldvf712_docs/PDFView1.aspx?detail=C/BjWXI0F6Ngq9gQBUvZ1zuYsGoxq+UPrnHrhJ0UloMFV1oevzJrJkFxrK/hfNdQPlkLhkivnRRgvfYorBjIaMcOYqf5/QRztyLcmbTrpjE=",
+    "status": 200,
+    "contentType": "application/pdf",
+    "headers": {
+      "cache-control": "no-cache,no-cache, no-store, must-revalidate",
+      "content-length": "308861",
+      "content-type": "application/pdf",
+      "date": "Sun, 14 Jun 2026 15:48:45 GMT",
+      "expires": "-1",
+      "pragma": "no-cache,no-cache",
+      "server": "XXXXXXXXXXXXXXXXXXX",
+      "strict-transport-security": "max-age=31536000; includeSubDomains",
+      "content-disposition": "filename=UMRETH_Bharoda_1994_2005_07_029_221_(JPG).pdf"
+    },
+    "bytes": 536,
+    "startsWithPDF": "<!doctyp",
+    "saved": "/home/kirtan/Desktop/projects/irmsc/anyror/vf712-capture/captured-1.pdf"
+  },
+  {
+    "url": "chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/f5096a4f-152f-4e7c-8530-acaff8a15d93",
+    "status": 200,
+    "contentType": "application/pdf",
+    "headers": {
+      "strict-transport-security": "max-age=31536000; includeSubDomains",
+      "cache-control": "no-cache,no-cache, no-store, must-revalidate",
+      "pragma": "no-cache,no-cache",
+      "expires": "-1",
+      "content-length": "308861",
+      "date": "Sun, 14 Jun 2026 15:48:45 GMT",
+      "content-type": "application/pdf",
+      "content-disposition": "filename=UMRETH_Bharoda_1994_2005_07_029_221_(JPG).pdf",
+      "server": "XXXXXXXXXXXXXXXXXXX"
+    },
+    "bodyErr": "response.body: Protocol error (Network.getResponseBody): No data found for resource with given identifier"
+  }
+]

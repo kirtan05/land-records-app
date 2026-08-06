@@ -1,0 +1,14 @@
+{
+  "name": "ircms-scraper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Recon + scraper for Gujarat iRCMS ViewSurveyList (Anand/Umreth/Bharoda)",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^7.0.0-rc13",
+    "pino": "^10.3.1",
+    "playwright-core": "^1.60.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0"
+  }
+}

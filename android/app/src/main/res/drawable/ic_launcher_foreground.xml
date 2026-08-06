@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- A calm stacked-document / ledger mark in the safe zone -->
+    <path
+        android:fillColor="#FBF9F4"
+        android:pathData="M38,32 h26 l10,10 v34 a2,2 0 0 1 -2,2 h-34 a2,2 0 0 1 -2,-2 v-42 a2,2 0 0 1 2,-2 z" />
+    <path
+        android:fillColor="#CDA349"
+        android:pathData="M64,32 l10,10 h-10 z" />
+    <path
+        android:fillColor="#2E5D50"
+        android:pathData="M42,50 h22 v3 h-22 z M42,58 h22 v3 h-22 z M42,66 h14 v3 h-14 z" />
+</vector>

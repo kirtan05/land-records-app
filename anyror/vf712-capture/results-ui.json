@@ -1,0 +1,237 @@
+{
+  "links": [
+    {
+      "text": "Top",
+      "href": null,
+      "onclick": "topFunction()",
+      "id": "myBtn"
+    },
+    {
+      "text": "HOME",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$lnkHome','')",
+      "onclick": null,
+      "id": "ContentPlaceHolder1_lnkHome"
+    },
+    {
+      "text": "RURAL LAND RECORD",
+      "href": "../LandRecordRural.aspx",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$0')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$1')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$2')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$3')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$4')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$5')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$6')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$7')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$8')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$9')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$10')",
+      "onclick": null,
+      "id": ""
+    },
+    {
+      "text": "View PDF",
+      "href": "javascript:__doPostBack('ctl00$ContentPlaceHolder1$gvResult','Select$11')",
+      "onclick": null,
+      "id": ""
+    }
+  ],
+  "inputs": [
+    {
+      "text": "",
+      "id": "",
+      "name": "",
+      "onclick": null,
+      "src": null
+    },
+    {
+      "text": "Close",
+      "id": "",
+      "name": "",
+      "onclick": null,
+      "src": null
+    },
+    {
+      "text": "Close",
+      "id": "",
+      "name": "",
+      "onclick": null,
+      "src": null
+    }
+  ],
+  "tableRows": [
+    [
+      "ક્રમ",
+      "થોક વર્ષ",
+      "થોક નંબર",
+      "સરવે/ બ્લોક નંબર",
+      "જુનો સરવે નંબર",
+      "PDF સ્ટેટસ",
+      ""
+    ],
+    [
+      "1",
+      "1993-2004",
+      "6",
+      "221",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "2",
+      "1985-1993",
+      "6",
+      "221",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "3",
+      "1971-1981",
+      "3",
+      "221",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "4",
+      "1960-1971",
+      "3",
+      "221/p",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "5",
+      "1960-1971",
+      "3",
+      "221/p",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "6",
+      "1960-1971",
+      "3",
+      "221/p",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "7",
+      "1950-1960",
+      "3",
+      "221/p",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "8",
+      "1950-1960",
+      "3",
+      "221/p",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "9",
+      "1950-1960",
+      "3",
+      "221/p",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "10",
+      "1930-1950",
+      "3",
+      "221/p",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "11",
+      "1930-1950",
+      "3",
+      "221/p",
+      "",
+      "Ok",
+      "View PDF"
+    ],
+    [
+      "12",
+      "1930-1950",
+      "3",
+      "221/p",
+      "",
+      "Ok",
+      "View PDF"
+    ]
+  ],
+  "bodyText": " \nHOME RURAL LAND RECORD OLD VF-7/12\nજુના ગામ નમૂના નંબર - ૭/૧૨ ની વિગતો\n* અહીં દર્શાવેલ જમીનની વિગતો ફક્ત આપની જાણ માટે જ છે જેને સત્તાવાર નકલ તરીકે ગણવામાં આવશે નહી.\nઆ વિગતો અંગે કોઈ પણ વધારાની માહિતી મેળવવી હોય તો જે તે મામલતદાર કચેરી અથવા કલેક્ટર કચેરીનો સંપર્ક કરવો.\n\n** The information provided online is updated, and no physical visit is required for this information.\nFor additional information you may visit respective office.\nDistrict (જીલ્લો)\nઆણંદ\nTaluka (તાલુકો)\nઉમરેઠ\nVillage (ગામ)\nભરોડા\nક્રમ\tથોક વર્ષ\tથોક નંબર\tસરવે/ બ્લોક નંબર\tજુનો સરવે નંબર\tPDF સ્ટેટસ\t \n1\t1993-2004\t6\t221\t \tOk\tView PDF\n2\t1985-1993\t6\t221\t \tOk\tView PDF\n3\t1971-1981\t3\t221\t \tOk\tView PDF\n4\t1960-1971\t3\t221/p\t \tOk\tView PDF\n5\t1960-1971\t3\t221/p\t \tOk\tView PDF\n6\t1960-1971\t3\t221/p\t \tOk\tView PDF\n7\t1950-1960\t3\t221/p\t \tOk\tView PDF\n8\t1950-1960\t3\t221/p\t \tOk\tView PDF\n9\t1950-1960\t3\t221/p\t \tOk\tView PDF\n10\t1930-1950\t3\t221/p\t \tOk\tView PDF\n11\t1930-1950\t3\t221/p\t \tOk\tView PDF\n12\t1930-1950\t3\t221/p\t \tOk\tView PDF\n* અહીં દર્શાવેલ જમીનની વિગતો ફક્ત આપની જાણ માટે જ છે જેને સત્તાવાર નકલ તરીકે ગણવામાં આવશે નહી.\nઆ વિગતો અંગે કોઈ પણ વધારાની માહિતી મેળવવી હોય તો જે તે મામલતદાર કચેરી અથવા કલેક્ટર કચેરીનો સંપર્ક કરવો.\n\n** The information provided online is updated, and no physical visit is required for this information.\nFor additional information you may visit respective office.\nContent Owned by Revenue Department, Government of Gujarat\n© Developed by National Informatics Centre (NIC), Gujarat State Centre, Gandhinagar"
+}
