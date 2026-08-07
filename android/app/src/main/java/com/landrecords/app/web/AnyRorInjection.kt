@@ -43,6 +43,14 @@ object AnyRorInjection {
           if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
           return false;
         }
+        // Survey option text is "<old-survey> ~~ <resurvey>" ("41 ~~ 70"). Match the OLD-survey
+        // field EXACTLY (keep '/'), so "41" hits "41 ~~ 70" and not "25 ~~ 41" or "4170"/"141".
+        function oldSurveyTok(s){ s=(s||'').split('~')[0];
+          return s.replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
+            .replace(/પ/g,'p').replace(/\s+/g,'').toLowerCase(); }
+        function pickSurvey(sel, want){ var w=oldSurveyTok(want); var best=null;
+          Array.from(sel.options).forEach(function(o){ if(best) return; if(o.value && oldSurveyTok(o.text)===w) best=o; });
+          if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; } return false; }
         function unset(sel){ if(!sel) return true; var v=(sel.value||'').trim(); return v===''||v==='0'||v==='-1'; }
         var rt=document.getElementById('${AnyRor.Ids.RECORD_TYPE}');
         if(rt && (rt.value||'')!=='$recordValue'){ rt.value='$recordValue'; rt.dispatchEvent(new Event('change',{bubbles:true})); return 'RT'; }
@@ -53,7 +61,7 @@ object AnyRorInjection {
         var vil=document.getElementById('${AnyRor.Ids.VILLAGE}');
         if(vil && unset(vil) && '$villageGu'){ return pick(vil,'$villageGu')?'VIL':'WAIT'; }
         var sur=document.getElementById('$surveyDropId');
-        if(sur && unset(sur) && '$surveyNorm'){ return pick(sur,'$surveyNorm')?'SUR':'WAIT'; }
+        if(sur && unset(sur) && '$surveyNorm'){ return pickSurvey(sur,'$surveyNorm')?'SUR':'WAIT'; }
         return 'READY';
       } catch(e) { return 'WAIT'; }
     })();

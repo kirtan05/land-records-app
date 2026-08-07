@@ -23,9 +23,10 @@ object IrcmsInjection {
           opts.forEach(function(o){ if(best) return; var t=(o.text||'').toLowerCase();
             if(o.value && t.indexOf(want)>=0) best=o; });
           if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; } return false; }
-        function selSurvey(sel, want){ want=norm(want);
+        function oldTok(s){ s=(s||'').split('~')[0]; return s.replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);}).replace(/પ/g,'p').replace(/\s+/g,'').toLowerCase(); }
+        function selSurvey(sel, want){ var w=oldTok(want);
           var opts=Array.prototype.slice.call(sel.options), best=null;
-          opts.forEach(function(o){ if(best) return; if(o.value && norm(o.text)===want) best=o; });
+          opts.forEach(function(o){ if(best) return; if(o.value && oldTok(o.text)===w) best=o; });
           if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; } return false; }
 
         var d=document.getElementById('${Ircms.Ids.DISTRICT}');
@@ -170,10 +171,11 @@ object IrcmsInjection {
       try {
         function norm(s){ return (s||'').replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
           .replace(/પ/g,'p').replace(/[~\/\s]+/g,'').toLowerCase(); }
-        var want=norm('$surveyNorm');
+        function oldTok(s){ s=(s||'').split('~')[0]; return s.replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);}).replace(/પ/g,'p').replace(/\s+/g,'').toLowerCase(); }
+        var want=oldTok('$surveyNorm');
         var s=document.getElementById('${Ircms.Ids.SURVEY}'); if(!s) return 'NOSEL';
         var opts=Array.prototype.slice.call(s.options), best=null;
-        opts.forEach(function(o){ if(best) return; if(o.value && norm(o.text)===want) best=o; });
+        opts.forEach(function(o){ if(best) return; if(o.value && oldTok(o.text)===want) best=o; });
         if(!best) return 'NOSURVEY';
         s.value=best.value; s.dispatchEvent(new Event('change',{bubbles:true}));
         var em=document.getElementById('errorMsgSurveyList'); if(em) em.innerHTML='';
@@ -230,10 +232,11 @@ object IrcmsInjection {
       try {
         function norm(s){ return (s||'').replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
           .replace(/પ/g,'p').replace(/[~\/\s]+/g,'').toLowerCase(); }
-        var want=norm('$surveyNorm');
+        function oldTok(s){ s=(s||'').split('~')[0]; return s.replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);}).replace(/પ/g,'p').replace(/\s+/g,'').toLowerCase(); }
+        var want=oldTok('$surveyNorm');
         var s=document.getElementById('${Ircms.Ids.SURVEY}'); if(!s){ window.__lr_search='ERROR'; return 'NOSEL'; }
         var opts=Array.prototype.slice.call(s.options), best=null;
-        opts.forEach(function(o){ if(best) return; if(o.value && norm(o.text)===want) best=o; });
+        opts.forEach(function(o){ if(best) return; if(o.value && oldTok(o.text)===want) best=o; });
         if(!best){ window.__lr_search='EMPTY:nosurvey'; return 'NOSURVEY'; }
         s.value=best.value;
         var dist=document.getElementById('${Ircms.Ids.DISTRICT}').value;
