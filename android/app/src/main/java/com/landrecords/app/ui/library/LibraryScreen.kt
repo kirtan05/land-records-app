@@ -110,9 +110,11 @@ fun LibraryScreen(
             if (!state.searching) {
                 item {
                     val selProp = state.villages.firstOrNull { it.selected }?.propertyId
-                    // Offer the batch only while some survey has never been checked for cases.
-                    // A checked-but-empty survey has an IRCMS record (docCount 0) → containsKey true.
-                    val missingCases = state.surveys.any { !it.counts.containsKey(RecordType.IRCMS) }
+                    // Offer the batch while any survey has no cases yet — either never checked
+                    // (no IRCMS key) OR checked-empty (docCount 0, e.g. a survey whose earlier
+                    // fetch recorded nothing). Empty ones stay re-runnable so a village that came
+                    // back blank (e.g. from a failed cascade) can be retried in one code.
+                    val missingCases = state.surveys.any { (it.counts[RecordType.IRCMS] ?: 0) == 0 }
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         DashedButton(
                             text = Lr(R.string.add_property_gu, R.string.add_property_en),

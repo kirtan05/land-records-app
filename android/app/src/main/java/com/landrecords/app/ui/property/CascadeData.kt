@@ -26,6 +26,7 @@ object CascadeData {
 
     private var districtsCache: List<GeoItem>? = null
     private val talukaCache = HashMap<String, List<TalukaItem>?>()
+    private val surveyCache = HashMap<String, List<String>?>()
 
     /** All 34 districts; empty only if the asset is missing/unreadable. */
     fun districts(context: Context): List<GeoItem> {
@@ -48,6 +49,26 @@ object CascadeData {
     /** The villages for one taluka, or `null` when that taluka hasn't been scraped. */
     fun villagesFor(context: Context, districtCode: String, talukaCode: String): List<GeoItem>? =
         talukasFor(context, districtCode)?.firstOrNull { it.code == talukaCode }?.villages
+
+    /**
+     * Every valid survey token for a village, in AnyRoR's exact display form (Gujarati numerals,
+     * `/` and `~~` kept as-is) — bundled under `assets/surveys/<dist>_<tal>_<vil>.json` as a plain
+     * JSON array of strings, scraped from AnyRoR's INTEGRATED SURVEY dropdown. Returns `null` when
+     * no list ships for that village, so the picker falls back to free-text entry. Storing a token
+     * picked from here guarantees the AnyRoR/iRCMS matchers resolve it exactly (no typos, no
+     * survey↔resurvey ambiguity).
+     */
+    fun surveyTokensFor(context: Context, districtCode: String, talukaCode: String, villageCode: String): List<String>? {
+        val key = "${districtCode}_${talukaCode}_${villageCode}"
+        if (surveyCache.containsKey(key)) return surveyCache[key]
+        val json = readAsset(context, "surveys/$key.json")
+        val result = json?.let {
+            val arr = org.json.JSONArray(it)
+            (0 until arr.length()).mapNotNull { i -> arr.optString(i).takeIf { s -> s.isNotBlank() } }
+        }
+        surveyCache[key] = result
+        return result
+    }
 
     /** Files to try for a district's talukas: the generic `<code>.json` first, then known names. */
     private fun candidateFiles(code: String): List<String> = buildList {

@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -64,7 +65,7 @@ import com.landrecords.app.ui.theme.LandType
 import com.landrecords.app.ui.theme.Lr
 
 /** Which picker sheet is currently open, if any. */
-private enum class Picker { DISTRICT, TALUKA, VILLAGE }
+private enum class Picker { DISTRICT, TALUKA, VILLAGE, SURVEY }
 
 @Composable
 fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
@@ -100,6 +101,12 @@ fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
     val villageOptions = remember(districtCode, talukaItem?.code) {
         val d = districtCode; val t = talukaItem?.code
         if (d != null && t != null) CascadeData.villagesFor(context, d, t) else null
+    }
+    // The bundled survey-token list for the chosen village (null → fall back to free-text entry).
+    val villageCode = if (villageOptions != null) villageItem?.code else null
+    val surveyOptions = remember(districtCode, talukaItem?.code, villageCode) {
+        val d = districtCode; val t = talukaItem?.code; val v = villageCode
+        if (d != null && t != null && v != null) CascadeData.surveyTokensFor(context, d, t, v) else null
     }
 
     // Effective saved names: the picked Gujarati label, or the typed text.
@@ -183,21 +190,26 @@ fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
                 }
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                InlineField(
-                    value = input, onChange = { input = it },
-                    placeholder = Lr(R.string.add_survey_number_gu, R.string.add_survey_number_en),
-                    modifier = Modifier.weight(1f),
-                )
-                PillButton(
-                    Lr(R.string.action_add_gu, R.string.action_add_en),
-                    onClick = {
-                        val t = input.trim()
-                        if (t.isNotEmpty() && t !in surveyNumbers) surveyNumbers.add(t)
-                        input = ""
-                    },
-                    filled = true,
-                )
+            if (surveyOptions != null) {
+                // Bundled list for this village → pick exact tokens (no typos, guaranteed match).
+                SurveyPickTrigger(count = surveyOptions.size, onClick = { openPicker = Picker.SURVEY })
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    InlineField(
+                        value = input, onChange = { input = it },
+                        placeholder = Lr(R.string.add_survey_number_gu, R.string.add_survey_number_en),
+                        modifier = Modifier.weight(1f),
+                    )
+                    PillButton(
+                        Lr(R.string.action_add_gu, R.string.action_add_en),
+                        onClick = {
+                            val t = input.trim()
+                            if (t.isNotEmpty() && t !in surveyNumbers) surveyNumbers.add(t)
+                            input = ""
+                        },
+                        filled = true,
+                    )
+                }
             }
         }
 
@@ -222,6 +234,7 @@ fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
                     district = picked
                     talukaItem = null; talukaTyped = ""
                     villageItem = null; villageTyped = ""
+                    surveyNumbers.clear()
                 }
                 openPicker = null
             },
@@ -235,6 +248,7 @@ fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
                 if (picked.code != talukaItem?.code) {
                     talukaItem = talukas?.firstOrNull { it.code == picked.code }
                     villageItem = null; villageTyped = ""
+                    surveyNumbers.clear()
                 }
                 openPicker = null
             },
@@ -245,9 +259,18 @@ fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
             items = villageOptions.orEmpty(),
             onDismiss = { openPicker = null },
             onPick = { picked ->
-                villageItem = picked
+                if (picked.code != villageItem?.code) {
+                    villageItem = picked
+                    surveyNumbers.clear()
+                }
                 openPicker = null
             },
+        )
+        Picker.SURVEY -> SurveyPickerSheet(
+            tokens = surveyOptions.orEmpty(),
+            selected = surveyNumbers,
+            onToggle = { tok -> if (tok in surveyNumbers) surveyNumbers.remove(tok) else surveyNumbers.add(tok) },
+            onDismiss = { openPicker = null },
         )
         null -> Unit
     }
@@ -349,6 +372,90 @@ private fun PickerSheet(
                             Text(item.gu, style = LandType.bodyStrong, color = Land.colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
                             Text(item.en, style = LandType.label, color = Land.colors.ink3, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** Full-width tap target (styled like [InlineField]) that opens the survey-token picker. */
+@Composable
+private fun SurveyPickTrigger(count: Int, onClick: () -> Unit) {
+    Row(
+        Modifier.fillMaxWidth().height(LandSize.field)
+            .clip(LandShape.field).background(Land.colors.surface)
+            .border(1.dp, Land.colors.line, LandShape.field)
+            .noRippleClick(onClick)
+            .padding(horizontal = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            L("સર્વે નંબર પસંદ કરો", "Pick survey number"),
+            style = LandType.body, color = Land.colors.ink3, modifier = Modifier.weight(1f),
+        )
+        Text("$count", style = LandType.label, color = Land.colors.ink3)
+        Spacer(Modifier.width(8.dp))
+        Icon(Icons.Outlined.KeyboardArrowDown, contentDescription = null, tint = Land.colors.ink3, modifier = Modifier.size(18.dp))
+    }
+}
+
+/**
+ * Type-to-filter picker over a village's bundled survey tokens (up to ~2k). Tapping a token
+ * toggles it into the record; the sheet stays open so several surveys can be added in one pass.
+ * Tokens render in Mono (they are land data — never translated).
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SurveyPickerSheet(
+    tokens: List<String>,
+    selected: List<String>,
+    onToggle: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var query by remember { mutableStateOf("") }
+    val filtered = remember(query, tokens) {
+        val q = query.trim()
+        if (q.isEmpty()) tokens else tokens.filter { it.contains(q, ignoreCase = true) }
+    }
+
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState,
+        containerColor = Land.colors.surface,
+    ) {
+        Column(
+            Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(L("સર્વે નંબર", "Survey number"), style = LandType.screenTitle, color = Land.colors.ink)
+            SheetSearchField(value = query, onChange = { query = it }, placeholder = L("સર્વે નંબર શોધો", "Search survey number"))
+            Text(
+                L("${selected.size} પસંદ · ${filtered.size} બતાવ્યા", "${selected.size} chosen · ${filtered.size} shown"),
+                style = LandType.stamp, color = Land.colors.ink3,
+            )
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth().heightIn(max = 420.dp),
+                verticalArrangement = Arrangement.spacedBy(Dp4.chipGap),
+            ) {
+                items(filtered, key = { it }) { tok ->
+                    val isSel = tok in selected
+                    Row(
+                        Modifier.fillMaxWidth().heightIn(min = LandSize.minTouchTarget)
+                            .clip(LandShape.field)
+                            .background(if (isSel) Land.colors.accentSoft else Land.colors.surface)
+                            .border(1.dp, if (isSel) Land.colors.accent else Land.colors.line, LandShape.field)
+                            .noRippleClick { onToggle(tok) }
+                            .padding(horizontal = 15.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            tok, style = LandType.metaMono,
+                            color = if (isSel) Land.colors.accent else Land.colors.ink,
+                            modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis,
+                        )
+                        if (isSel) Icon(Icons.Outlined.Check, contentDescription = null, tint = Land.colors.accent, modifier = Modifier.size(16.dp))
                     }
                 }
             }

@@ -18,11 +18,24 @@ object IrcmsInjection {
         function norm(s){ return (s||'').replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
           .replace(/પ/g,'p').replace(/[~\/\s]+/g,'').toLowerCase(); }
         function unset(sel){ if(!sel) return true; var v=(''+sel.value).trim(); return v===''||v==='0'||v==='-1'; }
-        function selText(sel, want){ want=(want||'').toLowerCase();
-          var opts=Array.prototype.slice.call(sel.options), best=null;
-          opts.forEach(function(o){ if(best) return; var t=(o.text||'').toLowerCase();
-            if(o.value && t.indexOf(want)>=0) best=o; });
-          if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; } return false; }
+        // Agnostic place matcher (see AnyRorInjection.pick): punctuation/spacing/prefix-insensitive
+        // so any district/taluka/village fills, but a UNIQUE hit is required — never guess a place.
+        function nn(s){ return (s||'')
+          .replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
+          .replace(/પ/g,'p').toLowerCase().replace(/[^a-z0-9઀-૿]+/g,''); }
+        function toks(s){ return (s||'').replace(/[()\[\].,\-\/_]+/g,' ').split(/\s+/).map(nn).filter(Boolean); }
+        function selText(sel, want){
+          var w=nn(want); if(!w) return false;
+          var opts=Array.prototype.slice.call(sel.options).filter(function(o){ return o.value && o.value!=='-1' && o.value!=='0'; });
+          var eq=opts.filter(function(o){ return nn(o.text)===w; });
+          if(eq.length){ sel.value=eq[0].value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
+          var sub=opts.filter(function(o){ var t=nn(o.text); return t.indexOf(w)>=0 || w.indexOf(t)>=0; });
+          if(sub.length===1){ sel.value=sub[0].value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
+          var wt=toks(want);
+          if(wt.length){ var tk=opts.filter(function(o){ var t=nn(o.text); return wt.every(function(x){ return t.indexOf(x)>=0; }); });
+            if(tk.length===1){ sel.value=tk[0].value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; } }
+          return false;
+        }
         function oldTok(s){ s=(s||'').split('~')[0]; return s.replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);}).replace(/પ/g,'p').replace(/\s+/g,'').toLowerCase(); }
         function selSurvey(sel, want){ var w=oldTok(want);
           var opts=Array.prototype.slice.call(sel.options), best=null;

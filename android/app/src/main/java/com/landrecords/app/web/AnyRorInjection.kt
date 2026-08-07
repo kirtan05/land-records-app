@@ -33,14 +33,26 @@ object AnyRorInjection {
       try {
         function norm(s){ return (s||'').replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
           .replace(/પ/g,'p').replace(/[~\s]+/g,'').toLowerCase(); }
-        // Survey token: the leading number before any separator, e.g. "851 ~~" -> "851".
-        function coreTok(s){ var m = norm(s).match(/^[0-9a-z\/અ-૱]+/); return m ? m[0] : norm(s); }
-        function pick(sel, wantText, exact){
-          var want=norm(wantText); var best=null;
-          Array.from(sel.options).forEach(function(o){ if(best) return; var t=norm(o.text);
-            var hit = exact ? (coreTok(o.text)===want) : (t===want || t.indexOf(want)>=0);
-            if(t && hit) best=o; });
-          if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
+        // District/taluka/village matcher — agnostic to any village, so a Kheda/Nadiad-Gramya
+        // record fills the same as an Anand one. Punctuation/spacing/numeric-prefix insensitive
+        // ("નડિયાદ ગ્રામ્ય" matches "નડિયાદ (ગ્રામ્ય)" / "22-નડિયાદ ગ્રામ્ય"). Never GUESSES: exact
+        // normalized match first, then a UNIQUE substring, then a UNIQUE token-subset — if two
+        // options are equally plausible we fill nothing rather than fetch the wrong place.
+        function nn(s){ return (s||'')
+          .replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
+          .replace(/પ/g,'p').toLowerCase().replace(/[^a-z0-9઀-૿]+/g,''); }
+        function toks(s){ return (s||'').replace(/[()\[\].,\-\/_]+/g,' ').split(/\s+/).map(nn).filter(Boolean); }
+        function setOpt(sel,o){ sel.value=o.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
+        function pick(sel, wantText){
+          var w=nn(wantText); if(!w) return false;
+          var opts=Array.from(sel.options).filter(function(o){ return o.value && o.value!=='-1' && o.value!=='0'; });
+          var eq=opts.filter(function(o){ return nn(o.text)===w; });
+          if(eq.length) return setOpt(sel, eq[0]);
+          var sub=opts.filter(function(o){ var t=nn(o.text); return t.indexOf(w)>=0 || w.indexOf(t)>=0; });
+          if(sub.length===1) return setOpt(sel, sub[0]);
+          var wt=toks(wantText);
+          if(wt.length){ var tk=opts.filter(function(o){ var t=nn(o.text); return wt.every(function(x){ return t.indexOf(x)>=0; }); });
+            if(tk.length===1) return setOpt(sel, tk[0]); }
           return false;
         }
         // Survey option text is "<old-survey> ~~ <resurvey>" ("41 ~~ 70"). Match the OLD-survey
