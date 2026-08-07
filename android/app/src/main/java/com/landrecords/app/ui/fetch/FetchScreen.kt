@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material3.HorizontalDivider
@@ -73,6 +77,10 @@ fun FetchScreen(
     var awaitingDetail by remember { mutableStateOf(false) }
     var submitPageLoaded by remember { mutableIntStateOf(-1) }
     var captureRunning by remember { mutableStateOf(false) }
+    // True while the app is driving the page (loading + auto-filling the cascade, or waiting
+    // for the post-submit postback) — a blocking buffer covers the WebView so a stray tap or
+    // Back can't derail the machine. Cleared only when the CAPTCHA spotlight is up for the user.
+    var working by remember { mutableStateOf(true) }
 
     val surveyDropId = when (recordType) {
         RecordType.VF712 -> AnyRor.Ids.SURVEY_VF712
@@ -89,20 +97,27 @@ fun FetchScreen(
         if (awaitingDetail) {
             // Only look for the result AFTER the submit's postback has loaded a new page —
             // otherwise we'd capture the form the instant the button/Enter fires.
-            if (pageLoaded <= submitPageLoaded) return@LaunchedEffect
+            if (pageLoaded <= submitPageLoaded) {
+                android.util.Log.i("LR", "awaitingDetail: waiting for postback (pageLoaded=$pageLoaded submit=$submitPageLoaded)")
+                return@LaunchedEffect
+            }
             // Poll a few seconds — the detail DOM can render a beat after onPageFinished.
-                var ready = WebViewCapture.eval(wv, AnyRorInjection.detailReadyJs())
+            var ready = WebViewCapture.eval(wv, AnyRorInjection.detailReadyJs())
             var tries = 0
             while (ready.contains("WAIT") && tries < 8) {
                 delay(500)
                 ready = WebViewCapture.eval(wv, AnyRorInjection.detailReadyJs())
                 tries++
             }
+            android.util.Log.i("LR", "detailReady='$ready' after $tries tries (pageLoaded=$pageLoaded)")
             when {
                 ready.contains("READY") -> {
                     captureRunning = true
+                    working = true
                     vm.setPhase(FetchPhase.READING)
-                    WebViewCapture.eval(wv, AnyRorInjection.cleanupJs())
+                    WebViewCapture.eval(wv, AnyRorInjection.cleanupJs(
+                        districtEn = i.district, talukaEn = i.taluka, villageEn = i.village, surveyNo = i.surveyNo,
+                    ))
                     val html = WebViewCapture.rawHtml(wv)
                     vm.setPhase(FetchPhase.BUILDING)
                     val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
@@ -124,6 +139,7 @@ fun FetchScreen(
                     awaitingDetail = false
                     submitPageLoaded = -1
                     WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
+                    working = false // hand the CAPTCHA back to the user
                 }
             }
         } else {
@@ -142,10 +158,12 @@ fun FetchScreen(
             if (step.contains("READY") || step.contains("SUR")) {
                 delay(600)
                 WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
+                working = false // cascade is filled + spotlit — the user solves the CAPTCHA now
             }
         }
     }
 
+    Box(Modifier.fillMaxSize()) {
     Column(Modifier.fillMaxSize().background(Land.colors.bg)) {
         Column(Modifier.background(Land.colors.surface).statusBarsPadding()) {
             Row(
@@ -183,9 +201,11 @@ fun FetchScreen(
                         @JavascriptInterface
                         fun onSubmit() {
                             post {
+                                android.util.Log.i("LR", "onSubmit fired (awaitingDetail=$awaitingDetail pageLoaded=$pageLoaded)")
                                 if (!awaitingDetail) {
                                     submitPageLoaded = pageLoaded
                                     awaitingDetail = true
+                                    working = true // block the UI the instant they tap — no dead air
                                 }
                             }
                         }
@@ -193,6 +213,7 @@ fun FetchScreen(
                     webViewClient = object : WebViewClient() {
                         override fun onPageFinished(view: WebView, url: String?) {
                             pageLoaded += 1
+                            android.util.Log.i("LR", "onPageFinished #$pageLoaded url=${url?.take(60)}")
                         }
                     }
                     webRef = this
@@ -202,24 +223,44 @@ fun FetchScreen(
         )
     }
 
-    if (phase != FetchPhase.SOLVING) {
-        SavingOverlay(
-            surveyNo = info?.surveyNo ?: "",
-            village = info?.village ?: "",
-            destinationPath = "Documents/LandRecords/${info?.district}/${info?.taluka}/${info?.village}/Survey ${info?.surveyNo}",
-            step = when (phase) {
-                FetchPhase.READING -> 0
-                FetchPhase.BUILDING -> 1
-                else -> 2
-            },
-            error = if (phase == FetchPhase.ERROR) vm.errorMessage else null,
-            onRetry = {
-                vm.setPhase(FetchPhase.SOLVING)
-                awaitingDetail = false
-                submitPageLoaded = -1
-                captureRunning = false
-                webRef?.reload()
-            },
-        )
+    // ── Blocking buffers ──────────────────────────────────────────────────────────────
+    // While the app drives the page (capture in progress, or auto-filling / waiting) a
+    // full-screen layer swallows every touch and Back press so nothing can derail the run.
+    when {
+        phase != FetchPhase.SOLVING -> {
+            val isError = phase == FetchPhase.ERROR
+            InputBlocker(active = !isError) {
+                SavingOverlay(
+                    surveyNo = info?.surveyNo ?: "",
+                    village = info?.village ?: "",
+                    destinationPath = "Documents/LandRecords/${info?.district}/${info?.taluka}/${info?.village}/Survey ${info?.surveyNo}",
+                    step = when (phase) {
+                        FetchPhase.READING -> 0
+                        FetchPhase.BUILDING -> 1
+                        else -> 2
+                    },
+                    error = if (isError) vm.errorMessage else null,
+                    onRetry = {
+                        vm.setPhase(FetchPhase.SOLVING)
+                        awaitingDetail = false
+                        submitPageLoaded = -1
+                        captureRunning = false
+                        working = true
+                        webRef?.reload()
+                    },
+                )
+            }
+        }
+        // Post-tap fetch: full "Fetching the record…" overlay (the one that reads well).
+        working && awaitingDetail -> {
+            InputBlocker(active = true) { PreparingOverlay(fetching = true) }
+        }
+        // Auto-fill: keep the form VISIBLE (don't cover it) but swallow stray taps/Back so
+        // the cascade can't be derailed. Only show the "Filling…" chip once the form has
+        // actually loaded — before that it'd sit over a blank page, which read as premature.
+        working -> {
+            InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() }
+        }
+    }
     }
 }

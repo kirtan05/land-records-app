@@ -54,6 +54,11 @@ class FetchViewModel(
 
     fun setPhase(p: FetchPhase) { phase.value = p }
 
+    /** Record that a type was checked and holds nothing (e.g. no iRCMS cases) so it won't re-queue. */
+    suspend fun markEmpty(type: RecordType) {
+        repo.saveFetchedRecord(surveyId, type, docCount = 0, pdfPath = null, sourcePath = null)
+    }
+
     fun fail(message: String) {
         errorMessage = message
         phase.value = FetchPhase.ERROR
@@ -64,7 +69,7 @@ class FetchViewModel(
      * Returns true on success. Doc count firms up per type once the multi-doc capture
      * (VF-7/12 combine, deeds) is wired; a single Integrated PDF counts as 1.
      */
-    suspend fun fileCapture(type: RecordType, pdfBytes: ByteArray, rawHtml: String): Boolean {
+    suspend fun fileCapture(type: RecordType, pdfBytes: ByteArray, rawHtml: String, docCount: Int = 1): Boolean {
         return try {
             val snap = repo.snapshot(surveyId) ?: error("Survey not found")
             val (survey, prop) = snap
@@ -72,7 +77,7 @@ class FetchViewModel(
                 district = prop.district, taluka = prop.taluka, village = prop.village,
                 surveyNo = survey.surveyNo, type = type, pdfBytes = pdfBytes, rawHtml = rawHtml,
             )
-            repo.saveFetchedRecord(surveyId, type, docCount = 1, pdfPath = filed.pdfPath, sourcePath = filed.sourcePath)
+            repo.saveFetchedRecord(surveyId, type, docCount = docCount, pdfPath = filed.pdfPath, sourcePath = filed.sourcePath)
             android.util.Log.i("LR", "fileCapture OK: pdf='${filed.pdfPath}' source='${filed.sourcePath}' (${pdfBytes.size} bytes)")
             true
         } catch (e: Exception) {

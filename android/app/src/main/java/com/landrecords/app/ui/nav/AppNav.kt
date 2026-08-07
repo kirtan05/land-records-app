@@ -14,6 +14,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.landrecords.app.data.model.RecordType
 import com.landrecords.app.ui.fetch.FetchScreen
+import com.landrecords.app.ui.fetch.IrcmsBatchScreen
+import com.landrecords.app.ui.fetch.IrcmsFetchScreen
 import com.landrecords.app.ui.fetch.RegenerateScreen
 import com.landrecords.app.ui.library.LibraryScreen
 import com.landrecords.app.ui.property.AddPropertyScreen
@@ -28,10 +30,12 @@ private object Routes {
     const val REGEN = "regen/{surveyId}/{recordType}"
     const val ADD = "add_property"
     const val SETTINGS = "settings"
+    const val IRCMS_BATCH = "ircms_batch/{propertyId}"
 
     fun survey(id: Long, justAdded: String? = null) = "survey/$id?justAdded=${justAdded ?: ""}"
     fun fetch(id: Long, type: RecordType) = "fetch/$id/${type.name}"
     fun regen(id: Long, type: RecordType) = "regen/$id/${type.name}"
+    fun ircmsBatch(propertyId: Long) = "ircms_batch/$propertyId"
 }
 
 @Composable
@@ -51,6 +55,7 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
             LibraryScreen(
                 onOpenSurvey = { navController.navigate(Routes.survey(it)) },
                 onFetch = { id, type -> navController.navigate(Routes.fetch(id, type)) },
+                onBatchIrcms = { navController.navigate(Routes.ircmsBatch(it)) },
                 onAddProperty = { navController.navigate(Routes.ADD) },
                 onSettings = { navController.navigate(Routes.SETTINGS) },
             )
@@ -93,19 +98,33 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
         ) { entry ->
             val id = entry.arguments?.getLong("surveyId") ?: return@composable
             val type = RecordType.valueOf(entry.arguments?.getString("recordType") ?: return@composable)
-            FetchScreen(
-                surveyId = id,
-                recordType = type,
-                onBack = { navController.popBackStack() },
-                onDone = {
-                    navController.navigate(Routes.survey(id, type.name)) {
-                        popUpTo(Routes.LIBRARY)
-                    }
-                },
-            )
+            val onDoneNav: () -> Unit = {
+                navController.navigate(Routes.survey(id, type.name)) { popUpTo(Routes.LIBRARY) }
+            }
+            if (type == RecordType.IRCMS) {
+                IrcmsFetchScreen(surveyId = id, onBack = { navController.popBackStack() }, onDone = onDoneNav)
+            } else {
+                FetchScreen(
+                    surveyId = id,
+                    recordType = type,
+                    onBack = { navController.popBackStack() },
+                    onDone = onDoneNav,
+                )
+            }
         }
         composable(Routes.ADD) {
             AddPropertyScreen(onBack = { navController.popBackStack() }, onSaved = { navController.popBackStack() })
+        }
+        composable(
+            Routes.IRCMS_BATCH,
+            arguments = listOf(navArgument("propertyId") { type = NavType.LongType }),
+        ) { entry ->
+            val pid = entry.arguments?.getLong("propertyId") ?: return@composable
+            IrcmsBatchScreen(
+                propertyId = pid,
+                onBack = { navController.popBackStack() },
+                onDone = { navController.popBackStack() },
+            )
         }
         composable(Routes.SETTINGS) {
             SettingsScreen(onBack = { navController.popBackStack() })

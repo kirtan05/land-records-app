@@ -7,6 +7,7 @@ import com.landrecords.app.data.db.SurveyEntity
 import com.landrecords.app.data.model.RecordType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 
 /** A survey plus the document count of each record type it holds (0 = missing). */
 data class SurveyWithCounts(
@@ -37,6 +38,32 @@ class LandRecordsRepository(private val db: AppDatabase) {
         }
 
     suspend fun propertyById(id: Long) = db.propertyDao().byId(id)
+
+    /** Survey row id for a (village, human survey number) pair, or null — links seeded records. */
+    suspend fun findSurveyId(village: String, surveyNo: String): Long? =
+        db.surveyDao().findByVillageAndNo(village, surveyNo)?.id
+
+    /**
+     * Create a property (or reuse an existing same-named one) and add the given survey numbers.
+     * Names are stored as both the display and the Gujarati match value, since the AnyRoR/iRCMS
+     * cascades are matched by the visible name. Returns the property id.
+     */
+    suspend fun addProperty(
+        district: String, taluka: String, village: String, surveyNos: List<String>,
+    ): Long {
+        val existing = db.propertyDao().observeAll().first()
+            .firstOrNull { it.district == district && it.taluka == taluka && it.village == village }
+        val propId = existing?.id ?: db.propertyDao().upsert(
+            PropertyEntity(
+                state = "Gujarat", district = district, taluka = taluka, village = village,
+                districtGu = district, talukaGu = taluka, villageGu = village,
+            ),
+        )
+        for (no in surveyNos.map { it.trim() }.filter { it.isNotEmpty() }) {
+            db.surveyDao().upsert(SurveyEntity(propertyId = propId, surveyNo = no, normalized = tokenOf(no)))
+        }
+        return propId
+    }
 
     suspend fun recordFor(surveyId: Long, type: RecordType): RecordEntity? =
         db.recordDao().find(surveyId, type.name)

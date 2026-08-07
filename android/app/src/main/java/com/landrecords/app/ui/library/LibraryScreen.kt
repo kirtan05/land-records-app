@@ -38,6 +38,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.R
 import com.landrecords.app.data.model.RecordType
 import com.landrecords.app.ui.components.BlueprintHeader
+import com.landrecords.app.ui.components.DashedButton
 import com.landrecords.app.ui.components.LanguagePill
 import com.landrecords.app.ui.components.ParcelTile
 import com.landrecords.app.ui.components.PathBreadcrumb
@@ -55,11 +56,13 @@ import com.landrecords.app.ui.theme.Lang
 import com.landrecords.app.ui.theme.LocalLang
 import com.landrecords.app.ui.theme.Lr
 import com.landrecords.app.ui.theme.badge
+import com.landrecords.app.ui.theme.join
 
 @Composable
 fun LibraryScreen(
     onOpenSurvey: (Long) -> Unit,
     onFetch: (Long, RecordType) -> Unit,
+    onBatchIrcms: (Long) -> Unit,
     onAddProperty: () -> Unit,
     onSettings: () -> Unit,
 ) {
@@ -106,6 +109,28 @@ fun LibraryScreen(
             item { PathBreadcrumb(state.breadcrumb) }
             if (!state.searching) {
                 item {
+                    val selProp = state.villages.firstOrNull { it.selected }?.propertyId
+                    // Offer the batch only while some survey has never been checked for cases.
+                    // A checked-but-empty survey has an IRCMS record (docCount 0) → containsKey true.
+                    val missingCases = state.surveys.any { !it.counts.containsKey(RecordType.IRCMS) }
+                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        DashedButton(
+                            text = Lr(R.string.add_property_gu, R.string.add_property_en),
+                            onClick = onAddProperty,
+                            modifier = Modifier.weight(1f),
+                        )
+                        if (selProp != null && state.surveys.isNotEmpty() && missingCases) {
+                            DashedButton(
+                                text = lang.join("બધા કેસ · ૧ કોડ", "All cases · 1 code"),
+                                onClick = { onBatchIrcms(selProp) },
+                                modifier = Modifier.weight(1f),
+                            )
+                        }
+                    }
+                }
+            }
+            if (!state.searching) {
+                item {
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         state.villages.forEach { v ->
                             VillageCard(
@@ -139,13 +164,7 @@ fun LibraryScreen(
                     },
                 )
             }
-            item {
-                PrimaryButton(
-                    text = Lr(R.string.add_property_gu, R.string.add_property_en),
-                    onClick = onAddProperty,
-                    modifier = Modifier.padding(top = 6.dp),
-                )
-            }
+            item { Spacer(Modifier.height(2.dp)) }
         }
     }
 }

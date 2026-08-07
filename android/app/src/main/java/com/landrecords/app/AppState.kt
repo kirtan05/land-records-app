@@ -16,7 +16,7 @@ class AppState(context: Context) {
     private val prefs = context.getSharedPreferences("land_prefs", Context.MODE_PRIVATE)
 
     private var _lang by mutableStateOf(load("lang", Lang.entries, Lang.BOTH))
-    private var _theme by mutableStateOf(load("theme", ThemeMode.entries, ThemeMode.SYSTEM))
+    private var _theme by mutableStateOf(load("theme", ThemeMode.entries, ThemeMode.LIGHT))
 
     val lang: Lang get() = _lang
     val themeMode: ThemeMode get() = _theme

@@ -66,11 +66,25 @@ object LibraryAccess {
         return runCatching { context.startActivity(intent); true }.getOrDefault(false)
     }
 
-    fun share(context: Context, pdfPath: String?): Boolean {
-        val uri = contentUriFor(context, pdfPath) ?: return false
+    /**
+     * Share the PDF. When [shareName] is given, the file is copied to the cache under that
+     * descriptive name (e.g. "Bharoda_221_p_Integrated_Survey_Record.pdf") so the receiving
+     * app shows a meaningful filename instead of the generic library name.
+     */
+    fun share(context: Context, pdfPath: String?, shareName: String? = null): Boolean {
+        val uri: Uri = if (!shareName.isNullOrBlank()) {
+            val bytes = readBytes(context, pdfPath) ?: return false
+            val safe = shareName.replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "record.pdf" }
+            val out = File(context.cacheDir, "share").apply { mkdirs() }.let { File(it, safe) }
+            runCatching { out.writeBytes(bytes) }.getOrElse { return false }
+            FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", out)
+        } else {
+            contentUriFor(context, pdfPath) ?: return false
+        }
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "application/pdf"
             putExtra(Intent.EXTRA_STREAM, uri)
+            if (!shareName.isNullOrBlank()) putExtra(Intent.EXTRA_TITLE, shareName)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
         val chooser = Intent.createChooser(intent, "Share record").apply {

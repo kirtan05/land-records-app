@@ -1,8 +1,11 @@
 package com.landrecords.app.ui.fetch
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,12 +14,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.landrecords.app.R
@@ -88,5 +96,87 @@ fun SavingOverlay(
         }
         Spacer(Modifier.height(20.dp))
         Text(destinationPath, style = LandType.stamp, color = Land.colors.ink3)
+    }
+}
+
+/**
+ * A full-screen layer that swallows every touch and the Back gesture while [active], so the
+ * fetch state machine can drive the page without a stray tap or Back derailing it. When not
+ * active it's an inert pass-through (used for the error state, where Back should still work).
+ */
+@Composable
+fun InputBlocker(active: Boolean, content: @Composable BoxScope.() -> Unit) {
+    if (active) BackHandler(enabled = true) { /* swallow — the run owns the screen */ }
+    Box(
+        Modifier
+            .fillMaxSize()
+            .then(
+                if (active) Modifier.pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        // Consume on the Initial pass so nothing reaches the WebView beneath.
+                        while (true) awaitPointerEvent(PointerEventPass.Initial).changes.forEach { it.consume() }
+                    }
+                } else Modifier,
+            ),
+        content = content,
+    )
+}
+
+/**
+ * Auto-fill buffer: kept deliberately light — the AnyRoR form stays VISIBLE behind it (the
+ * enclosing [InputBlocker] already swallows taps), with just a small chip up top so the user
+ * knows the app is filling the cascade and shouldn't touch yet.
+ */
+@Composable
+fun BoxScope.FillingIndicator() {
+    Row(
+        Modifier
+            .align(Alignment.TopCenter)
+            .statusBarsPadding()
+            .padding(top = 10.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(Land.colors.surface)
+            .border(1.dp, Land.colors.line, RoundedCornerShape(20.dp))
+            .padding(horizontal = 14.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Box(Modifier.size(6.dp).clip(CircleShape).background(Land.colors.accent))
+        Text(
+            "ફોર્મ ભરાઈ રહ્યું છે…  ·  Filling the form",
+            style = LandType.stamp, color = Land.colors.ink2,
+        )
+    }
+}
+
+/**
+ * The buffer shown after the user taps Get Record Detail, until the capture pipeline takes
+ * over. Blocks the dead air the user reported between the tap and "Saving…".
+ */
+@Composable
+fun PreparingOverlay(fetching: Boolean) {
+    Column(
+        Modifier.fillMaxSize().background(Land.colors.bg.copy(alpha = 0.92f)).padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        ParcelPlate {
+            Text(
+                if (fetching) "રેકોર્ડ મેળવી રહ્યા છીએ  ·  Fetching the record…"
+                else "ફોર્મ ભરાઈ રહ્યું છે  ·  Filling the form…",
+                style = LandType.metaMono, color = Land.colors.ink,
+            )
+        }
+        Spacer(Modifier.height(18.dp))
+        LinearProgressIndicator(
+            color = Land.colors.accent,
+            trackColor = Land.colors.surfaceAlt,
+            modifier = Modifier.fillMaxWidth().height(LandSize.progressBar).clip(RoundedCornerShape(2.dp)),
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(
+            "કૃપા કરીને રાહ જુઓ  ·  Please wait",
+            style = LandType.stamp, color = Land.colors.ink3, textAlign = TextAlign.Center,
+        )
     }
 }

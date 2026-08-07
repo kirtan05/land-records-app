@@ -22,6 +22,10 @@ class LandRecordsApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appScope.launch { repository.seedIfEmpty() }
+        appScope.launch {
+            repository.seedIfEmpty()
+            // Backfill the already-generated desktop records (pushed to the app's files dir).
+            com.landrecords.app.data.storage.SeedImporter.run(this@LandRecordsApp, repository, libraryWriter)
+        }
     }
 }

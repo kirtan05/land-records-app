@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -68,7 +69,11 @@ fun DashedButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifie
             .clickable(interactionSource = interaction, indication = null, onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text, style = LandType.bodyStrong, color = Land.colors.accent)
+        Text(
+            text, style = LandType.bodyStrong, color = Land.colors.accent,
+            textAlign = TextAlign.Center, maxLines = 2,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
     }
 }
 

@@ -61,21 +61,30 @@ object AnyRorInjection {
 
     /** Reproduces anyror/format.mjs addStyleTag — the print CSS for the Integrated record. */
     const val CLEANUP_CSS = """
-        html, body { background:#fff !important; }
+        /* Tell the print engine the page is landscape A4 — without this it lays the content
+           out at portrait/letter width and drops it on the left of the landscape sheet,
+           leaving the big empty margin on the right. */
+        @page { size: A4 landscape; margin: 6mm; }
+        html, body { background:#fff !important; width:100% !important; max-width:100% !important; margin:0 !important; }
         * { background-image:none !important; }
         .imgwatermark { background:#fff !important; }
-        [class*="col-md-4"],[class*="col-lg-4"],[class*="col-md-5"],[class*="col-lg-5"],
-        [class*="col-md-6"],[class*="col-lg-6"],[class*="col-md-7"],[class*="col-lg-7"],
-        [class*="col-md-8"],[class*="col-lg-8"],[class*="col-md-9"],[class*="col-lg-9"]{
+        /* Bootstrap's .container is a FIXED width (~1170px) — on the wide print surface that
+           caps the record and wastes the whole right side. Force every container/column full. */
+        .container, .container-fluid, [class*="container"] { width:100% !important; max-width:100% !important; margin:0 auto !important; padding:0 !important; }
+        [class*="col-md-"],[class*="col-lg-"],[class*="col-sm-"],[class*="col-xs-"]{
            width:100% !important; max-width:100% !important; float:none !important; display:block !important; }
-        table { width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; margin:2px 0 5px 0 !important; }
-        td, th { border:.5pt solid #445 !important; padding:1.3px 3.5px !important; font-size:9.4pt !important;
+        /* The table's OWN border (from <table border="1" bordercolor=…>) is the thick blue frame.
+           Kill it; the slate cell borders below define the grid. */
+        table, .table, .table-bordered, table[border] { width:100% !important; table-layout:fixed !important;
+           border-collapse:collapse !important; margin:2px 0 5px 0 !important; border:none !important; }
+        td, th, .table-bordered td, .table-bordered th { border:.5pt solid #445 !important; padding:1.3px 3.5px !important; font-size:9.4pt !important;
                  line-height:1.16 !important; white-space:normal !important; word-break:break-word !important;
-                 overflow-wrap:anywhere !important; vertical-align:top !important; }
+                 overflow-wrap:anywhere !important; vertical-align:top !important; color:#111 !important; }
         th { background:#e8eef6 !important; font-weight:700 !important; }
         tr { page-break-inside:avoid !important; }
+        .text-success { color:#127a3d !important; }
         .panel, .panel-body, .Div-Border-Side-New, .form-group, .form-horizontal, .bs-example, .card, .container, .row
-           { padding:1px !important; margin:1px 0 !important; box-shadow:none !important; min-height:0 !important; }
+           { padding:1px !important; margin:1px 0 !important; box-shadow:none !important; min-height:0 !important; border-color:#445 !important; }
         .control-label { margin:0 !important; padding:0 2px !important; line-height:1.22 !important; }
         .Div-Border-Side-New > .form-group { margin:0 !important; }
         .panel-heading { padding:3px 6px !important; }
@@ -102,29 +111,121 @@ object AnyRorInjection {
     })();
     """.trimIndent()
 
-    /** Injects the print CSS and strips empty rows/tables/sections (format.mjs DOM pass). */
-    fun cleanupJs(): String = """
+    /**
+     * Full on-device port of anyror/format.mjs: strips empty rows/tables/sections, balances
+     * column widths by content length (colgroups), compacts long 1-column index lists into
+     * multi-column blocks, hides the native stacked summary, and inserts the compact blue
+     * title header — so a phone capture renders byte-for-byte like the desktop PDFs.
+     */
+    fun cleanupJs(
+        districtEn: String = "",
+        talukaEn: String = "",
+        villageEn: String = "",
+        surveyNo: String = "",
+    ): String = """
     (function(){
       try {
-        var s = document.createElement('style'); s.innerHTML = `$CLEANUP_CSS`; document.head.appendChild(s);
-        // Drop only the spotlight artifacts. Do NOT hide the cascade form by container —
-        // AnyRoR's real result page has no form, and walking up to .panel/.form nukes the
-        // record (the whole page is one ASP.NET form / one .panel-primary).
+        document.getElementById('__bot_banner') && document.getElementById('__bot_banner').remove();
+        // Drop the spotlight artifacts first (rings + dim CSS) so they never bake into the PDF.
         var sc = document.getElementById('__lr_spot_css'); if (sc) sc.remove();
         document.querySelectorAll('.lr-ring').forEach(function(e){ e.classList.remove('lr-ring'); });
+
         var blank = function(t){ return (t||'').replace(/[\s\-—_.]/g,'') === ''; };
+        var isHeadingText = function(t){ return t && t.length < 70 && /Details|વિગત/i.test(t); };
+
+        // 1) remove blank data rows
         document.querySelectorAll('table').forEach(function(t){
           Array.from(t.rows).forEach(function(r){ if(!r.querySelector('th') && blank(r.textContent)){ r.remove(); } });
         });
-        document.querySelectorAll('.Div-Border-Side-New').forEach(function(panel){
-          var hasData = Array.from(panel.querySelectorAll('table')).some(function(t){
-            return Array.from(t.rows).some(function(r){ return !r.querySelector('th') && (r.textContent||'').replace(/\s+/g,'').length > 2; });
-          });
-          var h = panel.querySelector('.text-success');
-          var bodyLen = ((panel.textContent||'').replace(h?h.textContent:'','').replace(/[\s\-—_.]/g,'')).length;
-          if (!hasData && bodyLen < 30) panel.style.display='none';
+        // 2) hide tables with no real data + the heading right above them
+        document.querySelectorAll('table').forEach(function(t){
+          var data = Array.from(t.rows).filter(function(r){ return !r.querySelector('th'); });
+          if(!data.some(function(r){ return !blank(r.textContent); })){
+            t.style.display='none';
+            var p=t.previousElementSibling, hops=0;
+            while(p && hops<4){ var x=(p.textContent||'').replace(/\s+/g,' ').trim(); if(isHeadingText(x)){ p.style.display='none'; break; } p=p.previousElementSibling; hops++; }
+          }
         });
-        document.getElementById('__bot_banner') && document.getElementById('__bot_banner').remove();
+        // 3) hide "Record Not Found" leaf nodes + their heading
+        Array.from(document.querySelectorAll('div,span,p,td')).forEach(function(e){
+          if(e.children.length) return;
+          var t=(e.textContent||'').replace(/\s+/g,' ').trim();
+          if(/^Record Not Found\.?${'$'}/i.test(t) || t==='---' || t==='----'){
+            e.style.display='none';
+            var p=e.previousElementSibling || (e.parentElement && e.parentElement.previousElementSibling), hops=0;
+            while(p && hops<3){ var x=(p.textContent||'').replace(/\s+/g,' ').trim(); if(isHeadingText(x)){ p.style.display='none'; break; } p=p.previousElementSibling; hops++; }
+          }
+        });
+        // 3b) hide whole empty Div-Border panels (Panchayat Tax / Electricity / Water / empty court cases)
+        document.querySelectorAll('.Div-Border-Side-New').forEach(function(panel){
+          var h=panel.querySelector('.text-success');
+          var hasData=Array.from(panel.querySelectorAll('table')).some(function(t){ return Array.from(t.rows).some(function(r){ return !r.querySelector('th') && (r.textContent||'').replace(/\s+/g,'').length>2; }); });
+          var bodyLen=((panel.textContent||'').replace(h?h.textContent:'','').replace(/[\s\-—_.]/g,'')).length;
+          if(!hasData && bodyLen<30) panel.style.display='none';
+        });
+        // 4) compact long 1-column SHORT-value lists into a multi-column block
+        document.querySelectorAll('table').forEach(function(t){
+          if(t.style.display==='none') return;
+          var cols=Math.max.apply(null,[0].concat(Array.from(t.rows).map(function(r){ return r.cells.length; })));
+          if(cols!==1) return;
+          var vals=Array.from(t.rows).filter(function(r){ return !r.querySelector('th'); }).map(function(r){ return (r.textContent||'').replace(/\s+/g,' ').trim(); }).filter(Boolean);
+          if(vals.length<10) return;
+          if(vals.reduce(function(a,s){ return a+s.length; },0)/vals.length>14) return;
+          var head=t.querySelector('th');
+          if(head){ var h=document.createElement('div'); h.style.cssText='font-weight:700;background:#e8eef6;padding:2px 6px;border:.4pt solid #aab;font-size:8.5pt;'; h.textContent=(head.textContent||'').replace(/\s+/g,' ').trim(); t.parentNode.insertBefore(h,t); }
+          var wrap=document.createElement('div');
+          wrap.style.cssText='column-count:10;column-gap:8px;font-size:8pt;border:.4pt solid #aab;border-top:none;padding:3px 6px;margin:0 0 6px 0;';
+          wrap.innerHTML=vals.map(function(v){ return '<div style="break-inside:avoid;">'+v+'</div>'; }).join('');
+          t.parentNode.insertBefore(wrap,t); t.style.display='none';
+        });
+        // 5) balance column widths by average content length (colgroup) so long-text columns
+        //    wrap less and short columns stay narrow — fewer, cleaner pages
+        document.querySelectorAll('table').forEach(function(t){
+          if(t.style.display==='none') return;
+          var rows=Array.from(t.rows).filter(function(r){ return r.cells.length; });
+          if(rows.length<2) return;
+          if(rows.some(function(r){ return Array.from(r.cells).some(function(c){ return (c.colSpan||1)>1 || (c.rowSpan||1)>1; }); })) return;
+          var ncol=Math.max.apply(null,rows.map(function(r){ return r.cells.length; }));
+          if(ncol<2 || ncol>14) return;
+          var sum=new Array(ncol).fill(0), cnt=new Array(ncol).fill(0);
+          rows.forEach(function(r){ Array.from(r.cells).forEach(function(c,i){ if(i<ncol){ sum[i]+=(c.innerText||'').replace(/\s+/g,' ').trim().length; cnt[i]++; } }); });
+          var raw=sum.map(function(s,i){ return Math.max(6,Math.min(s/Math.max(1,cnt[i]),60)); });
+          var total=raw.reduce(function(a,b){ return a+b; },0);
+          var cg=document.createElement('colgroup');
+          raw.forEach(function(x){ var col=document.createElement('col'); col.style.width=(100*x/total).toFixed(2)+'%'; cg.appendChild(col); });
+          t.insertBefore(cg,t.firstChild);
+        });
+
+        // 6) inject the print CSS
+        var s = document.createElement('style'); s.innerHTML = `$CLEANUP_CSS`; document.head.appendChild(s);
+
+        // 7) read the top summary, drop the native stacked block, insert the compact header
+        var grab=function(re){ var m=document.body.innerText.match(re); return m?(m[1]||'').trim():''; };
+        var summary={
+          area:grab(/Total Area[^:]*:\s*([^\n]+)/i), assessment:grab(/Total Assessment[^:]*:\s*([^\n]+)/i),
+          tenure:grab(/Tenure[^:]*:\s*([^\n]+)/i), landUse:grab(/Land Use[^:]*:\s*([^\n]+)/i),
+          asOf:(document.body.innerText.match(/તા\.\s*([0-9\/]+ [0-9:]+)\s*ની સ્થિતિએ/)||[,''])[1]||''
+        };
+        document.querySelectorAll('.Div-Border-Side-New').forEach(function(p){
+          var h=((p.querySelector('.text-success')||{}).textContent||'').replace(/\s+/g,' ');
+          if(/District \(|Land Details \(|જીલ્લો|જમીનની વિગત/.test(h)) p.style.display='none';
+        });
+        Array.from(document.querySelectorAll('h1,h2,h3,h4,div,span,strong,b,legend')).forEach(function(e){
+          if(!e.children.length && /^સરવે નંબરને લગતી સંપૂર્ણ વિગતો/.test((e.textContent||'').replace(/\s+/g,' ').trim())) e.style.display='none';
+        });
+        document.getElementById('__anyror_title') && document.getElementById('__anyror_title').remove();
+        var d=document.createElement('div'); d.id='__anyror_title';
+        d.style.cssText='padding:4px 8px 6px;margin:0 0 7px 0;border-bottom:2.5px solid #1f4e78;font-family:Arial,sans-serif;display:block !important;';
+        var chip=function(label,val){ return val?'<span style="margin-right:16px;white-space:nowrap;">'+label+': <b>'+val+'</b></span>':''; };
+        d.innerHTML=
+          '<div style="font-size:15pt;font-weight:800;color:#1f4e78;line-height:1.1;">AnyRoR — Integrated Survey Record</div>'+
+          '<div style="font-size:10pt;color:#222;margin-top:3px;">Village <b>$villageEn</b> &middot; Taluka <b>$talukaEn</b> &middot; District <b>$districtEn</b>'+
+          ' &nbsp;|&nbsp; Survey / Block No <b>$surveyNo</b>'+(summary.asOf?' &nbsp;|&nbsp; As of '+summary.asOf:'')+'</div>'+
+          '<div style="font-size:9.5pt;color:#111;margin-top:4px;line-height:1.5;">'+
+            chip('કુલ ક્ષેત્રફળ / Area',summary.area)+chip('આકાર / Assessment',summary.assessment)+
+            chip('સત્તાપ્રકાર / Tenure',summary.tenure)+chip('ઉપયોગ / Land Use',summary.landUse)+'</div>';
+        var anchor=document.querySelector('.panel.panel-primary')||document.querySelector('.panel-primary')||document.body.firstElementChild;
+        anchor.parentNode.insertBefore(d,anchor);
       } catch(e) {}
     })();
     """.trimIndent()
@@ -164,6 +265,14 @@ object AnyRorInjection {
           // on descendants compounds through nesting and whites the page out).
           style.innerHTML = '.lr-ring{outline:3px solid #B4531B !important;outline-offset:3px;border-radius:10px !important;}';
           document.head.appendChild(style);
+        }
+        // AnyRoR's Land_Record_Validation() throws ("selectedIndex of null") and blocks the
+        // button submit. Wrap it so a crash falls through to submit — the server still
+        // validates the CAPTCHA. (Pressing Enter bypassed onclick, which is why it worked before.)
+        if (typeof window.Land_Record_Validation === 'function' && !window.__lr_valwrap) {
+          window.__lr_valwrap = 1;
+          var _v = window.Land_Record_Validation;
+          window.Land_Record_Validation = function(){ try { return _v.apply(this, arguments); } catch(e){ return true; } };
         }
         var btn = document.getElementById('${AnyRor.Ids.GET_DETAIL_BUTTON}');
         var capImg = document.querySelector('img[src*="captcha" i]');

@@ -40,6 +40,13 @@ interface SurveyDao {
     @Query("SELECT * FROM surveys WHERE surveyNo LIKE '%' || :q || '%' ORDER BY normalized")
     fun search(q: String): Flow<List<SurveyEntity>>
 
+    /** Resolve a survey by its village + human survey number — used to link seeded records. */
+    @Query(
+        "SELECT s.* FROM surveys s JOIN properties p ON s.propertyId = p.id " +
+            "WHERE p.village = :village AND s.surveyNo = :surveyNo LIMIT 1",
+    )
+    suspend fun findByVillageAndNo(village: String, surveyNo: String): SurveyEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(survey: SurveyEntity): Long
 }

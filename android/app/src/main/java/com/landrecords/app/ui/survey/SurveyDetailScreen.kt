@@ -120,7 +120,15 @@ fun SurveyDetailScreen(
                     },
                     onRegenerate = { onRegenerate(surveyId, type) },
                     onShare = {
-                        val ok = LibraryAccess.share(context, record?.pdfPath)
+                        val typeTag = when (type) {
+                            RecordType.INTEGRATED -> "Integrated_Survey_Record"
+                            RecordType.VF712 -> "VF_7_12"
+                            RecordType.DEEDS -> "Registered_Deeds"
+                            RecordType.IRCMS -> "iRCMS_Cases"
+                        }
+                        val vil = state.villageLatin.ifBlank { "Land" }
+                        val shareName = "${vil}_${survey.surveyNo}_$typeTag.pdf"
+                        val ok = LibraryAccess.share(context, record?.pdfPath, shareName)
                         if (!ok) android.widget.Toast.makeText(context, "Nothing to share yet", android.widget.Toast.LENGTH_SHORT).show()
                     },
                     onGet = { onFetch(surveyId, type) },

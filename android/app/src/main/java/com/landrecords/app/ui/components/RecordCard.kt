@@ -71,7 +71,10 @@ fun RecordCard(
         ) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(type.label(), style = LandType.bodyStrong, color = Land.colors.ink)
+                    // Weight so the long title takes the room and the badge keeps its natural
+                    // width — otherwise the badge gets squeezed to a sliver and wraps into a
+                    // tall vertical strip that inflates the whole card.
+                    Text(type.label(), style = LandType.bodyStrong, color = Land.colors.ink, modifier = Modifier.weight(1f))
                     if (justAdded) JustAddedBadge()
                 }
                 if (lang == Lang.BOTH) {
@@ -150,6 +153,7 @@ private fun JustAddedBadge() {
         Text(
             Lr(R.string.just_added_gu, R.string.just_added_en),
             style = LandType.label, color = Land.colors.accent, textAlign = TextAlign.Center,
+            maxLines = 1, softWrap = false,
         )
     }
 }
