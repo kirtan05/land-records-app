@@ -16,8 +16,8 @@ android {
         applicationId = "com.landrecords.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.3.0"
+        versionCode = 4
+        versionName = "0.4.0"
         vectorDrawables { useSupportLibrary = true }
     }
 
@@ -75,6 +75,9 @@ dependencies {
     implementation(libs.androidx.webkit)
     implementation(libs.androidx.documentfile)
     implementation(libs.kotlinx.coroutines.android)
+
+    // Streaming PDF merge (no rasterization) — avoids OOM when combining big scanned records.
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

@@ -1,64 +1,41 @@
 package com.landrecords.app.web
 
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.pdf.PdfDocument
-import android.graphics.pdf.PdfRenderer
-import android.os.ParcelFileDescriptor
+import com.tom_roush.pdfbox.io.MemoryUsageSetting
+import com.tom_roush.pdfbox.multipdf.PDFMergerUtility
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
+import java.io.ByteArrayInputStream
 import java.io.File
 
 /**
- * Merges several PDFs into one. Android has no native vector-PDF concatenation, so each source
- * page is rendered to a bitmap (PdfRenderer) and re-emitted into a new PdfDocument. Lossy vs. a
- * true merge, but the iRCMS case pages are already scans/print output, so it's fine — and it
- * needs no third-party dependency (the build toolchain is pinned).
+ * Concatenates several PDFs into one WITHOUT rasterizing — pdfbox copies page objects and streams
+ * to a temp file (MemoryUsageSetting.setupTempFileOnly), so merging big scanned records (iRCMS
+ * cases + order scans, VF-7/12 year scans) stays flat in memory instead of OOM-ing. Also keeps the
+ * original scan quality (the old bitmap-rasterizing merge was both lossy and memory-hungry).
  */
 object PdfMerge {
-
-    /** ~144 dpi (2× the 72dpi PDF point grid) — legible without ballooning the file. */
-    private const val SCALE = 2
 
     suspend fun merge(parts: List<ByteArray>, cacheDir: File): ByteArray? = withContext(Dispatchers.IO) {
         val usable = parts.filter { it.isNotEmpty() }
         if (usable.isEmpty()) return@withContext null
-        val doc = PdfDocument()
-        var pageNo = 0
-        for ((idx, bytes) in usable.withIndex()) {
-            val tmp = File(cacheDir, "merge_src_$idx.pdf").apply { writeBytes(bytes) }
-            var pfd: ParcelFileDescriptor? = null
-            var renderer: PdfRenderer? = null
-            try {
-                pfd = ParcelFileDescriptor.open(tmp, ParcelFileDescriptor.MODE_READ_ONLY)
-                renderer = PdfRenderer(pfd)
-                for (i in 0 until renderer.pageCount) {
-                    val src = renderer.openPage(i)
-                    val w = (src.width * SCALE).coerceAtLeast(1)
-                    val h = (src.height * SCALE).coerceAtLeast(1)
-                    val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-                    bmp.eraseColor(Color.WHITE)
-                    src.render(bmp, null, null, PdfRenderer.Page.RENDER_MODE_FOR_PRINT)
-                    src.close()
-                    val page = doc.startPage(PdfDocument.PageInfo.Builder(w, h, ++pageNo).create())
-                    page.canvas.drawBitmap(bmp, 0f, 0f, null)
-                    doc.finishPage(page)
-                    bmp.recycle()
-                }
-            } catch (e: Exception) {
-                android.util.Log.w("LR", "PdfMerge: skipped a part (${e.javaClass.simpleName}: ${e.message})")
-            } finally {
-                runCatching { renderer?.close() }
-                runCatching { pfd?.close() }
-                tmp.delete()
-            }
+        if (usable.size == 1) return@withContext usable[0]
+
+        val out = File(cacheDir, "merge_out_${usable.size}_${usable.first().size}.pdf")
+        try {
+            if (out.exists()) out.delete()
+            val merger = PDFMergerUtility()
+            usable.forEach { merger.addSource(ByteArrayInputStream(it)) }
+            merger.destinationFileName = out.absolutePath
+            // Temp-file scratch only → merging N large scans never inflates the heap.
+            merger.mergeDocuments(MemoryUsageSetting.setupTempFileOnly())
+            val bytes = if (out.exists() && out.length() > 0) out.readBytes() else null
+            android.util.Log.i("LR", "PdfMerge: merged ${usable.size} parts -> ${bytes?.size ?: -1} bytes")
+            bytes
+        } catch (e: Throwable) {
+            android.util.Log.w("LR", "PdfMerge failed: ${e.javaClass.simpleName}: ${e.message}")
+            null
+        } finally {
+            runCatching { out.delete() }
         }
-        if (pageNo == 0) { doc.close(); return@withContext null }
-        val out = ByteArrayOutputStream()
-        doc.writeTo(out)
-        doc.close()
-        android.util.Log.i("LR", "PdfMerge: merged ${usable.size} parts -> $pageNo pages")
-        out.toByteArray()
     }
 }

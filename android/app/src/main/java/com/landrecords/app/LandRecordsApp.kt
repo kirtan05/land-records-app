@@ -22,6 +22,8 @@ class LandRecordsApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // pdfbox needs its resource loader wired to a context before any merge.
+        com.tom_roush.pdfbox.android.PDFBoxResourceLoader.init(applicationContext)
         appScope.launch {
             repository.seedIfEmpty()
             // Backfill the already-generated desktop records (pushed to the app's files dir).
