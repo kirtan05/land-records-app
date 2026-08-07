@@ -77,6 +77,9 @@ fun FetchScreen(
     var awaitingDetail by remember { mutableStateOf(false) }
     var submitPageLoaded by remember { mutableIntStateOf(-1) }
     var captureRunning by remember { mutableStateOf(false) }
+    // Non-error notice shown after a Deeds fetch (table saved, but the scanned documents are
+    // usually dead server-side) — a dialog the user dismisses, then we leave the screen.
+    var deedNotice by remember { mutableStateOf<String?>(null) }
     // True while the app is driving the page (loading + auto-filling the cascade, or waiting
     // for the post-submit postback) — a blocking buffer covers the WebView so a stray tap or
     // Back can't derail the machine. Cleared only when the CAPTCHA spotlight is up for the user.
@@ -116,28 +119,55 @@ fun FetchScreen(
                     working = true
                     vm.setPhase(FetchPhase.READING)
                     if (recordType == RecordType.DEEDS) {
-                        // Deeds are a SECTION of the type-8 page (Sub-registrar Deed Details). The
-                        // scanned files are dead server-side, so we capture the details table.
+                        // Deeds are a SECTION of the type-8 page (Sub registrar Deed Details).
+                        // Read the postback FORM first — deedCaptureJs rewrites the DOM, which would
+                        // wipe the download links — then TRY the scanned documents (usually dead:
+                        // the server answers "Document Record Not Found"), then isolate + capture the
+                        // details table either way so the user always keeps the registered-deed info.
                         android.util.Log.i("LR", "deeds probe: " + WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedDebugJs()))
-                        // The deed section can load a beat after the main record — poll a few seconds.
-                        var r = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedCaptureJs())
+                        var form = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedFormJs())
                         var dtries = 0
-                        while (!r.startsWith("READY") && dtries < 8) {
+                        while (form == "NONE" && dtries < 8) {
                             delay(500)
-                            r = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedCaptureJs())
+                            form = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedFormJs())
                             dtries++
                         }
-                        android.util.Log.i("LR", "deeds capture: '$r' after $dtries tries")
-                        if (!r.startsWith("READY")) {
-                            vm.markEmpty(RecordType.DEEDS); vm.setPhase(FetchPhase.DONE); delay(450); onDone()
+                        if (form == "NONE") {
+                            android.util.Log.i("LR", "deeds: none after $dtries tries")
+                            vm.markEmpty(RecordType.DEEDS)
+                            vm.setPhase(FetchPhase.DONE)
+                            deedNotice = "આ સર્વે નંબર માટે કોઈ નોંધાયેલ દસ્તાવેજ મળ્યો નથી.\n\n" +
+                                "No registered deeds found for this survey number."
                         } else {
-                            val n = r.substringAfter(":", "").toIntOrNull() ?: 1
+                            // Replay each "View Deed" postback with the live cookies. Almost always
+                            // returns nothing usable right now, but keeps working if the SRO recovers.
+                            val docs = com.landrecords.app.web.DeedsDownloader.fetchAll(form, app.cacheDir)
+                            android.util.Log.i("LR", "deeds: pulled ${docs.size} document(s)")
+                            var r = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedCaptureJs())
+                            var ctries = 0
+                            while (!r.startsWith("READY") && ctries < 6) {
+                                delay(400); r = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedCaptureJs()); ctries++
+                            }
+                            android.util.Log.i("LR", "deeds capture: '$r'")
+                            val n = r.substringAfter(":", "").toIntOrNull() ?: docs.size.coerceAtLeast(1)
                             val html = WebViewCapture.rawHtml(wv)
                             vm.setPhase(FetchPhase.BUILDING)
-                            val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
+                            val tablePdf = WebViewCapture.renderPdf(wv, app.cacheDir)
+                            // Details table first, then any scanned documents we actually pulled.
+                            val merged = if (docs.isNotEmpty() && tablePdf != null)
+                                com.landrecords.app.web.PdfMerge.merge(listOf(tablePdf) + docs.map { it.pdf }, app.cacheDir) ?: tablePdf
+                            else tablePdf
                             vm.setPhase(FetchPhase.FILING)
-                            if (vm.fileCapture(RecordType.DEEDS, pdf, html, docCount = n)) {
-                                vm.setPhase(FetchPhase.DONE); delay(450); onDone()
+                            if (merged != null && vm.fileCapture(RecordType.DEEDS, merged, html, docCount = n)) {
+                                vm.setPhase(FetchPhase.DONE)
+                                deedNotice = if (docs.isNotEmpty())
+                                    "$n દસ્તાવેજ સાચવ્યા — વિગત અને સ્કેન કરેલ દસ્તાવેજ.\n\n" +
+                                        "Saved $n deed(s) with the scanned documents."
+                                else
+                                    "દસ્તાવેજની વિગત સાચવી. પણ સ્કેન કરેલ દસ્તાવેજ અત્યારે સરકારી (GARVI) સાઇટ પરથી મળતો નથી " +
+                                        "(“Document Record Not Found”). થોડા કલાક પછી ફરી “Get record” કરીને પ્રયત્ન કરો.\n\n" +
+                                        "Saved the deed details. The scanned deed document isn’t available from the government (GARVI) " +
+                                        "server right now (“Document Record Not Found”) — try “Get record” again in a few hours."
                             } else {
                                 vm.fail("Couldn't save the deed details.")
                             }
@@ -295,6 +325,21 @@ fun FetchScreen(
         working -> {
             InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
+    }
+
+    // Deeds outcome — a plain dismissable notice (the record is already saved); leaving is the
+    // only action, so tapping the button always exits to the record.
+    deedNotice?.let { msg ->
+        androidx.compose.material3.AlertDialog(
+            onDismissRequest = { deedNotice = null; onDone() },
+            confirmButton = {
+                androidx.compose.material3.TextButton(onClick = { deedNotice = null; onDone() }) {
+                    Text("બરાબર · OK")
+                }
+            },
+            title = { Text("દસ્તાવેજ · Deeds") },
+            text = { Text(msg) },
+        )
     }
     }
 }

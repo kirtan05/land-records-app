@@ -65,6 +65,10 @@ fun SettingsScreen(onBack: () -> Unit) {
     var exporting by remember { mutableStateOf(false) }
     var showAbout by remember { mutableStateOf(false) }
     var showPdfInfo by remember { mutableStateOf(false) }
+    var reporting by remember { mutableStateOf(false) }
+    var checking by remember { mutableStateOf(false) }
+    var update by remember { mutableStateOf<com.landrecords.app.web.Updater.Update?>(null) }
+    var installing by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().background(Land.colors.bg)) {
         BlueprintHeader(modifier = Modifier.statusBarsPadding()) {
@@ -137,6 +141,32 @@ fun SettingsScreen(onBack: () -> Unit) {
                 },
             )
             NavRow(label = Lr(R.string.pdf_layout_gu, R.string.pdf_layout_en), onClick = { showPdfInfo = true })
+
+            NavRow(
+                label = if (checking) L("તપાસ થઈ રહી છે…", "Checking…") else L("અપડેટ તપાસો", "Check for updates"),
+                enabled = !checking,
+                onClick = {
+                    checking = true
+                    scope.launch {
+                        val u = com.landrecords.app.web.Updater.check(context)
+                        checking = false
+                        if (u != null) update = u
+                        else Toast.makeText(context, "તમે લેટેસ્ટ વર્ઝન પર છો · You're on the latest version", Toast.LENGTH_SHORT).show()
+                    }
+                },
+            )
+            NavRow(
+                label = if (reporting) L("તૈયાર થઈ રહ્યું છે…", "Preparing…") else L("ભૂલ / સમસ્યા જણાવો", "Report a problem"),
+                enabled = !reporting,
+                onClick = {
+                    reporting = true
+                    scope.launch {
+                        val ok = com.landrecords.app.data.storage.DiagnosticsReport.share(context)
+                        reporting = false
+                        if (!ok) Toast.makeText(context, "Couldn't build the report", Toast.LENGTH_SHORT).show()
+                    }
+                },
+            )
             NavRow(label = Lr(R.string.about_gu, R.string.about_en), onClick = { showAbout = true })
 
             Spacer(Modifier.height(4.dp))
@@ -165,6 +195,41 @@ fun SettingsScreen(onBack: () -> Unit) {
                 "Your land records — Integrated 7/12, old scanned VF-7/12, and iRCMS land cases — fetched from AnyRoR & iRCMS and saved as PDFs.\n\nVersion $version",
             ),
             onDismiss = { showAbout = false },
+        )
+    }
+    update?.let { u ->
+        AlertDialog(
+            onDismissRequest = { if (!installing) update = null },
+            confirmButton = {
+                TextButton(
+                    enabled = !installing,
+                    onClick = {
+                        installing = true
+                        scope.launch {
+                            val apk = com.landrecords.app.web.Updater.download(context, u)
+                            installing = false
+                            if (apk != null) {
+                                com.landrecords.app.web.Updater.install(context, apk); update = null
+                            } else {
+                                Toast.makeText(context, "Download failed", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    },
+                ) {
+                    Text(
+                        if (installing) L("ડાઉનલોડ થઈ રહ્યું છે…", "Downloading…") else L("હમણાં અપડેટ કરો", "Update now"),
+                        color = Land.colors.accent,
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(enabled = !installing, onClick = { update = null }) {
+                    Text(L("પછી", "Later"), color = Land.colors.ink3)
+                }
+            },
+            title = { Text(L("નવું અપડેટ", "Update available") + " · v${u.versionName}", style = LandType.bodyStrong, color = Land.colors.ink) },
+            text = { Text(u.notes.ifBlank { L("નવું વર્ઝન ઉપલબ્ધ છે.", "A newer version is available.") }, style = LandType.body, color = Land.colors.ink2) },
+            containerColor = Land.colors.surface,
         )
     }
 }

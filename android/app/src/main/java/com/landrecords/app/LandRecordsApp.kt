@@ -22,6 +22,18 @@ class LandRecordsApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // Persist fatal crash stacks to a file so the Settings "Report a problem" button can attach
+        // them later (this is what would have captured the OOM). Chain the default handler so the
+        // app still crashes/reports normally.
+        val prevHandler = Thread.getDefaultUncaughtExceptionHandler()
+        Thread.setDefaultUncaughtExceptionHandler { thread, ex ->
+            runCatching {
+                val f = com.landrecords.app.data.storage.DiagnosticsReport.crashLogFile(this)
+                val ts = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.US).format(java.util.Date())
+                f.appendText("\n=== $ts · thread ${thread.name} ===\n" + android.util.Log.getStackTraceString(ex) + "\n")
+            }
+            prevHandler?.uncaughtException(thread, ex)
+        }
         // pdfbox needs its resource loader wired to a context before any merge.
         com.tom_roush.pdfbox.android.PDFBoxResourceLoader.init(applicationContext)
         appScope.launch {

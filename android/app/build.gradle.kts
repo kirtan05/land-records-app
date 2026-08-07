@@ -16,8 +16,8 @@ android {
         applicationId = "com.landrecords.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5
-        versionName = "0.5.0"
+        versionCode = 6
+        versionName = "0.6.0"
         vectorDrawables { useSupportLibrary = true }
     }
 
@@ -38,6 +38,12 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    // The 125 MB data seed is already-compressed PDFs — don't let aapt slow-deflate them
+    // (keeps build + install time sane, restore works either way).
+    androidResources {
+        noCompress += "pdf"
     }
 
     packaging {

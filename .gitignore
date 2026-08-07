@@ -58,5 +58,10 @@ detail-*.png
 detail-*.html
 test-order*.pdf
 
+# ===== Bundled data seed (125 MB of personal land records — NEVER commit) =====
+# Regenerable via scratchpad/stage_seed.py from a device snapshot; ships in the APK from
+# the working tree, so it never needs to be in git (and must not be, especially publicly).
+android/app/src/main/assets/seed/
+
 # ================= OS =================
 .DS_Store
