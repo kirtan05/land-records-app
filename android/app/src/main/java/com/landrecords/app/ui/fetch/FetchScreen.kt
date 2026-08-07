@@ -245,6 +245,15 @@ fun FetchScreen(
         if (awaitingDetail && !captureRunning && phase == FetchPhase.SOLVING)
             vm.fail("Could not reach the site — your connection may be blocked. Try later or a different network.")
     }
+    // Prefill-stall guard: the cascade fills one step per postback (pageLoaded++). If a place name
+    // doesn't match the site, pick() fires no change event, no postback arrives, pageLoaded freezes,
+    // and the "Filling…" overlay would hang forever (the frozen/non-responsive Valetva symptom).
+    // Keyed on pageLoaded, so every real step resets this timer; it only fires on a true stall.
+    LaunchedEffect(pageLoaded) {
+        delay(45_000)
+        if (phase == FetchPhase.SOLVING && working && !awaitingDetail && pageLoaded >= 1)
+            vm.fail("Couldn't auto-fill the form — a district/taluka/village name may not match the site. Tap retry, or add the survey through the picker.")
+    }
 
     Box(Modifier.fillMaxSize()) {
     Column(Modifier.fillMaxSize().background(Land.colors.bg)) {

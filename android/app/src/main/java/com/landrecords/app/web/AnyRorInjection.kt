@@ -55,6 +55,17 @@ object AnyRorInjection {
             if(tk.length===1) return setOpt(sel, tk[0]);
             var rev=opts.filter(function(o){ var ot=toks(o.text); return ot.length && ot.every(function(x){ return wt.indexOf(x)>=0; }); });
             if(rev.length===1) return setOpt(sel, rev[0]);
+            // Rural/urban qualifier anchor: our stored place-name spelling can drift from the
+            // site's (e.g. "નડિયાદ" vs the site's "નડીઆદ"), but the qualifier token is stable.
+            // If want carries a taluka qualifier and EXACTLY ONE option shares it, pick that —
+            // this can never confuse ગ્રામ્ય (rural) with શહેર (city) / નગર, only the two options
+            // being distinguished by the qualifier.
+            var QUAL=['ગ્રામ્ય','શહેર','નગર','નગરપાલિકા'].map(nn);
+            var wq=wt.filter(function(x){ return QUAL.indexOf(x)>=0; });
+            if(wq.length){
+              var qm=opts.filter(function(o){ var ot=toks(o.text); return wq.every(function(x){ return ot.indexOf(x)>=0; }); });
+              if(qm.length===1) return setOpt(sel, qm[0]);
+            }
           }
           return '';
         }

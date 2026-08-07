@@ -16,8 +16,8 @@ android {
         applicationId = "com.landrecords.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.7.0"
+        versionCode = 8
+        versionName = "0.7.1"
         vectorDrawables { useSupportLibrary = true }
     }
 
