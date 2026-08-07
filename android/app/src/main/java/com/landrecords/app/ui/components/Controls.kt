@@ -119,7 +119,18 @@ fun VillageCard(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         Text(name, style = LandType.bodyStrong, color = if (selected) Land.colors.accent else Land.colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Text(helper, style = LandType.label, color = if (selected) Land.colors.accent else Land.colors.ink3, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        // Split "Latin · count" so the count stays visible when the card is narrow (portrait);
+        // only the name ellipsizes.
+        val helperColor = if (selected) Land.colors.accent else Land.colors.ink3
+        val hasCount = helper.contains(" · ")
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                if (hasCount) helper.substringBeforeLast(" · ") else helper,
+                style = LandType.label, color = helperColor, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            if (hasCount) Text("· ${helper.substringAfterLast(" · ")}", style = LandType.label, color = helperColor, maxLines = 1)
+        }
     }
 }
 

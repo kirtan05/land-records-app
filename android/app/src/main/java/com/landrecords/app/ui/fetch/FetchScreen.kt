@@ -115,18 +115,37 @@ fun FetchScreen(
                     captureRunning = true
                     working = true
                     vm.setPhase(FetchPhase.READING)
-                    WebViewCapture.eval(wv, AnyRorInjection.cleanupJs(
-                        districtEn = i.district, talukaEn = i.taluka, villageEn = i.village, surveyNo = i.surveyNo,
-                    ))
-                    val html = WebViewCapture.rawHtml(wv)
-                    vm.setPhase(FetchPhase.BUILDING)
-                    val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
-                    vm.setPhase(FetchPhase.FILING)
-                    val ok = vm.fileCapture(recordType, pdf, html)
-                    if (ok) {
-                        vm.setPhase(FetchPhase.DONE)
-                        delay(450)
-                        onDone()
+                    if (recordType == RecordType.DEEDS) {
+                        // Deeds live inside the same type-8 page (the garvi/Sub-registrar table).
+                        val deedJson = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedFormJs())
+                        if (deedJson == "NONE" || deedJson.isBlank()) {
+                            vm.markEmpty(RecordType.DEEDS); vm.setPhase(FetchPhase.DONE); delay(450); onDone()
+                        } else {
+                            val html = WebViewCapture.rawHtml(wv)
+                            vm.setPhase(FetchPhase.BUILDING)
+                            val deeds = com.landrecords.app.web.DeedsDownloader.fetchAll(deedJson, app.cacheDir)
+                            val merged = com.landrecords.app.web.PdfMerge.merge(deeds.map { it.pdf }, app.cacheDir)
+                            vm.setPhase(FetchPhase.FILING)
+                            if (merged != null && deeds.isNotEmpty() && vm.fileCapture(RecordType.DEEDS, merged, html, docCount = deeds.size)) {
+                                vm.setPhase(FetchPhase.DONE); delay(450); onDone()
+                            } else {
+                                vm.fail("Deeds were listed but couldn't be downloaded (they may be a scan format we can't yet convert).")
+                            }
+                        }
+                    } else {
+                        WebViewCapture.eval(wv, AnyRorInjection.cleanupJs(
+                            districtEn = i.district, talukaEn = i.taluka, villageEn = i.village, surveyNo = i.surveyNo,
+                        ))
+                        val html = WebViewCapture.rawHtml(wv)
+                        vm.setPhase(FetchPhase.BUILDING)
+                        val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
+                        vm.setPhase(FetchPhase.FILING)
+                        val ok = vm.fileCapture(recordType, pdf, html)
+                        if (ok) {
+                            vm.setPhase(FetchPhase.DONE)
+                            delay(450)
+                            onDone()
+                        }
                     }
                     captureRunning = false
                 }
