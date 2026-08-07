@@ -52,6 +52,44 @@ object DeedsInjection {
     }catch(e){ return 'ERR:'+e.message; } })();
     """.trimIndent()
 
+    /**
+     * Isolates the "Sub registrar Deed Details" table (the deed metadata: office/survey/doc-no/
+     * date/party/amount) into a clean standalone page for printing, and returns 'READY:n' (n deed
+     * rows) or 'NONE'. The scanned deed FILES ("View Deed") are dead server-side ("Document Record
+     * Not Found" even on desktop), so we capture the details table, not the files.
+     */
+    fun deedCaptureJs(): String = """
+    (function(){
+      try{
+        var tbl=document.getElementById('$GARVI_TABLE_ID');
+        if(!tbl){
+          tbl=Array.prototype.slice.call(document.querySelectorAll('table'))
+            .filter(function(t){ return /View Deed|Sub.?registrar|સબ.?રજીસ્ટ્રાર/i.test(t.innerHTML||''); })[0];
+        }
+        if(!tbl) return 'NONE';
+        var dataRows=Array.prototype.slice.call(tbl.querySelectorAll('tr')).filter(function(r){
+          return r.querySelector('td') && !r.querySelector('th') && (r.textContent||'').replace(/\s+/g,'').length>4; });
+        var n=dataRows.length;
+        if(n===0) return 'NONE';
+        // Drop the dead "View Deed" links so they don't render as clickable-looking junk.
+        Array.prototype.slice.call(tbl.querySelectorAll('a,input[type=submit],input[type=button]')).forEach(function(a){
+          if(/View Deed/i.test((a.textContent||a.value||''))) a.parentNode && (a.outerHTML='—'); });
+        var title='AnyRoR — Registered Deeds / નોંધાયેલ દસ્તાવેજ';
+        document.body.innerHTML='<div style="padding:8px;font-family:Arial,sans-serif;">'+
+          '<div style="font-size:15pt;font-weight:800;color:#1f4e78;border-bottom:2.5px solid #1f4e78;padding-bottom:6px;margin-bottom:8px;">'+title+'</div>'+
+          tbl.outerHTML+
+          '<div style="font-size:8.5pt;color:#777;margin-top:8px;">* Scanned deed images are not available from the AnyRoR server; these are the registered-deed details.</div></div>';
+        var s=document.createElement('style');
+        s.innerHTML='@page{size:A4 landscape;margin:6mm;} html,body{background:#fff!important;width:100%!important;margin:0!important;}'+
+          'table{width:100%!important;border-collapse:collapse!important;table-layout:fixed!important;}'+
+          'td,th{border:.5pt solid #445!important;padding:2px 5px!important;font-size:9.4pt!important;word-break:break-word!important;vertical-align:top!important;color:#111!important;}'+
+          'th{background:#e8eef6!important;font-weight:700!important;}';
+        document.head.appendChild(s);
+        return 'READY:'+n;
+      }catch(e){ return 'ERR:'+e.message; }
+    })();
+    """.trimIndent()
+
     fun deedFormJs(): String = """
     (function(){
       try {

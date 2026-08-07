@@ -1,11 +1,11 @@
 package com.landrecords.app.ui.settings
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,20 +19,30 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material.icons.outlined.ChevronRight
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.landrecords.app.R
+import com.landrecords.app.data.storage.BackupExport
 import com.landrecords.app.ui.components.BlueprintHeader
 import com.landrecords.app.ui.components.SegmentedPills
 import com.landrecords.app.ui.components.SquareIconButton
 import com.landrecords.app.ui.landApp
 import com.landrecords.app.ui.theme.Dp4
+import com.landrecords.app.ui.theme.L
 import com.landrecords.app.ui.theme.Land
 import com.landrecords.app.ui.theme.LandShape
 import com.landrecords.app.ui.theme.LandSize
@@ -40,11 +50,21 @@ import com.landrecords.app.ui.theme.LandType
 import com.landrecords.app.ui.theme.Lang
 import com.landrecords.app.ui.theme.Lr
 import com.landrecords.app.ui.theme.ThemeMode
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(onBack: () -> Unit) {
     val app = landApp()
     val appState = app.appState
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val version = remember {
+        runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: ""
+    }
+    var exporting by remember { mutableStateOf(false) }
+    var showAbout by remember { mutableStateOf(false) }
+    var showPdfInfo by remember { mutableStateOf(false) }
 
     Column(Modifier.fillMaxSize().background(Land.colors.bg)) {
         BlueprintHeader(modifier = Modifier.statusBarsPadding()) {
@@ -62,7 +82,6 @@ fun SettingsScreen(onBack: () -> Unit) {
             Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            // Language
             SettingCard {
                 Text(Lr(R.string.language_gu, R.string.language_en), style = LandType.bodyStrong, color = Land.colors.ink)
                 Spacer(Modifier.height(10.dp))
@@ -79,7 +98,6 @@ fun SettingsScreen(onBack: () -> Unit) {
                 Text(stringResource(R.string.language_note), style = LandType.meta, color = Land.colors.ink3)
             }
 
-            // Theme
             SettingCard {
                 Text(Lr(R.string.theme_gu, R.string.theme_en), style = LandType.bodyStrong, color = Land.colors.ink)
                 Spacer(Modifier.height(10.dp))
@@ -94,7 +112,6 @@ fun SettingsScreen(onBack: () -> Unit) {
                 )
             }
 
-            // Storage
             SettingCard {
                 Text(Lr(R.string.storage_gu, R.string.storage_en), style = LandType.bodyStrong, color = Land.colors.ink)
                 Spacer(Modifier.height(4.dp))
@@ -102,14 +119,65 @@ fun SettingsScreen(onBack: () -> Unit) {
                 Text(stringResource(R.string.storage_note), style = LandType.meta, color = Land.colors.ink3)
             }
 
-            NavRow(Lr(R.string.backup_gu, R.string.backup_en))
-            NavRow(Lr(R.string.pdf_layout_gu, R.string.pdf_layout_en))
-            NavRow(Lr(R.string.about_gu, R.string.about_en))
+            NavRow(
+                label = if (exporting) L("નિકાસ થઈ રહ્યું છે…", "Exporting…") else Lr(R.string.backup_gu, R.string.backup_en),
+                enabled = !exporting,
+                onClick = {
+                    exporting = true
+                    scope.launch {
+                        val n = BackupExport.exportZip(context)
+                        exporting = false
+                        val msg = when {
+                            n > 0 -> "Exported $n PDFs"
+                            n == 0 -> "No records to export yet"
+                            else -> "Export failed"
+                        }
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                    }
+                },
+            )
+            NavRow(label = Lr(R.string.pdf_layout_gu, R.string.pdf_layout_en), onClick = { showPdfInfo = true })
+            NavRow(label = Lr(R.string.about_gu, R.string.about_en), onClick = { showAbout = true })
 
             Spacer(Modifier.height(4.dp))
-            Text(stringResource(R.string.settings_footer), style = LandType.stamp, color = Land.colors.ink3)
+            Text(
+                "${stringResource(R.string.settings_footer)} · v$version",
+                style = LandType.stamp, color = Land.colors.ink3,
+            )
         }
     }
+
+    if (showPdfInfo) {
+        InfoDialog(
+            title = Lr(R.string.pdf_layout_gu, R.string.pdf_layout_en),
+            body = L(
+                "રેકોર્ડ A4 લેન્ડસ્કેપ PDF તરીકે સાચવવામાં આવે છે — AnyRoR ડેસ્કટૉપ જેવું આખું-પહોળું લેઆઉટ, પેજ-બ્રેક સાચવીને.",
+                "Records are saved as A4-landscape PDFs matching the AnyRoR desktop layout — full-width tables, page-break aware.",
+            ),
+            onDismiss = { showPdfInfo = false },
+        )
+    }
+    if (showAbout) {
+        InfoDialog(
+            title = Lr(R.string.about_gu, R.string.about_en),
+            body = L(
+                "તમારા જમીન રેકોર્ડ — સંકલિત ૭/૧૨, જૂનું સ્કેન થયેલ ૭/૧૨, અને iRCMS જમીન કેસ — AnyRoR અને iRCMS પરથી મેળવીને PDF તરીકે સાચવેલ.\n\nસંસ્કરણ $version",
+                "Your land records — Integrated 7/12, old scanned VF-7/12, and iRCMS land cases — fetched from AnyRoR & iRCMS and saved as PDFs.\n\nVersion $version",
+            ),
+            onDismiss = { showAbout = false },
+        )
+    }
+}
+
+@Composable
+private fun InfoDialog(title: String, body: String, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = { TextButton(onClick = onDismiss) { Text(L("બંધ કરો", "Close"), color = Land.colors.accent) } },
+        title = { Text(title, style = LandType.bodyStrong, color = Land.colors.ink) },
+        text = { Text(body, style = LandType.body, color = Land.colors.ink2) },
+        containerColor = Land.colors.surface,
+    )
 }
 
 @Composable
@@ -126,14 +194,14 @@ private fun SettingCard(content: @Composable androidx.compose.foundation.layout.
 }
 
 @Composable
-private fun NavRow(label: String) {
+private fun NavRow(label: String, onClick: () -> Unit, enabled: Boolean = true) {
     Row(
         Modifier
             .fillMaxWidth()
             .clip(LandShape.card)
             .background(Land.colors.surface)
             .border(1.dp, Land.colors.line, LandShape.card)
-            .clickable { }
+            .clickable(enabled = enabled, onClick = onClick)
             .padding(Dp4.cardPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {

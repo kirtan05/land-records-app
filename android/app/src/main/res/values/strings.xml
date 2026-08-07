@@ -121,8 +121,8 @@
     <string name="backup_gu">બેકઅપ અને નિકાસ</string>
     <string name="backup_en">Backup &amp; export</string>
     <string name="pdf_layout_gu">PDF લેઆઉટ</string>
-    <string name="pdf_layout_en">PDF layout · re-generate all</string>
+    <string name="pdf_layout_en">PDF layout</string>
     <string name="about_gu">એપ વિશે</string>
     <string name="about_en">About</string>
-    <string name="settings_footer">Land Records 0.1 · sideloaded · for family use</string>
+    <string name="settings_footer">Land Records</string>
 </resources>

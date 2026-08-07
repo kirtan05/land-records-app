@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.R
 import com.landrecords.app.data.model.RecordType
+import com.landrecords.app.data.storage.VfScansStore
 import com.landrecords.app.ui.components.SquareIconButton
 import com.landrecords.app.ui.landApp
 import com.landrecords.app.ui.theme.Land
@@ -137,7 +138,7 @@ fun Vf712FetchScreen(
                 if (rows.isEmpty()) { vm.fail("Couldn't read the VF-7/12 list. Please try again."); return@LaunchedEffect }
 
                 vm.setPhase(FetchPhase.BUILDING)
-                val kept = ArrayList<Pair<Int, ByteArray>>() // startYear -> scan bytes
+                val kept = ArrayList<Pair<Vf712Row, ByteArray>>() // grid row -> genuine scan bytes
                 for (r in rows) {
                     if (!r.status.contains("ok", ignoreCase = true)) continue
                     val sig = CompletableDeferred<Unit>()
@@ -152,7 +153,7 @@ fun Vf712FetchScreen(
                         android.util.Log.i("LR", "vf712 row ${r.index} ${r.period}: weeded (placeholder/empty)")
                         continue
                     }
-                    kept.add(startYearOf(r.period) to bytes)
+                    kept.add(r to bytes)
                     android.util.Log.i("LR", "vf712 row ${r.index} ${r.period}: kept ${bytes.size} bytes")
                 }
 
@@ -160,9 +161,23 @@ fun Vf712FetchScreen(
                     // Grid had rows but every doc was a "not scanned" placeholder → genuinely empty.
                     vm.markEmpty(RecordType.VF712); vm.setPhase(FetchPhase.DONE); delay(300); onDone(); return@LaunchedEffect
                 }
-                // Combine oldest→newest, matching anyror/run-vf712.mjs (sort by start year ascending).
-                val ordered = kept.sortedBy { it.first }.map { it.second }
-                val merged = PdfMerge.merge(ordered, app.cacheDir)
+                // Order oldest→newest, matching anyror/run-vf712.mjs (sort by start year ascending).
+                val ordered = kept.sortedBy { startYearOf(it.first.period) }
+
+                // Persist each kept scan individually (period + bytes) BEFORE the merge, so the Scans
+                // screen can re-select/re-export any subset of years. Purely additive to VF-7-12.pdf.
+                info?.let { i ->
+                    val scans = ordered.mapIndexed { k, pair ->
+                        val row = pair.first
+                        VfScansStore.ScanCapture(
+                            index = k + 1, period = row.period, thok = row.thok, block = row.block,
+                            oldSurvey = row.oldSurvey, status = row.status, pdf = pair.second,
+                        )
+                    }
+                    VfScansStore.save(app, i.district, i.taluka, i.village, i.surveyNo, scans)
+                }
+
+                val merged = PdfMerge.merge(ordered.map { it.second }, app.cacheDir)
                 if (merged == null || merged.isEmpty()) { vm.fail("Couldn't build the VF-7/12 PDF."); return@LaunchedEffect }
                 vm.setPhase(FetchPhase.FILING)
                 if (vm.fileCapture(RecordType.VF712, merged, listHtml, docCount = ordered.size)) {
@@ -268,8 +283,15 @@ fun Vf712FetchScreen(
     }
 }
 
-/** One VF-7/12 grid row we care about. */
-internal data class Vf712Row(val index: Int, val period: String, val status: String)
+/** One VF-7/12 grid row we care about (mirrors anyror/run-vf712.mjs parseRows). */
+internal data class Vf712Row(
+    val index: Int,
+    val period: String,
+    val thok: String,
+    val block: String,
+    val oldSurvey: String,
+    val status: String,
+)
 
 /** Parse [Vf712Injection.readRowsJs] output → the grid rows (in table order). */
 internal fun parseVf712Rows(json: String): List<Vf712Row> = try {
@@ -277,7 +299,14 @@ internal fun parseVf712Rows(json: String): List<Vf712Row> = try {
     (0 until arr.length()).mapNotNull { k ->
         val o = arr.getJSONObject(k)
         val idx = o.optInt("index", -1)
-        if (idx < 0) null else Vf712Row(idx, o.optString("period", ""), o.optString("status", ""))
+        if (idx < 0) null else Vf712Row(
+            index = idx,
+            period = o.optString("period", ""),
+            thok = o.optString("thok", ""),
+            block = o.optString("block", ""),
+            oldSurvey = o.optString("oldSurvey", ""),
+            status = o.optString("status", ""),
+        )
     }
 } catch (e: Exception) {
     android.util.Log.w("LR", "parseVf712Rows failed: ${e.message}")

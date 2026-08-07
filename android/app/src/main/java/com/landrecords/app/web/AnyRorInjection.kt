@@ -281,6 +281,10 @@ object AnyRorInjection {
           || (capImg && capImg.closest('div,td,table,form') || document).querySelector('input[type=text]');
         if (capImg) capImg.classList.add('lr-ring');
         if (inp) inp.classList.add('lr-ring');
+        // Insurance for desktop-UA (Deeds) fetches: keep the caret at the end so typed code isn't reversed.
+        if (inp && !inp.dataset.lrCap){ inp.dataset.lrCap='1'; inp.setAttribute('dir','ltr');
+          var toEnd=function(){ try{ var v=inp.value; inp.setSelectionRange(v.length, v.length); }catch(e){} };
+          inp.addEventListener('keyup', toEnd); inp.addEventListener('input', toEnd); inp.addEventListener('focus', toEnd); }
         if (btn) btn.classList.add('lr-ring');
         if (inp) inp.scrollIntoView({block:'center'}); else if (btn) btn.scrollIntoView({block:'center'});
         function fire(){ try{ AndroidCapture.onSubmit(); }catch(e){} }

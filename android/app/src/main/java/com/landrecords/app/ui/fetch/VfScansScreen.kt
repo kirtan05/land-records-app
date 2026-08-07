@@ -53,8 +53,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.LandRecordsApp
 import com.landrecords.app.data.model.RecordType
-import com.landrecords.app.data.storage.CasesStore
 import com.landrecords.app.data.storage.LibraryAccess
+import com.landrecords.app.data.storage.VfScansStore
 import com.landrecords.app.ui.components.PillButton
 import com.landrecords.app.ui.components.SquareIconButton
 import com.landrecords.app.ui.landApp
@@ -64,7 +64,6 @@ import com.landrecords.app.ui.theme.LandShape
 import com.landrecords.app.ui.theme.LandSize
 import com.landrecords.app.ui.theme.LandType
 import com.landrecords.app.ui.theme.LocalLang
-import com.landrecords.app.ui.theme.join
 import com.landrecords.app.web.PdfMerge
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,13 +71,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-/** Loads a survey's captured iRCMS cases (cases.json) + the merged View-all PDF path. */
-class IrcmsCasesViewModel(
+/** Loads a survey's captured VF-7/12 scans (vf712.json) + the merged View-all PDF path. */
+class VfScansViewModel(
     private val app: LandRecordsApp,
     private val surveyId: Long,
 ) : ViewModel() {
 
-    data class CasesUi(
+    data class ScansUi(
         val loaded: Boolean,
         val surveyNo: String,
         val district: String,
@@ -86,29 +85,29 @@ class IrcmsCasesViewModel(
         val village: String,
         val villageGu: String,
         val villageLatin: String,
-        val cases: List<CasesStore.CaseEntry>,
+        val scans: List<VfScansStore.ScanEntry>,
         val mergedPdfPath: String?,
     )
 
-    val ui = MutableStateFlow<CasesUi?>(null)
+    val ui = MutableStateFlow<ScansUi?>(null)
 
     init {
         viewModelScope.launch {
             val snap = app.repository.snapshot(surveyId)
             if (snap == null) {
-                ui.value = CasesUi(true, "", "", "", "", "", "", emptyList(), null)
+                ui.value = ScansUi(true, "", "", "", "", "", "", emptyList(), null)
                 return@launch
             }
             val (survey, prop) = snap
-            val cases = CasesStore.read(app, prop.district, prop.taluka, prop.village, survey.surveyNo)
-            val record = app.repository.recordFor(surveyId, RecordType.IRCMS)
-            ui.value = CasesUi(
+            val scans = VfScansStore.read(app, prop.district, prop.taluka, prop.village, survey.surveyNo)
+            val record = app.repository.recordFor(surveyId, RecordType.VF712)
+            ui.value = ScansUi(
                 loaded = true,
                 surveyNo = survey.surveyNo,
                 district = prop.district, taluka = prop.taluka, village = prop.village,
                 villageGu = prop.villageGu.ifBlank { prop.village },
                 villageLatin = prop.village,
-                cases = cases,
+                scans = scans,
                 mergedPdfPath = record?.pdfPath,
             )
         }
@@ -116,13 +115,13 @@ class IrcmsCasesViewModel(
 }
 
 /**
- * Per-case iRCMS view. Lists every captured case with a checkbox (all on by default), a
- * PENDING/DISPOSED chip and its parties; expands to office/date/survey. A header "Include orders"
- * toggle folds each disposed case's order PDF in right after its detail. Export merges the chosen
- * cases and shares the result; "View all" opens the pre-merged library PDF.
+ * Per-scan OLD-SCANNED VF-7/12 view. Lists every captured year-wise scan with a checkbox (all on by
+ * default) and its period ("1993-2004"); expands to thok/block/old-survey + a per-scan "View scan".
+ * Export merges the chosen scans oldest→newest and shares the result; "View all" opens the
+ * pre-merged library PDF. The per-scan analogue of the iRCMS Cases screen (no orders concept).
  */
 @Composable
-fun IrcmsCasesScreen(
+fun VfScansScreen(
     surveyId: Long,
     onBack: () -> Unit,
 ) {
@@ -130,39 +129,33 @@ fun IrcmsCasesScreen(
     val context = LocalContext.current
     val lang = LocalLang.current
     val scope = rememberCoroutineScope()
-    val vm: IrcmsCasesViewModel = viewModel(
-        factory = viewModelFactory { initializer { IrcmsCasesViewModel(app, surveyId) } },
+    val vm: VfScansViewModel = viewModel(
+        factory = viewModelFactory { initializer { VfScansViewModel(app, surveyId) } },
     )
     val ui by vm.ui.collectAsStateWithLifecycle()
 
-    var includeOrders by remember { mutableStateOf(true) }
     var expanded by remember { mutableStateOf<Int?>(null) }
     val selected = remember { mutableStateListOf<Boolean>() }
 
-    val cases = ui?.cases ?: emptyList()
-    // (Re)seed the selection — all cases checked by default — once the manifest loads.
-    LaunchedEffect(cases.size) {
+    val scans = ui?.scans ?: emptyList()
+    // (Re)seed the selection — all scans checked by default — once the manifest loads.
+    LaunchedEffect(scans.size) {
         selected.clear()
-        selected.addAll(List(cases.size) { true })
+        selected.addAll(List(scans.size) { true })
     }
     val chosenCount = selected.count { it }
 
     fun exportSelected() {
         val u = ui ?: return
-        val chosen = u.cases.filterIndexed { i, _ -> selected.getOrElse(i) { false } }
+        val chosen = u.scans.filterIndexed { i, _ -> selected.getOrElse(i) { false } }
         if (chosen.isEmpty()) return
         scope.launch {
             val parts = withContext(Dispatchers.IO) {
                 val out = ArrayList<ByteArray>()
-                for (c in chosen) {
-                    CasesStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, c.detailFile)
+                for (s in chosen) {
+                    VfScansStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, s.file)
                         ?.let { runCatching { File(it).readBytes() }.getOrNull() }
                         ?.let { out.add(it) }
-                    if (includeOrders && c.hasOrder) {
-                        CasesStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, c.orderFile)
-                            ?.let { runCatching { File(it).readBytes() }.getOrNull() }
-                            ?.let { out.add(it) }
-                    }
                 }
                 out
             }
@@ -171,47 +164,19 @@ fun IrcmsCasesScreen(
                 Toast.makeText(context, "Nothing to export", Toast.LENGTH_SHORT).show()
                 return@launch
             }
-            val name = "${u.villageLatin.ifBlank { "Land" }}_${u.surveyNo}_iRCMS_${chosen.size}cases.pdf"
+            val name = "${u.villageLatin.ifBlank { "Land" }}_${u.surveyNo}_VF712_${chosen.size}scans.pdf"
             if (!LibraryAccess.shareBytes(context, merged, name)) {
                 Toast.makeText(context, "Couldn't export", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    // Open a single stored case file (detail or order) straight from its saved path.
-    fun viewCaseFile(name: String) {
+    // Open a single stored scan file straight from its saved path.
+    fun viewScanFile(name: String) {
         val u = ui ?: return
-        val path = CasesStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, name)
+        val path = VfScansStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, name)
         if (!LibraryAccess.view(context, path)) {
             Toast.makeText(context, "Can't open this file", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    // Merge one case's detail + order into a single PDF, cache it, and open it.
-    fun viewCaseAndOrder(case: CasesStore.CaseEntry) {
-        val u = ui ?: return
-        scope.launch {
-            val path = withContext(Dispatchers.IO) {
-                val parts = ArrayList<ByteArray>()
-                CasesStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, case.detailFile)
-                    ?.let { runCatching { File(it).readBytes() }.getOrNull() }?.let { parts.add(it) }
-                CasesStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, case.orderFile)
-                    ?.let { runCatching { File(it).readBytes() }.getOrNull() }?.let { parts.add(it) }
-                val merged = PdfMerge.merge(parts, app.cacheDir)
-                if (merged == null || merged.isEmpty()) return@withContext null
-                val safe = "${u.villageLatin.ifBlank { "Land" }}_${u.surveyNo}_case${case.sr}_case+order.pdf"
-                    .replace(Regex("[^A-Za-z0-9._-]"), "_")
-                val out = File(File(app.cacheDir, "share").apply { mkdirs() }, safe)
-                runCatching { out.writeBytes(merged) }.getOrElse { return@withContext null }
-                out.absolutePath
-            }
-            if (path == null) {
-                Toast.makeText(context, "Couldn't open", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-            if (!LibraryAccess.view(context, path)) {
-                Toast.makeText(context, "Can't open this file", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
@@ -225,7 +190,7 @@ fun IrcmsCasesScreen(
                 SquareIconButton(Icons.Outlined.ChevronLeft, onBack, "Back", size = LandSize.backButton)
                 Spacer(Modifier.width(12.dp))
                 Column(Modifier.weight(1f)) {
-                    Text(L("કેસ", "Cases"), style = LandType.bodyStrong, color = Land.colors.ink)
+                    Text(L("સ્કેન", "Scans"), style = LandType.bodyStrong, color = Land.colors.ink)
                     val sub = ui?.let { "${it.surveyNo} · ${it.villageLatin}" } ?: ""
                     Text(sub, style = LandType.label, color = Land.colors.ink3)
                 }
@@ -236,7 +201,7 @@ fun IrcmsCasesScreen(
                 Modifier.fillMaxWidth().padding(start = 14.dp, end = 16.dp, top = 10.dp, bottom = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val total = cases.size
+                val total = scans.size
                 val allSelected = total > 0 && chosenCount == total
                 val someSelected = chosenCount in 1 until total
                 val toggleAll = {
@@ -264,25 +229,11 @@ fun IrcmsCasesScreen(
                 Spacer(Modifier.weight(1f))
                 Text("$chosenCount / $total", style = LandType.metaMono, color = Land.colors.ink3)
             }
-            // Include-orders toggle + View all.
+            // View all.
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    Modifier
-                        .clip(LandShape.pill)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                        ) { includeOrders = !includeOrders }
-                        .padding(vertical = 4.dp, horizontal = 2.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    SelectBox(checked = includeOrders, onToggle = { includeOrders = !includeOrders })
-                    Text(L("હુકમ સાથે", "Include orders"), style = LandType.body, color = Land.colors.ink2)
-                }
                 Spacer(Modifier.weight(1f))
                 val hasMerged = ui?.mergedPdfPath != null
                 OutlinePill(
@@ -302,15 +253,15 @@ fun IrcmsCasesScreen(
             ui?.loaded != true -> Box(Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
                 Text(L("ખૂલી રહ્યું છે…", "Opening…"), style = LandType.metaMono, color = Land.colors.ink3)
             }
-            cases.isEmpty() -> Box(
+            scans.isEmpty() -> Box(
                 Modifier.fillMaxWidth().weight(1f).padding(32.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(L("કોઈ કેસ સાચવ્યો નથી", "No cases stored yet"), style = LandType.bodyStrong, color = Land.colors.ink2, textAlign = TextAlign.Center)
+                    Text(L("કોઈ સ્કેન સાચવ્યું નથી", "No scans stored yet"), style = LandType.bodyStrong, color = Land.colors.ink2, textAlign = TextAlign.Center)
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        L("આ સર્વે ફરી મેળવો ત્યારે દરેક કેસ અલગથી સચવાશે.", "Re-fetch this survey to store each case individually."),
+                        L("આ સર્વે ફરી મેળવો ત્યારે દરેક વર્ષ અલગથી સચવાશે.", "Re-fetch this survey to store each year individually."),
                         style = LandType.meta, color = Land.colors.ink3, textAlign = TextAlign.Center,
                     )
                 }
@@ -320,17 +271,15 @@ fun IrcmsCasesScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
-                itemsIndexed(cases) { i, c ->
-                    CaseRow(
+                itemsIndexed(scans) { i, s ->
+                    ScanRow(
                         index = i + 1,
-                        case = c,
+                        scan = s,
                         checked = selected.getOrElse(i) { false },
                         expanded = expanded == i,
                         onToggleChecked = { if (i < selected.size) selected[i] = !selected[i] },
                         onToggleExpand = { expanded = if (expanded == i) null else i },
-                        onViewCase = { viewCaseFile(c.detailFile) },
-                        onViewOrder = { viewCaseFile(c.orderFile) },
-                        onViewCaseAndOrder = { viewCaseAndOrder(c) },
+                        onViewScan = { viewScanFile(s.file) },
                     )
                 }
             }
@@ -365,18 +314,16 @@ fun IrcmsCasesScreen(
     }
 }
 
-/** One case tile: 1dp border, radius 12 — checkbox · n. caseNo/parties · status chip · expand. */
+/** One scan tile: 1dp border, radius 12 — checkbox · n. period · block · status chip · expand. */
 @Composable
-private fun CaseRow(
+private fun ScanRow(
     index: Int,
-    case: CasesStore.CaseEntry,
+    scan: VfScansStore.ScanEntry,
     checked: Boolean,
     expanded: Boolean,
     onToggleChecked: () -> Unit,
     onToggleExpand: () -> Unit,
-    onViewCase: () -> Unit,
-    onViewOrder: () -> Unit,
-    onViewCaseAndOrder: () -> Unit,
+    onViewScan: () -> Unit,
 ) {
     Column(
         Modifier
@@ -405,18 +352,22 @@ private fun CaseRow(
                         style = LandType.metaMono, color = Land.colors.ink3,
                         modifier = Modifier.padding(top = 1.dp),
                     )
+                    // Period is source land data (year span) → shown untranslated; unknown renders "—".
                     Text(
-                        caseTitle(case.caseNo),
+                        scan.period.ifBlank { "—" },
                         style = LandType.bodyStrong, color = Land.colors.ink,
-                        maxLines = 2, overflow = TextOverflow.Ellipsis,
+                        maxLines = 1, overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f),
                     )
                 }
-                if (case.parties.isNotBlank()) {
-                    Text(case.parties, style = LandType.meta, color = Land.colors.ink2, maxLines = 2, overflow = TextOverflow.Ellipsis)
+                if (scan.block.isNotBlank()) {
+                    Text(
+                        "${L("સર્વે/બ્લોક", "Survey/Block")} ${scan.block}",
+                        style = LandType.meta, color = Land.colors.ink2, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    )
                 }
             }
-            StatusChip(case.status)
+            StatusChip(scan.status)
             Icon(
                 Icons.Outlined.KeyboardArrowDown,
                 contentDescription = null,
@@ -430,24 +381,17 @@ private fun CaseRow(
                 Modifier.fillMaxWidth().padding(start = 14.dp, end = 14.dp, top = 10.dp, bottom = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                KeyVal(L("કચેરી", "Office"), case.office)
-                // `dtv` is District / Taluka / Village — a location, NOT a date.
-                KeyVal(L("સ્થળ", "Location"), case.dtv)
-                // The real date lives inside the raw case string ("Disposal/Next hearing date : …").
-                caseDate(case.caseNo)?.let { KeyVal(L("તારીખ", "Date"), it) }
-                KeyVal(L("સર્વે", "Survey"), case.survno)
+                KeyVal(L("થોક વર્ષ", "Period"), scan.period)
+                KeyVal(L("થોક નંબર", "Thok no."), scan.thok)
+                KeyVal(L("સર્વે/બ્લોક", "Survey/Block"), scan.block)
+                KeyVal(L("જૂનો સર્વે", "Old survey"), scan.oldSurvey)
 
-                // Per-case view actions: detail, order (if any), and a merged case+order.
                 FlowRow(
                     modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    PillButton(L("કેસ જુઓ", "View case"), onClick = onViewCase)
-                    if (case.hasOrder) {
-                        PillButton(L("હુકમ જુઓ", "View order"), onClick = onViewOrder)
-                        PillButton(L("કેસ + હુકમ", "Case+order"), onClick = onViewCaseAndOrder)
-                    }
+                    PillButton(L("સ્કેન જુઓ", "View scan"), onClick = onViewScan)
                 }
             }
         }
@@ -462,12 +406,12 @@ private fun KeyVal(key: String, value: String) {
     }
 }
 
-/** PENDING/DISPOSED chip. Status is source data → shown untranslated; unknown renders "—". */
+/** PDF-status chip. Status is source data → shown untranslated; "Ok" reads as held (accent). */
 @Composable
 private fun StatusChip(status: String) {
-    val disposed = status.equals("DISPOSED", ignoreCase = true)
-    val bg = if (disposed) Land.colors.accentSoft else Land.colors.surfaceAlt
-    val fg = if (disposed) Land.colors.accent else Land.colors.ink2
+    val ok = status.equals("Ok", ignoreCase = true)
+    val bg = if (ok) Land.colors.accentSoft else Land.colors.surfaceAlt
+    val fg = if (ok) Land.colors.accent else Land.colors.ink2
     Box(
         Modifier.clip(LandShape.pill).background(bg).padding(horizontal = 9.dp, vertical = 3.dp),
         contentAlignment = Alignment.Center,
@@ -518,23 +462,3 @@ private fun OutlinePill(text: String, enabled: Boolean, onClick: () -> Unit) {
         Text(text, style = LandType.body, color = if (enabled) Land.colors.ink else Land.colors.ink3)
     }
 }
-
-/**
- * Clean row title from the raw case_str. The scraped string trails junk after a run of dashes —
- * "ANAND / RRT-Appeal / 2015 / 575 ----- (DISPOSED) Disposal date : 22/02/2016" — so cut at the
- * first run of 2+ dashes (single dashes inside "RRT-Appeal" survive), then drop any leftover
- * "(PENDING)/(DISPOSED) …" tail as a fallback for rows that never had the dashes.
- */
-private fun caseTitle(caseNo: String): String {
-    val head = caseNo.split(Regex("-{2,}")).firstOrNull()?.trim().orEmpty()
-    val stripped = head.replace(Regex("\\s*\\((PENDING|DISPOSED)\\).*$", RegexOption.IGNORE_CASE), "").trim()
-    return stripped.ifBlank { caseNo.trim().ifBlank { "—" } }
-}
-
-/**
- * The real hearing/disposal date embedded in the raw case_str — "Disposal date : <d>" (disposed)
- * or "Next hearing date : <d>" (pending). Returns null when neither is present so the row hides it.
- */
-private fun caseDate(caseNo: String): String? =
-    Regex("(?:Disposal|Next hearing) date\\s*:\\s*([0-9/]+)", RegexOption.IGNORE_CASE)
-        .find(caseNo)?.groupValues?.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }

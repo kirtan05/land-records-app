@@ -69,8 +69,13 @@ object Vf712Downloader {
         if (bytes.size < 2_000 || !isPdf(bytes)) return false
         // ISO-8859-1 is a byte-preserving 1:1 decode — safe for scanning raw PDF markers.
         val raw = String(bytes, Charsets.ISO_8859_1)
+        // Match a REAL raster image: an image-stream decode filter or an /Image XObject subtype.
+        // NB: do NOT test the bare "/Image" — the standard resource ProcSet array
+        // "/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]" contains "/Image", so a placeholder
+        // TEXT pdf (which still declares that ProcSet) would wrongly pass and never get weeded.
         return raw.contains("/DCTDecode") || raw.contains("/CCITTFax") ||
-            raw.contains("/JPXDecode") || raw.contains("/Image")
+            raw.contains("/JPXDecode") || raw.contains("/JBIG2Decode") ||
+            raw.contains("/Subtype/Image") || raw.contains("/Subtype /Image")
     }
 
     private fun isPdf(b: ByteArray): Boolean =

@@ -116,22 +116,30 @@ fun FetchScreen(
                     working = true
                     vm.setPhase(FetchPhase.READING)
                     if (recordType == RecordType.DEEDS) {
-                        // Deeds live inside the same type-8 page (the garvi/Sub-registrar table).
+                        // Deeds are a SECTION of the type-8 page (Sub-registrar Deed Details). The
+                        // scanned files are dead server-side, so we capture the details table.
                         android.util.Log.i("LR", "deeds probe: " + WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedDebugJs()))
-                        val deedJson = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedFormJs())
-                        android.util.Log.i("LR", "deeds: ${if (deedJson == "NONE" || deedJson.isBlank()) "NONE (no deed table)" else "found len=${deedJson.length}"}")
-                        if (deedJson == "NONE" || deedJson.isBlank()) {
+                        // The deed section can load a beat after the main record — poll a few seconds.
+                        var r = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedCaptureJs())
+                        var dtries = 0
+                        while (!r.startsWith("READY") && dtries < 8) {
+                            delay(500)
+                            r = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedCaptureJs())
+                            dtries++
+                        }
+                        android.util.Log.i("LR", "deeds capture: '$r' after $dtries tries")
+                        if (!r.startsWith("READY")) {
                             vm.markEmpty(RecordType.DEEDS); vm.setPhase(FetchPhase.DONE); delay(450); onDone()
                         } else {
+                            val n = r.substringAfter(":", "").toIntOrNull() ?: 1
                             val html = WebViewCapture.rawHtml(wv)
                             vm.setPhase(FetchPhase.BUILDING)
-                            val deeds = com.landrecords.app.web.DeedsDownloader.fetchAll(deedJson, app.cacheDir)
-                            val merged = com.landrecords.app.web.PdfMerge.merge(deeds.map { it.pdf }, app.cacheDir)
+                            val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
                             vm.setPhase(FetchPhase.FILING)
-                            if (merged != null && deeds.isNotEmpty() && vm.fileCapture(RecordType.DEEDS, merged, html, docCount = deeds.size)) {
+                            if (vm.fileCapture(RecordType.DEEDS, pdf, html, docCount = n)) {
                                 vm.setPhase(FetchPhase.DONE); delay(450); onDone()
                             } else {
-                                vm.fail("Deeds were listed but couldn't be downloaded (they may be a scan format we can't yet convert).")
+                                vm.fail("Couldn't save the deed details.")
                             }
                         }
                     } else {
@@ -218,6 +226,11 @@ fun FetchScreen(
                     settings.domStorageEnabled = true
                     settings.useWideViewPort = true
                     settings.loadWithOverviewMode = true
+                    // Deeds live in a desktop-only section of the page — render as desktop for them.
+                    if (recordType == RecordType.DEEDS) {
+                        settings.userAgentString =
+                            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
+                    }
                     addJavascriptInterface(object {
                         @JavascriptInterface
                         fun onSubmit() {

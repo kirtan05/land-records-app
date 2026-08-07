@@ -18,6 +18,7 @@ import com.landrecords.app.ui.fetch.IrcmsBatchScreen
 import com.landrecords.app.ui.fetch.IrcmsCasesScreen
 import com.landrecords.app.ui.fetch.IrcmsFetchScreen
 import com.landrecords.app.ui.fetch.Vf712FetchScreen
+import com.landrecords.app.ui.fetch.VfScansScreen
 import com.landrecords.app.ui.fetch.RegenerateScreen
 import com.landrecords.app.ui.library.LibraryScreen
 import com.landrecords.app.ui.property.AddPropertyScreen
@@ -34,12 +35,14 @@ private object Routes {
     const val SETTINGS = "settings"
     const val IRCMS_BATCH = "ircms_batch/{propertyId}"
     const val IRCMS_CASES = "ircms_cases/{surveyId}"
+    const val VF_SCANS = "vf_scans/{surveyId}"
 
     fun survey(id: Long, justAdded: String? = null) = "survey/$id?justAdded=${justAdded ?: ""}"
     fun fetch(id: Long, type: RecordType) = "fetch/$id/${type.name}"
     fun regen(id: Long, type: RecordType) = "regen/$id/${type.name}"
     fun ircmsBatch(propertyId: Long) = "ircms_batch/$propertyId"
     fun ircmsCases(surveyId: Long) = "ircms_cases/$surveyId"
+    fun vfScans(surveyId: Long) = "vf_scans/$surveyId"
 }
 
 @Composable
@@ -81,6 +84,7 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
                 onFetch = { sid, type -> navController.navigate(Routes.fetch(sid, type)) },
                 onRegenerate = { sid, type -> navController.navigate(Routes.regen(sid, type)) },
                 onCases = { sid -> navController.navigate(Routes.ircmsCases(sid)) },
+                onScans = { sid -> navController.navigate(Routes.vfScans(sid)) },
             )
         }
         composable(
@@ -137,6 +141,13 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
         ) { entry ->
             val id = entry.arguments?.getLong("surveyId") ?: return@composable
             IrcmsCasesScreen(surveyId = id, onBack = { navController.popBackStack() })
+        }
+        composable(
+            Routes.VF_SCANS,
+            arguments = listOf(navArgument("surveyId") { type = NavType.LongType }),
+        ) { entry ->
+            val id = entry.arguments?.getLong("surveyId") ?: return@composable
+            VfScansScreen(surveyId = id, onBack = { navController.popBackStack() })
         }
         composable(Routes.SETTINGS) {
             SettingsScreen(onBack = { navController.popBackStack() })

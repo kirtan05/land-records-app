@@ -56,6 +56,7 @@ fun SurveyDetailScreen(
     onFetch: (Long, RecordType) -> Unit,
     onRegenerate: (Long, RecordType) -> Unit,
     onCases: (Long) -> Unit,
+    onScans: (Long) -> Unit,
 ) {
     val app = landApp()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -137,6 +138,7 @@ fun SurveyDetailScreen(
                     },
                     onGet = { onFetch(surveyId, type) },
                     onCases = if (type == RecordType.IRCMS) ({ onCases(surveyId) }) else null,
+                    onScans = if (type == RecordType.VF712) ({ onScans(surveyId) }) else null,
                 )
             }
             item {
