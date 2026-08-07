@@ -80,12 +80,28 @@ object SeedImporter {
             val docCount = o.optInt("docCount", 1)
             val type = runCatching { RecordType.valueOf(o.getString("type")) }.getOrNull() ?: run { skipped++; continue }
 
-            val surveyId = repo.findSurveyId(village, surveyNo)
+            val surveyId = repo.findSurveyId(district, taluka, village, surveyNo)
             if (surveyId == null) { skipped++; continue }
 
             // Don't clobber a record the user has already fetched for real.
             val existing = repo.recordFor(surveyId, type)
             if (existing?.pdfPath != null) { skipped++; continue }
+
+            // iRCMS / VF-7-12 records carry per-item detail (cases.json / vf712.json) that the
+            // Cases / Scans screens read. If this row's per-item source tree isn't in the bundle
+            // (step 1 restores only what's present), filing just the merged library PDF creates a
+            // half-state: a "held" record (docCount>0) whose Cases/Scans screen is empty. Skip it
+            // so the record stays "not fetched" and a fresh fetch fills BOTH the merged PDF and
+            // the per-item detail. (This is the Sundalpura 901/p & 902 iRCMS case.)
+            val perItemPresent = when (type) {
+                RecordType.IRCMS -> File(CasesStore.dir(context, district, taluka, village, surveyNo), "cases.json").exists()
+                RecordType.VF712 -> File(VfScansStore.dir(context, district, taluka, village, surveyNo), "vf712.json").exists()
+                else -> true
+            }
+            if (!perItemPresent) {
+                android.util.Log.i("LR", "SeedImporter: skip $surveyNo/$type — no per-item source (cases.json/vf712.json) in bundle")
+                skipped++; continue
+            }
 
             val bytes = runCatching { assets.open("seed/${o.getString("pdf")}").use { it.readBytes() } }.getOrNull()
             if (bytes == null || bytes.isEmpty()) { skipped++; continue }

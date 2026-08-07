@@ -40,12 +40,22 @@ interface SurveyDao {
     @Query("SELECT * FROM surveys WHERE surveyNo LIKE '%' || :q || '%' ORDER BY normalized")
     fun search(q: String): Flow<List<SurveyEntity>>
 
-    /** Resolve a survey by its village + human survey number — used to link seeded records. */
+    /**
+     * Resolve a survey by its full place (district + taluka + village) + human survey number —
+     * used to link seeded records. Scoping to district+taluka (not just village name) keeps the
+     * LIMIT 1 lookup deterministic when two properties share a village name across places.
+     */
     @Query(
         "SELECT s.* FROM surveys s JOIN properties p ON s.propertyId = p.id " +
-            "WHERE p.village = :village AND s.surveyNo = :surveyNo LIMIT 1",
+            "WHERE p.district = :district AND p.taluka = :taluka AND p.village = :village " +
+            "AND s.surveyNo = :surveyNo LIMIT 1",
     )
-    suspend fun findByVillageAndNo(village: String, surveyNo: String): SurveyEntity?
+    suspend fun findByVillageAndNo(
+        district: String,
+        taluka: String,
+        village: String,
+        surveyNo: String,
+    ): SurveyEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(survey: SurveyEntity): Long

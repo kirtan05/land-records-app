@@ -122,6 +122,10 @@ fun RecordCard(
                 }
                 PillButton(Lr(R.string.action_regenerate_gu, R.string.action_regenerate_en), onRegenerate)
                 PillButton(Lr(R.string.action_share_gu, R.string.action_share_en), onShare)
+                // Re-fetch stays available on a HELD record so a merged-only seed row (e.g.
+                // Sundalpura iRCMS with no per-case detail) can be refreshed. onGet -> onFetch ->
+                // the fetch pipeline, which overwrites the record (PDF, cases.json/vf712.json, Room).
+                PillButton(lang.join("ફરી લાવો", "Re-fetch"), onGet)
             }
         } else {
             Row(

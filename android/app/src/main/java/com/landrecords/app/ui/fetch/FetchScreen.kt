@@ -210,16 +210,40 @@ fun FetchScreen(
                     surveyNorm = i.surveyNorm, surveyDropId = surveyDropId,
                 ),
             )
-            // District/taluka/village selections post back → a new pageLoaded re-runs this
-            // effect for the next step. The survey (last dropdown) does NOT post back, so
-            // spotlight as soon as it's selected ('SUR') or the cascade is fully set ('READY').
-            // dimSpotlight is idempotent, so a following postback re-spotlighting is harmless.
-            if (step.contains("READY") || step.contains("SUR")) {
+            // One line per cascade step so the NEXT on-device run shows exactly where it stalls:
+            // the returned code (RT/DIST/TAL/VIL/SUR/READY/WAIT) and, on a miss, the wanted text plus
+            // every option the page offered (e.g. "WAIT|tal|want=…|opts=…"). This is the Valetva probe.
+            android.util.Log.i("LR", "prefill step (page #$pageLoaded): $step")
+            // The step code is the field before the first '|'. District/taluka/village selections post
+            // back → a new pageLoaded re-runs this effect for the next step; the survey (last dropdown)
+            // does NOT post back, so spotlight as soon as it's picked ('SUR') or the cascade is fully
+            // set ('READY'). dimSpotlight is idempotent, so a following postback re-spotlight is harmless.
+            val code = step.substringBefore('|').trim()
+            if (code == "READY" || code == "SUR") {
+                android.util.Log.i("LR", "cascade complete ($code) — spotlighting the CAPTCHA")
                 delay(600)
                 WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
                 working = false // cascade is filled + spotlit — the user solves the CAPTCHA now
             }
         }
+    }
+
+    // ── Connection / WAF guards ──────────────────────────────────────────────────────────
+    // A WAF-blocked IP makes the WebView hang with no callback: the initial page never finishes
+    // loading, and the post-submit postback never arrives. Cap each wait and surface a clear
+    // error instead of spinning forever. pageLoaded>=1 means the page DID load, so the load
+    // guard never fires while the user is calmly solving the CAPTCHA.
+    LaunchedEffect(phase) {
+        if (phase != FetchPhase.SOLVING) return@LaunchedEffect
+        delay(75_000)
+        if (pageLoaded < 1 && phase == FetchPhase.SOLVING)
+            vm.fail("Could not reach the site — your connection may be blocked. Try later or a different network.")
+    }
+    LaunchedEffect(awaitingDetail, submitPageLoaded) {
+        if (!awaitingDetail) return@LaunchedEffect
+        delay(75_000)
+        if (awaitingDetail && !captureRunning && phase == FetchPhase.SOLVING)
+            vm.fail("Could not reach the site — your connection may be blocked. Try later or a different network.")
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -281,7 +305,7 @@ fun FetchScreen(
                         }
                     }
                     webRef = this
-                    loadUrl(AnyRor.URL)
+                    loadUrl(if (recordType == RecordType.DEEDS) AnyRor.URL_DESKTOP else AnyRor.URL)
                 }
             },
         )

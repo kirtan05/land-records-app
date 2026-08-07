@@ -255,6 +255,13 @@ object IrcmsInjection {
         var dist=document.getElementById('${Ircms.Ids.DISTRICT}').value;
         var tal=document.getElementById('${Ircms.Ids.TALUKA}').value;
         var vill=document.getElementById('${Ircms.Ids.VILLAGE}').value;
+        // Cross-contamination guard: NEVER search with a defaulted geo cascade. If prefill could not
+        // uniquely fill district/taluka/village they sit at their placeholder ('' / '0' / '-1');
+        // searching then would scrape whatever place happens to be selected and file it under the
+        // requested survey. Abort instead so nothing wrong is captured. (On the working path the
+        // cascade is fully set before View, so this never fires.)
+        function __unsetv(x){ x=(''+x).trim(); return x===''||x==='0'||x==='-1'; }
+        if(__unsetv(dist)||__unsetv(tal)||__unsetv(vill)){ window.__lr_search='ERROR'; return 'NOPLACE'; }
         var cap=(document.getElementById('${Ircms.Ids.CAPTCHA}').value||'').trim();
         var tokEl=document.querySelector('input[name=_token]'); var tok=tokEl?tokEl.value:'';
         window.__lr_search='WAIT';

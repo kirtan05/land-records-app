@@ -39,24 +39,32 @@ class LandRecordsRepository(private val db: AppDatabase) {
 
     suspend fun propertyById(id: Long) = db.propertyDao().byId(id)
 
-    /** Survey row id for a (village, human survey number) pair, or null — links seeded records. */
-    suspend fun findSurveyId(village: String, surveyNo: String): Long? =
-        db.surveyDao().findByVillageAndNo(village, surveyNo)?.id
+    /** Survey row id for a full-place (district/taluka/village) + survey number, or null — links seeded records. */
+    suspend fun findSurveyId(district: String, taluka: String, village: String, surveyNo: String): Long? =
+        db.surveyDao().findByVillageAndNo(district, taluka, village, surveyNo)?.id
 
     /**
      * Create a property (or reuse an existing same-named one) and add the given survey numbers.
-     * Names are stored as both the display and the Gujarati match value, since the AnyRoR/iRCMS
-     * cascades are matched by the visible name. Returns the property id.
+     * The plain district/taluka/village fields hold a stable English/code key (used for the storage
+     * path + the seed-link lookup); the *Gu fields hold the Gujarati label the AnyRoR/iRCMS cascades
+     * match on. This mirrors seedQueued's convention (English in plain, Gujarati in Gu) so a
+     * user-added village and a seeded one never diverge and findByVillageAndNo stays deterministic.
+     * When only a typed name is available the same text fills both fields. Returns the property id.
      */
     suspend fun addProperty(
-        district: String, taluka: String, village: String, surveyNos: List<String>,
+        district: String, districtGu: String,
+        taluka: String, talukaGu: String,
+        village: String, villageGu: String,
+        surveyNos: List<String>,
     ): Long {
         val existing = db.propertyDao().observeAll().first()
             .firstOrNull { it.district == district && it.taluka == taluka && it.village == village }
         val propId = existing?.id ?: db.propertyDao().upsert(
             PropertyEntity(
                 state = "Gujarat", district = district, taluka = taluka, village = village,
-                districtGu = district, talukaGu = taluka, villageGu = village,
+                districtGu = districtGu.ifBlank { district },
+                talukaGu = talukaGu.ifBlank { taluka },
+                villageGu = villageGu.ifBlank { village },
             ),
         )
         for (no in surveyNos.map { it.trim() }.filter { it.isNotEmpty() }) {

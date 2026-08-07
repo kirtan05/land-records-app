@@ -102,7 +102,9 @@ fun Vf712FetchScreen(
                 surveyNorm = i.surveyNorm, surveyDropId = surveyDropId,
             ),
         )
-        if (step.contains("READY") || step.contains("SUR")) {
+        android.util.Log.i("LR", "vf712 prefill step (page #$pageLoaded): $step")
+        val code = step.substringBefore('|').trim()
+        if (code == "READY" || code == "SUR") {
             delay(600)
             WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
             working = false // cascade filled + spotlit — the user solves the CAPTCHA now

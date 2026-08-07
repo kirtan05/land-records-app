@@ -168,10 +168,16 @@ fun IrcmsBatchScreen(
                 // Search directly (reuse the one code — never touch the button's get_captcha).
                 WebViewCapture.eval(wv, IrcmsInjection.searchSurveyDirectJs(t.surveyNo))
                 var st = "WAIT"; var w = 0
-                while (w < 24) {
+                while (w < 150) { // ~75s no-progress cap (WAF/connection guard)
                     st = WebViewCapture.eval(wv, IrcmsInjection.searchStatusJs())
                     if (st != "WAIT") break
                     delay(500); w++
+                }
+                if (st == "WAIT") {
+                    // Never responded — one code covers every survey, so a dead connection fails the batch.
+                    errorMsg = "Could not reach the site — your connection may be blocked. Try later or a different network."
+                    phase = BatchPhase.ERROR
+                    return@LaunchedEffect
                 }
                 if (st == "READY") {
                     val listHtml = WebViewCapture.rawHtml(wv)
@@ -233,6 +239,19 @@ fun IrcmsBatchScreen(
         phase = BatchPhase.DONE
         delay(600)
         onDone()
+    }
+
+    // ── Connection / WAF guard ───────────────────────────────────────────────────────────
+    // A WAF-blocked IP makes the initial WebView load hang forever (no onPageFinished), so the
+    // cascade never fills and the run can't start. Cap the wait and surface a clear error.
+    // mainLoaded>=1 means the page loaded, so this never fires while waiting on the human tap.
+    LaunchedEffect(phase) {
+        if (phase != BatchPhase.SOLVING) return@LaunchedEffect
+        delay(75_000)
+        if (mainLoaded < 1 && phase == BatchPhase.SOLVING) {
+            errorMsg = "Could not reach the site — your connection may be blocked. Try later or a different network."
+            phase = BatchPhase.ERROR
+        }
     }
 
     Box(Modifier.fillMaxSize()) {

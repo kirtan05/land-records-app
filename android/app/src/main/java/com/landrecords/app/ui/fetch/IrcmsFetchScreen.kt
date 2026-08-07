@@ -120,12 +120,17 @@ fun IrcmsFetchScreen(
         WebViewCapture.eval(wv, IrcmsInjection.searchSurveyDirectJs(i.surveyNorm))
         var res = "WAIT"
         var tries = 0
-        while (tries < 24) {
+        while (tries < 150) { // ~75s no-progress cap (WAF/connection guard)
             res = WebViewCapture.eval(wv, IrcmsInjection.searchStatusJs())
             if (res != "WAIT") break
             delay(500); tries++
         }
         android.util.Log.i("LR", "iRCMS single search='$res' after $tries tries")
+
+        if (res == "WAIT") { // never responded — connection likely blocked
+            vm.fail("Could not reach the site — your connection may be blocked. Try later or a different network.")
+            return@LaunchedEffect
+        }
 
         val wrongCode = res.startsWith("EMPTY") && Regex("captcha|invalid", RegexOption.IGNORE_CASE).containsMatchIn(res)
         when {
@@ -180,6 +185,17 @@ fun IrcmsFetchScreen(
             res.startsWith("EMPTY") -> { vm.markEmpty(RecordType.IRCMS); vm.setPhase(FetchPhase.DONE); delay(300); onDone() } // genuine empty
             else -> { awaitingList = false; working = false; WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs()) } // error/timeout → re-solve
         }
+    }
+
+    // ── Connection / WAF guard ───────────────────────────────────────────────────────────
+    // A WAF-blocked IP makes the initial WebView load hang forever (no onPageFinished, so the
+    // cascade never fills). Cap the wait and surface a clear error. pageLoaded>=1 means the
+    // page loaded, so this never fires while the user is solving the CAPTCHA.
+    LaunchedEffect(phase) {
+        if (phase != FetchPhase.SOLVING) return@LaunchedEffect
+        delay(75_000)
+        if (pageLoaded < 1 && phase == FetchPhase.SOLVING)
+            vm.fail("Could not reach the site — your connection may be blocked. Try later or a different network.")
     }
 
     Box(Modifier.fillMaxSize()) {

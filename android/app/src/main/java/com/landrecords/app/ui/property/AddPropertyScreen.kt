@@ -109,10 +109,18 @@ fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
         if (d != null && t != null && v != null) CascadeData.surveyTokensFor(context, d, t, v) else null
     }
 
-    // Effective saved names: the picked Gujarati label, or the typed text.
+    // Effective saved names: the picked Gujarati label, or the typed text. These are the
+    // cascade-matching values, stored in the *Gu fields.
     val districtName = if (hasDistricts) district?.gu.orEmpty() else districtTyped.trim()
     val talukaName = if (talukas != null) talukaItem?.gu.orEmpty() else talukaTyped.trim()
     val villageName = if (villageOptions != null) villageItem?.gu.orEmpty() else villageTyped.trim()
+
+    // Stable English/code key for each level, stored in the plain field (the storage path + the
+    // seed-link lookup key), matching seedQueued's convention. Falls back to the Gujarati/typed
+    // name when a bundled item carries no English label, so the path is never blank.
+    val districtEn = (if (hasDistricts) district?.en.orEmpty() else districtTyped.trim()).ifBlank { districtName }
+    val talukaEn = (if (talukas != null) talukaItem?.en.orEmpty() else talukaTyped.trim()).ifBlank { talukaName }
+    val villageEn = (if (villageOptions != null) villageItem?.en.orEmpty() else villageTyped.trim()).ifBlank { villageName }
 
     val canSave = districtName.isNotBlank() && talukaName.isNotBlank() &&
         villageName.isNotBlank() && surveyNumbers.isNotEmpty()
@@ -217,7 +225,12 @@ fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
             PrimaryButton(
                 Lr(R.string.action_save_gu, R.string.action_save_en),
                 onClick = {
-                    if (canSave) vm.save(districtName, talukaName, villageName, surveyNumbers.toList()) { onSaved() }
+                    if (canSave) vm.save(
+                        districtEn, districtName,
+                        talukaEn, talukaName,
+                        villageEn, villageName,
+                        surveyNumbers.toList(),
+                    ) { onSaved() }
                 },
             )
         }

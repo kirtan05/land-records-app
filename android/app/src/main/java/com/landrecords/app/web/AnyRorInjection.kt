@@ -31,51 +31,78 @@ object AnyRorInjection {
     ): String = """
     (function(){
       try {
-        function norm(s){ return (s||'').replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
-          .replace(/પ/g,'p').replace(/[~\s]+/g,'').toLowerCase(); }
-        // District/taluka/village matcher — agnostic to any village, so a Kheda/Nadiad-Gramya
-        // record fills the same as an Anand one. Punctuation/spacing/numeric-prefix insensitive
-        // ("નડિયાદ ગ્રામ્ય" matches "નડિયાદ (ગ્રામ્ય)" / "22-નડિયાદ ગ્રામ્ય"). Never GUESSES: exact
-        // normalized match first, then a UNIQUE substring, then a UNIQUE token-subset — if two
-        // options are equally plausible we fill nothing rather than fetch the wrong place.
         function nn(s){ return (s||'')
           .replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
           .replace(/પ/g,'p').toLowerCase().replace(/[^a-z0-9઀-૿]+/g,''); }
         function toks(s){ return (s||'').replace(/[()\[\].,\-\/_]+/g,' ').split(/\s+/).map(nn).filter(Boolean); }
-        function setOpt(sel,o){ sel.value=o.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
+        function realOpts(sel){ return sel ? Array.from(sel.options).filter(function(o){ return o.value && o.value!=='-1' && o.value!=='0'; }) : []; }
+        function optText(o){ return (o.text||'').replace(/\s+/g,' ').trim(); }
+        function setOpt(sel,o){ sel.value=o.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return optText(o)||'?'; }
+        // Never GUESSES: exact-normalized, then UNIQUE substring (either direction), then UNIQUE
+        // token-subset (want tokens all in option), then UNIQUE reverse token-subset (option tokens
+        // all in want — the DB name longer than the site's, e.g. "નડિયાદ ગ્રામ્ય" vs a bare
+        // "નડિયાદ" option). Returns the chosen option's visible text, or '' if nothing was unambiguous.
         function pick(sel, wantText){
-          var w=nn(wantText); if(!w) return false;
-          var opts=Array.from(sel.options).filter(function(o){ return o.value && o.value!=='-1' && o.value!=='0'; });
+          var w=nn(wantText); if(!w) return '';
+          var opts=realOpts(sel);
           var eq=opts.filter(function(o){ return nn(o.text)===w; });
           if(eq.length) return setOpt(sel, eq[0]);
           var sub=opts.filter(function(o){ var t=nn(o.text); return t.indexOf(w)>=0 || w.indexOf(t)>=0; });
           if(sub.length===1) return setOpt(sel, sub[0]);
           var wt=toks(wantText);
-          if(wt.length){ var tk=opts.filter(function(o){ var t=nn(o.text); return wt.every(function(x){ return t.indexOf(x)>=0; }); });
-            if(tk.length===1) return setOpt(sel, tk[0]); }
-          return false;
+          if(wt.length){
+            var tk=opts.filter(function(o){ var t=nn(o.text); return wt.every(function(x){ return t.indexOf(x)>=0; }); });
+            if(tk.length===1) return setOpt(sel, tk[0]);
+            var rev=opts.filter(function(o){ var ot=toks(o.text); return ot.length && ot.every(function(x){ return wt.indexOf(x)>=0; }); });
+            if(rev.length===1) return setOpt(sel, rev[0]);
+          }
+          return '';
         }
-        // Survey option text is "<old-survey> ~~ <resurvey>" ("41 ~~ 70"). Match the OLD-survey
-        // field EXACTLY (keep '/'), so "41" hits "41 ~~ 70" and not "25 ~~ 41" or "4170"/"141".
+        // Diagnostic dump for a stalled dropdown: what we wanted + every real option the page shows,
+        // so the logcat says exactly why pick() couldn't choose (wrong text / ambiguous / not there).
+        function diag(sel, want){
+          var os=realOpts(sel);
+          var list=os.slice(0,60).map(optText);
+          return 'want='+String(want||'').replace(/\s+/g,' ').trim()+'|n='+os.length+'|opts='+list.join(' · ')+(os.length>60?' …':'');
+        }
+        // Survey text is "<old-survey>" or "<old> ~~ <resurvey>"; match the OLD field EXACTLY (keep '/').
         function oldSurveyTok(s){ s=(s||'').split('~')[0];
           return s.replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
             .replace(/પ/g,'p').replace(/\s+/g,'').toLowerCase(); }
         function pickSurvey(sel, want){ var w=oldSurveyTok(want); var best=null;
           Array.from(sel.options).forEach(function(o){ if(best) return; if(o.value && oldSurveyTok(o.text)===w) best=o; });
-          if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; } return false; }
+          if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return optText(best)||'?'; } return ''; }
         function unset(sel){ if(!sel) return true; var v=(sel.value||'').trim(); return v===''||v==='0'||v==='-1'; }
+
         var rt=document.getElementById('${AnyRor.Ids.RECORD_TYPE}');
-        if(rt && (rt.value||'')!=='$recordValue'){ rt.value='$recordValue'; rt.dispatchEvent(new Event('change',{bubbles:true})); return 'RT'; }
         var dist=document.getElementById('${AnyRor.Ids.DISTRICT}');
-        if(dist && unset(dist) && '$districtGu'){ return pick(dist,'$districtGu')?'DIST':'WAIT'; }
+        // AnyRoR throws an Application Error if the record type (8/11) is posted BEFORE the geo
+        // cascade, so fill district -> taluka -> village FIRST and select the record type LAST.
+        // Fallback: if the district dropdown can't be used until a record type is chosen (disabled
+        // or empty), set the record type first — this preserves the path that already works today.
+        var distReady = dist && !dist.disabled && realOpts(dist).length>0;
+        if(rt && (rt.value||'')!=='$recordValue' && !distReady){ rt.value='$recordValue'; rt.dispatchEvent(new Event('change',{bubbles:true})); return 'RT'; }
+        if(dist && unset(dist) && '$districtGu'){ var hd=pick(dist,'$districtGu'); return hd?('DIST|hit='+hd):('WAIT|dist|'+diag(dist,'$districtGu')); }
         var tal=document.getElementById('${AnyRor.Ids.TALUKA}');
-        if(tal && unset(tal) && '$talukaGu'){ return pick(tal,'$talukaGu')?'TAL':'WAIT'; }
+        if(tal && unset(tal) && '$talukaGu'){ var ht=pick(tal,'$talukaGu'); return ht?('TAL|hit='+ht):('WAIT|tal|'+diag(tal,'$talukaGu')); }
         var vil=document.getElementById('${AnyRor.Ids.VILLAGE}');
-        if(vil && unset(vil) && '$villageGu'){ return pick(vil,'$villageGu')?'VIL':'WAIT'; }
+        if(vil && unset(vil) && '$villageGu'){ var hv=pick(vil,'$villageGu'); return hv?('VIL|hit='+hv):('WAIT|vil|'+diag(vil,'$villageGu')); }
+        // Geo cascade is set -> NOW select the record type, which renders the survey dropdown.
+        if(rt && (rt.value||'')!=='$recordValue'){ rt.value='$recordValue'; rt.dispatchEvent(new Event('change',{bubbles:true})); return 'RT'; }
         var sur=document.getElementById('$surveyDropId');
-        if(sur && unset(sur) && '$surveyNorm'){ return pickSurvey(sur,'$surveyNorm')?'SUR':'WAIT'; }
+        if('$surveyNorm'){
+          if(!sur) return 'WAIT|sur|absent';
+          if(unset(sur)){
+            var hs=pickSurvey(sur,'$surveyNorm');
+            if(hs) return 'SUR|hit='+hs;
+            var wS=oldSurveyTok('$surveyNorm');
+            var near=Array.from(sur.options).filter(function(o){ return o.value; }).map(optText)
+               .filter(function(t){ return oldSurveyTok(t).indexOf(wS)>=0; }).slice(0,20);
+            return 'WAIT|sur|want=$surveyNorm|tok='+wS+'|n='+realOpts(sur).length+'|near='+near.join(' · ');
+          }
+        }
         return 'READY';
-      } catch(e) { return 'WAIT'; }
+      } catch(e) { return 'WAIT|err|'+(e&&e.message?e.message:e); }
     })();
     """.trimIndent()
 

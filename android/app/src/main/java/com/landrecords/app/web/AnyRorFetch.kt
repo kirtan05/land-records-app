@@ -21,6 +21,13 @@ import com.landrecords.app.data.model.RecordType
  */
 object AnyRor {
     const val URL = "https://anyror.gujarat.gov.in/LandRecordRural.aspx"
+    /**
+     * DEEDS-only desktop entry. The /1000 variant serves the FULL desktop detail page
+     * (InfoSurveyNoDetail.aspx) whose Sub-registrar deed grid (ContentPlaceHolder1_gvgarviProDet)
+     * the plain LandRecordRural.aspx (mobile) flow omits. Same cascade element ids, so
+     * AnyRorInjection.prefillStepJs is unchanged (cf. anyror/cascade-explore.mjs, anyror/deed-step1.mjs).
+     */
+    const val URL_DESKTOP = "https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000"
 
     /** Cascade element ids (ASP.NET ContentPlaceHolder1_…). */
     object Ids {
