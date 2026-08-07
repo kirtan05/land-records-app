@@ -33,7 +33,8 @@ object AnyRorInjection {
       try {
         function nn(s){ return (s||'')
           .replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
-          .replace(/પ/g,'p').toLowerCase().replace(/[^a-z0-9઀-૿]+/g,''); }
+          .replace(/પ/g,'p').replace(/ળ/g,'લ').replace(/ી/g,'િ').replace(/ૂ/g,'ુ')
+          .toLowerCase().replace(/[^a-z0-9઀-૿]+/g,''); }
         function toks(s){ return (s||'').replace(/[()\[\].,\-\/_]+/g,' ').split(/\s+/).map(nn).filter(Boolean); }
         function realOpts(sel){ return sel ? Array.from(sel.options).filter(function(o){ return o.value && o.value!=='-1' && o.value!=='0'; }) : []; }
         function optText(o){ return (o.text||'').replace(/\s+/g,' ').trim(); }

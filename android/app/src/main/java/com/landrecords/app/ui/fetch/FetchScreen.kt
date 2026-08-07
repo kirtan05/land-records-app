@@ -250,9 +250,11 @@ fun FetchScreen(
     // and the "Filling…" overlay would hang forever (the frozen/non-responsive Valetva symptom).
     // Keyed on pageLoaded, so every real step resets this timer; it only fires on a true stall.
     LaunchedEffect(pageLoaded) {
-        delay(45_000)
-        if (phase == FetchPhase.SOLVING && working && !awaitingDetail && pageLoaded >= 1)
+        delay(30_000)
+        if (phase == FetchPhase.SOLVING && working && !awaitingDetail && pageLoaded >= 1) {
+            android.util.Log.w("LR", "prefill watchdog: cascade stalled at page #$pageLoaded — failing out")
             vm.fail("Couldn't auto-fill the form — a district/taluka/village name may not match the site. Tap retry, or add the survey through the picker.")
+        }
     }
 
     Box(Modifier.fillMaxSize()) {

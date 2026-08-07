@@ -22,7 +22,8 @@ object IrcmsInjection {
         // so any district/taluka/village fills, but a UNIQUE hit is required — never guess a place.
         function nn(s){ return (s||'')
           .replace(/[૦-૯]/g,function(d){return '૦૧૨૩૪૫૬૭૮૯'.indexOf(d);})
-          .replace(/પ/g,'p').toLowerCase().replace(/[^a-z0-9઀-૿]+/g,''); }
+          .replace(/પ/g,'p').replace(/ળ/g,'લ').replace(/ી/g,'િ').replace(/ૂ/g,'ુ')
+          .toLowerCase().replace(/[^a-z0-9઀-૿]+/g,''); }
         function toks(s){ return (s||'').replace(/[()\[\].,\-\/_]+/g,' ').split(/\s+/).map(nn).filter(Boolean); }
         function selText(sel, want){
           var w=nn(want); if(!w) return false;
