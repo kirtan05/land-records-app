@@ -4,21 +4,1680 @@
     "en": "ANAND",
     "gu": "આણંદ"
   },
-  "source": "ircms.gujarat.gov.in ServiceData/fetch cascade, captured recon-page.html (2025-06-11)",
-  "note": "Real talukas for Anand. Villages populated ONLY for Umreth(03) so far; villages:null means not yet fetched (run the in-app cascade scraper for that taluka). Bharoda=029, Sundalpura=030 confirmed here.",
+  "source": "ircms.gujarat.gov.in ServiceData/fetch cascade, live-scraped 2026-08-07",
+  "note": "All 9 Anand talukas with full village lists, live-scraped from iRCMS ServiceData/fetch on 2026-08-07. Every taluka has a populated villages array.",
   "talukaCount": 9,
   "talukas": [
     {
-      "code": "01",
-      "en": "Tarapur",
-      "gu": "તારાપુર",
-      "villages": null
+      "code": "09",
+      "en": "Anand (City)",
+      "gu": "આણંદ (શહેર)",
+      "villages": [
+        {
+          "code": "001",
+          "en": "ANAND (CITY)",
+          "gu": "આણંદ (શહેર)"
+        }
+      ]
+    },
+    {
+      "code": "04",
+      "en": "Anand",
+      "gu": "આણંદ",
+      "villages": [
+        {
+          "code": "035",
+          "en": "Adas",
+          "gu": "અડાસ"
+        },
+        {
+          "code": "004",
+          "en": "Ajarpura",
+          "gu": "અજરપુરા"
+        },
+        {
+          "code": "034",
+          "en": "Anklavdi",
+          "gu": "આંકલાવડી"
+        },
+        {
+          "code": "015",
+          "en": "Bakrol",
+          "gu": "બાકરોલ"
+        },
+        {
+          "code": "017",
+          "en": "Bedva",
+          "gu": "બેડવા"
+        },
+        {
+          "code": "005",
+          "en": "Boriavi",
+          "gu": "બોરીયાવી"
+        },
+        {
+          "code": "011",
+          "en": "Chikhodra",
+          "gu": "ચિખોદરા"
+        },
+        {
+          "code": "012",
+          "en": "Gamdi",
+          "gu": "ગામડી"
+        },
+        {
+          "code": "028",
+          "en": "Gana",
+          "gu": "ગાના"
+        },
+        {
+          "code": "031",
+          "en": "Gopalpura",
+          "gu": "ગોપાલપુરા"
+        },
+        {
+          "code": "023",
+          "en": "Hadgood",
+          "gu": "હાડગુડ"
+        },
+        {
+          "code": "032",
+          "en": "Jakhariya",
+          "gu": "ઝાંખરીયા"
+        },
+        {
+          "code": "024",
+          "en": "Jitodiya",
+          "gu": "જીટોડીયા"
+        },
+        {
+          "code": "014",
+          "en": "Jol",
+          "gu": "જોળ"
+        },
+        {
+          "code": "044",
+          "en": "KARAMSAD",
+          "gu": "કરમસદ"
+        },
+        {
+          "code": "003",
+          "en": "Kasor",
+          "gu": "કાસોર"
+        },
+        {
+          "code": "009",
+          "en": "Khambholaj",
+          "gu": "ખંભોળજ"
+        },
+        {
+          "code": "039",
+          "en": "Khandhali",
+          "gu": "ખાંધલી"
+        },
+        {
+          "code": "019",
+          "en": "Khanpur",
+          "gu": "ખાનપુર"
+        },
+        {
+          "code": "020",
+          "en": "Kherda",
+          "gu": "ખેરડા"
+        },
+        {
+          "code": "008",
+          "en": "Kunjrao",
+          "gu": "કુંજરાવ"
+        },
+        {
+          "code": "013",
+          "en": "Lambhvel",
+          "gu": "લાંભવેલ"
+        },
+        {
+          "code": "038",
+          "en": "Meghva Gana",
+          "gu": "મે઼ઘવાગાના"
+        },
+        {
+          "code": "022",
+          "en": "Mogar",
+          "gu": "મોગર"
+        },
+        {
+          "code": "025",
+          "en": "Mogari",
+          "gu": "મોગરી"
+        },
+        {
+          "code": "040",
+          "en": "Napad Talpad",
+          "gu": "નાપાડ તળપદ"
+        },
+        {
+          "code": "036",
+          "en": "Napad Vanto",
+          "gu": "નાપાડ વાંટા"
+        },
+        {
+          "code": "029",
+          "en": "Navli",
+          "gu": "નાવલી"
+        },
+        {
+          "code": "001",
+          "en": "Ode",
+          "gu": "ઓડ"
+        },
+        {
+          "code": "002",
+          "en": "Rahtalav",
+          "gu": "રાહતલાવ"
+        },
+        {
+          "code": "042",
+          "en": "Rajupura",
+          "gu": "રાજુપુરા"
+        },
+        {
+          "code": "033",
+          "en": "Ramnagar",
+          "gu": "રામનગર"
+        },
+        {
+          "code": "010",
+          "en": "Rasnol",
+          "gu": "રાસનોલ"
+        },
+        {
+          "code": "006",
+          "en": "Samarkha",
+          "gu": "સામરખા"
+        },
+        {
+          "code": "027",
+          "en": "Sandesar",
+          "gu": "સંદેસર"
+        },
+        {
+          "code": "018",
+          "en": "Sarsa",
+          "gu": "સારસા"
+        },
+        {
+          "code": "041",
+          "en": "Sundan",
+          "gu": "સુંદણ"
+        },
+        {
+          "code": "007",
+          "en": "Tarnol",
+          "gu": "ત્રણોલ"
+        },
+        {
+          "code": "030",
+          "en": "Vadod",
+          "gu": "વડોદ"
+        },
+        {
+          "code": "016",
+          "en": "Vaghasi",
+          "gu": "વઘાસી"
+        },
+        {
+          "code": "021",
+          "en": "Vaherakhadi",
+          "gu": "વેરાખાડી"
+        },
+        {
+          "code": "026",
+          "en": "Valasan",
+          "gu": "વલાસણ"
+        },
+        {
+          "code": "037",
+          "en": "Vans Khiliya",
+          "gu": "વાંસખેલીયા"
+        },
+        {
+          "code": "043",
+          "en": "Vasad",
+          "gu": "વાસદ"
+        }
+      ]
+    },
+    {
+      "code": "08",
+      "en": "Anklav",
+      "gu": "આંકલાવ",
+      "villages": [
+        {
+          "code": "001",
+          "en": "Ambali",
+          "gu": "અંબાલી"
+        },
+        {
+          "code": "002",
+          "en": "Ambav",
+          "gu": "અંબાવ"
+        },
+        {
+          "code": "003",
+          "en": "Amrol",
+          "gu": "આમરોલ"
+        },
+        {
+          "code": "004",
+          "en": "Anklav",
+          "gu": "આંકલાવ"
+        },
+        {
+          "code": "005",
+          "en": "Asarma",
+          "gu": "આસરમા"
+        },
+        {
+          "code": "006",
+          "en": "Asodar",
+          "gu": "આસોદર"
+        },
+        {
+          "code": "007",
+          "en": "Bamangam",
+          "gu": "બામણગામ"
+        },
+        {
+          "code": "008",
+          "en": "Bhanpura",
+          "gu": "ભાણપુરા"
+        },
+        {
+          "code": "009",
+          "en": "Bhetasi (Talpad)",
+          "gu": "ભેટાસી (તલપદ)"
+        },
+        {
+          "code": "010",
+          "en": "Bhetasi Ba Bhag",
+          "gu": "ભેટાસી (બા.ભાગ)"
+        },
+        {
+          "code": "011",
+          "en": "Bhetasi Vanto",
+          "gu": "ભેટાસી વાંટા"
+        },
+        {
+          "code": "012",
+          "en": "Bilpad",
+          "gu": "બીલપાડ"
+        },
+        {
+          "code": "013",
+          "en": "Chamara",
+          "gu": "ચમારા"
+        },
+        {
+          "code": "014",
+          "en": "Devapura",
+          "gu": "દેવાપુરા"
+        },
+        {
+          "code": "015",
+          "en": "Gambhira",
+          "gu": "ગંભીરા"
+        },
+        {
+          "code": "016",
+          "en": "Haldari",
+          "gu": "હલદરી"
+        },
+        {
+          "code": "017",
+          "en": "Hathipura",
+          "gu": "હઠીપુરા"
+        },
+        {
+          "code": "018",
+          "en": "Jhilod",
+          "gu": "જીલોડ"
+        },
+        {
+          "code": "019",
+          "en": "Joshikuva",
+          "gu": "જોષીકુવા"
+        },
+        {
+          "code": "020",
+          "en": "Kanthariya",
+          "gu": "કંથારીયા"
+        },
+        {
+          "code": "021",
+          "en": "Kanvadi",
+          "gu": "કહાનવાડી"
+        },
+        {
+          "code": "022",
+          "en": "Khadol (Haldari)",
+          "gu": "ખડોલ (હલદરી)"
+        },
+        {
+          "code": "023",
+          "en": "Khadol (Umeta)",
+          "gu": "ખડોલ (ઉમેટા)"
+        },
+        {
+          "code": "024",
+          "en": "Kosindra",
+          "gu": "કોસીન્દ્રા"
+        },
+        {
+          "code": "025",
+          "en": "Lalpura",
+          "gu": "લાલપુરા"
+        },
+        {
+          "code": "026",
+          "en": "Manpura",
+          "gu": "માનપુરા"
+        },
+        {
+          "code": "027",
+          "en": "Mujkuva",
+          "gu": "મુજકુવા"
+        },
+        {
+          "code": "028",
+          "en": "Narpura",
+          "gu": "નારપુરા"
+        },
+        {
+          "code": "029",
+          "en": "Navakhal",
+          "gu": "નવાખલ"
+        },
+        {
+          "code": "030",
+          "en": "Navapura",
+          "gu": "નવાપુરા"
+        },
+        {
+          "code": "031",
+          "en": "Sankhyad",
+          "gu": "સંખ્યાડ"
+        },
+        {
+          "code": "032",
+          "en": "Umeta",
+          "gu": "ઉમેટા"
+        }
+      ]
+    },
+    {
+      "code": "07",
+      "en": "Borsad",
+      "gu": "બોરસદ",
+      "villages": [
+        {
+          "code": "036",
+          "en": "Alarsa",
+          "gu": "અલારસા"
+        },
+        {
+          "code": "045",
+          "en": "Amiyad",
+          "gu": "અમીયાદ"
+        },
+        {
+          "code": "060",
+          "en": "Badalpur",
+          "gu": "બદલપુર"
+        },
+        {
+          "code": "043",
+          "en": "Banejda",
+          "gu": "બનેજડા"
+        },
+        {
+          "code": "035",
+          "en": "Bhadran",
+          "gu": "ભાદરણ"
+        },
+        {
+          "code": "034",
+          "en": "Bhadraniya",
+          "gu": "ભાદરણીયા"
+        },
+        {
+          "code": "015",
+          "en": "Bochasan",
+          "gu": "બોચાસણ"
+        },
+        {
+          "code": "018",
+          "en": "Bodal",
+          "gu": "બોદાલ"
+        },
+        {
+          "code": "065",
+          "en": "Borsad",
+          "gu": "બોરસદ"
+        },
+        {
+          "code": "024",
+          "en": "Chuva",
+          "gu": "ચુવા"
+        },
+        {
+          "code": "016",
+          "en": "Dabhasi",
+          "gu": "ડભાસી"
+        },
+        {
+          "code": "009",
+          "en": "Dahemi",
+          "gu": "દહેમી"
+        },
+        {
+          "code": "062",
+          "en": "Dahewan",
+          "gu": "દહેવાણ"
+        },
+        {
+          "code": "058",
+          "en": "Dali",
+          "gu": "ડાલી"
+        },
+        {
+          "code": "017",
+          "en": "Davol",
+          "gu": "દાવોલ"
+        },
+        {
+          "code": "013",
+          "en": "Dedarda",
+          "gu": "દેદરડા"
+        },
+        {
+          "code": "050",
+          "en": "Dhanavasi",
+          "gu": "ધનાવશી"
+        },
+        {
+          "code": "005",
+          "en": "Dhobikui",
+          "gu": "ધોબીકુઈ"
+        },
+        {
+          "code": "003",
+          "en": "Dhundakuva",
+          "gu": "ઢુંઢાકુવા"
+        },
+        {
+          "code": "046",
+          "en": "Divel",
+          "gu": "દિવેલ"
+        },
+        {
+          "code": "064",
+          "en": "Gajana",
+          "gu": "ગાજણાં"
+        },
+        {
+          "code": "026",
+          "en": "Golel",
+          "gu": "ગોરેલ"
+        },
+        {
+          "code": "055",
+          "en": "Gorva",
+          "gu": "ગોરવા"
+        },
+        {
+          "code": "019",
+          "en": "Harkhapura",
+          "gu": "હરખાપુરા"
+        },
+        {
+          "code": "042",
+          "en": "Jantral",
+          "gu": "જંત્રાલ"
+        },
+        {
+          "code": "059",
+          "en": "Kalu",
+          "gu": "કાલુ"
+        },
+        {
+          "code": "057",
+          "en": "Kanbha",
+          "gu": "કણભા"
+        },
+        {
+          "code": "044",
+          "en": "Kandhroti",
+          "gu": "કાંધરોટી"
+        },
+        {
+          "code": "061",
+          "en": "Kankapura",
+          "gu": "કંકાપુરા"
+        },
+        {
+          "code": "022",
+          "en": "Kasari",
+          "gu": "કસારી"
+        },
+        {
+          "code": "010",
+          "en": "Kasumbad",
+          "gu": "કસુંબાડ"
+        },
+        {
+          "code": "056",
+          "en": "Kathana",
+          "gu": "કઠાણા"
+        },
+        {
+          "code": "047",
+          "en": "Kathol",
+          "gu": "કઠોલ"
+        },
+        {
+          "code": "002",
+          "en": "Kavitha",
+          "gu": "કાવીઠા"
+        },
+        {
+          "code": "029",
+          "en": "Khanpur",
+          "gu": "ખાનપુર"
+        },
+        {
+          "code": "038",
+          "en": "Khedasa",
+          "gu": "ખેડાસા"
+        },
+        {
+          "code": "052",
+          "en": "Kihkhlod",
+          "gu": "કિંખલોડ"
+        },
+        {
+          "code": "053",
+          "en": "Kothiya khad",
+          "gu": "કોઠીયાખાડ"
+        },
+        {
+          "code": "051",
+          "en": "Moti Sherdi",
+          "gu": "મોટી શેરડી"
+        },
+        {
+          "code": "006",
+          "en": "Naman",
+          "gu": "નામણ"
+        },
+        {
+          "code": "054",
+          "en": "Nani Sherdi",
+          "gu": "નાની શેરડી"
+        },
+        {
+          "code": "008",
+          "en": "Napa Talpad",
+          "gu": "નાપા તળપદ"
+        },
+        {
+          "code": "007",
+          "en": "Napa Vanto",
+          "gu": "નાપા વાટાં"
+        },
+        {
+          "code": "020",
+          "en": "Nisaraya",
+          "gu": "નીસરાયા"
+        },
+        {
+          "code": "011",
+          "en": "Pamol",
+          "gu": "પામોલ"
+        },
+        {
+          "code": "037",
+          "en": "Pipli",
+          "gu": "પીપ઼ળી"
+        },
+        {
+          "code": "027",
+          "en": "Ranoli",
+          "gu": "રણોલી"
+        },
+        {
+          "code": "040",
+          "en": "Ras",
+          "gu": "રાસ"
+        },
+        {
+          "code": "023",
+          "en": "Rudel",
+          "gu": "રુદેલ"
+        },
+        {
+          "code": "030",
+          "en": "Saijpur",
+          "gu": "સૈજપુર"
+        },
+        {
+          "code": "063",
+          "en": "Salol",
+          "gu": "સારોલ"
+        },
+        {
+          "code": "001",
+          "en": "Santokpura",
+          "gu": "સંતોકપુરા"
+        },
+        {
+          "code": "012",
+          "en": "Singlav",
+          "gu": "સીંગલાવ"
+        },
+        {
+          "code": "039",
+          "en": "Sisva",
+          "gu": "સીસ્વા"
+        },
+        {
+          "code": "004",
+          "en": "Sur Kuva",
+          "gu": "સુરકુવા"
+        },
+        {
+          "code": "048",
+          "en": "Umlav",
+          "gu": "ઉમલાવ"
+        },
+        {
+          "code": "025",
+          "en": "Uneli",
+          "gu": "ઉનેલી"
+        },
+        {
+          "code": "033",
+          "en": "Vachhiyel",
+          "gu": "વાછીયેલ"
+        },
+        {
+          "code": "032",
+          "en": "Vadeli",
+          "gu": "વડેલી"
+        },
+        {
+          "code": "014",
+          "en": "Vahera",
+          "gu": "વહેરા"
+        },
+        {
+          "code": "049",
+          "en": "Valvod",
+          "gu": "વાલવોડ"
+        },
+        {
+          "code": "041",
+          "en": "Vasna ( Ras)",
+          "gu": "વાસણા(રાસ)"
+        },
+        {
+          "code": "021",
+          "en": "Vasna (Borsad)",
+          "gu": "વાસણા(બોરસદ)"
+        },
+        {
+          "code": "028",
+          "en": "Virsad",
+          "gu": "વિરસદ"
+        },
+        {
+          "code": "031",
+          "en": "Zharola",
+          "gu": "ઝારોલા"
+        }
+      ]
+    },
+    {
+      "code": "06",
+      "en": "Khambhat",
+      "gu": "ખંભાત",
+      "villages": [
+        {
+          "code": "015",
+          "en": "Akhol",
+          "gu": "આખોલ"
+        },
+        {
+          "code": "039",
+          "en": "Bamanva",
+          "gu": "બામણવા"
+        },
+        {
+          "code": "018",
+          "en": "Bhat Talavadi",
+          "gu": "ભાટ તલાવડી"
+        },
+        {
+          "code": "007",
+          "en": "Bhimtalav",
+          "gu": "ભીમ તલાવ"
+        },
+        {
+          "code": "048",
+          "en": "Bhuvel",
+          "gu": "ભુવેલ"
+        },
+        {
+          "code": "043",
+          "en": "Chhatardi",
+          "gu": "છતરડી"
+        },
+        {
+          "code": "016",
+          "en": "Daheda",
+          "gu": "દહેડા"
+        },
+        {
+          "code": "060",
+          "en": "Dhuvaran",
+          "gu": "ધુવારણ"
+        },
+        {
+          "code": "023",
+          "en": "Finav",
+          "gu": "ફીણાવ"
+        },
+        {
+          "code": "001",
+          "en": "Golana",
+          "gu": "ગોલાણા"
+        },
+        {
+          "code": "008",
+          "en": "Gudel",
+          "gu": "ગુડેલ"
+        },
+        {
+          "code": "059",
+          "en": "Haripura",
+          "gu": "હરીપુરા"
+        },
+        {
+          "code": "020",
+          "en": "Hariyan",
+          "gu": "હરીયાણ"
+        },
+        {
+          "code": "004",
+          "en": "Hasanpura",
+          "gu": "હસનપુરા"
+        },
+        {
+          "code": "038",
+          "en": "Jahaj",
+          "gu": "જહાજ"
+        },
+        {
+          "code": "022",
+          "en": "Jalsan",
+          "gu": "જલસણ"
+        },
+        {
+          "code": "040",
+          "en": "Jalundh",
+          "gu": "જલુંધ"
+        },
+        {
+          "code": "029",
+          "en": "Jhalapur",
+          "gu": "ઝાલાપુર"
+        },
+        {
+          "code": "006",
+          "en": "Jinaj",
+          "gu": "જીણજ"
+        },
+        {
+          "code": "061",
+          "en": "KHAMBHAT",
+          "gu": "ખંભાત"
+        },
+        {
+          "code": "051",
+          "en": "Kalamsar",
+          "gu": "કલમસ઼ર"
+        },
+        {
+          "code": "034",
+          "en": "Kali Talavadi",
+          "gu": "કાળી તલાવડી"
+        },
+        {
+          "code": "024",
+          "en": "Kanisa",
+          "gu": "કાણીસા"
+        },
+        {
+          "code": "045",
+          "en": "Kansari",
+          "gu": "કંસારી"
+        },
+        {
+          "code": "021",
+          "en": "Kanzat",
+          "gu": "કણઝટ"
+        },
+        {
+          "code": "058",
+          "en": "Khadodhi",
+          "gu": "ખડોધી"
+        },
+        {
+          "code": "049",
+          "en": "Khatnal",
+          "gu": "ખટનાલ"
+        },
+        {
+          "code": "026",
+          "en": "Kodva",
+          "gu": "કોડવા"
+        },
+        {
+          "code": "031",
+          "en": "Lunej",
+          "gu": "લુણેજ"
+        },
+        {
+          "code": "017",
+          "en": "Malasoni",
+          "gu": "માલાસોની"
+        },
+        {
+          "code": "019",
+          "en": "Malu",
+          "gu": "માલુ"
+        },
+        {
+          "code": "056",
+          "en": "Metpur",
+          "gu": "મેતપુર"
+        },
+        {
+          "code": "002",
+          "en": "Mitli",
+          "gu": "મીતલી"
+        },
+        {
+          "code": "027",
+          "en": "Motipura",
+          "gu": "મોતીપુરા"
+        },
+        {
+          "code": "033",
+          "en": "Nagra",
+          "gu": "નગરા"
+        },
+        {
+          "code": "046",
+          "en": "Nana Kalodra",
+          "gu": "નાના કલોદરા"
+        },
+        {
+          "code": "037",
+          "en": "Nandeli",
+          "gu": "નંદેલી"
+        },
+        {
+          "code": "014",
+          "en": "Navagam Bara",
+          "gu": "નવાગામ બારા"
+        },
+        {
+          "code": "028",
+          "en": "Navagam Vanta",
+          "gu": "નવાગામ વાંટા"
+        },
+        {
+          "code": "044",
+          "en": "Neja",
+          "gu": "નેજા"
+        },
+        {
+          "code": "030",
+          "en": "Paldi",
+          "gu": "પાલડી"
+        },
+        {
+          "code": "010",
+          "en": "Pandad",
+          "gu": "પાંદડ"
+        },
+        {
+          "code": "036",
+          "en": "Piploi",
+          "gu": "પીપળોઈ"
+        },
+        {
+          "code": "042",
+          "en": "Popat Vav",
+          "gu": "પોપટ વાવ"
+        },
+        {
+          "code": "057",
+          "en": "Rajpur",
+          "gu": "રાજપુર"
+        },
+        {
+          "code": "053",
+          "en": "Ralaj",
+          "gu": "રાલજ"
+        },
+        {
+          "code": "005",
+          "en": "Rangpur",
+          "gu": "રંગપુર"
+        },
+        {
+          "code": "003",
+          "en": "Rohni",
+          "gu": "રોહણી"
+        },
+        {
+          "code": "025",
+          "en": "Sayama",
+          "gu": "સાયમા"
+        },
+        {
+          "code": "055",
+          "en": "Shakarpur",
+          "gu": "શક્કરપુર"
+        },
+        {
+          "code": "032",
+          "en": "Sokhada",
+          "gu": "સોખડા"
+        },
+        {
+          "code": "009",
+          "en": "Tamsa",
+          "gu": "તામસા"
+        },
+        {
+          "code": "011",
+          "en": "Tarakpur",
+          "gu": "તરકપુર"
+        },
+        {
+          "code": "035",
+          "en": "Timba",
+          "gu": "ટીંબા"
+        },
+        {
+          "code": "047",
+          "en": "Undel",
+          "gu": "ઉંદેલ"
+        },
+        {
+          "code": "012",
+          "en": "Vadgam",
+          "gu": "વડગામ"
+        },
+        {
+          "code": "041",
+          "en": "Vadola",
+          "gu": "વાડોલા"
+        },
+        {
+          "code": "013",
+          "en": "Vainaj",
+          "gu": "વૈણજ"
+        },
+        {
+          "code": "054",
+          "en": "Vasna",
+          "gu": "વાસણા"
+        },
+        {
+          "code": "050",
+          "en": "Vatadra",
+          "gu": "વટાદરા"
+        },
+        {
+          "code": "052",
+          "en": "Vatra",
+          "gu": "વત્રા"
+        }
+      ]
+    },
+    {
+      "code": "05",
+      "en": "Petlad",
+      "gu": "પેટલાદ",
+      "villages": [
+        {
+          "code": "001",
+          "en": "Agas",
+          "gu": "અગાસ"
+        },
+        {
+          "code": "002",
+          "en": "Amod",
+          "gu": "આમોદ"
+        },
+        {
+          "code": "003",
+          "en": "Ardi",
+          "gu": "અરડી"
+        },
+        {
+          "code": "004",
+          "en": "Ashi",
+          "gu": "આશી"
+        },
+        {
+          "code": "005",
+          "en": "Bamroli",
+          "gu": "બામરોલી"
+        },
+        {
+          "code": "006",
+          "en": "Bhalel",
+          "gu": "ભારેલ"
+        },
+        {
+          "code": "007",
+          "en": "Bhatiel",
+          "gu": "ભાટીયેલ"
+        },
+        {
+          "code": "008",
+          "en": "Bhavanipura",
+          "gu": "ભવાનીપુરા"
+        },
+        {
+          "code": "009",
+          "en": "Bhurakui",
+          "gu": "ભુરાકુઇ"
+        },
+        {
+          "code": "010",
+          "en": "Boriya",
+          "gu": "બોરીયા"
+        },
+        {
+          "code": "011",
+          "en": "Changa",
+          "gu": "ચાંગા"
+        },
+        {
+          "code": "012",
+          "en": "Dantali",
+          "gu": "દંતાલી"
+        },
+        {
+          "code": "013",
+          "en": "Danteli",
+          "gu": "દંતેલી"
+        },
+        {
+          "code": "014",
+          "en": "Davalpura",
+          "gu": "દાવલપુરા"
+        },
+        {
+          "code": "015",
+          "en": "Demol",
+          "gu": "ડેમોલ"
+        },
+        {
+          "code": "016",
+          "en": "Dhairyapura",
+          "gu": "ધૈર્યપુરા"
+        },
+        {
+          "code": "017",
+          "en": "Dharmaj",
+          "gu": "ધર્મજ"
+        },
+        {
+          "code": "018",
+          "en": "Fangani",
+          "gu": "ફાગણી"
+        },
+        {
+          "code": "019",
+          "en": "Ghunteli",
+          "gu": "ઘુંટેલી"
+        },
+        {
+          "code": "020",
+          "en": "Isarama",
+          "gu": "ઇશરામા"
+        },
+        {
+          "code": "021",
+          "en": "Jesarva",
+          "gu": "જેસરવા"
+        },
+        {
+          "code": "022",
+          "en": "Jogan",
+          "gu": "જોગણ"
+        },
+        {
+          "code": "023",
+          "en": "Kaniya",
+          "gu": "કણીયા"
+        },
+        {
+          "code": "024",
+          "en": "Khadana",
+          "gu": "ખડાણા"
+        },
+        {
+          "code": "025",
+          "en": "Lakkadpura",
+          "gu": "લકકડપુરા"
+        },
+        {
+          "code": "026",
+          "en": "Mahelav",
+          "gu": "મહેળાવ"
+        },
+        {
+          "code": "027",
+          "en": "Manej",
+          "gu": "માણેજ"
+        },
+        {
+          "code": "028",
+          "en": "Manpura",
+          "gu": "માનપુરા"
+        },
+        {
+          "code": "029",
+          "en": "Morad",
+          "gu": "મોરડ"
+        },
+        {
+          "code": "030",
+          "en": "Nar",
+          "gu": "નાર"
+        },
+        {
+          "code": "031",
+          "en": "Padgol",
+          "gu": "પાડગોલ"
+        },
+        {
+          "code": "032",
+          "en": "Palaj",
+          "gu": "પાળજ"
+        },
+        {
+          "code": "033",
+          "en": "Pandoli",
+          "gu": "પંડોળી"
+        },
+        {
+          "code": "057",
+          "en": "Petlad",
+          "gu": "પેટલાદ"
+        },
+        {
+          "code": "034",
+          "en": "Porda",
+          "gu": "પોરડા"
+        },
+        {
+          "code": "035",
+          "en": "Ramodadi",
+          "gu": "રામોદડી"
+        },
+        {
+          "code": "037",
+          "en": "Rangaipura",
+          "gu": "રંગાઈપુરા"
+        },
+        {
+          "code": "038",
+          "en": "Ravipura",
+          "gu": "રવીપુરા"
+        },
+        {
+          "code": "039",
+          "en": "Ravli",
+          "gu": "રાવલી"
+        },
+        {
+          "code": "040",
+          "en": "Rupiyapura",
+          "gu": "રુપીયાપુરા"
+        },
+        {
+          "code": "041",
+          "en": "Sanjaya",
+          "gu": "સંજાયા"
+        },
+        {
+          "code": "042",
+          "en": "Sansej",
+          "gu": "સાંસેજ"
+        },
+        {
+          "code": "043",
+          "en": "Shahpur",
+          "gu": "શાહપુર"
+        },
+        {
+          "code": "044",
+          "en": "Shekhadi",
+          "gu": "શેખડી"
+        },
+        {
+          "code": "045",
+          "en": "Sihol",
+          "gu": "સિહોલ"
+        },
+        {
+          "code": "046",
+          "en": "Silvai",
+          "gu": "સીલવાઈ"
+        },
+        {
+          "code": "047",
+          "en": "Simarada",
+          "gu": "સીમરડા"
+        },
+        {
+          "code": "048",
+          "en": "Sunav",
+          "gu": "સુણાવ"
+        },
+        {
+          "code": "049",
+          "en": "Sundara",
+          "gu": "સુંદરા"
+        },
+        {
+          "code": "050",
+          "en": "Sundarana",
+          "gu": "સુંદરણા"
+        },
+        {
+          "code": "051",
+          "en": "Vadadala",
+          "gu": "વડદલા"
+        },
+        {
+          "code": "052",
+          "en": "Vatav",
+          "gu": "વટાવ"
+        },
+        {
+          "code": "053",
+          "en": "Virol(Simarada)",
+          "gu": "વિરોલ (સીમરડા)"
+        },
+        {
+          "code": "054",
+          "en": "Vishnoli",
+          "gu": "વિશ્નોલી"
+        },
+        {
+          "code": "055",
+          "en": "Vishrampura",
+          "gu": "વિશ્રામપુરા"
+        },
+        {
+          "code": "056",
+          "en": "bandhni",
+          "gu": "બાંધણી"
+        }
+      ]
     },
     {
       "code": "02",
       "en": "Sojitra",
       "gu": "સોજિત્રા",
-      "villages": null
+      "villages": [
+        {
+          "code": "016",
+          "en": "Balinta",
+          "gu": "બાલીન્ટા"
+        },
+        {
+          "code": "001",
+          "en": "Bantwa",
+          "gu": "બાંટવા"
+        },
+        {
+          "code": "002",
+          "en": "Bhadkad",
+          "gu": "ભડકદ"
+        },
+        {
+          "code": "007",
+          "en": "Dabhou",
+          "gu": "ડભોઉ"
+        },
+        {
+          "code": "014",
+          "en": "Dali",
+          "gu": "ડાલી"
+        },
+        {
+          "code": "003",
+          "en": "Deva Talpad",
+          "gu": "દેવા તળપદ"
+        },
+        {
+          "code": "015",
+          "en": "Devataj",
+          "gu": "દેવાતજ"
+        },
+        {
+          "code": "017",
+          "en": "Gada",
+          "gu": "ગાડા"
+        },
+        {
+          "code": "013",
+          "en": "Insav",
+          "gu": "ઇસણાવ"
+        },
+        {
+          "code": "012",
+          "en": "Kasor",
+          "gu": "કાસોર"
+        },
+        {
+          "code": "021",
+          "en": "Khansol",
+          "gu": "ખણસોલ"
+        },
+        {
+          "code": "020",
+          "en": "Kothavi",
+          "gu": "કોઠાવી"
+        },
+        {
+          "code": "010",
+          "en": "Limbali",
+          "gu": "લીંબાલી"
+        },
+        {
+          "code": "008",
+          "en": "Magharol",
+          "gu": "મઘરોલ"
+        },
+        {
+          "code": "006",
+          "en": "Maltaj",
+          "gu": "મલાતજ"
+        },
+        {
+          "code": "009",
+          "en": "Meghalpur",
+          "gu": "મેઘલપુર"
+        },
+        {
+          "code": "018",
+          "en": "Palol",
+          "gu": "પલોલ"
+        },
+        {
+          "code": "023",
+          "en": "Piplav",
+          "gu": "પીપળાવ"
+        },
+        {
+          "code": "019",
+          "en": "Runaj",
+          "gu": "રુણજ"
+        },
+        {
+          "code": "024",
+          "en": "SOJITRA",
+          "gu": "સોજીત્રા"
+        },
+        {
+          "code": "011",
+          "en": "Trambovad",
+          "gu": "ત્રંબોવાડ"
+        },
+        {
+          "code": "022",
+          "en": "Virol (Sojitra)",
+          "gu": "વિરોલ (સોજીત્રા)"
+        }
+      ]
+    },
+    {
+      "code": "01",
+      "en": "Tarapur",
+      "gu": "તારાપુર",
+      "villages": [
+        {
+          "code": "029",
+          "en": "Adruj",
+          "gu": "આદરુજ"
+        },
+        {
+          "code": "031",
+          "en": "Amaliyara",
+          "gu": "આમલીયારા"
+        },
+        {
+          "code": "041",
+          "en": "Bhanderaj",
+          "gu": "ભંડેરજ"
+        },
+        {
+          "code": "036",
+          "en": "Budhej",
+          "gu": "બુધેજ"
+        },
+        {
+          "code": "014",
+          "en": "Changada",
+          "gu": "ચાંગડા"
+        },
+        {
+          "code": "024",
+          "en": "Chikhaliya",
+          "gu": "ચીખલીયા"
+        },
+        {
+          "code": "008",
+          "en": "Chitarwada",
+          "gu": "ચીતરવાડા"
+        },
+        {
+          "code": "009",
+          "en": "Dugari",
+          "gu": "દુગારી"
+        },
+        {
+          "code": "011",
+          "en": "Fatepura",
+          "gu": "ફતેપુરા"
+        },
+        {
+          "code": "012",
+          "en": "Galiyana",
+          "gu": "ગલીયાણા"
+        },
+        {
+          "code": "032",
+          "en": "Gorad",
+          "gu": "ગોરાડ"
+        },
+        {
+          "code": "016",
+          "en": "Indranaj",
+          "gu": "ઈન્દ્રાણજ"
+        },
+        {
+          "code": "020",
+          "en": "Isanpur",
+          "gu": "ઈસનપુર"
+        },
+        {
+          "code": "027",
+          "en": "Isarwada",
+          "gu": "ઈસરવાડા"
+        },
+        {
+          "code": "006",
+          "en": "Jafarganj",
+          "gu": "જાફરગંજ"
+        },
+        {
+          "code": "035",
+          "en": "Jafrabad",
+          "gu": "જાફરાબાદ"
+        },
+        {
+          "code": "040",
+          "en": "Jalla",
+          "gu": "જલ્લા"
+        },
+        {
+          "code": "023",
+          "en": "Jichka",
+          "gu": "જીચકા"
+        },
+        {
+          "code": "007",
+          "en": "Kanavada",
+          "gu": "કાનાવાડા"
+        },
+        {
+          "code": "013",
+          "en": "Kasbara",
+          "gu": "કસબારા"
+        },
+        {
+          "code": "003",
+          "en": "Khada",
+          "gu": "ખડા"
+        },
+        {
+          "code": "034",
+          "en": "Khakhsar",
+          "gu": "ખાખસર"
+        },
+        {
+          "code": "022",
+          "en": "Khanpur",
+          "gu": "ખાનપુર"
+        },
+        {
+          "code": "025",
+          "en": "Mahiyari",
+          "gu": "મહીયારી"
+        },
+        {
+          "code": "030",
+          "en": "Malpur",
+          "gu": "માલપુર"
+        },
+        {
+          "code": "004",
+          "en": "Mil Rampura",
+          "gu": "મીલ રામપુરા"
+        },
+        {
+          "code": "039",
+          "en": "Mobha",
+          "gu": "મોભા"
+        },
+        {
+          "code": "028",
+          "en": "Moraj",
+          "gu": "મોરજ"
+        },
+        {
+          "code": "005",
+          "en": "Mota Kalodra",
+          "gu": "મોટા કલોદરા"
+        },
+        {
+          "code": "002",
+          "en": "Nabhoi",
+          "gu": "નભોઈ"
+        },
+        {
+          "code": "010",
+          "en": "Pachegam",
+          "gu": "પચેગામ"
+        },
+        {
+          "code": "033",
+          "en": "Padra",
+          "gu": "પાદરા"
+        },
+        {
+          "code": "021",
+          "en": "Rel",
+          "gu": "રેલ"
+        },
+        {
+          "code": "001",
+          "en": "Rinza",
+          "gu": "રીંઝા"
+        },
+        {
+          "code": "037",
+          "en": "Sath",
+          "gu": "સાઠ"
+        },
+        {
+          "code": "042",
+          "en": "Tarapur",
+          "gu": "તારાપુર"
+        },
+        {
+          "code": "026",
+          "en": "Tol",
+          "gu": "ટોલ"
+        },
+        {
+          "code": "038",
+          "en": "Untwada",
+          "gu": "ઉંટવાડા"
+        },
+        {
+          "code": "018",
+          "en": "Valandapura",
+          "gu": "વાળંદાપુરા"
+        },
+        {
+          "code": "019",
+          "en": "Valli",
+          "gu": "વલ્લી"
+        },
+        {
+          "code": "015",
+          "en": "Vank Talav",
+          "gu": "વાંક તળાવ"
+        },
+        {
+          "code": "017",
+          "en": "Varsada",
+          "gu": "વરસડા"
+        }
+      ]
     },
     {
       "code": "03",
@@ -26,69 +1685,14 @@
       "gu": "ઉમરેઠ",
       "villages": [
         {
+          "code": "031",
+          "en": "Ahima",
+          "gu": "અહીમા"
+        },
+        {
           "code": "001",
           "en": "Ardi",
           "gu": "અરડી"
-        },
-        {
-          "code": "002",
-          "en": "Ghora",
-          "gu": "ઘોરા"
-        },
-        {
-          "code": "003",
-          "en": "Thamna",
-          "gu": "થામણા"
-        },
-        {
-          "code": "004",
-          "en": "Bhatpura",
-          "gu": "ભાટપુરા"
-        },
-        {
-          "code": "005",
-          "en": "Navapura",
-          "gu": "નવાપુરા"
-        },
-        {
-          "code": "006",
-          "en": "Parvata",
-          "gu": "પરવટા"
-        },
-        {
-          "code": "007",
-          "en": "Lingda",
-          "gu": "લીંગડા"
-        },
-        {
-          "code": "008",
-          "en": "Pansora",
-          "gu": "પણસોરા"
-        },
-        {
-          "code": "009",
-          "en": "Untkhari",
-          "gu": "ઉટખરી"
-        },
-        {
-          "code": "010",
-          "en": "Zala Bordi",
-          "gu": "ઝાલા બોરડી"
-        },
-        {
-          "code": "011",
-          "en": "Vansol",
-          "gu": "વણસોલ"
-        },
-        {
-          "code": "012",
-          "en": "Saiyadpura",
-          "gu": "સૈયદપુરા"
-        },
-        {
-          "code": "013",
-          "en": "Meghva Badapura",
-          "gu": "મેઘવા બડાપુરા"
         },
         {
           "code": "014",
@@ -96,9 +1700,9 @@
           "gu": "આશીપુરા"
         },
         {
-          "code": "015",
-          "en": "Hamidpura",
-          "gu": "હમીદપુરા"
+          "code": "020",
+          "en": "Badapura",
+          "gu": "બડાપુરા"
         },
         {
           "code": "016",
@@ -106,64 +1710,9 @@
           "gu": "બેચરી"
         },
         {
-          "code": "017",
-          "en": "Khankhanpur",
-          "gu": "ખાંખણપુર"
-        },
-        {
-          "code": "018",
-          "en": "Dhuleta",
-          "gu": "ઘુલેટા"
-        },
-        {
-          "code": "019",
-          "en": "Sureli",
-          "gu": "સુરેલી"
-        },
-        {
-          "code": "020",
-          "en": "Badapura",
-          "gu": "બડાપુરા"
-        },
-        {
-          "code": "021",
-          "en": "Ratanpura",
-          "gu": "રતનપુરા"
-        },
-        {
-          "code": "022",
-          "en": "Dagjipura",
-          "gu": "દાગજીપુરા"
-        },
-        {
-          "code": "023",
-          "en": "Gangapura",
-          "gu": "ગંગાપુરા"
-        },
-        {
-          "code": "024",
-          "en": "Jakhala",
-          "gu": "જાખલાં"
-        },
-        {
-          "code": "025",
-          "en": "Fatepura",
-          "gu": "ફતેપુરા"
-        },
-        {
-          "code": "026",
-          "en": "Tarpura",
-          "gu": "તારપુરા"
-        },
-        {
           "code": "027",
           "en": "Bhalej",
           "gu": "ભાલેજ"
-        },
-        {
-          "code": "028",
-          "en": "Khankuva",
-          "gu": "ખાનકુવા"
         },
         {
           "code": "029",
@@ -171,14 +1720,104 @@
           "gu": "ભરોડા"
         },
         {
-          "code": "030",
-          "en": "Sundalpura",
-          "gu": "સુંદલપુરા"
+          "code": "004",
+          "en": "Bhatpura",
+          "gu": "ભાટપુરા"
         },
         {
-          "code": "031",
-          "en": "Ahima",
-          "gu": "અહીમા"
+          "code": "022",
+          "en": "Dagjipura",
+          "gu": "દાગજીપુરા"
+        },
+        {
+          "code": "036",
+          "en": "Dholi",
+          "gu": "ધોળી"
+        },
+        {
+          "code": "018",
+          "en": "Dhuleta",
+          "gu": "ઘુલેટા"
+        },
+        {
+          "code": "025",
+          "en": "Fatepura",
+          "gu": "ફતેપુરા"
+        },
+        {
+          "code": "023",
+          "en": "Gangapura",
+          "gu": "ગંગાપુરા"
+        },
+        {
+          "code": "002",
+          "en": "Ghora",
+          "gu": "ઘોરા"
+        },
+        {
+          "code": "015",
+          "en": "Hamidpura",
+          "gu": "હમીદપુરા"
+        },
+        {
+          "code": "024",
+          "en": "Jakhala",
+          "gu": "જાખલાં"
+        },
+        {
+          "code": "017",
+          "en": "Khankhanpur",
+          "gu": "ખાંખણપુર"
+        },
+        {
+          "code": "028",
+          "en": "Khankuva",
+          "gu": "ખાનકુવા"
+        },
+        {
+          "code": "034",
+          "en": "Khorwad",
+          "gu": "ખોરવાડ"
+        },
+        {
+          "code": "007",
+          "en": "Lingda",
+          "gu": "લીંગડા"
+        },
+        {
+          "code": "013",
+          "en": "Meghva Badapura",
+          "gu": "મેઘવા બડાપુરા"
+        },
+        {
+          "code": "005",
+          "en": "Navapura",
+          "gu": "નવાપુરા"
+        },
+        {
+          "code": "008",
+          "en": "Pansora",
+          "gu": "પણસોરા"
+        },
+        {
+          "code": "006",
+          "en": "Parvata",
+          "gu": "પરવટા"
+        },
+        {
+          "code": "035",
+          "en": "Pratappura",
+          "gu": "પ્રતાપપુરા"
+        },
+        {
+          "code": "021",
+          "en": "Ratanpura",
+          "gu": "રતનપુરા"
+        },
+        {
+          "code": "012",
+          "en": "Saiyadpura",
+          "gu": "સૈયદપુરા"
         },
         {
           "code": "032",
@@ -191,62 +1830,46 @@
           "gu": "શીલી"
         },
         {
-          "code": "034",
-          "en": "Khorwad",
-          "gu": "ખોરવાડ"
+          "code": "030",
+          "en": "Sundalpura",
+          "gu": "સુંદલપુરા"
         },
         {
-          "code": "035",
-          "en": "Pratappura",
-          "gu": "પ્રતાપપુરા"
+          "code": "019",
+          "en": "Sureli",
+          "gu": "સુરેલી"
         },
         {
-          "code": "036",
-          "en": "Dholi",
-          "gu": "ધોળી"
+          "code": "026",
+          "en": "Tarpura",
+          "gu": "તારપુરા"
+        },
+        {
+          "code": "003",
+          "en": "Thamna",
+          "gu": "થામણા"
         },
         {
           "code": "037",
           "en": "UMRETH",
           "gu": "ઉમરેઠ"
+        },
+        {
+          "code": "009",
+          "en": "Untkhari",
+          "gu": "ઉટખરી"
+        },
+        {
+          "code": "011",
+          "en": "Vansol",
+          "gu": "વણસોલ"
+        },
+        {
+          "code": "010",
+          "en": "Zala Bordi",
+          "gu": "ઝાલા બોરડી"
         }
       ]
-    },
-    {
-      "code": "04",
-      "en": "Anand",
-      "gu": "આણંદ",
-      "villages": null
-    },
-    {
-      "code": "05",
-      "en": "Petlad",
-      "gu": "પેટલાદ",
-      "villages": null
-    },
-    {
-      "code": "06",
-      "en": "Khambhat",
-      "gu": "ખંભાત",
-      "villages": null
-    },
-    {
-      "code": "07",
-      "en": "Borsad",
-      "gu": "બોરસદ",
-      "villages": null
-    },
-    {
-      "code": "08",
-      "en": "Anklav",
-      "gu": "આંકલાવ",
-      "villages": null
-    },
-    {
-      "code": "09",
-      "en": "Anand (City)",
-      "gu": "આણંદ (શહેર)",
-      "villages": null
     }
   ]
 }

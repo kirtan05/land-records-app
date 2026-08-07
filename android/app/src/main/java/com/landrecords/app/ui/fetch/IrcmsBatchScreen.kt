@@ -43,6 +43,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.data.LandRecordsRepository
 import com.landrecords.app.data.model.RecordType
+import com.landrecords.app.data.storage.CasesStore
 import com.landrecords.app.data.storage.LibraryWriter
 import com.landrecords.app.ui.components.SquareIconButton
 import com.landrecords.app.ui.landApp
@@ -174,28 +175,38 @@ fun IrcmsBatchScreen(
                 }
                 if (st == "READY") {
                     val listHtml = WebViewCapture.rawHtml(wv)
-                    val (token, cases) = parseCases(WebViewCapture.eval(wv, IrcmsInjection.readCasesJs()))
+                    val (token, cases) = parseCaseList(WebViewCapture.eval(wv, IrcmsInjection.readCasesJs()))
                     android.util.Log.i("LR", "batch: ${t.surveyNo} -> ${cases.size} cases")
                     val cwv = captureRef
-                    val parts = ArrayList<ByteArray>(cases.size)
+                    val captures = ArrayList<CasesStore.CaseCapture>(cases.size)
                     if (cwv != null) {
-                        for ((ci, ck) in cases.withIndex()) {
+                        for ((ci, c) in cases.withIndex()) {
                             progress = "${t.surveyNo}  ·  કેસ / case ${ci + 1}/${cases.size}"
                             val sig = CompletableDeferred<Unit>(); captureSignal = sig
-                            cwv.post { cwv.postUrl(Ircms.CASE_DETAIL_URL, IrcmsInjection.caseBody(token, ck).toByteArray()) }
+                            cwv.post { cwv.postUrl(Ircms.CASE_DETAIL_URL, IrcmsInjection.caseBody(token, c.casekey).toByteArray()) }
                             withTimeoutOrNull(20_000) { sig.await() }
                             delay(650)
                             WebViewCapture.eval(cwv, IrcmsInjection.caseCleanupJs())
                             val pdf = PrintPdf.toPdfBytes(cwv, app.cacheDir) ?: WebViewCapture.toPdfBytes(cwv)
-                            if (pdf.isNotEmpty()) parts.add(pdf)
                             val orderForm = WebViewCapture.eval(cwv, IrcmsInjection.orderFormJs())
+                            var orderPdf: ByteArray? = null
                             if (orderForm.startsWith("{")) {
                                 progress = "${t.surveyNo}  ·  હુકમ / order ${ci + 1}"
-                                OrderDownloader.fetch(orderForm)?.let { parts.add(it) }
+                                orderPdf = OrderDownloader.fetch(orderForm)
                             }
+                            captures.add(
+                                CasesStore.CaseCapture(
+                                    sr = c.sr, caseNo = c.caseNo, status = c.status, office = c.office,
+                                    dtv = c.dtv, parties = c.parties, survno = c.survno,
+                                    detailPdf = pdf.takeIf { it.isNotEmpty() }, orderPdf = orderPdf,
+                                ),
+                            )
                         }
                     }
                     progress = "${t.surveyNo}  ·  સાચવી રહ્યા છીએ / saving"
+                    // Persist each case's own PDFs + a cases.json manifest (additive to the merged PDF).
+                    CasesStore.save(app, i.district, i.taluka, i.village, t.surveyNo, captures)
+                    val parts = captures.flatMap { listOfNotNull(it.detailPdf, it.orderPdf) }
                     val merged = PdfMerge.merge(parts, app.cacheDir)
                     if (merged != null && merged.isNotEmpty()) {
                         vm.fileCases(t.surveyId, t.surveyNo, merged, listHtml, cases.size)
@@ -304,7 +315,7 @@ fun IrcmsBatchScreen(
                     onBack = null,
                 )
             }
-            working -> InputBlocker(active = true) { if (mainLoaded >= 1) FillingIndicator() }
+            working -> InputBlocker(active = true) { if (mainLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
     }
 }

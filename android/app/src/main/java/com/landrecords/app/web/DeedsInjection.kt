@@ -37,6 +37,21 @@ object DeedsInjection {
      * [DeedsDownloader.fetchDeed] takes this JSON and, per deed, overrides __EVENTTARGET with the
      * row's eventTarget to pull that deed's bytes.
      */
+    /** Diagnostic: is the garvi deed table present on the live page, and what tables exist? */
+    fun deedDebugJs(): String = """
+    (function(){ try{
+      var ids=Array.prototype.slice.call(document.querySelectorAll('table[id]')).map(function(t){return t.id.replace('ContentPlaceHolder1_','');});
+      var g=document.getElementById('$GARVI_TABLE_ID');
+      var body=document.body.innerText||'';
+      var viewDeed=/View Deed/i.test(body);                          // the actual deed button label
+      var subReg=/Sub.?registrar|સબ.?રજીસ્ટ્રાર/i.test(body);        // the deed section heading
+      // Any table that contains the deed download links, whatever its id.
+      var deedTbls=Array.prototype.slice.call(document.querySelectorAll('table')).filter(function(t){
+        return /View Deed|lbDownload|Sub.?registrar/i.test(t.innerHTML||''); }).map(function(t){ return t.id||'noid'; });
+      return 'garvi='+(!!g)+' viewDeed='+viewDeed+' subReg='+subReg+' deedTables=['+deedTbls.join(',')+'] tables=['+ids.join(',')+']';
+    }catch(e){ return 'ERR:'+e.message; } })();
+    """.trimIndent()
+
     fun deedFormJs(): String = """
     (function(){
       try {

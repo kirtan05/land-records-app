@@ -176,6 +176,33 @@ fun BoxScope.FillingIndicator() {
 }
 
 /**
+ * Opaque cover shown while the page itself is still loading (pageLoaded == 0) — most visible on
+ * the very first fetch of a session, when Android is one-time initializing the WebView engine
+ * and the view is briefly black. Once the page loads we switch to the lighter FillingIndicator.
+ */
+@Composable
+fun OpeningOverlay() {
+    Column(
+        Modifier.fillMaxSize().background(Land.colors.bg).padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        ParcelPlate { Text("…", style = LandType.metaMono, color = Land.colors.ink) }
+        Spacer(Modifier.height(18.dp))
+        LinearProgressIndicator(
+            color = Land.colors.accent,
+            trackColor = Land.colors.surfaceAlt,
+            modifier = Modifier.fillMaxWidth().height(LandSize.progressBar).clip(RoundedCornerShape(2.dp)),
+        )
+        Spacer(Modifier.height(12.dp))
+        Text(
+            "ખૂલી રહ્યું છે…  ·  Opening…",
+            style = LandType.stamp, color = Land.colors.ink3, textAlign = TextAlign.Center,
+        )
+    }
+}
+
+/**
  * The buffer shown after the user taps Get Record Detail, until the capture pipeline takes
  * over. Blocks the dead air the user reported between the tap and "Saving…".
  */

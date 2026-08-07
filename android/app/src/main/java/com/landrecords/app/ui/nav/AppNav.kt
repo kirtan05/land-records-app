@@ -15,6 +15,7 @@ import androidx.navigation.navArgument
 import com.landrecords.app.data.model.RecordType
 import com.landrecords.app.ui.fetch.FetchScreen
 import com.landrecords.app.ui.fetch.IrcmsBatchScreen
+import com.landrecords.app.ui.fetch.IrcmsCasesScreen
 import com.landrecords.app.ui.fetch.IrcmsFetchScreen
 import com.landrecords.app.ui.fetch.Vf712FetchScreen
 import com.landrecords.app.ui.fetch.RegenerateScreen
@@ -32,11 +33,13 @@ private object Routes {
     const val ADD = "add_property"
     const val SETTINGS = "settings"
     const val IRCMS_BATCH = "ircms_batch/{propertyId}"
+    const val IRCMS_CASES = "ircms_cases/{surveyId}"
 
     fun survey(id: Long, justAdded: String? = null) = "survey/$id?justAdded=${justAdded ?: ""}"
     fun fetch(id: Long, type: RecordType) = "fetch/$id/${type.name}"
     fun regen(id: Long, type: RecordType) = "regen/$id/${type.name}"
     fun ircmsBatch(propertyId: Long) = "ircms_batch/$propertyId"
+    fun ircmsCases(surveyId: Long) = "ircms_cases/$surveyId"
 }
 
 @Composable
@@ -77,6 +80,7 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
                 onBack = { navController.popBackStack() },
                 onFetch = { sid, type -> navController.navigate(Routes.fetch(sid, type)) },
                 onRegenerate = { sid, type -> navController.navigate(Routes.regen(sid, type)) },
+                onCases = { sid -> navController.navigate(Routes.ircmsCases(sid)) },
             )
         }
         composable(
@@ -126,6 +130,13 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
                 onBack = { navController.popBackStack() },
                 onDone = { navController.popBackStack() },
             )
+        }
+        composable(
+            Routes.IRCMS_CASES,
+            arguments = listOf(navArgument("surveyId") { type = NavType.LongType }),
+        ) { entry ->
+            val id = entry.arguments?.getLong("surveyId") ?: return@composable
+            IrcmsCasesScreen(surveyId = id, onBack = { navController.popBackStack() })
         }
         composable(Routes.SETTINGS) {
             SettingsScreen(onBack = { navController.popBackStack() })

@@ -108,7 +108,13 @@ object IrcmsInjection {
     })();
     """.trimIndent()
 
-    /** Reads the cases + the viewnewcasestatus form token as JSON: {token, cases:[{casekey,...}]}. */
+    /**
+     * Reads the cases + the viewnewcasestatus form token as JSON:
+     *   {token, cases:[{casekey, sr, caseNo, status, office, dtv, parties, survno}]}.
+     * Columns (see [searchSurveyDirectJs] trHTML): 0 sr · 1 case_str · 2 office · 3 date ·
+     * 4 survey · 5 parties · 6 view. `status` is parsed from the "(PENDING)/(DISPOSED)" suffix
+     * in case_str; `caseNo` keeps the full case_str (lossless) so the UI can strip it for display.
+     */
     fun readCasesJs(): String = """
     (function(){
       try {
@@ -124,7 +130,10 @@ object IrcmsInjection {
           var id=b.getAttribute('data-id')||'', off=b.getAttribute('data-offcode')||'', sur=b.getAttribute('data-survno')||'';
           var str=id+':'+off+':'+sur;
           var skey=id?btoa(unescape(encodeURIComponent(str))):'';
-          return { casekey: skey, caseNo: tds[1]||'', office: tds[2]||'', survno: tds[4]||'' };
+          var cstr=tds[1]||'';
+          var m=cstr.match(/\((PENDING|DISPOSED)\)/i);
+          return { casekey: skey, sr: tds[0]||'', caseNo: cstr, status: m?m[1].toUpperCase():'',
+                   office: tds[2]||'', dtv: tds[3]||'', parties: tds[5]||'', survno: tds[4]||'' };
         }).filter(function(c){ return c.casekey; });
         return JSON.stringify({ token: token, cases: cases });
       } catch(e){ return JSON.stringify({ token:'', cases:[] }); }

@@ -117,7 +117,9 @@ fun FetchScreen(
                     vm.setPhase(FetchPhase.READING)
                     if (recordType == RecordType.DEEDS) {
                         // Deeds live inside the same type-8 page (the garvi/Sub-registrar table).
+                        android.util.Log.i("LR", "deeds probe: " + WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedDebugJs()))
                         val deedJson = WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedFormJs())
+                        android.util.Log.i("LR", "deeds: ${if (deedJson == "NONE" || deedJson.isBlank()) "NONE (no deed table)" else "found len=${deedJson.length}"}")
                         if (deedJson == "NONE" || deedJson.isBlank()) {
                             vm.markEmpty(RecordType.DEEDS); vm.setPhase(FetchPhase.DONE); delay(450); onDone()
                         } else {
@@ -278,7 +280,7 @@ fun FetchScreen(
         // the cascade can't be derailed. Only show the "Filling…" chip once the form has
         // actually loaded — before that it'd sit over a blank page, which read as premature.
         working -> {
-            InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() }
+            InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
     }
     }

@@ -55,6 +55,7 @@ fun SurveyDetailScreen(
     onBack: () -> Unit,
     onFetch: (Long, RecordType) -> Unit,
     onRegenerate: (Long, RecordType) -> Unit,
+    onCases: (Long) -> Unit,
 ) {
     val app = landApp()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -113,7 +114,10 @@ fun SurveyDetailScreen(
                     docCount = record?.docCount ?: 0,
                     asOfGu = record?.asOf ?: "",
                     asOfLatin = (record?.asOf ?: "").guToLatinDigits(),
-                    justAdded = type == justAddedType,
+                    // "Just added" only when something was actually added; a record row with 0
+                    // docs means "checked, none found" (e.g. no iRCMS cases / no deeds).
+                    justAdded = type == justAddedType && (record?.docCount ?: 0) > 0,
+                    checked = record != null,
                     onView = {
                         val ok = LibraryAccess.view(context, record?.pdfPath)
                         if (!ok) android.widget.Toast.makeText(context, "Can't open this file", android.widget.Toast.LENGTH_SHORT).show()
@@ -132,6 +136,7 @@ fun SurveyDetailScreen(
                         if (!ok) android.widget.Toast.makeText(context, "Nothing to share yet", android.widget.Toast.LENGTH_SHORT).show()
                     },
                     onGet = { onFetch(surveyId, type) },
+                    onCases = if (type == RecordType.IRCMS) ({ onCases(surveyId) }) else null,
                 )
             }
             item {

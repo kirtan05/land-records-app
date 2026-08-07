@@ -42,10 +42,13 @@ fun RecordCard(
     asOfGu: String,
     asOfLatin: String,
     justAdded: Boolean,
+    checked: Boolean = false,
     onView: () -> Unit,
     onRegenerate: () -> Unit,
     onShare: () -> Unit,
     onGet: () -> Unit,
+    /** iRCMS only: opens the per-case Cases view. Shown as a pill when held (docCount>0). */
+    onCases: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val lang = LocalLang.current
@@ -109,6 +112,9 @@ fun RecordCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 PillButton(Lr(R.string.action_view_gu, R.string.action_view_en), onView, filled = true)
+                if (type == RecordType.IRCMS && onCases != null) {
+                    PillButton(lang.join("કેસ", "Cases"), onCases)
+                }
                 PillButton(Lr(R.string.action_regenerate_gu, R.string.action_regenerate_en), onRegenerate)
                 PillButton(Lr(R.string.action_share_gu, R.string.action_share_en), onShare)
             }
@@ -132,11 +138,16 @@ fun RecordCard(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Text(
-                    Lr(R.string.not_fetched_gu, R.string.not_fetched_en),
+                    if (checked) lang.join("ઉપલબ્ધ નથી", "Not available")
+                    else Lr(R.string.not_fetched_gu, R.string.not_fetched_en),
                     style = LandType.metaMono, color = Land.colors.ink3,
                     modifier = Modifier.weight(1f),
                 )
-                PillButton(Lr(R.string.get_record_gu, R.string.get_record_en), onGet)
+                PillButton(
+                    if (checked) lang.join("ફરી તપાસો", "Recheck")
+                    else Lr(R.string.get_record_gu, R.string.get_record_en),
+                    onGet,
+                )
             }
         }
     }

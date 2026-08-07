@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.R
 import com.landrecords.app.data.model.RecordType
+import com.landrecords.app.data.storage.CasesStore
 import com.landrecords.app.ui.components.SquareIconButton
 import com.landrecords.app.ui.landApp
 import com.landrecords.app.ui.theme.Land
@@ -134,30 +135,41 @@ fun IrcmsFetchScreen(
                 vm.setPhase(FetchPhase.READING)
                 val listHtml = WebViewCapture.rawHtml(wv)
                 val casesJson = WebViewCapture.eval(wv, IrcmsInjection.readCasesJs())
-                val (token, cases) = parseCases(casesJson)
+                val (token, cases) = parseCaseList(casesJson)
                 android.util.Log.i("LR", "iRCMS cases=${cases.size} token=${token.take(6)}…")
                 if (cases.isEmpty()) { vm.markEmpty(RecordType.IRCMS); vm.setPhase(FetchPhase.DONE); delay(300); onDone(); return@LaunchedEffect }
 
                 vm.setPhase(FetchPhase.BUILDING)
                 // Desktop UA now (capture only) so the case pages render wide for the PDF.
                 wv.settings.userAgentString = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
-                val parts = ArrayList<ByteArray>(cases.size)
-                for ((idx, casekey) in cases.withIndex()) {
+                val captures = ArrayList<CasesStore.CaseCapture>(cases.size)
+                for ((idx, c) in cases.withIndex()) {
                     val sig = CompletableDeferred<Unit>()
                     pageSignal = sig
-                    val body = IrcmsInjection.caseBody(token, casekey).toByteArray()
+                    val body = IrcmsInjection.caseBody(token, c.casekey).toByteArray()
                     wv.post { wv.postUrl(Ircms.CASE_DETAIL_URL, body) }
                     withTimeoutOrNull(20_000) { sig.await() }
                     delay(700)
                     WebViewCapture.eval(wv, IrcmsInjection.caseCleanupJs())
                     val pdf = PrintPdf.toPdfBytes(wv, app.cacheDir) ?: WebViewCapture.toPdfBytes(wv)
-                    if (pdf.isNotEmpty()) parts.add(pdf)
-                    // Disposed cases carry a "Download Order" — append the order PDF after the case.
+                    // Disposed cases carry a "Download Order" — the order PDF follows the case.
                     val orderForm = WebViewCapture.eval(wv, IrcmsInjection.orderFormJs())
-                    if (orderForm.startsWith("{")) OrderDownloader.fetch(orderForm)?.let { parts.add(it) }
-                    android.util.Log.i("LR", "iRCMS captured case ${idx + 1}/${cases.size} (${pdf.size} bytes)")
+                    val orderPdf = if (orderForm.startsWith("{")) OrderDownloader.fetch(orderForm) else null
+                    captures.add(
+                        CasesStore.CaseCapture(
+                            sr = c.sr, caseNo = c.caseNo, status = c.status, office = c.office,
+                            dtv = c.dtv, parties = c.parties, survno = c.survno,
+                            detailPdf = pdf.takeIf { it.isNotEmpty() }, orderPdf = orderPdf,
+                        ),
+                    )
+                    android.util.Log.i("LR", "iRCMS captured case ${idx + 1}/${cases.size} (${pdf.size} bytes, order=${orderPdf != null})")
                 }
 
+                // Persist each case's own PDFs + a cases.json manifest (additive to the merged PDF).
+                CasesStore.save(app, i.district, i.taluka, i.village, i.surveyNo, captures)
+
+                // The quick View-all PDF is the ordered concat of every case (detail then order).
+                val parts = captures.flatMap { listOfNotNull(it.detailPdf, it.orderPdf) }
                 val merged = PdfMerge.merge(parts, app.cacheDir)
                 if (merged == null || merged.isEmpty()) { vm.fail("Couldn't build the cases PDF."); return@LaunchedEffect }
                 vm.setPhase(FetchPhase.FILING)
@@ -253,26 +265,51 @@ fun IrcmsFetchScreen(
                 }
             }
             working && awaitingList -> InputBlocker(active = true) { PreparingOverlay(fetching = true) }
-            working -> InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() }
+            working -> InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
     }
 }
 
-/** Parse readCasesJs output → (token, list of casekeys, in table order). */
-internal fun parseCases(json: String): Pair<String, List<String>> {
+/** A case row scraped from the iRCMS list — metadata only; each PDF is captured separately. */
+internal data class ScrapedCase(
+    val casekey: String,
+    val sr: String,
+    val caseNo: String,
+    val status: String,
+    val office: String,
+    val dtv: String,
+    val parties: String,
+    val survno: String,
+)
+
+/** Parse readCasesJs output → (token, ordered unique cases in table order). */
+internal fun parseCaseList(json: String): Pair<String, List<ScrapedCase>> {
     return try {
         val o = JSONObject(json)
         val token = o.optString("token", "")
         val arr = o.optJSONArray("cases") ?: return token to emptyList()
-        val keys = ArrayList<String>(arr.length())
+        val out = ArrayList<ScrapedCase>(arr.length())
         val seen = HashSet<String>()
         for (i in 0 until arr.length()) {
-            val k = arr.getJSONObject(i).optString("casekey", "")
-            if (k.isNotBlank() && seen.add(k)) keys.add(k) // dedupe repeated case rows
+            val c = arr.getJSONObject(i)
+            val key = c.optString("casekey", "")
+            if (key.isBlank() || !seen.add(key)) continue // dedupe repeated case rows
+            out.add(
+                ScrapedCase(
+                    casekey = key,
+                    sr = c.optString("sr", "").ifBlank { (out.size + 1).toString() },
+                    caseNo = c.optString("caseNo", ""),
+                    status = c.optString("status", ""),
+                    office = c.optString("office", ""),
+                    dtv = c.optString("dtv", ""),
+                    parties = c.optString("parties", ""),
+                    survno = c.optString("survno", ""),
+                ),
+            )
         }
-        token to keys
+        token to out
     } catch (e: Exception) {
-        android.util.Log.w("LR", "parseCases failed: ${e.message}")
+        android.util.Log.w("LR", "parseCaseList failed: ${e.message}")
         "" to emptyList()
     }
 }

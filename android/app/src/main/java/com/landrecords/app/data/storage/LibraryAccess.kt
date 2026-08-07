@@ -92,4 +92,27 @@ object LibraryAccess {
         }
         return runCatching { context.startActivity(chooser); true }.getOrDefault(false)
     }
+
+    /**
+     * Share freshly-built PDF [bytes] (e.g. an on-the-fly export of selected iRCMS cases) under a
+     * descriptive [shareName]. Same cache/FileProvider pattern as [share], but the source is bytes
+     * in memory rather than a stored library file.
+     */
+    fun shareBytes(context: Context, bytes: ByteArray, shareName: String): Boolean {
+        if (bytes.isEmpty()) return false
+        val safe = shareName.replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "cases.pdf" }
+        val out = File(context.cacheDir, "share").apply { mkdirs() }.let { File(it, safe) }
+        runCatching { out.writeBytes(bytes) }.getOrElse { return false }
+        val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", out)
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            putExtra(Intent.EXTRA_TITLE, shareName)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        val chooser = Intent.createChooser(intent, "Share cases").apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        return runCatching { context.startActivity(chooser); true }.getOrDefault(false)
+    }
 }
