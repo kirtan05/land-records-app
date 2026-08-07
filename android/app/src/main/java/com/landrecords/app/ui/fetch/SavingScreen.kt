@@ -1,6 +1,13 @@
 package com.landrecords.app.ui.fetch
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -120,6 +127,25 @@ fun InputBlocker(active: Boolean, content: @Composable BoxScope.() -> Unit) {
             ),
         content = content,
     )
+}
+
+/**
+ * A live step line: the new step slides up + fades in; the old one slides up while shrinking and
+ * greying out — so the user sees continuous motion instead of a frozen screen.
+ */
+@Composable
+fun AnimatedStep(text: String, modifier: Modifier = Modifier) {
+    AnimatedContent(
+        targetState = text,
+        transitionSpec = {
+            (slideInVertically { it / 2 } + fadeIn()) togetherWith
+                (slideOutVertically { -it } + fadeOut() + scaleOut(targetScale = 0.8f))
+        },
+        label = "step",
+        modifier = modifier,
+    ) { t ->
+        Text(t, style = LandType.metaMono, color = Land.colors.ink2, textAlign = TextAlign.Center)
+    }
 }
 
 /**

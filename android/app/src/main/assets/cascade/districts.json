@@ -1,0 +1,177 @@
+{
+  "source": "ircms.gujarat.gov.in/ViewSurveyList #sel_district (captured recon-page.html, 2025-06-11)",
+  "note": "iRCMS district codes. AnyRoR (LandRecordRural.aspx #ContentPlaceHolder1_ddlDistrict) uses the SAME numeric codes (verified against anyror/recon-page.html); AnyRoR labels are Gujarati-only.",
+  "count": 34,
+  "districts": [
+    {
+      "code": "01",
+      "en": "KACHCHH",
+      "gu": "કચ્છ"
+    },
+    {
+      "code": "02",
+      "en": "BANASKANTHA",
+      "gu": "બનાસકાંઠા"
+    },
+    {
+      "code": "03",
+      "en": "PATAN",
+      "gu": "પાટણ"
+    },
+    {
+      "code": "04",
+      "en": "MAHESANA",
+      "gu": "મહેસાણા"
+    },
+    {
+      "code": "05",
+      "en": "SABARKANTHA",
+      "gu": "સાબરકાંઠા"
+    },
+    {
+      "code": "06",
+      "en": "GANDHINAGAR",
+      "gu": "ગાંધીનગર"
+    },
+    {
+      "code": "07",
+      "en": "AHMADABAD",
+      "gu": "અમદાવાદ"
+    },
+    {
+      "code": "08",
+      "en": "SURENDRANAGAR",
+      "gu": "સુરેન્દ્રનગર"
+    },
+    {
+      "code": "09",
+      "en": "RAJKOT",
+      "gu": "રાજકોટ"
+    },
+    {
+      "code": "10",
+      "en": "JAMNAGAR",
+      "gu": "જામનગર"
+    },
+    {
+      "code": "11",
+      "en": "PORBANDAR",
+      "gu": "પોરબંદર"
+    },
+    {
+      "code": "12",
+      "en": "JUNAGADH",
+      "gu": "જુનાગઢ"
+    },
+    {
+      "code": "13",
+      "en": "AMRELI",
+      "gu": "અમરેલી"
+    },
+    {
+      "code": "14",
+      "en": "BHAVNAGAR",
+      "gu": "ભાવનગર"
+    },
+    {
+      "code": "15",
+      "en": "ANAND",
+      "gu": "આણંદ"
+    },
+    {
+      "code": "16",
+      "en": "KHEDA",
+      "gu": "ખેડા"
+    },
+    {
+      "code": "17",
+      "en": "PANCHMAHALS",
+      "gu": "પંચમહાલ"
+    },
+    {
+      "code": "18",
+      "en": "DAHOD",
+      "gu": "દાહોદ"
+    },
+    {
+      "code": "19",
+      "en": "VADODARA",
+      "gu": "વડોદરા"
+    },
+    {
+      "code": "20",
+      "en": "NARMADA",
+      "gu": "નર્મદા"
+    },
+    {
+      "code": "21",
+      "en": "BHARUCH",
+      "gu": "ભરુચ"
+    },
+    {
+      "code": "22",
+      "en": "SURAT",
+      "gu": "સુરત"
+    },
+    {
+      "code": "23",
+      "en": "DANGS",
+      "gu": "ડાંગ"
+    },
+    {
+      "code": "24",
+      "en": "NAVSARI",
+      "gu": "નવસારી"
+    },
+    {
+      "code": "25",
+      "en": "VALSAD",
+      "gu": "વલસાડ"
+    },
+    {
+      "code": "26",
+      "en": "TAPI",
+      "gu": "તાપી"
+    },
+    {
+      "code": "27",
+      "en": "DEVBHUMI DWARKA",
+      "gu": "દેવભુમિ દ્વારકા"
+    },
+    {
+      "code": "28",
+      "en": "MORBI",
+      "gu": "મોરબી"
+    },
+    {
+      "code": "29",
+      "en": "GIR SOMNATH",
+      "gu": "ગીર સોમનાથ"
+    },
+    {
+      "code": "30",
+      "en": "BOTAD",
+      "gu": "બોટાદ"
+    },
+    {
+      "code": "31",
+      "en": "ARVALLI",
+      "gu": "અરવલ્લી"
+    },
+    {
+      "code": "32",
+      "en": "MAHISAGAR",
+      "gu": "મહિસાગર"
+    },
+    {
+      "code": "33",
+      "en": "CHHOTAUDEPUR",
+      "gu": "છોટાઉદેપુર"
+    },
+    {
+      "code": "34",
+      "en": "VAV-THARAD",
+      "gu": "વાવ થરાદ"
+    }
+  ]
+}

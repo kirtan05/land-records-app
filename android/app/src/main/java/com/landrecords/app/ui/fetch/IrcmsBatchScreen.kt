@@ -179,7 +179,8 @@ fun IrcmsBatchScreen(
                     val cwv = captureRef
                     val parts = ArrayList<ByteArray>(cases.size)
                     if (cwv != null) {
-                        for (ck in cases) {
+                        for ((ci, ck) in cases.withIndex()) {
+                            progress = "${t.surveyNo}  ·  કેસ / case ${ci + 1}/${cases.size}"
                             val sig = CompletableDeferred<Unit>(); captureSignal = sig
                             cwv.post { cwv.postUrl(Ircms.CASE_DETAIL_URL, IrcmsInjection.caseBody(token, ck).toByteArray()) }
                             withTimeoutOrNull(20_000) { sig.await() }
@@ -188,9 +189,13 @@ fun IrcmsBatchScreen(
                             val pdf = PrintPdf.toPdfBytes(cwv, app.cacheDir) ?: WebViewCapture.toPdfBytes(cwv)
                             if (pdf.isNotEmpty()) parts.add(pdf)
                             val orderForm = WebViewCapture.eval(cwv, IrcmsInjection.orderFormJs())
-                            if (orderForm.startsWith("{")) OrderDownloader.fetch(orderForm)?.let { parts.add(it) }
+                            if (orderForm.startsWith("{")) {
+                                progress = "${t.surveyNo}  ·  હુકમ / order ${ci + 1}"
+                                OrderDownloader.fetch(orderForm)?.let { parts.add(it) }
+                            }
                         }
                     }
+                    progress = "${t.surveyNo}  ·  સાચવી રહ્યા છીએ / saving"
                     val merged = PdfMerge.merge(parts, app.cacheDir)
                     if (merged != null && merged.isNotEmpty()) {
                         vm.fileCases(t.surveyId, t.surveyNo, merged, listHtml, cases.size)
@@ -313,8 +318,8 @@ private fun BatchStatusCard(title: String, detail: String, onBack: (() -> Unit)?
     ) {
         Text(title, style = LandType.screenTitle, color = Land.colors.ink, textAlign = TextAlign.Center)
         if (detail.isNotBlank()) {
-            Spacer(Modifier.height(10.dp))
-            Text(detail, style = LandType.metaMono, color = Land.colors.ink2, textAlign = TextAlign.Center)
+            Spacer(Modifier.height(12.dp))
+            AnimatedStep(detail, modifier = Modifier.height(22.dp))
         }
         if (onBack != null) {
             Spacer(Modifier.height(20.dp))

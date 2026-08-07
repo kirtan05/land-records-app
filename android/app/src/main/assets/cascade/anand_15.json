@@ -1,0 +1,252 @@
+{
+  "district": {
+    "code": "15",
+    "en": "ANAND",
+    "gu": "આણંદ"
+  },
+  "source": "ircms.gujarat.gov.in ServiceData/fetch cascade, captured recon-page.html (2025-06-11)",
+  "note": "Real talukas for Anand. Villages populated ONLY for Umreth(03) so far; villages:null means not yet fetched (run the in-app cascade scraper for that taluka). Bharoda=029, Sundalpura=030 confirmed here.",
+  "talukaCount": 9,
+  "talukas": [
+    {
+      "code": "01",
+      "en": "Tarapur",
+      "gu": "તારાપુર",
+      "villages": null
+    },
+    {
+      "code": "02",
+      "en": "Sojitra",
+      "gu": "સોજિત્રા",
+      "villages": null
+    },
+    {
+      "code": "03",
+      "en": "Umreth",
+      "gu": "ઉમરેઠ",
+      "villages": [
+        {
+          "code": "001",
+          "en": "Ardi",
+          "gu": "અરડી"
+        },
+        {
+          "code": "002",
+          "en": "Ghora",
+          "gu": "ઘોરા"
+        },
+        {
+          "code": "003",
+          "en": "Thamna",
+          "gu": "થામણા"
+        },
+        {
+          "code": "004",
+          "en": "Bhatpura",
+          "gu": "ભાટપુરા"
+        },
+        {
+          "code": "005",
+          "en": "Navapura",
+          "gu": "નવાપુરા"
+        },
+        {
+          "code": "006",
+          "en": "Parvata",
+          "gu": "પરવટા"
+        },
+        {
+          "code": "007",
+          "en": "Lingda",
+          "gu": "લીંગડા"
+        },
+        {
+          "code": "008",
+          "en": "Pansora",
+          "gu": "પણસોરા"
+        },
+        {
+          "code": "009",
+          "en": "Untkhari",
+          "gu": "ઉટખરી"
+        },
+        {
+          "code": "010",
+          "en": "Zala Bordi",
+          "gu": "ઝાલા બોરડી"
+        },
+        {
+          "code": "011",
+          "en": "Vansol",
+          "gu": "વણસોલ"
+        },
+        {
+          "code": "012",
+          "en": "Saiyadpura",
+          "gu": "સૈયદપુરા"
+        },
+        {
+          "code": "013",
+          "en": "Meghva Badapura",
+          "gu": "મેઘવા બડાપુરા"
+        },
+        {
+          "code": "014",
+          "en": "Ashipura",
+          "gu": "આશીપુરા"
+        },
+        {
+          "code": "015",
+          "en": "Hamidpura",
+          "gu": "હમીદપુરા"
+        },
+        {
+          "code": "016",
+          "en": "Bechari",
+          "gu": "બેચરી"
+        },
+        {
+          "code": "017",
+          "en": "Khankhanpur",
+          "gu": "ખાંખણપુર"
+        },
+        {
+          "code": "018",
+          "en": "Dhuleta",
+          "gu": "ઘુલેટા"
+        },
+        {
+          "code": "019",
+          "en": "Sureli",
+          "gu": "સુરેલી"
+        },
+        {
+          "code": "020",
+          "en": "Badapura",
+          "gu": "બડાપુરા"
+        },
+        {
+          "code": "021",
+          "en": "Ratanpura",
+          "gu": "રતનપુરા"
+        },
+        {
+          "code": "022",
+          "en": "Dagjipura",
+          "gu": "દાગજીપુરા"
+        },
+        {
+          "code": "023",
+          "en": "Gangapura",
+          "gu": "ગંગાપુરા"
+        },
+        {
+          "code": "024",
+          "en": "Jakhala",
+          "gu": "જાખલાં"
+        },
+        {
+          "code": "025",
+          "en": "Fatepura",
+          "gu": "ફતેપુરા"
+        },
+        {
+          "code": "026",
+          "en": "Tarpura",
+          "gu": "તારપુરા"
+        },
+        {
+          "code": "027",
+          "en": "Bhalej",
+          "gu": "ભાલેજ"
+        },
+        {
+          "code": "028",
+          "en": "Khankuva",
+          "gu": "ખાનકુવા"
+        },
+        {
+          "code": "029",
+          "en": "Bharoda",
+          "gu": "ભરોડા"
+        },
+        {
+          "code": "030",
+          "en": "Sundalpura",
+          "gu": "સુંદલપુરા"
+        },
+        {
+          "code": "031",
+          "en": "Ahima",
+          "gu": "અહીમા"
+        },
+        {
+          "code": "032",
+          "en": "Sardarpura",
+          "gu": "સરદારપુરા"
+        },
+        {
+          "code": "033",
+          "en": "Shili",
+          "gu": "શીલી"
+        },
+        {
+          "code": "034",
+          "en": "Khorwad",
+          "gu": "ખોરવાડ"
+        },
+        {
+          "code": "035",
+          "en": "Pratappura",
+          "gu": "પ્રતાપપુરા"
+        },
+        {
+          "code": "036",
+          "en": "Dholi",
+          "gu": "ધોળી"
+        },
+        {
+          "code": "037",
+          "en": "UMRETH",
+          "gu": "ઉમરેઠ"
+        }
+      ]
+    },
+    {
+      "code": "04",
+      "en": "Anand",
+      "gu": "આણંદ",
+      "villages": null
+    },
+    {
+      "code": "05",
+      "en": "Petlad",
+      "gu": "પેટલાદ",
+      "villages": null
+    },
+    {
+      "code": "06",
+      "en": "Khambhat",
+      "gu": "ખંભાત",
+      "villages": null
+    },
+    {
+      "code": "07",
+      "en": "Borsad",
+      "gu": "બોરસદ",
+      "villages": null
+    },
+    {
+      "code": "08",
+      "en": "Anklav",
+      "gu": "આંકલાવ",
+      "villages": null
+    },
+    {
+      "code": "09",
+      "en": "Anand (City)",
+      "gu": "આણંદ (શહેર)",
+      "villages": null
+    }
+  ]
+}

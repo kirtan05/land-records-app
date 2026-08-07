@@ -95,7 +95,7 @@ fun IrcmsFetchScreen(
             android.util.Log.i("LR", "iRCMS prefill step='$step' (try $tries)")
             if (step.contains("READY")) {
                 delay(400)
-                WebViewCapture.eval(wv, IrcmsInjection.spotlightJs())
+                WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs())
                 working = false
                 return@LaunchedEffect
             }
@@ -104,7 +104,7 @@ fun IrcmsFetchScreen(
         }
         if (phase == FetchPhase.SOLVING && !awaitingList) {
             // Never resolved — still let the user try (maybe the survey/village isn't in iRCMS).
-            WebViewCapture.eval(wv, IrcmsInjection.spotlightJs())
+            WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs())
             working = false
         }
     }
@@ -114,17 +114,21 @@ fun IrcmsFetchScreen(
         val wv = webRef ?: return@LaunchedEffect
         if (!awaitingList || captureRunning) return@LaunchedEffect
 
-        var res = ""
+        val i = info ?: return@LaunchedEffect
+        // Same proven path as the batch: search directly (the site button is stripped), poll status.
+        WebViewCapture.eval(wv, IrcmsInjection.searchSurveyDirectJs(i.surveyNorm))
+        var res = "WAIT"
         var tries = 0
-        while (awaitingList && tries < 50) { // ~25s
-            res = WebViewCapture.eval(wv, IrcmsInjection.listReadyJs())
-            if (res.startsWith("READY") || res == "EMPTY" || res == "RETRY") break
+        while (tries < 24) {
+            res = WebViewCapture.eval(wv, IrcmsInjection.searchStatusJs())
+            if (res != "WAIT") break
             delay(500); tries++
         }
-        android.util.Log.i("LR", "iRCMS listReady='$res' after $tries tries")
+        android.util.Log.i("LR", "iRCMS single search='$res' after $tries tries")
 
+        val wrongCode = res.startsWith("EMPTY") && Regex("captcha|invalid", RegexOption.IGNORE_CASE).containsMatchIn(res)
         when {
-            res.startsWith("READY") -> {
+            res == "READY" -> {
                 captureRunning = true
                 working = true
                 vm.setPhase(FetchPhase.READING)
@@ -132,7 +136,7 @@ fun IrcmsFetchScreen(
                 val casesJson = WebViewCapture.eval(wv, IrcmsInjection.readCasesJs())
                 val (token, cases) = parseCases(casesJson)
                 android.util.Log.i("LR", "iRCMS cases=${cases.size} token=${token.take(6)}…")
-                if (cases.isEmpty()) { vm.fail("Couldn't read the iRCMS case list. Please try again."); return@LaunchedEffect }
+                if (cases.isEmpty()) { vm.markEmpty(RecordType.IRCMS); vm.setPhase(FetchPhase.DONE); delay(300); onDone(); return@LaunchedEffect }
 
                 vm.setPhase(FetchPhase.BUILDING)
                 // Desktop UA now (capture only) so the case pages render wide for the PDF.
@@ -160,9 +164,9 @@ fun IrcmsFetchScreen(
                 val ok = vm.fileCapture(RecordType.IRCMS, merged, listHtml, docCount = cases.size)
                 if (ok) { vm.setPhase(FetchPhase.DONE); delay(450); onDone() }
             }
-            res == "EMPTY" -> { vm.markEmpty(RecordType.IRCMS); vm.setPhase(FetchPhase.DONE); delay(300); onDone() }
-            res == "RETRY" -> { awaitingList = false; working = false; WebViewCapture.eval(wv, IrcmsInjection.spotlightJs()) }
-            else -> { awaitingList = false; working = false; WebViewCapture.eval(wv, IrcmsInjection.spotlightJs()) }
+            wrongCode -> { awaitingList = false; working = false; WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs()) } // wrong code → re-solve
+            res.startsWith("EMPTY") -> { vm.markEmpty(RecordType.IRCMS); vm.setPhase(FetchPhase.DONE); delay(300); onDone() } // genuine empty
+            else -> { awaitingList = false; working = false; WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs()) } // error/timeout → re-solve
         }
     }
 

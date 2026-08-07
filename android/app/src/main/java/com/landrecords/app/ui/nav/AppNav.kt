@@ -16,6 +16,7 @@ import com.landrecords.app.data.model.RecordType
 import com.landrecords.app.ui.fetch.FetchScreen
 import com.landrecords.app.ui.fetch.IrcmsBatchScreen
 import com.landrecords.app.ui.fetch.IrcmsFetchScreen
+import com.landrecords.app.ui.fetch.Vf712FetchScreen
 import com.landrecords.app.ui.fetch.RegenerateScreen
 import com.landrecords.app.ui.library.LibraryScreen
 import com.landrecords.app.ui.property.AddPropertyScreen
@@ -101,10 +102,10 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
             val onDoneNav: () -> Unit = {
                 navController.navigate(Routes.survey(id, type.name)) { popUpTo(Routes.LIBRARY) }
             }
-            if (type == RecordType.IRCMS) {
-                IrcmsFetchScreen(surveyId = id, onBack = { navController.popBackStack() }, onDone = onDoneNav)
-            } else {
-                FetchScreen(
+            when (type) {
+                RecordType.IRCMS -> IrcmsFetchScreen(surveyId = id, onBack = { navController.popBackStack() }, onDone = onDoneNav)
+                RecordType.VF712 -> Vf712FetchScreen(surveyId = id, onBack = { navController.popBackStack() }, onDone = onDoneNav)
+                else -> FetchScreen(
                     surveyId = id,
                     recordType = type,
                     onBack = { navController.popBackStack() },
