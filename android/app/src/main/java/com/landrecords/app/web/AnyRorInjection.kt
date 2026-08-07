@@ -107,11 +107,11 @@ object AnyRorInjection {
     (function(){
       try {
         var s = document.createElement('style'); s.innerHTML = `$CLEANUP_CSS`; document.head.appendChild(s);
-        // Drop the spotlight artifacts and the cascade FORM so only the record prints.
+        // Drop only the spotlight artifacts. Do NOT hide the cascade form by container —
+        // AnyRoR's real result page has no form, and walking up to .panel/.form nukes the
+        // record (the whole page is one ASP.NET form / one .panel-primary).
         var sc = document.getElementById('__lr_spot_css'); if (sc) sc.remove();
         document.querySelectorAll('.lr-ring').forEach(function(e){ e.classList.remove('lr-ring'); });
-        [document.getElementById('${AnyRor.Ids.RECORD_TYPE}'), document.getElementById('${AnyRor.Ids.GET_DETAIL_BUTTON}')]
-          .forEach(function(el){ if(el){ var p = el.closest('.panel,.Div-Border-Side-New,fieldset,form'); if(p) p.style.display='none'; } });
         var blank = function(t){ return (t||'').replace(/[\s\-—_.]/g,'') === ''; };
         document.querySelectorAll('table').forEach(function(t){
           Array.from(t.rows).forEach(function(r){ if(!r.querySelector('th') && blank(r.textContent)){ r.remove(); } });
@@ -138,12 +138,14 @@ object AnyRorInjection {
     (function(){
       try {
         var t = document.body ? document.body.innerText : '';
-        // Record content wins: the integrated page shows "Record Not Found" inside EMPTY
-        // subsections (court cases / tax), so only treat the WHOLE page as not-found when
-        // there is no actual record content anywhere.
-        var hasRecord = /ખાતેદાર|કબ્જેદાર|ગામ\s*નમૂનો|ગામ\s*નમુનો|ખેતીની\s*જમીન|જમીનની\s*વિગત|મ્યુટેશન|હક્ક\s*પત્રક|સત્તાપ્રકાર/.test(t);
-        if (hasRecord) return 'READY';
-        if (/Record Not Found|No Record Found|રેકોર્ડ મળ્યો નથી|માહિતી ઉપલબ્ધ નથી/i.test(t)) return 'NOTFOUND';
+        // Use RECORD-ONLY markers that never appear on the cascade form: the result table
+        // header "ખાતા નંબર" and the page heading "…સંપૂર્ણ વિગતો". (The form's record-type
+        // option says "…સંપૂર્ણ માહિતી" — deliberately not matched.) If the Get Record Detail
+        // button is still present, we're still on the form (wrong CAPTCHA) → keep waiting.
+        var onForm = document.getElementById('${AnyRor.Ids.GET_DETAIL_BUTTON}') != null;
+        var hasRecord = /ખાતા\s*નંબર|સંપૂર્ણ\s*વિગત/.test(t);
+        if (hasRecord && !onForm) return 'READY';
+        if (!onForm && /Record Not Found|No Record Found|રેકોર્ડ મળ્યો નથી|માહિતી ઉપલબ્ધ નથી/i.test(t)) return 'NOTFOUND';
         return 'WAIT';
       } catch(e) { return 'WAIT'; }
     })();
