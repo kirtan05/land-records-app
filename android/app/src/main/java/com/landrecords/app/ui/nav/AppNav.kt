@@ -35,14 +35,14 @@ private object Routes {
     const val ADD = "add_property"
     const val SETTINGS = "settings"
     const val MARKED = "marked"
-    const val IRCMS_BATCH = "ircms_batch/{propertyId}"
+    const val IRCMS_BATCH = "ircms_batch/{propertyId}?refetch={refetch}"
     const val IRCMS_CASES = "ircms_cases/{surveyId}"
     const val VF_SCANS = "vf_scans/{surveyId}"
 
     fun survey(id: Long, justAdded: String? = null) = "survey/$id?justAdded=${justAdded ?: ""}"
     fun fetch(id: Long, type: RecordType) = "fetch/$id/${type.name}"
     fun regen(id: Long, type: RecordType) = "regen/$id/${type.name}"
-    fun ircmsBatch(propertyId: Long) = "ircms_batch/$propertyId"
+    fun ircmsBatch(propertyId: Long, refetch: Boolean = false) = "ircms_batch/$propertyId?refetch=$refetch"
     fun ircmsCases(surveyId: Long) = "ircms_cases/$surveyId"
     fun vfScans(surveyId: Long) = "vf_scans/$surveyId"
 }
@@ -64,7 +64,7 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
             LibraryScreen(
                 onOpenSurvey = { navController.navigate(Routes.survey(it)) },
                 onFetch = { id, type -> navController.navigate(Routes.fetch(id, type)) },
-                onBatchIrcms = { navController.navigate(Routes.ircmsBatch(it)) },
+                onBatchIrcms = { id, refetch -> navController.navigate(Routes.ircmsBatch(id, refetch)) },
                 onAddProperty = { navController.navigate(Routes.ADD) },
                 onSettings = { navController.navigate(Routes.SETTINGS) },
                 onMarked = { navController.navigate(Routes.MARKED) },
@@ -129,11 +129,16 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
         }
         composable(
             Routes.IRCMS_BATCH,
-            arguments = listOf(navArgument("propertyId") { type = NavType.LongType }),
+            arguments = listOf(
+                navArgument("propertyId") { type = NavType.LongType },
+                navArgument("refetch") { type = NavType.BoolType; defaultValue = false },
+            ),
         ) { entry ->
             val pid = entry.arguments?.getLong("propertyId") ?: return@composable
+            val refetch = entry.arguments?.getBoolean("refetch") ?: false
             IrcmsBatchScreen(
                 propertyId = pid,
+                refetch = refetch,
                 onBack = { navController.popBackStack() },
                 onDone = { navController.popBackStack() },
             )

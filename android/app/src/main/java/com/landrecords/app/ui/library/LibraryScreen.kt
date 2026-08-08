@@ -69,7 +69,7 @@ import com.landrecords.app.ui.theme.join
 fun LibraryScreen(
     onOpenSurvey: (Long) -> Unit,
     onFetch: (Long, RecordType) -> Unit,
-    onBatchIrcms: (Long) -> Unit,
+    onBatchIrcms: (Long, Boolean) -> Unit,
     onAddProperty: () -> Unit,
     onSettings: () -> Unit,
     onMarked: () -> Unit,
@@ -125,8 +125,9 @@ fun LibraryScreen(
                     // The batch stays available even once everything's fetched — because a
                     // checked-empty survey (0 cases) is indistinguishable from a never-checked one,
                     // we can't reliably show "all fetched". So keep the button, but if any survey
-                    // already holds cases a tap is a RE-fetch → confirm first (it overwrites).
-                    val hasAnyCases = state.surveys.any { (it.counts[RecordType.IRCMS] ?: 0) > 0 }
+                    // has already been checked, a tap is a RE-fetch → confirm first (it re-runs ALL
+                    // surveys and overwrites; a plain run only fetches surveys never checked).
+                    val anyChecked = state.surveys.any { it.counts.containsKey(RecordType.IRCMS) }
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         DashedButton(
                             text = Lr(R.string.add_property_gu, R.string.add_property_en),
@@ -136,7 +137,7 @@ fun LibraryScreen(
                         if (selProp != null && state.surveys.isNotEmpty()) {
                             DashedButton(
                                 text = lang.join("બધા કેસ · ૧ કોડ", "All cases · 1 code"),
-                                onClick = { if (hasAnyCases) confirmBatchProp = selProp else onBatchIrcms(selProp) },
+                                onClick = { if (anyChecked) confirmBatchProp = selProp else onBatchIrcms(selProp, false) },
                                 modifier = Modifier.weight(1f),
                             )
                         }
@@ -202,7 +203,7 @@ fun LibraryScreen(
                 )
             },
             confirmButton = {
-                TextButton(onClick = { confirmBatchProp = null; onBatchIrcms(pid) }) {
+                TextButton(onClick = { confirmBatchProp = null; onBatchIrcms(pid, true) }) {
                     Text(lang.join("ફરી લાવો", "Re-fetch"), color = Land.colors.accent)
                 }
             },

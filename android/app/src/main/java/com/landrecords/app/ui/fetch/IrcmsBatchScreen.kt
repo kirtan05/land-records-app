@@ -76,6 +76,7 @@ class IrcmsBatchViewModel(
     private val repo: LandRecordsRepository,
     private val writer: LibraryWriter,
     private val propertyId: Long,
+    private val refetch: Boolean,
 ) : ViewModel() {
 
     val info = MutableStateFlow<BatchInfo?>(null)
@@ -85,7 +86,10 @@ class IrcmsBatchViewModel(
             val prop = repo.propertyById(propertyId) ?: return@launch
             val surveys = repo.observeSurveys(propertyId).first()
             val targets = surveys
-                .filter { repo.recordFor(it.id, RecordType.IRCMS) == null } // only ones missing cases
+                // Normal run: only surveys with no iRCMS record yet. Re-fetch (user confirmed):
+                // EVERY survey — otherwise already-checked surveys (incl. checked-empty) are all
+                // skipped and the batch would run 0 surveys.
+                .filter { refetch || repo.recordFor(it.id, RecordType.IRCMS) == null }
                 .map { BatchTarget(it.id, it.surveyNo) }
             info.value = BatchInfo(prop.district, prop.taluka, prop.village, targets)
         }
@@ -118,12 +122,13 @@ private enum class BatchPhase { SOLVING, RUNNING, DONE, ERROR }
 @Composable
 fun IrcmsBatchScreen(
     propertyId: Long,
+    refetch: Boolean = false,
     onBack: () -> Unit,
     onDone: () -> Unit,
 ) {
     val app = landApp()
     val vm: IrcmsBatchViewModel = viewModel(
-        factory = viewModelFactory { initializer { IrcmsBatchViewModel(app.repository, app.libraryWriter, propertyId) } },
+        factory = viewModelFactory { initializer { IrcmsBatchViewModel(app.repository, app.libraryWriter, propertyId, refetch) } },
     )
     val info by vm.info.collectAsStateWithLifecycle()
 
