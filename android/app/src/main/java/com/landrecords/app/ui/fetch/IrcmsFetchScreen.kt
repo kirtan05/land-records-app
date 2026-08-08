@@ -305,20 +305,28 @@ internal fun parseCaseList(json: String): Pair<String, List<ScrapedCase>> {
         val token = o.optString("token", "")
         val arr = o.optJSONArray("cases") ?: return token to emptyList()
         val out = ArrayList<ScrapedCase>(arr.length())
-        val seen = HashSet<String>()
+        val seen = HashSet<String>()       // by iRCMS key (data-id:offcode:survno)
+        val seenIdent = HashSet<String>()  // by visible identity — collapses one case cross-listed under many survnos
         for (i in 0 until arr.length()) {
             val c = arr.getJSONObject(i)
             val key = c.optString("casekey", "")
-            if (key.isBlank() || !seen.add(key)) continue // dedupe repeated case rows
+            if (key.isBlank() || !seen.add(key)) continue // dedupe exact repeated key rows
+            val caseNo = c.optString("caseNo", "")
+            val office = c.optString("office", "")
+            val dtv = c.optString("dtv", "")
+            val parties = c.optString("parties", "")
+            // The key includes the survey number, so the SAME case listed under two survey numbers has
+            // two different keys; collapse those here so it isn't captured/shown/merged twice.
+            if (!seenIdent.add(CasesStore.identity(caseNo, parties, office, dtv))) continue
             out.add(
                 ScrapedCase(
                     casekey = key,
                     sr = c.optString("sr", "").ifBlank { (out.size + 1).toString() },
-                    caseNo = c.optString("caseNo", ""),
+                    caseNo = caseNo,
                     status = c.optString("status", ""),
-                    office = c.optString("office", ""),
-                    dtv = c.optString("dtv", ""),
-                    parties = c.optString("parties", ""),
+                    office = office,
+                    dtv = dtv,
+                    parties = parties,
                     survno = c.optString("survno", ""),
                 ),
             )

@@ -24,9 +24,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,6 +81,8 @@ fun LibraryScreen(
     )
     val state by vm.uiState.collectAsStateWithLifecycle()
     val lang = LocalLang.current
+    // Property whose "All cases · 1 code" tap is awaiting a re-fetch confirmation (cases already exist).
+    var confirmBatchProp by remember { mutableStateOf<Long?>(null) }
 
     val subline = when (lang) {
         Lang.GU -> "${state.totalCount.numerals(Lang.GU)} સર્વે"
@@ -115,21 +122,21 @@ fun LibraryScreen(
             if (!state.searching) {
                 item {
                     val selProp = state.villages.firstOrNull { it.selected }?.propertyId
-                    // Offer the batch while any survey has no cases yet — either never checked
-                    // (no IRCMS key) OR checked-empty (docCount 0, e.g. a survey whose earlier
-                    // fetch recorded nothing). Empty ones stay re-runnable so a village that came
-                    // back blank (e.g. from a failed cascade) can be retried in one code.
-                    val missingCases = state.surveys.any { (it.counts[RecordType.IRCMS] ?: 0) == 0 }
+                    // The batch stays available even once everything's fetched — because a
+                    // checked-empty survey (0 cases) is indistinguishable from a never-checked one,
+                    // we can't reliably show "all fetched". So keep the button, but if any survey
+                    // already holds cases a tap is a RE-fetch → confirm first (it overwrites).
+                    val hasAnyCases = state.surveys.any { (it.counts[RecordType.IRCMS] ?: 0) > 0 }
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                         DashedButton(
                             text = Lr(R.string.add_property_gu, R.string.add_property_en),
                             onClick = onAddProperty,
                             modifier = Modifier.weight(1f),
                         )
-                        if (selProp != null && state.surveys.isNotEmpty() && missingCases) {
+                        if (selProp != null && state.surveys.isNotEmpty()) {
                             DashedButton(
                                 text = lang.join("બધા કેસ · ૧ કોડ", "All cases · 1 code"),
-                                onClick = { onBatchIrcms(selProp) },
+                                onClick = { if (hasAnyCases) confirmBatchProp = selProp else onBatchIrcms(selProp) },
                                 modifier = Modifier.weight(1f),
                             )
                         }
@@ -179,6 +186,33 @@ fun LibraryScreen(
             }
             item { Spacer(Modifier.height(2.dp)) }
         }
+    }
+
+    confirmBatchProp?.let { pid ->
+        AlertDialog(
+            onDismissRequest = { confirmBatchProp = null },
+            title = { Text(lang.join("બધા કેસ ફરી લાવવા?", "Re-fetch all cases?"), style = LandType.bodyStrong, color = Land.colors.ink) },
+            text = {
+                Text(
+                    lang.join(
+                        "આ ગામના દરેક સર્વે માટે iRCMS કેસ ફરીથી ડાઉનલોડ થશે અને હાલ સાચવેલા બદલાઈ જશે.",
+                        "This re-downloads iRCMS cases for every survey in this village and replaces what's saved.",
+                    ),
+                    style = LandType.body, color = Land.colors.ink2,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { confirmBatchProp = null; onBatchIrcms(pid) }) {
+                    Text(lang.join("ફરી લાવો", "Re-fetch"), color = Land.colors.accent)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmBatchProp = null }) {
+                    Text(lang.join("રદ કરો", "Cancel"), color = Land.colors.ink3)
+                }
+            },
+            containerColor = Land.colors.surface,
+        )
     }
 }
 

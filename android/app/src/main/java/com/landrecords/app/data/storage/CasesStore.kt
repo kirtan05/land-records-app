@@ -95,15 +95,29 @@ object CasesStore {
         android.util.Log.i("LR", "CasesStore: wrote ${entries.size} cases -> ${dir.absolutePath}")
     }
 
-    /** Reads cases.json for a survey (empty list if nothing has been captured yet). */
+    /**
+     * Reads cases.json for a survey (empty list if nothing has been captured yet), collapsing any
+     * duplicate rows by [identity] — this cleans up manifests written before the capture-side dedup,
+     * where the same case cross-listed under several survey numbers was stored more than once.
+     */
     suspend fun read(
         context: Context,
         district: String, taluka: String, village: String, surveyNo: String,
     ): List<CaseEntry> = withContext(Dispatchers.IO) {
         val f = File(dir(context, district, taluka, village, surveyNo), MANIFEST)
         if (!f.exists()) return@withContext emptyList()
-        runCatching { fromJson(f.readText()) }.getOrDefault(emptyList())
+        val all = runCatching { fromJson(f.readText()) }.getOrDefault(emptyList())
+        val seen = HashSet<String>()
+        all.filter { seen.add(identity(it.caseNo, it.parties, it.office, it.dtv)) }
     }
+
+    /**
+     * Visible identity of a case — the same case can be cross-listed under multiple survey numbers
+     * (so it carries different iRCMS keys but identical case-no/parties/office/date). Dedup by this
+     * to avoid capturing/showing it twice.
+     */
+    fun identity(caseNo: String, parties: String, office: String, dtv: String): String =
+        listOf(caseNo, parties, office, dtv).joinToString("|") { it.replace(Regex("\\s+"), " ").trim().lowercase() }
 
     /** Absolute path to a stored case file (detail or order) by manifest filename, or null. */
     fun filePath(
