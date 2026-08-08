@@ -59,4 +59,20 @@ data class RecordEntity(
     val sourcePath: String? = null,
     /** Epoch millis when last fetched; null = not fetched yet (shows "Get record"). */
     val fetchedAt: Long? = null,
+    /** Colour mark for batch export ([com.landrecords.app.ui.marked.MarkColor] id), null = unmarked. */
+    val mark: String? = null,
+)
+
+/**
+ * A marked record joined with just enough of its survey/property to name and locate the PDF for
+ * batch export. Populated by [com.landrecords.app.data.db.RecordDao.observeMarked].
+ */
+data class MarkedRecordRow(
+    val recordId: Long,
+    val type: RecordType,
+    val mark: String,
+    val pdfPath: String,
+    val surveyNo: String,
+    val villageEn: String,
+    val villageGu: String,
 )

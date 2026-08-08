@@ -30,16 +30,26 @@ object LibraryAccess {
         val relDir = path.substring(0, slash + 1) // MediaStore RELATIVE_PATH keeps the trailing slash
         val name = path.substring(slash + 1)
         val collection = MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY)
+        // Match RELATIVE_PATH case-INSENSITIVELY. A user-added village can be stored in the DB with
+        // a different case than MediaStore's canonical folder — e.g. the cascade gives district
+        // en="ANAND", but the file lands in the pre-existing case-insensitive "Anand" tree, so
+        // MediaStore records the path as "Anand". An exact '=' match would then miss the file and
+        // the record shows "can't open". Query by the (app-controlled, exact) display name and
+        // compare the folder ignoring case.
+        val wantDir = relDir.trim('/').lowercase()
         context.contentResolver.query(
             collection,
-            arrayOf(MediaStore.MediaColumns._ID),
-            "${MediaStore.MediaColumns.RELATIVE_PATH}=? AND ${MediaStore.MediaColumns.DISPLAY_NAME}=?",
-            arrayOf(relDir, name),
+            arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.RELATIVE_PATH),
+            "${MediaStore.MediaColumns.DISPLAY_NAME}=?",
+            arrayOf(name),
             null,
         )?.use { c ->
-            if (c.moveToFirst()) {
-                val id = c.getLong(c.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
-                return ContentUris.withAppendedId(collection, id)
+            val idCol = c.getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
+            val relCol = c.getColumnIndexOrThrow(MediaStore.MediaColumns.RELATIVE_PATH)
+            while (c.moveToNext()) {
+                if ((c.getString(relCol) ?: "").trim('/').lowercase() == wantDir) {
+                    return ContentUris.withAppendedId(collection, c.getLong(idCol))
+                }
             }
         }
         android.util.Log.w("LR", "contentUriFor: no MediaStore match for relDir='$relDir' name='$name'")
@@ -57,13 +67,37 @@ object LibraryAccess {
         return runCatching { context.contentResolver.openInputStream(uri)?.use { it.readBytes() } }.getOrNull()
     }
 
-    fun view(context: Context, pdfPath: String?): Boolean {
-        val uri = contentUriFor(context, pdfPath) ?: return false
+    /**
+     * Open the PDF in an external viewer. When [viewName] is given, the file is first copied to the
+     * cache under that descriptive name (e.g. "Bhaleja 236 Integrated Record.pdf") and THAT copy is
+     * opened — so if the user then hits "Share" inside the PDF viewer, the attachment carries a
+     * meaningful filename instead of the generic library name ("Integrated Record.pdf").
+     */
+    fun view(context: Context, pdfPath: String?, viewName: String? = null): Boolean {
+        val uri: Uri = if (!viewName.isNullOrBlank()) {
+            val bytes = readBytes(context, pdfPath) ?: return false
+            val out = File(context.cacheDir, "view").apply { mkdirs() }.let { File(it, safeName(viewName)) }
+            runCatching { out.writeBytes(bytes) }.getOrElse { return false }
+            FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", out)
+        } else {
+            contentUriFor(context, pdfPath) ?: return false
+        }
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(uri, "application/pdf")
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         return runCatching { context.startActivity(intent); true }.getOrDefault(false)
+    }
+
+    /**
+     * Filesystem-safe filename that PRESERVES Gujarati (so "174/પૈકી 3" stays readable). Only the
+     * characters illegal in a filename (path separators, control chars) are swapped for a space;
+     * unlike the ASCII scrub used for share cache files, letters/digits in any script survive.
+     */
+    fun safeName(raw: String): String {
+        val cleaned = raw.replace(Regex("[\\\\/:*?\"<>|\\x00-\\x1F]"), " ").replace(Regex("\\s+"), " ").trim()
+        val base = cleaned.ifBlank { "record" }
+        return if (base.endsWith(".pdf", ignoreCase = true)) base else "$base.pdf"
     }
 
     /**

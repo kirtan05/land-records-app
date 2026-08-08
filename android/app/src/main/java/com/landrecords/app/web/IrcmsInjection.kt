@@ -270,7 +270,10 @@ object IrcmsInjection {
           data:{ dist:dist, taluka:tal, village:vill, surveyno:best.value, captcha_code:cap, _token:tok },
           success:function(data){
             var tb=window.jQuery('#${Ircms.Ids.TABLE} tbody'); tb.find('tr').remove();
-            if(!data || data.success===false){ window.__lr_search='EMPTY:'+((data&&data.message)||''); return; }
+            // Diagnostic: on a rejection, surface the captcha value + token length we actually sent,
+            // so the LR log shows whether the code was read wrong (empty/reversed/stale) vs the
+            // server rotating it out from under us.
+            if(!data || data.success===false){ window.__lr_search='EMPTY:'+((data&&data.message)||'')+' [sentCap="'+cap+'" tok='+(tok?tok.length:0)+']'; return; }
             var trHTML='';
             window.jQuery.each(data, function(k,v){ if(v && v.sr_no){
               trHTML += "<tr><td>"+v.sr_no+"</td><td>"+v.case_str+"</td><td>"+v.offname+"</td><td>"+v.dtv+"</td><td>"+v.sno_str+"</td><td>"+v.pet_res+"</td><td>"+v.view+"</td></tr>"; } });

@@ -182,7 +182,7 @@ fun IrcmsCasesScreen(
     fun viewCaseFile(name: String) {
         val u = ui ?: return
         val path = CasesStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, name)
-        if (!LibraryAccess.view(context, path)) {
+        if (!LibraryAccess.view(context, path, "${u.villageLatin.ifBlank { "Land" }} ${u.surveyNo} iRCMS case.pdf")) {
             Toast.makeText(context, "Can't open this file", Toast.LENGTH_SHORT).show()
         }
     }
@@ -289,7 +289,8 @@ fun IrcmsCasesScreen(
                     text = L("બધા જુઓ", "View all"),
                     enabled = hasMerged,
                     onClick = {
-                        val ok = LibraryAccess.view(context, ui?.mergedPdfPath)
+                        val vn = ui?.let { "${it.villageLatin.ifBlank { "Land" }} ${it.surveyNo} iRCMS Cases.pdf" }
+                        val ok = LibraryAccess.view(context, ui?.mergedPdfPath, vn)
                         if (!ok) Toast.makeText(context, "Can't open this file", Toast.LENGTH_SHORT).show()
                     },
                 )

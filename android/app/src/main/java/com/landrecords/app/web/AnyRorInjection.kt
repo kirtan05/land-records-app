@@ -104,10 +104,15 @@ object AnyRorInjection {
         var sur=document.getElementById('$surveyDropId');
         if('$surveyNorm'){
           if(!sur) return 'WAIT|sur|absent';
-          if(unset(sur)){
+          var wS=oldSurveyTok('$surveyNorm');
+          var cur=sur.options[sur.selectedIndex];
+          // Verify the CURRENTLY-selected survey is the one we want — don't just fill when empty.
+          // AnyRoR can restore a previous fetch's selection after a reload (bfcache / viewstate), and
+          // gating on unset() alone would then capture that stale survey and file it under the new
+          // one (e.g. "ran 174/p૨, got 174/p૧"). Re-select whenever the current value isn't the want.
+          if(!cur || !cur.value || oldSurveyTok(cur.text)!==wS){
             var hs=pickSurvey(sur,'$surveyNorm');
             if(hs) return 'SUR|hit='+hs;
-            var wS=oldSurveyTok('$surveyNorm');
             var near=Array.from(sur.options).filter(function(o){ return o.value; }).map(optText)
                .filter(function(t){ return oldSurveyTok(t).indexOf(wS)>=0; }).slice(0,20);
             return 'WAIT|sur|want=$surveyNorm|tok='+wS+'|n='+realOpts(sur).length+'|near='+near.join(' · ');

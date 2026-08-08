@@ -119,8 +119,18 @@ fun SurveyDetailScreen(
                     // docs means "checked, none found" (e.g. no iRCMS cases / no deeds).
                     justAdded = type == justAddedType && (record?.docCount ?: 0) > 0,
                     checked = record != null,
+                    mark = record?.mark,
+                    onSetMark = { newMark -> record?.let { vm.setMark(it.id, newMark) } },
                     onView = {
-                        val ok = LibraryAccess.view(context, record?.pdfPath)
+                        // Name the opened copy so a "share from the PDF viewer" carries a good filename.
+                        val vil = state.villageLatin.ifBlank { "Land" }
+                        val typeName = when (type) {
+                            RecordType.INTEGRATED -> "Integrated Record"
+                            RecordType.VF712 -> "VF 7-12"
+                            RecordType.DEEDS -> "Deeds"
+                            RecordType.IRCMS -> "iRCMS Cases"
+                        }
+                        val ok = LibraryAccess.view(context, record?.pdfPath, "$vil ${survey.surveyNo} $typeName.pdf")
                         if (!ok) android.widget.Toast.makeText(context, "Can't open this file", android.widget.Toast.LENGTH_SHORT).show()
                     },
                     onRegenerate = { onRegenerate(surveyId, type) },

@@ -76,6 +76,12 @@ class LandRecordsRepository(private val db: AppDatabase) {
     suspend fun recordFor(surveyId: Long, type: RecordType): RecordEntity? =
         db.recordDao().find(surveyId, type.name)
 
+    /** All marked records (with a PDF), grouped by colour — drives the Marked / batch-export screen. */
+    fun observeMarked(): Flow<List<com.landrecords.app.data.db.MarkedRecordRow>> = db.recordDao().observeMarked()
+
+    /** Set or clear ([mark] = null) a record's export colour. */
+    suspend fun setMark(recordId: Long, mark: String?) = db.recordDao().setMark(recordId, mark)
+
     /** A one-shot snapshot of a survey plus its owning property, for filing a capture. */
     suspend fun snapshot(surveyId: Long): Pair<SurveyEntity, PropertyEntity>? {
         val survey = db.surveyDao().byIdOnce(surveyId) ?: return null

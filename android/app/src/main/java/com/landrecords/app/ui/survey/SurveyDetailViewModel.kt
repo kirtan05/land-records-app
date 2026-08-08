@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 data class SurveyDetailUiState(
     val survey: SurveyEntity? = null,
@@ -21,9 +22,14 @@ data class SurveyDetailUiState(
 )
 
 class SurveyDetailViewModel(
-    repo: LandRecordsRepository,
+    private val repo: LandRecordsRepository,
     surveyId: Long,
 ) : ViewModel() {
+
+    /** Set or clear a record's export colour mark (see the leading dot on each record card). */
+    fun setMark(recordId: Long, mark: String?) {
+        viewModelScope.launch { repo.setMark(recordId, mark) }
+    }
 
     val uiState: StateFlow<SurveyDetailUiState> = combine(
         repo.observeSurvey(surveyId),

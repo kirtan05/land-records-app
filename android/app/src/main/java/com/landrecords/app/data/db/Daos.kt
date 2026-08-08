@@ -82,4 +82,20 @@ interface RecordDao {
     @Transaction
     @Query("SELECT COUNT(*) FROM records WHERE surveyId = :surveyId")
     suspend fun countForSurvey(surveyId: Long): Int
+
+    /** Set (or clear, with null) the export colour mark on one record. */
+    @Query("UPDATE records SET mark = :mark WHERE id = :id")
+    suspend fun setMark(id: Long, mark: String?)
+
+    /** Every marked record that actually has a PDF, joined to its survey + village, grouped by colour. */
+    @Query(
+        "SELECT r.id AS recordId, r.type AS type, r.mark AS mark, r.pdfPath AS pdfPath, " +
+            "s.surveyNo AS surveyNo, p.village AS villageEn, p.villageGu AS villageGu " +
+            "FROM records r " +
+            "JOIN surveys s ON r.surveyId = s.id " +
+            "JOIN properties p ON s.propertyId = p.id " +
+            "WHERE r.mark IS NOT NULL AND r.pdfPath IS NOT NULL " +
+            "ORDER BY r.mark, p.village, s.normalized",
+    )
+    fun observeMarked(): Flow<List<MarkedRecordRow>>
 }

@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -65,6 +67,7 @@ fun LibraryScreen(
     onBatchIrcms: (Long) -> Unit,
     onAddProperty: () -> Unit,
     onSettings: () -> Unit,
+    onMarked: () -> Unit,
 ) {
     val app = landApp()
     val appState = app.appState
@@ -89,6 +92,8 @@ fun LibraryScreen(
                         Text(subline, style = LandType.label, color = Land.colors.ink3)
                     }
                     LanguagePill(badge = lang.badge(), onClick = { appState.cycleLang() })
+                    Spacer(Modifier.width(8.dp))
+                    SquareIconButton(Icons.AutoMirrored.Outlined.Label, onMarked, contentDescription = "Marked records")
                     Spacer(Modifier.width(8.dp))
                     SquareIconButton(Icons.Outlined.Settings, onSettings, contentDescription = "Settings")
                 }
@@ -133,12 +138,18 @@ fun LibraryScreen(
             }
             if (!state.searching) {
                 item {
-                    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        state.villages.forEach { v ->
+                    // Villages scroll sideways: fixed-width cards in a LazyRow so a 4th, 5th…
+                    // village never squeezes the others into slivers (they used to share one row
+                    // via weight). Content-padding lets the last card clear the page gutter.
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        items(state.villages, key = { it.propertyId }) { v ->
                             VillageCard(
                                 name = v.name, helper = v.helper, selected = v.selected,
                                 onClick = { vm.selectVillage(v.propertyId) },
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier.width(150.dp),
                             )
                         }
                     }
