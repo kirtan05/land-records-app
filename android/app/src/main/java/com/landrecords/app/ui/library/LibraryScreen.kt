@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -73,6 +74,7 @@ fun LibraryScreen(
     onAddProperty: () -> Unit,
     onSettings: () -> Unit,
     onMarked: () -> Unit,
+    onMaps: () -> Unit,
 ) {
     val app = landApp()
     val appState = app.appState
@@ -105,6 +107,8 @@ fun LibraryScreen(
                     LanguagePill(badge = lang.badge(), onClick = { appState.cycleLang() })
                     Spacer(Modifier.width(8.dp))
                     SquareIconButton(Icons.AutoMirrored.Outlined.Label, onMarked, contentDescription = "Marked records")
+                    Spacer(Modifier.width(8.dp))
+                    SquareIconButton(Icons.Outlined.Map, onMaps, contentDescription = "Maps")
                     Spacer(Modifier.width(8.dp))
                     SquareIconButton(Icons.Outlined.Settings, onSettings, contentDescription = "Settings")
                 }

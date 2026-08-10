@@ -19,6 +19,22 @@
     <string name="no_records_yet_gu">રેકોર્ડ બાકી</string>
     <string name="no_records_yet_en">No records yet</string>
 
+    <!-- Maps -->
+    <string name="maps_title_gu">નકશા</string>
+    <string name="maps_title_en">Maps</string>
+    <string name="maps_district_label_gu">જિલ્લો</string>
+    <string name="maps_district_label_en">District</string>
+    <string name="maps_taluka_label_gu">તાલુકો</string>
+    <string name="maps_taluka_label_en">Taluka</string>
+    <string name="maps_search_hint_gu">ગામ શોધો</string>
+    <string name="maps_search_hint_en">Search village</string>
+    <string name="maps_pick_district_gu">જિલ્લો પસંદ કરો</string>
+    <string name="maps_pick_district_en">Pick a district</string>
+    <string name="maps_pick_taluka_gu">તાલુકો પસંદ કરો</string>
+    <string name="maps_pick_taluka_en">Pick a taluka</string>
+    <string name="maps_no_villages_gu">કોઈ ગામ મળ્યું નથી</string>
+    <string name="maps_no_villages_en">No villages found</string>
+
     <!-- Survey detail -->
     <string name="survey_gu">સર્વે</string>
     <string name="survey_en">Survey</string>
