@@ -52,8 +52,14 @@ import com.landrecords.app.web.EntriesDownloader
 import com.landrecords.app.web.EntriesInjection
 import com.landrecords.app.web.WebViewCapture
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONObject
 
@@ -193,6 +199,11 @@ fun FetchScreen(
                         WebViewCapture.eval(wv, AnyRorInjection.cleanupJs(
                             districtEn = i.district, talukaEn = i.taluka, villageEn = i.village, surveyNo = i.surveyNo,
                         ))
+                        if (recordType == RecordType.INTEGRATED) {
+                            // Make the red નોંધ numbers bold+underlined in the integrated PDF so they
+                            // still stand out on a black-&-white print (colour alone wouldn't).
+                            android.util.Log.i("LR", "markRedEntries: " + WebViewCapture.eval(wv, EntriesInjection.markRedEntriesForPdfJs()))
+                        }
                         val html = WebViewCapture.rawHtml(wv)
                         vm.setPhase(FetchPhase.BUILDING)
                         val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
@@ -208,19 +219,40 @@ fun FetchScreen(
                                 // effect no-ops until the entries finish. The integrated PDF is already
                                 // filed, so an entries failure is non-fatal.
                                 scope.launch {
-                                    val caps = ArrayList<EntriesStore.EntryCapture>(reds.size)
-                                    for ((k, e) in reds.withIndex()) {
-                                        entryStatus = "નોંધ ${k + 1}/${reds.size}  ·  Entry ${k + 1}/${reds.size}"
-                                        val sig = CompletableDeferred<Unit>()
-                                        pageSignal = sig
-                                        WebViewCapture.eval(wv, EntriesInjection.selectEntryJs(e.index))
-                                        withTimeoutOrNull(30_000) { sig.await() }
-                                        delay(450) // let gvImages render + its <img> resolve
-                                        val srcs = parseEntryImages(WebViewCapture.eval(wv, EntriesInjection.entryImagesJs()))
-                                        val bytes = srcs.mapNotNull { EntriesDownloader.fetchImage(it) }
-                                        val entryPdf = EntriesDownloader.imagesToPdf(bytes, e.number)
-                                        caps.add(EntriesStore.EntryCapture(number = e.number, red = true, pdf = entryPdf))
-                                        android.util.Log.i("LR", "entry ${e.number}: ${srcs.size} img(s) -> pdf=${entryPdf?.size ?: 0}")
+                                    entryStatus = "નોંધ · Entries…"
+                                    // ONE Select postback on the first red entry teaches us the
+                                    // Info6oldImage handler URL (its dtv is constant for the whole
+                                    // survey); every entry's scan is then a plain parallel GET — no
+                                    // more per-entry page reloads (13 reloads was ~a minute).
+                                    val sig = CompletableDeferred<Unit>()
+                                    pageSignal = sig
+                                    WebViewCapture.eval(wv, EntriesInjection.selectEntryJs(reds.first().index))
+                                    withTimeoutOrNull(30_000) { sig.await() }
+                                    delay(400)
+                                    val firstImgs = parseEntryImages(WebViewCapture.eval(wv, EntriesInjection.entryImagesJs()))
+                                    val template = firstImgs.firstNotNullOfOrNull { EntriesDownloader.templateFrom(it) }
+                                    val caps = if (template != null) {
+                                        val done = java.util.concurrent.atomic.AtomicInteger(0)
+                                        val sem = Semaphore(4) // gentle: at most 4 concurrent image GETs
+                                        coroutineScope {
+                                            reds.map { e ->
+                                                async(Dispatchers.IO) {
+                                                    sem.withPermit {
+                                                        val pages = EntriesDownloader.fetchEntryPages(template, e.number)
+                                                        val pdf = EntriesDownloader.imagesToPdf(pages, e.number)
+                                                        val n = done.incrementAndGet()
+                                                        entryStatus = "નોંધ $n/${reds.size}  ·  Entry $n/${reds.size}"
+                                                        android.util.Log.i("LR", "entry ${e.number}: ${pages.size} page(s) -> pdf=${pdf?.size ?: 0}")
+                                                        EntriesStore.EntryCapture(number = e.number, red = true, pdf = pdf)
+                                                    }
+                                                }
+                                            }.awaitAll()
+                                        }
+                                    } else {
+                                        // dtv unreadable → salvage just the first entry from its rendered URLs.
+                                        android.util.Log.w("LR", "entries: no dtv template — first-entry fallback")
+                                        val bytes = firstImgs.mapNotNull { EntriesDownloader.fetchImage(it) }
+                                        listOf(EntriesStore.EntryCapture(reds.first().number, true, EntriesDownloader.imagesToPdf(bytes, reds.first().number)))
                                     }
                                     runCatching {
                                         EntriesStore.save(app, i.district, i.taluka, i.village, i.surveyNo, caps)

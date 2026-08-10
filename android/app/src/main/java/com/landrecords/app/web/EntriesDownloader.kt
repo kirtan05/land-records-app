@@ -32,6 +32,37 @@ object EntriesDownloader {
     private const val MARGIN = 24
     private const val HEADER_H = 26
 
+    /**
+     * The Info6oldImage.ashx address for a survey's entry scans: everything is in the query
+     * (dtv = the book/geo code, constant for the whole survey; eno = entry number; pagecnt = 1-based
+     * page). So after ONE Select postback teaches us [base] + [dtv], every other entry's scan is a
+     * plain parallel GET — no more per-entry page reloads.
+     */
+    data class ImageUrl(val base: String, val dtv: String)
+
+    /** Parse a rendered gvImages src into a reusable [ImageUrl] template (null if it isn't one). */
+    fun templateFrom(sampleUrl: String): ImageUrl? {
+        val q = sampleUrl.indexOf('?')
+        if (q < 0 || !sampleUrl.contains("Info6oldImage", ignoreCase = true)) return null
+        val dtv = Regex("[?&]dtv=([^&]+)", RegexOption.IGNORE_CASE).find(sampleUrl)?.groupValues?.get(1) ?: return null
+        return ImageUrl(sampleUrl.substring(0, q), dtv)
+    }
+
+    private fun pageUrl(t: ImageUrl, eno: String, page: Int): String =
+        "${t.base}?dtv=${t.dtv}&eno=${java.net.URLEncoder.encode(eno.trim(), "UTF-8")}&pagecnt=$page"
+
+    /** Fetch every scanned page of one entry (pagecnt 1,2,… until a page is missing). */
+    suspend fun fetchEntryPages(t: ImageUrl, eno: String): List<ByteArray> {
+        val pages = ArrayList<ByteArray>()
+        var p = 1
+        while (p <= 25) {
+            val bytes = fetchImage(pageUrl(t, eno, p)) ?: break
+            pages.add(bytes)
+            p++
+        }
+        return pages
+    }
+
     /** GETs one image URL with the WebView cookies. Returns raw image bytes, or null on failure. */
     suspend fun fetchImage(url: String): ByteArray? = withContext(Dispatchers.IO) {
         try {
