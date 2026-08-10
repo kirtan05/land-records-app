@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.landrecords.app.data.model.RecordType
+import com.landrecords.app.ui.fetch.AnyrorAddScreen
 import com.landrecords.app.ui.fetch.FetchScreen
 import com.landrecords.app.ui.fetch.IrcmsBatchScreen
 import com.landrecords.app.ui.fetch.IrcmsCasesScreen
@@ -33,6 +34,7 @@ private object Routes {
     const val FETCH = "fetch/{surveyId}/{recordType}"
     const val REGEN = "regen/{surveyId}/{recordType}"
     const val ADD = "add_property"
+    const val ANYROR_ADD = "anyror_add"
     const val SETTINGS = "settings"
     const val MARKED = "marked"
     const val IRCMS_BATCH = "ircms_batch/{propertyId}?refetch={refetch}"
@@ -125,7 +127,19 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
             }
         }
         composable(Routes.ADD) {
-            AddPropertyScreen(onBack = { navController.popBackStack() }, onSaved = { navController.popBackStack() })
+            AddPropertyScreen(
+                onBack = { navController.popBackStack() },
+                onSaved = { navController.popBackStack() },
+                onAddByAnyror = { navController.navigate(Routes.ANYROR_ADD) },
+            )
+        }
+        composable(Routes.ANYROR_ADD) {
+            AnyrorAddScreen(
+                onBack = { navController.popBackStack() },
+                onCreated = { sid ->
+                    navController.navigate(Routes.fetch(sid, RecordType.INTEGRATED)) { popUpTo(Routes.LIBRARY) }
+                },
+            )
         }
         composable(
             Routes.IRCMS_BATCH,

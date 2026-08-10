@@ -200,6 +200,30 @@ class LandRecordsRepository(private val db: AppDatabase) {
         "${district.trim().lowercase()}|${taluka.trim().lowercase()}|${village.trim().lowercase()}"
 
     /**
+     * Strip the "- <code>" suffix AnyRoR appends to its village dropdown text (e.g. "ઉતરસંડા - 091")
+     * from any stored place name — that code breaks the AnyRoR/iRCMS name matchers. Idempotent.
+     */
+    suspend fun stripPlaceCodeSuffixes() {
+        runCatching {
+            val rx = Regex("""\s*-\s*\d+\s*$""")
+            for (p in db.propertyDao().observeAll().first()) {
+                val cleaned = p.copy(
+                    district = p.district.replace(rx, "").trim(),
+                    districtGu = p.districtGu.replace(rx, "").trim(),
+                    taluka = p.taluka.replace(rx, "").trim(),
+                    talukaGu = p.talukaGu.replace(rx, "").trim(),
+                    village = p.village.replace(rx, "").trim(),
+                    villageGu = p.villageGu.replace(rx, "").trim(),
+                )
+                if (cleaned != p) {
+                    db.propertyDao().upsert(cleaned)
+                    android.util.Log.i("LR", "stripPlaceCodeSuffixes: cleaned property ${p.id} -> ${cleaned.villageGu}")
+                }
+            }
+        }.onFailure { android.util.Log.w("LR", "stripPlaceCodeSuffixes failed: ${it.message}") }
+    }
+
+    /**
      * Collapse duplicate village cards: properties that are the same place (case-insensitively) but
      * got stored as separate rows — e.g. seeded "Anand/…/Bharoda" vs a user-added "ANAND/…/Bharoda".
      * Keeps the lowest-id property and RE-PARENTS every survey of the duplicates onto it (survey ids

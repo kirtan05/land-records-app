@@ -154,7 +154,12 @@ fun IrcmsFetchScreen(
                     val body = IrcmsInjection.caseBody(token, c.casekey).toByteArray()
                     wv.post { wv.postUrl(Ircms.CASE_DETAIL_URL, body) }
                     withTimeoutOrNull(20_000) { sig.await() }
-                    delay(700)
+                    // The detail table paints a beat after the page load — poll so we don't capture a
+                    // blank white page (the ~896-byte symptom). Falls through to capture after ~5s.
+                    var cr = ""; var ct = 0
+                    while (ct < 12) { cr = WebViewCapture.eval(wv, IrcmsInjection.caseReadyJs()); if (cr.startsWith("READY")) break; delay(400); ct++ }
+                    android.util.Log.i("LR", "iRCMS case ${idx + 1} ready='$cr' after $ct polls")
+                    delay(250)
                     WebViewCapture.eval(wv, IrcmsInjection.caseCleanupJs())
                     val pdf = PrintPdf.toPdfBytes(wv, app.cacheDir) ?: WebViewCapture.toPdfBytes(wv)
                     // Disposed cases carry a "Download Order" — the order PDF follows the case.

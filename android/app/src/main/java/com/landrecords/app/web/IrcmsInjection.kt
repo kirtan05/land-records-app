@@ -30,6 +30,11 @@ object IrcmsInjection {
           var opts=Array.prototype.slice.call(sel.options).filter(function(o){ return o.value && o.value!=='-1' && o.value!=='0'; });
           var eq=opts.filter(function(o){ return nn(o.text)===w; });
           if(eq.length){ sel.value=eq[0].value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
+          // iRCMS lists options as "English : ગુજરાતી". An English key can be a PREFIX of another
+          // (e.g. "Nadiad" vs "Nadiad City"), so a plain substring match is ambiguous and never
+          // fills. Try an EXACT match on either side of the colon first — that disambiguates.
+          var part=opts.filter(function(o){ return o.text.split(':').some(function(p){ return nn(p)===w; }); });
+          if(part.length===1){ sel.value=part[0].value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
           var sub=opts.filter(function(o){ var t=nn(o.text); return t.indexOf(w)>=0 || w.indexOf(t)>=0; });
           if(sub.length===1){ sel.value=sub[0].value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; }
           var wt=toks(want);
@@ -48,7 +53,7 @@ object IrcmsInjection {
         // spelling drift like "તડપદ"/"તલપદ" or "નડીઆદ"/"નડિયાદ" — can be diagnosed without a device.
         function optList(sel){ return Array.prototype.slice.call(sel.options)
           .filter(function(o){ return o.value && o.value!=='-1' && o.value!=='0'; })
-          .slice(0,30).map(function(o){ return (o.text||'').replace(/\s+/g,' ').trim(); }).join(' · '); }
+          .slice(0,150).map(function(o){ return (o.text||'').replace(/\s+/g,' ').trim(); }).join(' · '); }
         var d=document.getElementById('${Ircms.Ids.DISTRICT}');
         if(d && unset(d)){ if(selText(d,'$district')) return 'DIST'; return 'WAIT|dist|want=$district|opts='+optList(d); }
         var t=document.getElementById('${Ircms.Ids.TALUKA}');
@@ -158,6 +163,20 @@ object IrcmsInjection {
         }).filter(function(c){ return c.casekey; });
         return JSON.stringify({ token: token, cases: cases });
       } catch(e){ return JSON.stringify({ token:'', cases:[] }); }
+    })();
+    """.trimIndent()
+
+    /**
+     * Is the case-detail page actually rendered? The detail table paints a beat AFTER onPageFinished,
+     * so capturing immediately yields a blank white page (~896-byte PDF). Poll this until 'READY'.
+     */
+    fun caseReadyJs(): String = """
+    (function(){
+      try {
+        var txt=((document.body && document.body.innerText) || '').replace(/\s+/g,'');
+        var rows=document.querySelectorAll('table tr').length;
+        return (txt.length>250 && rows>1) ? 'READY' : ('WAIT|len='+txt.length+'|rows='+rows);
+      } catch(e){ return 'WAIT'; }
     })();
     """.trimIndent()
 

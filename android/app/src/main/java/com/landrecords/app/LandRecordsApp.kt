@@ -22,6 +22,8 @@ class LandRecordsApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // Persist our own LR trace to a capped file so "Report a problem" has real logs later.
+        com.landrecords.app.data.storage.AppLog.start(this)
         // Persist fatal crash stacks to a file so the Settings "Report a problem" button can attach
         // them later (this is what would have captured the OOM). Chain the default handler so the
         // app still crashes/reports normally.
@@ -40,7 +42,8 @@ class LandRecordsApp : Application() {
             repository.seedIfEmpty()
             // Backfill the already-generated desktop records (pushed to the app's files dir).
             com.landrecords.app.data.storage.SeedImporter.run(this@LandRecordsApp, repository, libraryWriter)
-            // Collapse any duplicate village cards (same place stored under different casing).
+            // Clean AnyRoR "- <code>" suffixes off village names, then collapse duplicate cards.
+            repository.stripPlaceCodeSuffixes()
             repository.mergeDuplicateProperties()
         }
     }

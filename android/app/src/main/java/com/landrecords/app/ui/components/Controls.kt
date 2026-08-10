@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -150,19 +152,25 @@ fun SegmentedPills(
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    // Equal-width segments: each pill takes 1/3 of the row, so a longer label (e.g. "System", or a
+    // wider Gujarati word) can't elongate one pill and blow the card out past the screen width.
+    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         options.forEachIndexed { i, label ->
             val selected = i == selectedIndex
             Box(
                 modifier = Modifier
+                    .weight(1f)
                     .clip(LandShape.pill)
                     .background(if (selected) Land.colors.accentSoft else Color.Transparent)
                     .border(1.dp, if (selected) Land.colors.accent else Land.colors.line, LandShape.pill)
                     .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onSelect(i) }
-                    .padding(horizontal = 16.dp, vertical = 9.dp),
+                    .padding(vertical = 9.dp, horizontal = 6.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(label, style = LandType.body, color = if (selected) Land.colors.accent else Land.colors.ink2)
+                Text(
+                    label, style = LandType.body, color = if (selected) Land.colors.accent else Land.colors.ink2,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center,
+                )
             }
         }
     }

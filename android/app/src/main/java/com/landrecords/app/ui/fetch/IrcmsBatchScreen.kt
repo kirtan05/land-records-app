@@ -196,7 +196,10 @@ fun IrcmsBatchScreen(
                             val sig = CompletableDeferred<Unit>(); captureSignal = sig
                             cwv.post { cwv.postUrl(Ircms.CASE_DETAIL_URL, IrcmsInjection.caseBody(token, c.casekey).toByteArray()) }
                             withTimeoutOrNull(20_000) { sig.await() }
-                            delay(650)
+                            // Poll until the detail table renders (else a blank white page, ~896B).
+                            var bcr = 0
+                            while (bcr < 12 && !WebViewCapture.eval(cwv, IrcmsInjection.caseReadyJs()).startsWith("READY")) { delay(400); bcr++ }
+                            delay(250)
                             WebViewCapture.eval(cwv, IrcmsInjection.caseCleanupJs())
                             val pdf = PrintPdf.toPdfBytes(cwv, app.cacheDir) ?: WebViewCapture.toPdfBytes(cwv)
                             val orderForm = WebViewCapture.eval(cwv, IrcmsInjection.orderFormJs())

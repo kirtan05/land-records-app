@@ -123,6 +123,84 @@ object AnyRorInjection {
     })();
     """.trimIndent()
 
+    /** Read the survey dropdown's real options as JSON `[{v,t}]` — for the "choose a survey" fallback. */
+    fun surveyOptionsJs(surveyDropId: String): String = """
+    (function(){
+      try {
+        var s=document.getElementById('$surveyDropId'); if(!s) return '[]';
+        var out=[];
+        Array.prototype.slice.call(s.options).forEach(function(o){
+          if(o.value && o.value!=='-1' && o.value!=='0'){ out.push({v:o.value, t:(o.text||'').replace(/\s+/g,' ').trim()}); }
+        });
+        return JSON.stringify(out);
+      } catch(e){ return '[]'; }
+    })();
+    """.trimIndent()
+
+    /** Select a specific dropdown value by element id (the user's pick from a chooser). */
+    fun selectSurveyValueJs(surveyDropId: String, value: String): String {
+        val v = org.json.JSONObject.quote(value)
+        return """
+        (function(){
+          try {
+            var s=document.getElementById('$surveyDropId'); if(!s) return 'NO';
+            s.value=$v; s.dispatchEvent(new Event('change',{bubbles:true})); return 'OK';
+          } catch(e){ return 'ERR'; }
+        })();
+        """.trimIndent()
+    }
+
+    /**
+     * "Add via AnyRoR" guided cascade — no known place, so at each still-empty level return
+     * `{"level":"dist|tal|vil|sur","opts":[{v,t}]}` for the app to show a chooser. Geo is filled
+     * first and record type ($recordValue, INTEGRATED) LAST (AnyRoR errors otherwise). Returns
+     * 'WAIT' while a level is still loading, 'RT' just after setting the record type, or 'READY'
+     * when district/taluka/village/survey are all chosen.
+     */
+    fun guidedStepJs(recordValue: String, surveyDropId: String): String = """
+    (function(){
+      try {
+        function byId(id){ return document.getElementById(id); }
+        function unset(sel){ if(!sel) return true; var v=(''+sel.value).trim(); return v===''||v==='0'||v==='-1'; }
+        function opts(sel){ var out=[]; Array.prototype.slice.call(sel.options).forEach(function(o){
+          if(o.value && o.value!=='-1' && o.value!=='0'){ out.push({v:o.value, t:(o.text||'').replace(/\s+/g,' ').trim()}); } }); return out; }
+        function J(level, sel){ return JSON.stringify({level:level, opts:opts(sel)}); }
+        var rt=byId('${AnyRor.Ids.RECORD_TYPE}');
+        var dist=byId('${AnyRor.Ids.DISTRICT}');
+        if(!dist) return 'WAIT';                       // page not loaded yet — never fall through to READY
+        var distReady = !dist.disabled && dist.options.length>1;
+        if(rt && (rt.value||'')!=='$recordValue' && !distReady){ rt.value='$recordValue'; rt.dispatchEvent(new Event('change',{bubbles:true})); return 'RT'; }
+        if(unset(dist)){ return dist.options.length>1 ? J('dist',dist) : 'WAIT'; }
+        var tal=byId('${AnyRor.Ids.TALUKA}');
+        if(!tal || unset(tal)){ return (tal && tal.options.length>1) ? J('tal',tal) : 'WAIT'; }
+        var vil=byId('${AnyRor.Ids.VILLAGE}');
+        if(!vil || unset(vil)){ return (vil && vil.options.length>1) ? J('vil',vil) : 'WAIT'; }
+        if(rt && (rt.value||'')!=='$recordValue'){ rt.value='$recordValue'; rt.dispatchEvent(new Event('change',{bubbles:true})); return 'RT'; }
+        var sur=byId('$surveyDropId');
+        if(!sur || unset(sur)){ return (sur && sur.options.length>1) ? J('sur',sur) : 'WAIT'; }
+        return 'READY';
+      } catch(e){ return 'WAIT'; }
+    })();
+    """.trimIndent()
+
+    /** Read the currently-selected option TEXTS of the cascade — the place/survey to save. */
+    fun selectedTextsJs(surveyDropId: String): String = """
+    (function(){
+      try {
+        function txt(id){ var s=document.getElementById(id); if(!s) return ''; var o=s.options[s.selectedIndex]; return o?(o.text||'').replace(/\s+/g,' ').trim():''; }
+        return JSON.stringify({ district:txt('${AnyRor.Ids.DISTRICT}'), taluka:txt('${AnyRor.Ids.TALUKA}'), village:txt('${AnyRor.Ids.VILLAGE}'), survey:txt('$surveyDropId') });
+      } catch(e){ return '{}'; }
+    })();
+    """.trimIndent()
+
+    /** The dropdown element id for a guided-cascade level ('dist'|'tal'|'vil'|'sur'). */
+    fun levelDropId(level: String, surveyDropId: String): String = when (level) {
+        "dist" -> AnyRor.Ids.DISTRICT
+        "tal" -> AnyRor.Ids.TALUKA
+        "vil" -> AnyRor.Ids.VILLAGE
+        else -> surveyDropId
+    }
+
     /** Reproduces anyror/format.mjs addStyleTag — the print CSS for the Integrated record. */
     const val CLEANUP_CSS = """
         /* Tell the print engine the page is landscape A4 — without this it lays the content

@@ -51,7 +51,14 @@ object DiagnosticsReport {
             sb.appendLine(crash.readText().takeLast(6000))
             sb.appendLine()
         }
-        sb.appendLine("=== Recent app logs ===")
+        // The persisted ring-buffer (survives even if logcat's live buffer has rolled).
+        val saved = AppLog.file(context)
+        if (saved.exists() && saved.length() > 0) {
+            sb.appendLine("=== App log (saved, last ~180 KB) ===")
+            sb.appendLine(saved.readText().takeLast(180_000))
+            sb.appendLine()
+        }
+        sb.appendLine("=== Live logcat (most recent) ===")
         sb.appendLine(recentLogcat().takeLast(14000))
 
         val out = lastReportFile(context)

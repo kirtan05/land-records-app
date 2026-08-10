@@ -29,6 +29,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.size
+import com.landrecords.app.ui.theme.L
+import com.landrecords.app.ui.theme.LandShape
+import com.landrecords.app.ui.theme.LocalLang
+import com.landrecords.app.ui.theme.join
+import kotlinx.coroutines.launch
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -85,15 +108,27 @@ fun Vf712FetchScreen(
     var awaitingDetail by remember { mutableStateOf(false) }
     var captureRunning by remember { mutableStateOf(false) }
     var working by remember { mutableStateOf(true) }
+    // When the survey has no exact match in the (OLD-numbered) VF-7/12 dropdown, offer these to pick.
+    var surveyChoices by remember { mutableStateOf<List<Pair<String, String>>?>(null) }
+    var surveyChosen by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     val surveyDropId = AnyRor.Ids.SURVEY_VF712
     val recordValue = AnyRor.recordValue(RecordType.VF712) ?: "11"
 
     // ── Cascade prefill (one step per postback) + spotlight the CAPTCHA — same machine as FetchScreen.
-    LaunchedEffect(pageLoaded, info, awaitingDetail) {
+    LaunchedEffect(pageLoaded, info, awaitingDetail, surveyChosen) {
         val wv = webRef ?: return@LaunchedEffect
         val i = info ?: return@LaunchedEffect
         if (captureRunning || awaitingDetail) return@LaunchedEffect
+        if (surveyChosen) {
+            // The user hand-picked a survey (no exact match existed) — cascade complete, spotlight.
+            delay(400)
+            WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
+            working = false
+            return@LaunchedEffect
+        }
+        if (surveyChoices != null) return@LaunchedEffect // chooser open — wait for the user
         val step = WebViewCapture.eval(
             wv,
             AnyRorInjection.prefillStepJs(
@@ -108,6 +143,14 @@ fun Vf712FetchScreen(
             delay(600)
             WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
             working = false // cascade filled + spotlit — the user solves the CAPTCHA now
+        } else if (step.startsWith("WAIT|sur|want=")) {
+            // Survey dropdown is populated but the exact survey isn't in it — VF-7/12 uses the OLD
+            // numbering (e.g. no "1257/p", but "1257", "1257/1"…). Let the user choose which to fetch.
+            val n = Regex("""\|n=(\d+)""").find(step)?.groupValues?.get(1)?.toIntOrNull() ?: 0
+            if (n > 0) {
+                val opts = parseSurveyOptions(WebViewCapture.eval(wv, AnyRorInjection.surveyOptionsJs(surveyDropId)))
+                if (opts.isNotEmpty()) { surveyChoices = opts; working = false }
+            }
         }
     }
 
@@ -281,6 +324,104 @@ fun Vf712FetchScreen(
             }
             working && awaitingDetail -> InputBlocker(active = true) { PreparingOverlay(fetching = true) }
             working -> InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() }
+        }
+
+        surveyChoices?.let { choices ->
+            Vf712SurveyChooser(
+                options = choices,
+                wantedSurvey = info?.surveyNo ?: "",
+                initialQuery = baseOf(info?.surveyNorm ?: ""),
+                onDismiss = { surveyChoices = null },
+                onPick = { value ->
+                    surveyChoices = null
+                    working = true
+                    webRef?.let { wv ->
+                        scope.launch {
+                            WebViewCapture.eval(wv, AnyRorInjection.selectSurveyValueJs(surveyDropId, value))
+                            delay(250)
+                            surveyChosen = true // triggers the prefill effect → spotlight the CAPTCHA
+                        }
+                    }
+                },
+            )
+        }
+    }
+}
+
+/** Parse [AnyRorInjection.surveyOptionsJs] output → list of (value, visibleText). */
+private fun parseSurveyOptions(json: String): List<Pair<String, String>> = try {
+    val arr = org.json.JSONArray(json)
+    (0 until arr.length()).mapNotNull { k ->
+        val o = arr.getJSONObject(k)
+        val v = o.optString("v")
+        if (v.isBlank()) null else v to o.optString("t").ifBlank { v }
+    }
+} catch (e: Exception) {
+    android.util.Log.w("LR", "parseSurveyOptions failed: ${e.message}"); emptyList()
+}
+
+/** Leading number of a survey token ("1257/p" → "1257") — pre-filters the chooser to the family. */
+private fun baseOf(surveyNorm: String): String = Regex("^\\d+").find(surveyNorm.trim())?.value ?: ""
+
+/** Searchable "choose the old survey" sheet, shown when VF-7/12 has no exact match for the survey. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Vf712SurveyChooser(
+    options: List<Pair<String, String>>,
+    wantedSurvey: String,
+    initialQuery: String,
+    onDismiss: () -> Unit,
+    onPick: (String) -> Unit,
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var query by remember { mutableStateOf(initialQuery) }
+    val filtered = remember(query, options) {
+        val q = query.trim()
+        if (q.isEmpty()) options else options.filter { it.second.contains(q, ignoreCase = true) }
+    }
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, containerColor = Land.colors.surface) {
+        Column(
+            Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text(L("સર્વે પસંદ કરો", "Choose the survey"), style = LandType.screenTitle, color = Land.colors.ink)
+            Text(
+                L(
+                    "જૂનું ૭/૧૨ જૂના સર્વે નંબર વાપરે છે — “$wantedSurvey” સીધું નથી, તેથી નીચેમાંથી પસંદ કરો.",
+                    "Old VF-7/12 uses the old survey numbers — \"$wantedSurvey\" isn't listed directly, so pick one below.",
+                ),
+                style = LandType.stamp, color = Land.colors.ink3,
+            )
+            Row(
+                Modifier.fillMaxWidth().height(44.dp).clip(LandShape.field)
+                    .background(Land.colors.surfaceAlt).border(1.dp, Land.colors.line, LandShape.field)
+                    .padding(horizontal = 14.dp),
+                verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Box(Modifier.size(11.dp).clip(CircleShape).border(1.dp, Land.colors.ink3, CircleShape))
+                Box(Modifier.weight(1f)) {
+                    if (query.isEmpty()) Text(L("સર્વે શોધો", "Search survey"), style = LandType.body, color = Land.colors.ink3)
+                    BasicTextField(
+                        value = query, onValueChange = { query = it }, singleLine = true,
+                        textStyle = LandType.body.copy(color = Land.colors.ink),
+                        cursorBrush = SolidColor(Land.colors.accent), modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+            Text(L("${filtered.size} બતાવ્યા", "${filtered.size} shown"), style = LandType.stamp, color = Land.colors.ink3)
+            LazyColumn(Modifier.fillMaxWidth().heightIn(max = 420.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                items(filtered, key = { it.first }) { opt ->
+                    Row(
+                        Modifier.fillMaxWidth().heightIn(min = 44.dp).clip(LandShape.field)
+                            .background(Land.colors.surface).border(1.dp, Land.colors.line, LandShape.field)
+                            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onPick(opt.first) }
+                            .padding(horizontal = 15.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(opt.second, style = LandType.metaMono, color = Land.colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                }
+            }
         }
     }
 }

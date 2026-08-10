@@ -51,6 +51,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.R
 import com.landrecords.app.ui.components.BlueprintHeader
+import com.landrecords.app.ui.components.DashedButton
 import com.landrecords.app.ui.components.PillButton
 import com.landrecords.app.ui.components.PrimaryButton
 import com.landrecords.app.ui.components.RemovableChip
@@ -68,7 +69,7 @@ import com.landrecords.app.ui.theme.Lr
 private enum class Picker { DISTRICT, TALUKA, VILLAGE, SURVEY }
 
 @Composable
-fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
+fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit, onAddByAnyror: () -> Unit = {}) {
     val app = landApp()
     val context = LocalContext.current
     val vm: AddPropertyViewModel = viewModel(
@@ -141,6 +142,16 @@ fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit) {
             Modifier.fillMaxWidth().weight(1f).verticalScroll(rememberScrollState()).padding(20.dp),
             verticalArrangement = Arrangement.spacedBy(Dp4.cardGap),
         ) {
+            // AnyRoR-agnostic add: pick any village live on AnyRoR (no pre-cascaded list needed).
+            DashedButton(
+                text = L("AnyRoR થી ઉમેરો — કોઈ પણ ગામ", "Add via AnyRoR — any village"),
+                onClick = onAddByAnyror,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Text(
+                L("નવું ગામ યાદીમાં ન હોય? ઉપરથી AnyRoR પર પસંદ કરો. અથવા નીચે જાતે ભરો.", "New village not in the list? Pick it on AnyRoR above — or fill in manually below."),
+                style = LandType.stamp, color = Land.colors.ink3,
+            )
             ReadOnlyRow(Lr(R.string.state_gu, R.string.state_en), "ગુજરાત · Gujarat")
 
             // District — always a picker when the bundled list is present.
