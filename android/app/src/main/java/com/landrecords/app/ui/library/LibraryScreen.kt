@@ -1,5 +1,7 @@
 package com.landrecords.app.ui.library
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +31,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.R
+import com.landrecords.app.data.maps.VillageMaps
 import com.landrecords.app.data.model.RecordType
 import com.landrecords.app.ui.components.BlueprintHeader
 import com.landrecords.app.ui.components.DashedButton
@@ -83,6 +88,19 @@ fun LibraryScreen(
     )
     val state by vm.uiState.collectAsStateWithLifecycle()
     val lang = LocalLang.current
+    val context = LocalContext.current
+    // Village-map lookup is a separate, read-only asset (villages.json); load it once so the
+    // per-card map affordance can appear as soon as it's ready.
+    var mapsReady by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        VillageMaps.load(context)
+        mapsReady = true
+    }
+    fun openVillageMap(entry: com.landrecords.app.data.maps.VillageMapEntry) {
+        runCatching {
+            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(entry.viewUrl)))
+        }
+    }
     // Property whose "All cases · 1 code" tap is awaiting a re-fetch confirmation (cases already exist).
     var confirmBatchProp by remember { mutableStateOf<Long?>(null) }
     // Village (id → display name) whose long-press is awaiting a delete confirmation.
@@ -162,10 +180,16 @@ fun LibraryScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         items(state.villages, key = { it.propertyId }) { v ->
+                            val mapEntry = if (mapsReady) {
+                                remember(v.district, v.taluka, v.village, mapsReady) {
+                                    VillageMaps.find(v.district, v.taluka, v.village)
+                                }
+                            } else null
                             VillageCard(
                                 name = v.name, helper = v.helper, selected = v.selected,
                                 onClick = { vm.selectVillage(v.propertyId) },
                                 onLongClick = { confirmDeleteProp = v.propertyId to v.name },
+                                onOpenMap = mapEntry?.let { entry -> { openVillageMap(entry) } },
                                 modifier = Modifier.width(150.dp),
                             )
                         }

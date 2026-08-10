@@ -17,6 +17,9 @@ data class VillageChip(
     val name: String,
     val helper: String,
     val selected: Boolean,
+    val district: String,
+    val taluka: String,
+    val village: String,
 )
 
 data class LibraryUiState(
@@ -52,6 +55,9 @@ class LibraryViewModel(private val repo: LandRecordsRepository) : ViewModel() {
                 name = p.villageGu.ifBlank { p.village },
                 helper = "${p.village} · ${countFor(p.id)}",
                 selected = p.id == selId,
+                district = p.district,
+                taluka = p.taluka,
+                village = p.village,
             )
         }
 

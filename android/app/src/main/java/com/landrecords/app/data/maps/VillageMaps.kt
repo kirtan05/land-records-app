@@ -90,4 +90,26 @@ object VillageMaps {
             }
         }
     }
+
+    /** trim, lowercase, collapse whitespace runs, and treat '_'/'-' as spaces. */
+    private fun normalize(s: String): String =
+        s.trim().lowercase().replace('_', ' ').replace('-', ' ').replace(Regex("\\s+"), " ")
+
+    /**
+     * Find the official map for a property's (district, taluka, village), used to decide whether
+     * a village card gets a map affordance at all. Exact normalised match within the right
+     * district+taluka wins; if the taluka itself doesn't match anything, fall back to a unique
+     * normalised match anywhere in the district. Returns null (never a guess) if nothing matches
+     * or a district-wide fallback is ambiguous — showing no map beats showing the wrong one.
+     */
+    fun find(district: String, taluka: String, village: String): VillageMapEntry? {
+        val d = districts.firstOrNull { normalize(it.name) == normalize(district) } ?: return null
+        val nv = normalize(village)
+        val t = d.talukas.firstOrNull { normalize(it.name) == normalize(taluka) }
+        if (t != null) {
+            t.villages.firstOrNull { normalize(it.village) == nv }?.let { return it }
+        }
+        val candidates = d.talukas.flatMap { it.villages }.filter { normalize(it.village) == nv }.distinct()
+        return candidates.singleOrNull()
+    }
 }
