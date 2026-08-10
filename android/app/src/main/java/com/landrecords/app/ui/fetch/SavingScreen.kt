@@ -27,14 +27,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.landrecords.app.R
+import com.landrecords.app.ui.theme.LocalLang
+import com.landrecords.app.ui.theme.join
 import com.landrecords.app.ui.components.ParcelPlate
 import com.landrecords.app.ui.theme.Land
 import com.landrecords.app.ui.theme.LandSize
@@ -106,16 +113,36 @@ fun SavingOverlay(
     }
 }
 
+/** How long a first Back press stays "armed" for a second press to confirm an exit. */
+private const val DOUBLE_BACK_MS = 2500L
+
 /**
- * A full-screen layer that swallows every touch and the Back gesture while [active], so the
- * fetch state machine can drive the page without a stray tap or Back derailing it. When not
- * active it's an inert pass-through (used for the error state, where Back should still work).
+ * A full-screen layer that swallows every touch while [active], so the fetch state machine can
+ * drive the page without a stray tap derailing it. Back is deliberately NOT hard-swallowed: a
+ * single press only shows a "press again" toast — so an accidental Back ruins nothing — while a
+ * deliberate double-press within [DOUBLE_BACK_MS] runs [onExit]. That way a stuck run never needs
+ * a force-close (and no wait-timer), yet a stray tap can't abort a real fetch. When [onExit] is
+ * null no escape is offered (Back is a no-op); when not [active] the layer is an inert pass-through.
  */
 @Composable
-fun InputBlocker(active: Boolean, onBack: (() -> Unit)? = null, content: @Composable BoxScope.() -> Unit) {
-    // Back either exits (if the caller allows an escape hatch — so a stuck run isn't a force-close)
-    // or is swallowed so a stray press can't derail the machine.
-    if (active) BackHandler(enabled = true) { onBack?.invoke() }
+fun InputBlocker(active: Boolean, onExit: (() -> Unit)? = null, content: @Composable BoxScope.() -> Unit) {
+    val context = LocalContext.current
+    val lang = LocalLang.current
+    var armedAt by remember { mutableLongStateOf(0L) }
+    if (active) BackHandler(enabled = true) {
+        val exit = onExit ?: return@BackHandler
+        val now = System.currentTimeMillis()
+        if (armedAt != 0L && now - armedAt <= DOUBLE_BACK_MS) {
+            exit()
+        } else {
+            armedAt = now
+            android.widget.Toast.makeText(
+                context,
+                lang.join("બહાર નીકળવા ફરી બૅક દબાવો", "Press Back again to exit"),
+                android.widget.Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
     Box(
         Modifier
             .fillMaxSize()

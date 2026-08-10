@@ -63,6 +63,8 @@ import com.landrecords.app.ui.theme.Land
 import com.landrecords.app.ui.theme.LandShape
 import com.landrecords.app.ui.theme.LandSize
 import com.landrecords.app.ui.theme.LandType
+import com.landrecords.app.ui.theme.LocalLang
+import com.landrecords.app.ui.theme.join
 import com.landrecords.app.ui.theme.Lr
 
 /** Which picker sheet is currently open, if any. */
@@ -72,6 +74,7 @@ private enum class Picker { DISTRICT, TALUKA, VILLAGE, SURVEY }
 fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit, onAddByAnyror: () -> Unit = {}) {
     val app = landApp()
     val context = LocalContext.current
+    val lang = LocalLang.current // captured so the save callback (non-composable) can still localise
     val vm: AddPropertyViewModel = viewModel(
         factory = viewModelFactory { initializer { AddPropertyViewModel(app.repository) } },
     )
@@ -241,7 +244,17 @@ fun AddPropertyScreen(onBack: () -> Unit, onSaved: () -> Unit, onAddByAnyror: ()
                         talukaEn, talukaName,
                         villageEn, villageName,
                         surveyNumbers.toList(),
-                    ) { onSaved() }
+                    ) { _, duplicates ->
+                        if (duplicates.isNotEmpty()) {
+                            val joined = duplicates.joinToString(", ")
+                            android.widget.Toast.makeText(
+                                context,
+                                lang.join("પહેલેથી જ છે: $joined", "Already added: $joined"),
+                                android.widget.Toast.LENGTH_LONG,
+                            ).show()
+                        }
+                        onSaved()
+                    }
                 },
             )
         }

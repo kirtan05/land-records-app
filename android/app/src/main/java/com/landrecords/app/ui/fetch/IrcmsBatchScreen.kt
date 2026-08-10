@@ -335,14 +335,14 @@ fun IrcmsBatchScreen(
             phase == BatchPhase.ERROR -> InputBlocker(active = false) {
                 BatchStatusCard(title = "Couldn't start", detail = errorMsg ?: "", onBack = onBack)
             }
-            phase == BatchPhase.RUNNING || phase == BatchPhase.DONE -> InputBlocker(active = true) {
+            phase == BatchPhase.RUNNING || phase == BatchPhase.DONE -> InputBlocker(active = true, onExit = onBack) {
                 BatchStatusCard(
                     title = if (phase == BatchPhase.DONE) "Done" else "Fetching cases…",
                     detail = if (phase == BatchPhase.DONE) "$doneCount survey(s) filed" else progress,
                     onBack = null,
                 )
             }
-            working -> InputBlocker(active = true) { if (mainLoaded >= 1) FillingIndicator() else OpeningOverlay() }
+            working -> InputBlocker(active = true, onExit = onBack) { if (mainLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
     }
 }

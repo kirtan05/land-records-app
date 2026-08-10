@@ -18,16 +18,17 @@ class AddPropertyViewModel(private val repo: LandRecordsRepository) : ViewModel(
         taluka: String, talukaGu: String,
         village: String, villageGu: String,
         surveyNos: List<String>,
-        onSaved: (Long) -> Unit,
+        onSaved: (Long, List<String>) -> Unit,
     ) {
         viewModelScope.launch {
-            val id = repo.addProperty(
+            val result = repo.addPropertyDetailed(
                 district.trim(), districtGu.trim(),
                 taluka.trim(), talukaGu.trim(),
                 village.trim(), villageGu.trim(),
                 surveyNos,
             )
-            onSaved(id)
+            // Duplicates are the survey numbers that were already in the village (kept, not overwritten).
+            onSaved(result.propertyId, result.duplicates)
         }
     }
 }

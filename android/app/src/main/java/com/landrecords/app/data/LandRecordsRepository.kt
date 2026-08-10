@@ -64,6 +64,9 @@ class LandRecordsRepository(private val db: AppDatabase) {
     suspend fun findSurveyId(district: String, taluka: String, village: String, surveyNo: String): Long? =
         db.surveyDao().findByVillageAndNo(district, taluka, village, surveyNo)?.id
 
+    /** Outcome of an add: which survey numbers were freshly created vs already present (skipped). */
+    data class AddResult(val propertyId: Long, val added: List<String>, val duplicates: List<String>)
+
     /**
      * Create a property (or reuse an existing same-named one) and add the given survey numbers.
      * The plain district/taluka/village fields hold a stable English/code key (used for the storage
@@ -77,7 +80,21 @@ class LandRecordsRepository(private val db: AppDatabase) {
         taluka: String, talukaGu: String,
         village: String, villageGu: String,
         surveyNos: List<String>,
-    ): Long {
+    ): Long = addPropertyDetailed(district, districtGu, taluka, talukaGu, village, villageGu, surveyNos).propertyId
+
+    /**
+     * Like [addProperty] but DE-DUPLICATES the surveys and reports the outcome: a survey number
+     * already present in that village is never inserted a second time and never overwritten — the
+     * existing survey row (and every fetched record / scan / case / colour-mark hanging off it) is
+     * kept intact, and the number is returned under [AddResult.duplicates]. Dedup is by the
+     * *normalized* token, so "174/p2", "174/P2" and "174 p 2" collapse to one survey.
+     */
+    suspend fun addPropertyDetailed(
+        district: String, districtGu: String,
+        taluka: String, talukaGu: String,
+        village: String, villageGu: String,
+        surveyNos: List<String>,
+    ): AddResult {
         // Match case-INSENSITIVELY: the cascade gives district/village en in inconsistent case
         // (e.g. "ANAND", "KARAMSAD") so an exact-case compare would make a *second* property for a
         // village that already exists → a duplicate village card. Reuse the existing one instead.
@@ -91,10 +108,17 @@ class LandRecordsRepository(private val db: AppDatabase) {
                 villageGu = villageGu.ifBlank { village },
             ),
         )
+        // Tokens already held in this property — dedup against them AND within the input list.
+        val present = db.surveyDao().observeForProperty(propId).first().map { it.normalized }.toMutableSet()
+        val added = mutableListOf<String>()
+        val duplicates = mutableListOf<String>()
         for (no in surveyNos.map { it.trim() }.filter { it.isNotEmpty() }) {
-            db.surveyDao().upsert(SurveyEntity(propertyId = propId, surveyNo = no, normalized = tokenOf(no)))
+            val tok = tokenOf(no)
+            if (!present.add(tok)) { duplicates.add(no); continue } // already exists → keep, don't overwrite
+            db.surveyDao().upsert(SurveyEntity(propertyId = propId, surveyNo = no, normalized = tok))
+            added.add(no)
         }
-        return propId
+        return AddResult(propId, added, duplicates)
     }
 
     suspend fun recordFor(surveyId: Long, type: RecordType): RecordEntity? =

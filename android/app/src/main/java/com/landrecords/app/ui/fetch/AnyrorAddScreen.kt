@@ -51,6 +51,8 @@ import com.landrecords.app.ui.landApp
 import com.landrecords.app.ui.theme.L
 import com.landrecords.app.ui.theme.Land
 import com.landrecords.app.ui.theme.LandShape
+import com.landrecords.app.ui.theme.LocalLang
+import com.landrecords.app.ui.theme.join
 import com.landrecords.app.ui.theme.LandSize
 import com.landrecords.app.ui.theme.LandType
 import com.landrecords.app.web.AnyRor
@@ -73,6 +75,7 @@ private data class Sel(val district: String, val taluka: String, val village: St
 @Composable
 fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
     val app = landApp()
+    val lang = LocalLang.current // captured so the (non-composable) create coroutine can localise a toast
     val scope = rememberCoroutineScope()
     var webRef by remember { mutableStateOf<WebView?>(null) }
     var pageLoaded by remember { mutableIntStateOf(0) }
@@ -80,8 +83,6 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
     var busy by remember { mutableStateOf(true) }
     var creating by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
-    // Arms after ~15s of the page loading/cascading with no progress — gates the Back escape hatch.
-    var stuck by remember { mutableStateOf(false) }
 
     val surveyDropId = AnyRor.Ids.SURVEY_INTEGRATED
     val recordValue = "8"
@@ -110,10 +111,19 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
                         error = "Couldn't read the selection — please try again."; creating = false; return@launch
                     }
                     // Gujarati names off AnyRoR fill both the display + the (English) storage key.
-                    app.repository.addProperty(d, d, t, t, v, v, listOf(s))
+                    // Dedup: if this survey is already saved it is kept (not duplicated/overwritten);
+                    // we still hand off to the fetch so the user gets a fresh record.
+                    val addRes = app.repository.addPropertyDetailed(d, d, t, t, v, v, listOf(s))
                     val sid = app.repository.findSurveyId(d, t, v, s)
                     if (sid == null) { error = "Couldn't save the village — please try again."; creating = false; return@launch }
-                    android.util.Log.i("LR", "anyrorAdd created survey $sid ($d / $t / $v / $s) — handing to integrated fetch")
+                    if (addRes.duplicates.isNotEmpty()) {
+                        android.widget.Toast.makeText(
+                            app,
+                            lang.join("આ સર્વે નંબર પહેલેથી યાદીમાં છે — ફરી મેળવી રહ્યા છીએ", "Already in your list — re-fetching"),
+                            android.widget.Toast.LENGTH_SHORT,
+                        ).show()
+                    }
+                    android.util.Log.i("LR", "anyrorAdd survey $sid ($d / $t / $v / $s) dup=${addRes.duplicates.isNotEmpty()} — handing to integrated fetch")
                     onCreated(sid)
                 }
             }
@@ -131,13 +141,6 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
         if (pageLoaded < 1 && error == null && !creating) {
             error = "Couldn't reach AnyRoR — your connection may be blocked. Try later or another network."
         }
-    }
-    // Stall detector for the Back escape: reset on progress, arm after ~15s of no-progress loading.
-    LaunchedEffect(pageLoaded, busy, creating, chooser) {
-        stuck = false
-        if (!busy || creating || chooser != null) return@LaunchedEffect
-        delay(15_000)
-        stuck = true
     }
 
     Box(Modifier.fillMaxSize()) {
@@ -188,8 +191,8 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
                     onRetry = { error = null; creating = false; chooser = null; busy = true; webRef?.reload() },
                 )
             }
-            creating -> InputBlocker(active = true) { PreparingOverlay(fetching = true) }
-            busy && chooser == null -> InputBlocker(active = true, onBack = if (stuck) onBack else null) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
+            creating -> InputBlocker(active = true, onExit = onBack) { PreparingOverlay(fetching = true) }
+            busy && chooser == null -> InputBlocker(active = true, onExit = onBack) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
 
         chooser?.let { gc ->

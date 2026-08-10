@@ -264,7 +264,7 @@ fun IrcmsFetchScreen(
         when {
             phase != FetchPhase.SOLVING -> {
                 val isError = phase == FetchPhase.ERROR
-                InputBlocker(active = !isError) {
+                InputBlocker(active = !isError, onExit = onBack) {
                     SavingOverlay(
                         surveyNo = info?.surveyNo ?: "",
                         village = info?.village ?: "",
@@ -285,8 +285,8 @@ fun IrcmsFetchScreen(
                     )
                 }
             }
-            working && awaitingList -> InputBlocker(active = true) { PreparingOverlay(fetching = true) }
-            working -> InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
+            working && awaitingList -> InputBlocker(active = true, onExit = onBack) { PreparingOverlay(fetching = true) }
+            working -> InputBlocker(active = true, onExit = onBack) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
     }
 }

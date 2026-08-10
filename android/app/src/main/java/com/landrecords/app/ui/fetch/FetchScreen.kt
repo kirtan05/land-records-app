@@ -84,9 +84,6 @@ fun FetchScreen(
     // for the post-submit postback) — a blocking buffer covers the WebView so a stray tap or
     // Back can't derail the machine. Cleared only when the CAPTCHA spotlight is up for the user.
     var working by remember { mutableStateOf(true) }
-    // True only once the page has sat with NO progress for a while (a genuine stall) — used to offer
-    // a Back escape then, so a hung run isn't a force-close. Reset on every real step.
-    var stuck by remember { mutableStateOf(false) }
 
     val surveyDropId = when (recordType) {
         RecordType.VF712 -> AnyRor.Ids.SURVEY_VF712
@@ -259,15 +256,6 @@ fun FetchScreen(
             vm.fail("Couldn't auto-fill the form — a district/taluka/village name may not match the site. Tap retry, or add the survey through the picker.")
         }
     }
-    // Stall detector for the Back escape hatch: reset on any progress/state change; only after ~15s
-    // of the app "working" with nothing happening (and NOT mid-capture) do we let Back exit.
-    LaunchedEffect(pageLoaded, working, awaitingDetail, captureRunning) {
-        stuck = false
-        if (!working || captureRunning) return@LaunchedEffect
-        delay(15_000)
-        stuck = true
-    }
-
     Box(Modifier.fillMaxSize()) {
     Column(Modifier.fillMaxSize().background(Land.colors.bg)) {
         Column(Modifier.background(Land.colors.surface).statusBarsPadding()) {
@@ -339,8 +327,8 @@ fun FetchScreen(
     when {
         phase != FetchPhase.SOLVING -> {
             val isError = phase == FetchPhase.ERROR
-            // Capture/building the PDF: never let Back abort it (error state already frees Back).
-            InputBlocker(active = !isError) {
+            // Capture/building the PDF: a stray Back only toasts; a deliberate double-Back exits.
+            InputBlocker(active = !isError, onExit = onBack) {
                 SavingOverlay(
                     surveyNo = info?.surveyNo ?: "",
                     village = info?.village ?: "",
@@ -364,13 +352,13 @@ fun FetchScreen(
         }
         // Post-tap fetch: full "Fetching the record…" overlay (the one that reads well).
         working && awaitingDetail -> {
-            InputBlocker(active = true, onBack = if (stuck) onBack else null) { PreparingOverlay(fetching = true) }
+            InputBlocker(active = true, onExit = onBack) { PreparingOverlay(fetching = true) }
         }
         // Auto-fill: keep the form VISIBLE (don't cover it) but swallow stray taps/Back so
         // the cascade can't be derailed. Only show the "Filling…" chip once the form has
         // actually loaded — before that it'd sit over a blank page, which read as premature.
         working -> {
-            InputBlocker(active = true, onBack = if (stuck) onBack else null) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
+            InputBlocker(active = true, onExit = onBack) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
     }
 
