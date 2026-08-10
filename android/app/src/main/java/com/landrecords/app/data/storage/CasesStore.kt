@@ -36,6 +36,8 @@ object CasesStore {
         val hasOrder: Boolean,
         val detailFile: String, // filename inside the ircms/ dir, or ""
         val orderFile: String,  // filename inside the ircms/ dir, or ""
+        /** Per-case export colour ([com.landrecords.app.ui.marked.MarkColor] id), null = unmarked. */
+        val mark: String? = null,
     )
 
     /** A freshly captured case awaiting write: its scraped metadata + its raw per-case PDFs. */
@@ -130,6 +132,25 @@ object CasesStore {
         return if (f.exists()) f.absolutePath else null
     }
 
+    /**
+     * Set (or clear, [mark] = null) the export colour on one case, rewriting just that row in the
+     * manifest and leaving every other case + all per-case PDFs untouched. [itemId] is the case's
+     * visible [identity] — every manifest row sharing it (a cross-listed case) gets the same mark.
+     */
+    suspend fun setMark(
+        context: Context,
+        district: String, taluka: String, village: String, surveyNo: String,
+        itemId: String, mark: String?,
+    ) = withContext(Dispatchers.IO) {
+        val f = File(dir(context, district, taluka, village, surveyNo), MANIFEST)
+        if (!f.exists()) return@withContext
+        val all = runCatching { fromJson(f.readText()) }.getOrDefault(emptyList())
+        val updated = all.map {
+            if (identity(it.caseNo, it.parties, it.office, it.dtv) == itemId) it.copy(mark = mark) else it
+        }
+        f.writeText(toJson(updated))
+    }
+
     private fun safe(s: String): String =
         s.trim().replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "x" }
 
@@ -142,6 +163,9 @@ object CasesStore {
                     put("office", e.office); put("dtv", e.dtv); put("parties", e.parties)
                     put("survno", e.survno); put("hasOrder", e.hasOrder)
                     put("detailFile", e.detailFile); put("orderFile", e.orderFile)
+                    // Only write the colour when set — a missing key reads back as unmarked (null),
+                    // which keeps manifests written before marking existed backward-compatible.
+                    e.mark?.let { put("mark", it) }
                 },
             )
         }
@@ -159,6 +183,7 @@ object CasesStore {
                     office = o.optString("office"), dtv = o.optString("dtv"), parties = o.optString("parties"),
                     survno = o.optString("survno"), hasOrder = o.optBoolean("hasOrder"),
                     detailFile = o.optString("detailFile"), orderFile = o.optString("orderFile"),
+                    mark = o.optString("mark").ifBlank { null }, // absent/blank → unmarked
                 ),
             )
         }

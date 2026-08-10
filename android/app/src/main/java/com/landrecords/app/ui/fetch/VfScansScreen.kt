@@ -58,6 +58,7 @@ import com.landrecords.app.data.storage.VfScansStore
 import com.landrecords.app.ui.components.PillButton
 import com.landrecords.app.ui.components.SquareIconButton
 import com.landrecords.app.ui.landApp
+import com.landrecords.app.ui.marked.MarkDot
 import com.landrecords.app.ui.theme.L
 import com.landrecords.app.ui.theme.Land
 import com.landrecords.app.ui.theme.LandShape
@@ -109,6 +110,17 @@ class VfScansViewModel(
                 villageLatin = prop.village,
                 scans = scans,
                 mergedPdfPath = record?.pdfPath,
+            )
+        }
+    }
+
+    /** Set/clear one scan's export colour, persisting it and updating the list in place (snappy). */
+    fun setMark(scan: VfScansStore.ScanEntry, mark: String?) {
+        val u = ui.value ?: return
+        viewModelScope.launch {
+            VfScansStore.setMark(app, u.district, u.taluka, u.village, u.surveyNo, scan.index.toString(), mark)
+            ui.value = u.copy(
+                scans = u.scans.map { if (it.index == scan.index) it.copy(mark = mark) else it },
             )
         }
     }
@@ -278,6 +290,8 @@ fun VfScansScreen(
                         scan = s,
                         checked = selected.getOrElse(i) { false },
                         expanded = expanded == i,
+                        mark = s.mark,
+                        onSetMark = { vm.setMark(s, it) },
                         onToggleChecked = { if (i < selected.size) selected[i] = !selected[i] },
                         onToggleExpand = { expanded = if (expanded == i) null else i },
                         onViewScan = { viewScanFile(s.file) },
@@ -322,6 +336,8 @@ private fun ScanRow(
     scan: VfScansStore.ScanEntry,
     checked: Boolean,
     expanded: Boolean,
+    mark: String?,
+    onSetMark: (String?) -> Unit,
     onToggleChecked: () -> Unit,
     onToggleExpand: () -> Unit,
     onViewScan: () -> Unit,
@@ -368,6 +384,8 @@ private fun ScanRow(
                     )
                 }
             }
+            // Per-scan export mark — its own tap opens the colour menu (won't expand the row).
+            MarkDot(mark = mark, onSet = onSetMark)
             StatusChip(scan.status)
             Icon(
                 Icons.Outlined.KeyboardArrowDown,

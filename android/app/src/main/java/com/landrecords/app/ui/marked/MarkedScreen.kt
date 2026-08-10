@@ -34,6 +34,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,8 +52,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.AppState
-import com.landrecords.app.data.db.MarkedRecordRow
-import com.landrecords.app.data.model.RecordType
 import com.landrecords.app.data.storage.Exporter
 import com.landrecords.app.ui.components.BlueprintHeader
 import com.landrecords.app.ui.components.PillButton
@@ -75,9 +74,12 @@ fun MarkedScreen(onBack: () -> Unit) {
     val scope = rememberCoroutineScope()
     val lang = LocalLang.current
     val vm: MarkedViewModel = viewModel(
-        factory = viewModelFactory { initializer { MarkedViewModel(app.repository) } },
+        factory = viewModelFactory { initializer { MarkedViewModel(app.repository, app) } },
     )
-    val rows by vm.marked.collectAsStateWithLifecycle()
+    val rows by vm.rows.collectAsStateWithLifecycle()
+    // Marked cases/scans live in JSON manifests (no reactive source) — re-walk them each time the
+    // screen appears so a colour just set on the Cases/Scans screen shows here on return.
+    LaunchedEffect(Unit) { vm.reload() }
 
     // Colour → its rows, only the colours that actually have marks (in palette order).
     val groups = MarkColor.ordered.mapNotNull { c ->
@@ -88,8 +90,8 @@ fun MarkedScreen(onBack: () -> Unit) {
     var sendMenuFor by remember { mutableStateOf<String?>(null) }
     var showRename by remember { mutableStateOf(false) }
 
-    fun itemsFor(list: List<MarkedRecordRow>): List<Exporter.Item> =
-        list.map { Exporter.Item(it.pdfPath, "${it.villageEn} ${it.surveyNo} ${exportLabel(it.type)}.pdf") }
+    fun itemsFor(list: List<MarkedViewModel.Row>): List<Exporter.Item> =
+        list.map { Exporter.Item(it.pdfPath, it.exportName) }
 
     fun launchExport(action: suspend () -> Boolean) {
         if (busy) return
@@ -115,7 +117,7 @@ fun MarkedScreen(onBack: () -> Unit) {
                     val sub = when {
                         busy -> L("તૈયાર થાય છે…", "Preparing…")
                         rows.isEmpty() -> L("કંઈ ચિહ્નિત નથી", "Nothing marked")
-                        else -> lang.join("${rows.size} રેકોર્ડ", "${rows.size} records")
+                        else -> lang.join("${rows.size} વસ્તુ", "${rows.size} items")
                     }
                     Text(sub, style = LandType.label, color = Land.colors.ink3)
                 }
@@ -176,14 +178,14 @@ fun MarkedScreen(onBack: () -> Unit) {
 private fun GroupCard(
     color: MarkColor,
     name: String,
-    rows: List<MarkedRecordRow>,
+    rows: List<MarkedViewModel.Row>,
     sendMenuOpen: Boolean,
     onToggleSendMenu: () -> Unit,
     onSendMerged: () -> Unit,
     onSendSeparate: () -> Unit,
     onSendZip: () -> Unit,
     onPrint: () -> Unit,
-    onUnmark: (Long) -> Unit,
+    onUnmark: (MarkedViewModel.Row) -> Unit,
 ) {
     val lang = LocalLang.current
     Column(
@@ -201,7 +203,7 @@ private fun GroupCard(
             Text("${rows.size}", style = LandType.count, color = Land.colors.ink3)
         }
 
-        // Records in this colour.
+        // Every marked item in this colour — records, iRCMS cases and VF-7/12 scans alike.
         rows.forEach { r ->
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Column(Modifier.weight(1f)) {
@@ -210,11 +212,11 @@ private fun GroupCard(
                         style = LandType.metaMono, color = Land.colors.ink,
                         maxLines = 1, overflow = TextOverflow.Ellipsis,
                     )
-                    Text(lang.join(r.type.gujaratiLabel, r.type.englishLabel), style = LandType.label, color = Land.colors.ink3, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(lang.join(r.line2Gu, r.line2En), style = LandType.label, color = Land.colors.ink3, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 }
                 Box(
                     Modifier.size(28.dp).clip(CircleShape)
-                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onUnmark(r.recordId) },
+                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { onUnmark(r) },
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(Icons.Outlined.Close, contentDescription = "Remove mark", tint = Land.colors.ink3, modifier = Modifier.size(16.dp))
@@ -313,12 +315,4 @@ private fun RenameRow(c: MarkColor, appState: AppState) {
             )
         }
     }
-}
-
-/** Short, filename-friendly English label per record type (used for the exported PDF names). */
-private fun exportLabel(type: RecordType): String = when (type) {
-    RecordType.INTEGRATED -> "Integrated Record"
-    RecordType.VF712 -> "VF 7-12"
-    RecordType.DEEDS -> "Deeds"
-    RecordType.IRCMS -> "iRCMS Cases"
 }

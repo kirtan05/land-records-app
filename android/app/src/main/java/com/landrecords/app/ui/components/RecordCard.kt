@@ -2,24 +2,14 @@ package com.landrecords.app.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +21,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.landrecords.app.R
 import com.landrecords.app.data.model.RecordType
-import com.landrecords.app.ui.marked.MarkColor
+import com.landrecords.app.ui.marked.MarkDot
 import com.landrecords.app.ui.theme.Land
 import com.landrecords.app.ui.theme.Lang
 import com.landrecords.app.ui.theme.LandShape
@@ -92,7 +82,7 @@ fun RecordCard(
                     // Held records carry a tappable colour dot (the export mark). It sits where the
                     // old "Just added" pill used to — a fixed-size dot never reflows, so it can't
                     // squeeze the title or stretch the card the way that text badge did.
-                    if (held) MarkControl(mark = mark, onSet = onSetMark)
+                    if (held) MarkDot(mark = mark, onSet = onSetMark)
                     Text(type.label(), style = LandType.bodyStrong, color = Land.colors.ink, modifier = Modifier.weight(1f))
                 }
                 if (lang == Lang.BOTH) {
@@ -169,52 +159,6 @@ fun RecordCard(
                     if (checked) lang.join("ફરી તપાસો", "Recheck")
                     else Lr(R.string.get_record_gu, R.string.get_record_en),
                     onGet,
-                )
-            }
-        }
-    }
-}
-
-/**
- * The export-mark control: a tappable dot — hollow ring when unmarked, filled with the colour when
- * marked. Tapping opens a tiny colour menu (+ Remove). Whatever dad picks here groups the record on
- * the Marked screen for one-tap "Send all" / "Print".
- */
-@Composable
-private fun MarkControl(mark: String?, onSet: (String?) -> Unit) {
-    val lang = LocalLang.current
-    var open by remember { mutableStateOf(false) }
-    val current = MarkColor.from(mark)
-    Box {
-        Box(
-            Modifier
-                .size(16.dp)
-                .clip(CircleShape)
-                .then(
-                    if (current != null) Modifier.background(current.swatch)
-                    else Modifier.border(1.5.dp, Land.colors.ink3, CircleShape),
-                )
-                .clickable { open = true },
-        )
-        DropdownMenu(
-            expanded = open,
-            onDismissRequest = { open = false },
-        ) {
-            MarkColor.ordered.forEach { c ->
-                DropdownMenuItem(
-                    text = {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                            Box(Modifier.size(14.dp).clip(CircleShape).background(c.swatch))
-                            Text(c.label(), style = LandType.body, color = Land.colors.ink)
-                        }
-                    },
-                    onClick = { onSet(c.id); open = false },
-                )
-            }
-            if (current != null) {
-                DropdownMenuItem(
-                    text = { Text(lang.join("ચિહ્ન કાઢો", "Remove mark"), style = LandType.body, color = Land.colors.ink2) },
-                    onClick = { onSet(null); open = false },
                 )
             }
         }

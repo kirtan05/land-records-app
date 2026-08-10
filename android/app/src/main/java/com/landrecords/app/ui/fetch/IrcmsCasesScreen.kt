@@ -58,6 +58,7 @@ import com.landrecords.app.data.storage.LibraryAccess
 import com.landrecords.app.ui.components.PillButton
 import com.landrecords.app.ui.components.SquareIconButton
 import com.landrecords.app.ui.landApp
+import com.landrecords.app.ui.marked.MarkDot
 import com.landrecords.app.ui.theme.L
 import com.landrecords.app.ui.theme.Land
 import com.landrecords.app.ui.theme.LandShape
@@ -110,6 +111,20 @@ class IrcmsCasesViewModel(
                 villageLatin = prop.village,
                 cases = cases,
                 mergedPdfPath = record?.pdfPath,
+            )
+        }
+    }
+
+    /** Set/clear one case's export colour, persisting it and updating the list in place (snappy). */
+    fun setMark(case: CasesStore.CaseEntry, mark: String?) {
+        val u = ui.value ?: return
+        val id = CasesStore.identity(case.caseNo, case.parties, case.office, case.dtv)
+        viewModelScope.launch {
+            CasesStore.setMark(app, u.district, u.taluka, u.village, u.surveyNo, id, mark)
+            ui.value = u.copy(
+                cases = u.cases.map {
+                    if (CasesStore.identity(it.caseNo, it.parties, it.office, it.dtv) == id) it.copy(mark = mark) else it
+                },
             )
         }
     }
@@ -327,6 +342,8 @@ fun IrcmsCasesScreen(
                         case = c,
                         checked = selected.getOrElse(i) { false },
                         expanded = expanded == i,
+                        mark = c.mark,
+                        onSetMark = { vm.setMark(c, it) },
                         onToggleChecked = { if (i < selected.size) selected[i] = !selected[i] },
                         onToggleExpand = { expanded = if (expanded == i) null else i },
                         onViewCase = { viewCaseFile(c.detailFile) },
@@ -373,6 +390,8 @@ private fun CaseRow(
     case: CasesStore.CaseEntry,
     checked: Boolean,
     expanded: Boolean,
+    mark: String?,
+    onSetMark: (String?) -> Unit,
     onToggleChecked: () -> Unit,
     onToggleExpand: () -> Unit,
     onViewCase: () -> Unit,
@@ -417,6 +436,8 @@ private fun CaseRow(
                     Text(case.parties, style = LandType.meta, color = Land.colors.ink2, maxLines = 2, overflow = TextOverflow.Ellipsis)
                 }
             }
+            // Per-case export mark — its own tap opens the colour menu (won't expand the row).
+            MarkDot(mark = mark, onSet = onSetMark)
             StatusChip(case.status)
             Icon(
                 Icons.Outlined.KeyboardArrowDown,

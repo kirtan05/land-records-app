@@ -80,6 +80,8 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
     var busy by remember { mutableStateOf(true) }
     var creating by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
+    // Arms after ~15s of the page loading/cascading with no progress — gates the Back escape hatch.
+    var stuck by remember { mutableStateOf(false) }
 
     val surveyDropId = AnyRor.Ids.SURVEY_INTEGRATED
     val recordValue = "8"
@@ -130,6 +132,13 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
             error = "Couldn't reach AnyRoR — your connection may be blocked. Try later or another network."
         }
     }
+    // Stall detector for the Back escape: reset on progress, arm after ~15s of no-progress loading.
+    LaunchedEffect(pageLoaded, busy, creating, chooser) {
+        stuck = false
+        if (!busy || creating || chooser != null) return@LaunchedEffect
+        delay(15_000)
+        stuck = true
+    }
 
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().background(Land.colors.bg)) {
@@ -179,8 +188,8 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
                     onRetry = { error = null; creating = false; chooser = null; busy = true; webRef?.reload() },
                 )
             }
-            creating -> InputBlocker(active = true, onBack = onBack) { PreparingOverlay(fetching = true) }
-            busy && chooser == null -> InputBlocker(active = true, onBack = onBack) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
+            creating -> InputBlocker(active = true) { PreparingOverlay(fetching = true) }
+            busy && chooser == null -> InputBlocker(active = true, onBack = if (stuck) onBack else null) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
 
         chooser?.let { gc ->

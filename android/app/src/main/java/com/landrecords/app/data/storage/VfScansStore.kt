@@ -32,6 +32,8 @@ object VfScansStore {
         val oldSurvey: String,
         val status: String,    // grid "PDF status" — typically "Ok"
         val file: String,      // filename inside the vf712/ dir, or ""
+        /** Per-scan export colour ([com.landrecords.app.ui.marked.MarkColor] id), null = unmarked. */
+        val mark: String? = null,
     )
 
     /** A freshly captured scan awaiting write: its grid metadata + its raw scan PDF bytes. */
@@ -103,6 +105,23 @@ object VfScansStore {
         return if (f.exists()) f.absolutePath else null
     }
 
+    /**
+     * Set (or clear, [mark] = null) the export colour on one scan, rewriting just that row in the
+     * manifest and leaving every other scan + all per-scan PDFs untouched. [itemId] is the scan's
+     * 1-based [ScanEntry.index] as a string.
+     */
+    suspend fun setMark(
+        context: Context,
+        district: String, taluka: String, village: String, surveyNo: String,
+        itemId: String, mark: String?,
+    ) = withContext(Dispatchers.IO) {
+        val f = File(dir(context, district, taluka, village, surveyNo), MANIFEST)
+        if (!f.exists()) return@withContext
+        val all = runCatching { fromJson(f.readText()) }.getOrDefault(emptyList())
+        val updated = all.map { if (it.index.toString() == itemId) it.copy(mark = mark) else it }
+        f.writeText(toJson(updated))
+    }
+
     private fun toJson(entries: List<ScanEntry>): String {
         val arr = JSONArray()
         for (e in entries) {
@@ -111,6 +130,9 @@ object VfScansStore {
                     put("index", e.index); put("period", e.period); put("thok", e.thok)
                     put("block", e.block); put("oldSurvey", e.oldSurvey); put("status", e.status)
                     put("file", e.file)
+                    // Only write the colour when set — a missing key reads back as unmarked (null),
+                    // which keeps manifests written before marking existed backward-compatible.
+                    e.mark?.let { put("mark", it) }
                 },
             )
         }
@@ -128,6 +150,7 @@ object VfScansStore {
                     thok = o.optString("thok"), block = o.optString("block"),
                     oldSurvey = o.optString("oldSurvey"), status = o.optString("status"),
                     file = o.optString("file"),
+                    mark = o.optString("mark").ifBlank { null }, // absent/blank → unmarked
                 ),
             )
         }

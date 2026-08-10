@@ -108,6 +108,8 @@ fun Vf712FetchScreen(
     var awaitingDetail by remember { mutableStateOf(false) }
     var captureRunning by remember { mutableStateOf(false) }
     var working by remember { mutableStateOf(true) }
+    // True only after a genuine stall (no progress ~15s, not mid-capture) — gates the Back escape.
+    var stuck by remember { mutableStateOf(false) }
     // When the survey has no exact match in the (OLD-numbered) VF-7/12 dropdown, offer these to pick.
     var surveyChoices by remember { mutableStateOf<List<Pair<String, String>>?>(null) }
     var surveyChosen by remember { mutableStateOf(false) }
@@ -242,6 +244,14 @@ fun Vf712FetchScreen(
         }
     }
 
+    // Stall detector for the Back escape hatch (see FetchScreen): reset on progress, arm after ~15s.
+    LaunchedEffect(pageLoaded, working, awaitingDetail, captureRunning) {
+        stuck = false
+        if (!working || captureRunning) return@LaunchedEffect
+        delay(15_000)
+        stuck = true
+    }
+
     Box(Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxSize().background(Land.colors.bg)) {
             Column(Modifier.background(Land.colors.surface).statusBarsPadding()) {
@@ -301,7 +311,7 @@ fun Vf712FetchScreen(
         when {
             phase != FetchPhase.SOLVING -> {
                 val isError = phase == FetchPhase.ERROR
-                InputBlocker(active = !isError, onBack = onBack) {
+                InputBlocker(active = !isError) {
                     SavingOverlay(
                         surveyNo = info?.surveyNo ?: "",
                         village = info?.village ?: "",
@@ -322,8 +332,8 @@ fun Vf712FetchScreen(
                     )
                 }
             }
-            working && awaitingDetail -> InputBlocker(active = true, onBack = onBack) { PreparingOverlay(fetching = true) }
-            working -> InputBlocker(active = true, onBack = onBack) { if (pageLoaded >= 1) FillingIndicator() }
+            working && awaitingDetail -> InputBlocker(active = true, onBack = if (stuck) onBack else null) { PreparingOverlay(fetching = true) }
+            working -> InputBlocker(active = true, onBack = if (stuck) onBack else null) { if (pageLoaded >= 1) FillingIndicator() }
         }
 
         surveyChoices?.let { choices ->
