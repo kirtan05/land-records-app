@@ -259,6 +259,52 @@ object AnyRorInjection {
      * multi-column blocks, hides the native stacked summary, and inserts the compact blue
      * title header — so a phone capture renders byte-for-byte like the desktop PDFs.
      */
+    /**
+     * Read the record's header metadata (area / assessment / tenure / land use / as-of)
+     * as JSON.
+     *
+     * Works on BOTH a freshly fetched page and a stored .source page: [cleanupJs] only
+     * sets `display:none` on the original panels (so the text survives in the DOM) and
+     * additionally writes the values into the `#__anyror_title` chip strip. The chips are
+     * therefore read first, and the fallback walks `textContent` -- NOT `innerText`, which
+     * would skip the hidden originals.
+     */
+    fun summaryJs(): String = """
+        (function(){
+          try {
+            var out = {area:'', assessment:'', tenure:'', landUse:'', asOf:''};
+            var esc = function(s){ return (s||'').replace(/\s+/g,' ').trim(); };
+
+            // 1) the compact chip strip written by cleanupJs (present in stored source)
+            var t = document.getElementById('__anyror_title');
+            if (t) {
+              t.querySelectorAll('span').forEach(function(sp){
+                var txt = esc(sp.textContent), b = sp.querySelector('b');
+                if (!b) return;
+                var val = esc(b.textContent);
+                if (/ક્ષેત્રફળ|Area/i.test(txt))        out.area = out.area || val;
+                else if (/આકાર|Assessment/i.test(txt))  out.assessment = out.assessment || val;
+                else if (/સત્તાપ્રકાર|Tenure/i.test(txt)) out.tenure = out.tenure || val;
+                else if (/ઉપયોગ|Land Use/i.test(txt))   out.landUse = out.landUse || val;
+              });
+              var m = esc(t.textContent).match(/As of\s+([0-9\/]+\s*[0-9:]*)/i);
+              if (m) out.asOf = esc(m[1]);
+            }
+
+            // 2) fall back to the original (possibly hidden) panels
+            var body = esc(document.body.textContent);
+            var grab = function(re){ var m = body.match(re); return m ? esc(m[1]) : ''; };
+            if (!out.area)       out.area       = grab(/Total Area[^:]*:\s*([^A-Za-z]*[0-9૦-૯][^\s]*)/i);
+            if (!out.assessment) out.assessment = grab(/Total Assessment[^:]*:\s*([0-9૦-૯][^\s]*)/i);
+            if (!out.tenure)     out.tenure     = grab(/(?:Tenure|સત્તાપ્રકાર)[^:]*:\s*([^:]{1,40}?)\s{2,}/i);
+            if (!out.landUse)    out.landUse    = grab(/(?:Land Use|જમીનનો ઉપયોગ)[^:]*:\s*([^:]{1,40}?)\s{2,}/i);
+            if (!out.asOf)       out.asOf       = grab(/તા\.\s*([0-9\/]+\s*[0-9:]*)\s*ની સ્થિતિએ/);
+
+            return JSON.stringify(out);
+          } catch(e) { return '{}'; }
+        })();
+    """
+
     fun cleanupJs(
         districtEn: String = "",
         talukaEn: String = "",

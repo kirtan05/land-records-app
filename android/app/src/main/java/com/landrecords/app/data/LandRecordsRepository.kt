@@ -40,6 +40,16 @@ class LandRecordsRepository(private val db: AppDatabase) {
     suspend fun propertyById(id: Long) = db.propertyDao().byId(id)
 
     /** Delete a single survey number (its records) — the saved PDF files are left in Documents. */
+    /** Store the header metadata read off a fetched or re-rendered AnyRoR record. */
+    suspend fun updateSurveyMeta(
+        surveyId: Long,
+        area: String,
+        assessment: String,
+        tenure: String,
+        landUse: String,
+        asOf: String,
+    ) = db.surveyDao().updateMeta(surveyId, area, assessment, tenure, landUse, asOf)
+
     suspend fun deleteSurvey(surveyId: Long) {
         runCatching {
             db.recordDao().deleteForSurvey(surveyId)

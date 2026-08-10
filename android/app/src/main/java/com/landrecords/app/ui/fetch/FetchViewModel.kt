@@ -55,6 +55,23 @@ class FetchViewModel(
     fun setPhase(p: FetchPhase) { phase.value = p }
 
     /** Record that a type was checked and holds nothing (e.g. no iRCMS cases) so it won't re-queue. */
+    /**
+     * Persist the AnyRoR header metadata read off the record page (see
+     * [com.landrecords.app.web.AnyRorInjection.summaryJs]). Silently does nothing if the
+     * page carried none of it — a missing value must leave the existing one alone.
+     */
+    suspend fun saveSummary(json: String) {
+        val o = runCatching { org.json.JSONObject(json.ifBlank { "{}" }) }.getOrNull() ?: return
+        repo.updateSurveyMeta(
+            surveyId = surveyId,
+            area = o.optString("area"),
+            assessment = o.optString("assessment"),
+            tenure = o.optString("tenure"),
+            landUse = o.optString("landUse"),
+            asOf = o.optString("asOf"),
+        )
+    }
+
     suspend fun markEmpty(type: RecordType) {
         repo.saveFetchedRecord(surveyId, type, docCount = 0, pdfPath = null, sourcePath = null)
     }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -111,6 +112,22 @@ fun SurveyDetailScreen(
         else 0
     }
 
+    // Unit shown on the area chip; tapping it cycles through the four.
+    var areaUnit by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(com.landrecords.app.data.jantri.LandArea.Unit.HA_A_M)
+    }
+
+    // Jantri (ASR-2011) rate for this survey number, if the village is covered.
+    var jantri by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf<com.landrecords.app.data.jantri.JantriResult?>(null)
+    }
+    androidx.compose.runtime.LaunchedEffect(state.village, state.villageGu, survey?.surveyNo) {
+        val sn = survey?.surveyNo
+        jantri = if (sn != null) com.landrecords.app.data.jantri.JantriRates.lookup(
+            app, state.village, state.villageGu, state.taluka, sn,
+        ) else null
+    }
+
     Column(Modifier.fillMaxSize().background(Land.colors.bg)) {
         BlueprintHeader(modifier = Modifier.statusBarsPadding()) {
             Column(Modifier.padding(start = 16.dp, end = 20.dp, top = 12.dp, bottom = 16.dp)) {
@@ -146,12 +163,22 @@ fun SurveyDetailScreen(
         ) {
             item {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(Dp4.chipGap), verticalArrangement = Arrangement.spacedBy(Dp4.chipGap)) {
-                    MetaChip(Lr(R.string.meta_area_gu, R.string.meta_area_en), survey.area, areaLatinHelper(survey.area))
+                    // Tap the area chip to cycle ha-a-m² → acre → guntha → m².
+                    MetaChip(
+                        Lr(R.string.meta_area_gu, R.string.meta_area_en),
+                        survey.area,
+                        com.landrecords.app.data.jantri.LandArea.format(survey.area, areaUnit)
+                            .ifBlank { areaLatinHelper(survey.area) },
+                        modifier = if (survey.area.isBlank()) Modifier
+                        else Modifier.clickable { areaUnit = areaUnit.next() },
+                    )
                     MetaChip(Lr(R.string.meta_assessment_gu, R.string.meta_assessment_en), survey.assessment, survey.assessment.guToLatinDigits())
                     MetaChip(Lr(R.string.meta_tenure_gu, R.string.meta_tenure_en), survey.tenure, tenureLatin(survey.tenure))
                     MetaChip(Lr(R.string.meta_landuse_gu, R.string.meta_landuse_en), survey.landUse, landUseLatin(survey.landUse))
-                    MetaChip(Lr(R.string.as_of_gu, R.string.as_of_en), survey.asOf, survey.asOf.guToLatinDigits())
                 }
+            }
+            jantri?.let { j ->
+                item { JantriCard(j, com.landrecords.app.data.jantri.LandArea.toSqm(survey.area)) }
             }
             items(RecordType.entries.toList()) { type ->
                 val record = state.records[type]

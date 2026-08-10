@@ -204,6 +204,10 @@ fun FetchScreen(
                             // still stand out on a black-&-white print (colour alone wouldn't).
                             android.util.Log.i("LR", "markRedEntries: " + WebViewCapture.eval(wv, EntriesInjection.markRedEntriesForPdfJs()))
                         }
+                        // Header metadata (area / આકાર / tenure / land use) for the survey card.
+                        if (recordType == RecordType.INTEGRATED) {
+                            vm.saveSummary(WebViewCapture.eval(wv, AnyRorInjection.summaryJs()))
+                        }
                         val html = WebViewCapture.rawHtml(wv)
                         vm.setPhase(FetchPhase.BUILDING)
                         val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)

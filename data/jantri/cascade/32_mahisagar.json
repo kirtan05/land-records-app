@@ -1,0 +1,526 @@
+{
+ "district": {
+  "code": "32",
+  "en": "MAHISAGAR",
+  "gu": "મહિસાગર"
+ },
+ "source": "ircms.gujarat.gov.in/ServiceData/fetch",
+ "note": "Only Balasinor + Virpur: the two talukas that were part of KHEDA district in the ASR-2011 jantri and moved to Mahisagar in 2013.",
+ "talukas": [
+  {
+   "code": "05",
+   "en": "Balasinor",
+   "gu": "બાલાસિનોર",
+   "villages": [
+    {
+     "code": "054",
+     "en": "Alela",
+     "gu": "આલેલા"
+    },
+    {
+     "code": "101",
+     "en": "Balasinor",
+     "gu": "બાલાસિનોર"
+    },
+    {
+     "code": "089",
+     "en": "Baliyadev",
+     "gu": "બળિયાદેવ"
+    },
+    {
+     "code": "068",
+     "en": "Bhanthala",
+     "gu": "ભાંથલા"
+    },
+    {
+     "code": "090",
+     "en": "Bodeli",
+     "gu": "બોડેલી"
+    },
+    {
+     "code": "083",
+     "en": "Dakhariya",
+     "gu": "ડખરીયા"
+    },
+    {
+     "code": "065",
+     "en": "Dev",
+     "gu": "દેવ"
+    },
+    {
+     "code": "073",
+     "en": "Dhadi",
+     "gu": "ઢાઠી"
+    },
+    {
+     "code": "058",
+     "en": "Dhanela",
+     "gu": "ધનેલા"
+    },
+    {
+     "code": "066",
+     "en": "Dhundhaliya",
+     "gu": "ધુંધલિયા"
+    },
+    {
+     "code": "057",
+     "en": "Dolat Poyda",
+     "gu": "દોલત પોરડા"
+    },
+    {
+     "code": "069",
+     "en": "Felsani",
+     "gu": "ફેલસાણી"
+    },
+    {
+     "code": "077",
+     "en": "Gadhavada",
+     "gu": "ગધાવાડા"
+    },
+    {
+     "code": "085",
+     "en": "Gadhna Muvada",
+     "gu": "ગઢના મુવાડા"
+    },
+    {
+     "code": "078",
+     "en": "Gaja Pagina Muvada",
+     "gu": "ગજાપગીનામુવાડા"
+    },
+    {
+     "code": "055",
+     "en": "Gundela",
+     "gu": "ગુંદેલા"
+    },
+    {
+     "code": "070",
+     "en": "Gunthli",
+     "gu": "ગુંથલી"
+    },
+    {
+     "code": "099",
+     "en": "Handiya (Balasinor)",
+     "gu": "હાંડીયા (બાલા)"
+    },
+    {
+     "code": "093",
+     "en": "Jamiyatpura",
+     "gu": "જમીયતપુરા"
+    },
+    {
+     "code": "075",
+     "en": "Janod",
+     "gu": "જનોડ"
+    },
+    {
+     "code": "062",
+     "en": "Jetholi",
+     "gu": "જેઠોલી"
+    },
+    {
+     "code": "071",
+     "en": "Jorapura",
+     "gu": "જોરાપુરા"
+    },
+    {
+     "code": "074",
+     "en": "Kadhya",
+     "gu": "કઢૈયા"
+    },
+    {
+     "code": "059",
+     "en": "Kambopa",
+     "gu": "કંબોપા"
+    },
+    {
+     "code": "088",
+     "en": "Karanpur",
+     "gu": "કરણપુર"
+    },
+    {
+     "code": "067",
+     "en": "Khandivav",
+     "gu": "ખાંડીવાવ"
+    },
+    {
+     "code": "084",
+     "en": "Kotarbor",
+     "gu": "કોતરબોર"
+    },
+    {
+     "code": "092",
+     "en": "Kunjra",
+     "gu": "કુંજરા"
+    },
+    {
+     "code": "072",
+     "en": "Limbdi",
+     "gu": "લિંબડી"
+    },
+    {
+     "code": "079",
+     "en": "Manvarpura",
+     "gu": "મનવરપુરા"
+    },
+    {
+     "code": "076",
+     "en": "Meghaliya",
+     "gu": "મેઘલીયા"
+    },
+    {
+     "code": "102",
+     "en": "Natvarpura",
+     "gu": "નટવરપુરા"
+    },
+    {
+     "code": "091",
+     "en": "Navagama",
+     "gu": "નવગામા"
+    },
+    {
+     "code": "080",
+     "en": "Othvad",
+     "gu": "ઓથવાડ"
+    },
+    {
+     "code": "061",
+     "en": "Pandva",
+     "gu": "પાંડવા"
+    },
+    {
+     "code": "081",
+     "en": "Parabiya",
+     "gu": "પરબીયા"
+    },
+    {
+     "code": "100",
+     "en": "Parpadiya",
+     "gu": "પરપડીયા"
+    },
+    {
+     "code": "086",
+     "en": "Pilodra",
+     "gu": "પિલોદરા"
+    },
+    {
+     "code": "063",
+     "en": "Raiyoli",
+     "gu": "રૈયોલી"
+    },
+    {
+     "code": "097",
+     "en": "Rajpur (Balasinor)",
+     "gu": "રાજપુર (બાલાસિનોર)"
+    },
+    {
+     "code": "095",
+     "en": "Raliyata (Balasinor)",
+     "gu": "રળિયાતા (બાલા)"
+    },
+    {
+     "code": "094",
+     "en": "Sakariya",
+     "gu": "સાકરીયા"
+    },
+    {
+     "code": "087",
+     "en": "Saliyavadi",
+     "gu": "સલિયાવાડી"
+    },
+    {
+     "code": "082",
+     "en": "Saroda",
+     "gu": "સરોડા"
+    },
+    {
+     "code": "064",
+     "en": "Sutariya",
+     "gu": "સુતારીયા"
+    },
+    {
+     "code": "098",
+     "en": "Vadadala",
+     "gu": "વડદલા"
+    },
+    {
+     "code": "096",
+     "en": "Vanakbori",
+     "gu": "વણાકબોરી"
+    },
+    {
+     "code": "060",
+     "en": "Vasadra",
+     "gu": "વસાદરા"
+    }
+   ]
+  },
+  {
+   "code": "06",
+   "en": "Virpur",
+   "gu": "વિરપુર",
+   "villages": [
+    {
+     "code": "011",
+     "en": "Alampura",
+     "gu": "આલમપુરા"
+    },
+    {
+     "code": "052",
+     "en": "Aspur",
+     "gu": "આસપુર"
+    },
+    {
+     "code": "048",
+     "en": "Asundariya",
+     "gu": "આસુંદરીયા"
+    },
+    {
+     "code": "006",
+     "en": "Bagharpura",
+     "gu": "બાઘરપુરા"
+    },
+    {
+     "code": "049",
+     "en": "Bar",
+     "gu": "બાર"
+    },
+    {
+     "code": "017",
+     "en": "Baroda",
+     "gu": "બારોડા"
+    },
+    {
+     "code": "043",
+     "en": "Bhanjini Vav",
+     "gu": "ભાણજી ની વાવ"
+    },
+    {
+     "code": "016",
+     "en": "Bharodi",
+     "gu": "ભરોડી"
+    },
+    {
+     "code": "014",
+     "en": "Bhatpur",
+     "gu": "ભાટપુર"
+    },
+    {
+     "code": "007",
+     "en": "Chharvangi",
+     "gu": "છરવંગી"
+    },
+    {
+     "code": "002",
+     "en": "Chikhli Jhojha",
+     "gu": "ચીખલી ઝોઝા"
+    },
+    {
+     "code": "023",
+     "en": "Chorasa",
+     "gu": "ચોરસા"
+    },
+    {
+     "code": "005",
+     "en": "Debhari",
+     "gu": "ડેભારી"
+    },
+    {
+     "code": "027",
+     "en": "Dhoravada",
+     "gu": "ધોરાવાડા"
+    },
+    {
+     "code": "045",
+     "en": "Gadheli",
+     "gu": "ગાંધેલી"
+    },
+    {
+     "code": "010",
+     "en": "Gandhari",
+     "gu": "ગંધારી"
+    },
+    {
+     "code": "004",
+     "en": "Ghatda",
+     "gu": "ઘાટડા"
+    },
+    {
+     "code": "025",
+     "en": "Gomvadi",
+     "gu": "ગોમવાડી"
+    },
+    {
+     "code": "030",
+     "en": "Gopalpura",
+     "gu": "ગોપાલપુરા"
+    },
+    {
+     "code": "035",
+     "en": "Handiya (Virpur)",
+     "gu": "હાંડીયા(વિરપુર)"
+    },
+    {
+     "code": "028",
+     "en": "Jamalpur",
+     "gu": "જમાલપુર"
+    },
+    {
+     "code": "039",
+     "en": "Jambudi",
+     "gu": "જાંબુડી"
+    },
+    {
+     "code": "041",
+     "en": "Javarkhat Na Muvada",
+     "gu": "ઝવરખાંટના મુવાડા"
+    },
+    {
+     "code": "051",
+     "en": "Jodhpur",
+     "gu": "જોધપુર"
+    },
+    {
+     "code": "031",
+     "en": "Kaslavati",
+     "gu": "કસલાવટી"
+    },
+    {
+     "code": "019",
+     "en": "Kasudi",
+     "gu": "કાસોડી"
+    },
+    {
+     "code": "038",
+     "en": "Kharod",
+     "gu": "ખરોડ"
+    },
+    {
+     "code": "003",
+     "en": "Khata",
+     "gu": "ખાટા"
+    },
+    {
+     "code": "033",
+     "en": "Kheroli",
+     "gu": "ખેરોલી"
+    },
+    {
+     "code": "013",
+     "en": "Koydam",
+     "gu": "કોયડમ"
+    },
+    {
+     "code": "008",
+     "en": "Koyla",
+     "gu": "કોયલા"
+    },
+    {
+     "code": "018",
+     "en": "Kumbharvadi",
+     "gu": "કુંભરવાડી"
+    },
+    {
+     "code": "034",
+     "en": "Limbarvada",
+     "gu": "લીંબરવાડા"
+    },
+    {
+     "code": "032",
+     "en": "Nasroli",
+     "gu": "નાસરોલી"
+    },
+    {
+     "code": "040",
+     "en": "Pansroda",
+     "gu": "પાંસરોડા"
+    },
+    {
+     "code": "044",
+     "en": "Panta",
+     "gu": "પાંટા"
+    },
+    {
+     "code": "026",
+     "en": "Rajena",
+     "gu": "રાજેણા"
+    },
+    {
+     "code": "020",
+     "en": "Rajpur (Virpur)",
+     "gu": "રાજપુર(વિરપુર)"
+    },
+    {
+     "code": "015",
+     "en": "Raliyata (Virpur)",
+     "gu": "રળીયાતા(વિરપુર)"
+    },
+    {
+     "code": "009",
+     "en": "Rampura",
+     "gu": "રામપુરા"
+    },
+    {
+     "code": "029",
+     "en": "Rasulpur",
+     "gu": "રસુલપુર"
+    },
+    {
+     "code": "047",
+     "en": "Ratankuva",
+     "gu": "રતનકુવા"
+    },
+    {
+     "code": "024",
+     "en": "Rojhav",
+     "gu": "રોઝાવ"
+    },
+    {
+     "code": "021",
+     "en": "Salaiya",
+     "gu": "સાલૈયા"
+    },
+    {
+     "code": "046",
+     "en": "Saradiya",
+     "gu": "સરાડીયા"
+    },
+    {
+     "code": "036",
+     "en": "Sariya",
+     "gu": "સારીયા"
+    },
+    {
+     "code": "053",
+     "en": "Tajpur",
+     "gu": "તાજપુર"
+    },
+    {
+     "code": "012",
+     "en": "Umariya",
+     "gu": "ઉમરીયા"
+    },
+    {
+     "code": "042",
+     "en": "Varadhara",
+     "gu": "વરધરા"
+    },
+    {
+     "code": "054",
+     "en": "Virpur",
+     "gu": "વિરપુર"
+    },
+    {
+     "code": "037",
+     "en": "balvakhant Na Muvada",
+     "gu": "બલવાખાંટ઼ના મુવાડા"
+    },
+    {
+     "code": "022",
+     "en": "vaghas",
+     "gu": "વઘાસ"
+    }
+   ]
+  }
+ ],
+ "villageCount": 100
+}
