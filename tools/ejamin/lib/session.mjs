@@ -29,12 +29,44 @@ export function extractTpMapData(html) {
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/**
+ * A counting semaphore. eJamin is a private commercial site, not a gujarat.gov.in host, so the
+ * AnyRoR politeness rules do not apply to it — the catalogue walk is ~18k requests and running it
+ * serially measured out at ~14 hours. We run it wide instead and let the server tell us the limit:
+ * a 429 or 5xx halves the live concurrency and retries with backoff, so the crawl settles at
+ * whatever rate the site will actually serve rather than a rate we guessed.
+ */
+class Gate {
+  constructor(limit) {
+    this.limit = limit;
+    this.active = 0;
+    this.queue = [];
+  }
+
+  async acquire() {
+    if (this.active < this.limit) { this.active++; return; }
+    await new Promise((r) => this.queue.push(r));
+    this.active++;
+  }
+
+  release() {
+    this.active--;
+    this.queue.shift()?.();
+  }
+
+  /** Back off after the server pushes back. Never drops below 1 — that is still forward progress. */
+  shrink() {
+    this.limit = Math.max(1, Math.floor(this.limit / 2));
+  }
+}
+
 export class Session {
-  constructor(token, cookie, html) {
+  constructor(token, cookie, html, concurrency = Number(process.env.EJAMIN_CONCURRENCY ?? 16)) {
     this.token = token;
     this.cookie = cookie;
     this.html = html;
-    this.last = 0;
+    this.gate = new Gate(concurrency);
+    this.throttled = 0;
   }
 
   static async open() {
@@ -46,24 +78,49 @@ export class Session {
     return new Session(extractToken(html), cookie, html);
   }
 
-  /** One throttled villageMapGet. Serial by construction — callers await each hop. */
+  /**
+   * One villageMapGet, run under the concurrency gate with retry-and-back-off. Safe to call from
+   * many callers at once. Returns the payload, or null when the site reports no data — an empty
+   * result is a real answer and is never turned into a fabricated row upstream.
+   */
   async post(type, id) {
-    const wait = 400 - (Date.now() - this.last);
-    if (wait > 0) await sleep(wait);
-    this.last = Date.now();
+    // Retry loop sits OUTSIDE the gate: each attempt acquires and releases exactly once, so a
+    // back-off never leaks a permit and slowly inflates the real concurrency.
+    for (let attempt = 0; ; attempt++) {
+      const body = new FormData();
+      body.append('_token', this.token);
+      body.append('id', String(id));
+      body.append('type', type);
 
-    const body = new FormData();
-    body.append('_token', this.token);
-    body.append('id', String(id));
-    body.append('type', type);
+      let res;
+      await this.gate.acquire();
+      try {
+        res = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'User-Agent': UA, 'X-Requested-With': 'XMLHttpRequest', Referer: HOME, Cookie: this.cookie },
+          body,
+        });
+      } finally {
+        this.gate.release();
+      }
 
-    const res = await fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'User-Agent': UA, 'X-Requested-With': 'XMLHttpRequest', Referer: HOME, Cookie: this.cookie },
-      body,
-    });
-    if (!res.ok) throw new Error(`eJamin: ${type}/${id} HTTP ${res.status}`);
-    const json = await res.json();
-    return json.status === 1 ? json.data : null;
+      // 429/5xx = the site pushing back. Narrow the pipe and retry; only give up after 5 tries so a
+      // transient blip never silently drops a village from the catalogue.
+      if (res.status === 429 || res.status >= 500) {
+        if (attempt >= 5) throw new Error(`eJamin: ${type}/${id} HTTP ${res.status} after ${attempt} retries`);
+        this.throttled++;
+        this.gate.shrink();
+        await sleep(500 * 2 ** attempt);
+        continue;
+      }
+      if (!res.ok) throw new Error(`eJamin: ${type}/${id} HTTP ${res.status}`);
+      const json = await res.json();
+      return json.status === 1 ? json.data : null;
+    }
+  }
+
+  /** Run [items] through [fn] concurrently; the gate inside post() is what actually bounds it. */
+  async map(items, fn) {
+    return Promise.all(items.map(fn));
   }
 }

@@ -76,3 +76,7 @@ data/jantri/*.sqlite
 data/jantri/app/
 # villages.csv (1.4 MB) IS tracked -- it is the cross-database join key list.
 backups/
+
+# ejamin generated catalogues (15 MB, regenerable via scrape-catalog.mjs)
+tools/ejamin/out/
+anyrorintegrated.html
