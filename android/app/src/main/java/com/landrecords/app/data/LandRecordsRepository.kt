@@ -227,9 +227,20 @@ class LandRecordsRepository(private val db: AppDatabase) {
     private fun tokenOf(surveyNo: String): String =
         surveyNo.trim().uppercase().replace('/', '_').replace(" ", "")
 
-    /** Case/space-insensitive identity of a place (its English District/Taluka/Village keys). */
-    private fun placeKey(district: String, taluka: String, village: String): String =
-        "${district.trim().lowercase()}|${taluka.trim().lowercase()}|${village.trim().lowercase()}"
+    /**
+     * Case/space-insensitive identity of a place. When the shipped cascade catalogue can resolve
+     * the place confidently (see [com.landrecords.app.data.place.PlaceNames]) the key is built from
+     * its canonical ENGLISH triple, so the same village written in Gujarati and in English lands on
+     * one key — that is what lets [mergeDuplicateProperties] see a cross-script duplicate at all.
+     * Anything the catalogue can't resolve falls back to the literal, script-sensitive key.
+     */
+    private fun placeKey(district: String, taluka: String, village: String): String {
+        val c = com.landrecords.app.data.place.PlaceNames.canonical(district, taluka, village)
+        val d = c?.first ?: district
+        val t = c?.second ?: taluka
+        val v = c?.third ?: village
+        return "${d.trim().lowercase()}|${t.trim().lowercase()}|${v.trim().lowercase()}"
+    }
 
     /**
      * Strip the "- <code>" suffix AnyRoR appends to its village dropdown text (e.g. "ઉતરસંડા - 091")
@@ -278,5 +289,229 @@ class LandRecordsRepository(private val db: AppDatabase) {
                 }
             }
         }.onFailure { android.util.Log.w("LR", "mergeDuplicateProperties failed: ${it.message}") }
+    }
+
+    // ------------------------------------------------------------ cross-script place migration
+
+    private companion object {
+        const val MIGRATION_PREFS = "lr_migrations"
+        const val KEY_CROSS_SCRIPT = "crossScriptPlaces_v1"
+    }
+
+    /**
+     * One-shot repair for villages that got saved twice in two scripts — e.g. the seeded
+     * "Anand / Umreth / Bharoda" and an AnyRoR-added "આણંદ / ઉમરેઠ / ભરોડા". Both are the same
+     * real village, but until [com.landrecords.app.data.place.PlaceNames] existed nothing could see
+     * that, so the user got two library cards and a second set of folders on disk.
+     *
+     * Per group of properties sharing one canonical place:
+     *  1. Pick the survivor — a row whose stored English names already ARE the canonical spelling,
+     *     else the lowest id (the oldest, which owns the bulk of the files).
+     *  2. Copy every file of the other rows' places into the survivor's place, in both the
+     *     app-internal `source/` tree and the visible Documents/LandRecords tree. Existing
+     *     destination files are never overwritten.
+     *  3. Rewrite the place segments inside RecordEntity.pdfPath / sourcePath.
+     *  4. Re-parent the surveys onto the survivor, normalise the survivor's own names, delete the
+     *     drained duplicate row — and only THEN delete the copied-from files.
+     *
+     * Nothing is deleted until every copy and every database write of that group has succeeded, so
+     * a failure leaves the group fully usable (at worst with a duplicated file) and the whole thing
+     * is safe to run again. Guarded by a preference flag as well, and every step is independently
+     * idempotent. Audit trail: `adb logcat -s LR`.
+     */
+    suspend fun migrateCrossScriptPlaces(context: android.content.Context) {
+        val prefs = context.getSharedPreferences(MIGRATION_PREFS, android.content.Context.MODE_PRIVATE)
+        if (prefs.getBoolean(KEY_CROSS_SCRIPT, false)) return
+        com.landrecords.app.data.place.PlaceNames.load(context)
+        if (!com.landrecords.app.data.place.PlaceNames.isLoaded) {
+            android.util.Log.w("LR", "migrateCrossScriptPlaces: catalogue unavailable — skipped (will retry next launch)")
+            return
+        }
+
+        var allOk = true
+        runCatching {
+            val props = db.propertyDao().observeAll().first()
+            val groups = props
+                .filter { com.landrecords.app.data.place.PlaceNames.canonical(it.district, it.taluka, it.village) != null }
+                .groupBy { placeKey(it.district, it.taluka, it.village) }
+
+            for ((key, group) in groups) {
+                if (group.size <= 1) continue
+                val target = targetNamesFor(group) ?: continue
+                val survivor = group.firstOrNull { sameNames(it, target) } ?: group.minByOrNull { it.id } ?: continue
+                android.util.Log.i(
+                    "LR",
+                    "migrateCrossScriptPlaces: group '$key' -> survivor ${survivor.id} as " +
+                        "${target.first}/${target.second}/${target.third} (${group.size} rows)",
+                )
+                if (!migrateGroup(context, group, survivor, target)) allOk = false
+            }
+        }.onFailure {
+            allOk = false
+            android.util.Log.w("LR", "migrateCrossScriptPlaces failed: ${it.message}")
+        }
+
+        // Only latch the flag on a clean sweep; a failed group gets another attempt next launch.
+        if (allOk) prefs.edit().putBoolean(KEY_CROSS_SCRIPT, true).apply()
+    }
+
+    /**
+     * The names this group should end up stored under. Canonically the catalogue's English triple —
+     * but where a row already spells a level the same way (ignoring case), that existing spelling
+     * wins. The catalogue writes districts upper-case ("ANAND"); adopting that would rename a whole
+     * on-disk tree ("…/Anand" → "…/ANAND") for no gain, and case-only renames are exactly what the
+     * MediaStore layer handles worst.
+     */
+    private fun targetNamesFor(group: List<PropertyEntity>): Triple<String, String, String>? {
+        val first = group.first()
+        val canon = com.landrecords.app.data.place.PlaceNames
+            .canonical(first.district, first.taluka, first.village) ?: return null
+        fun keep(catalogue: String, stored: List<String>): String =
+            stored.firstOrNull { com.landrecords.app.data.place.PlaceNames.normalize(it) == com.landrecords.app.data.place.PlaceNames.normalize(catalogue) }
+                ?: catalogue
+        return Triple(
+            keep(canon.first, group.map { it.district }),
+            keep(canon.second, group.map { it.taluka }),
+            keep(canon.third, group.map { it.village }),
+        )
+    }
+
+    private fun sameNames(p: PropertyEntity, t: Triple<String, String, String>): Boolean =
+        p.district == t.first && p.taluka == t.second && p.village == t.third
+
+    /** Returns true when the whole group completed; false means it was aborted and left as it was. */
+    private suspend fun migrateGroup(
+        context: android.content.Context,
+        group: List<PropertyEntity>,
+        survivor: PropertyEntity,
+        target: Triple<String, String, String>,
+    ): Boolean = runCatching {
+        val moved = mutableListOf<Triple<String, String, String>>()
+
+        // ---- phase 1: copy files. Nothing is deleted here, so a throw is harmless.
+        for (p in group) {
+            val from = Triple(p.district, p.taluka, p.village)
+            if (from == target) continue
+            val copied = com.landrecords.app.data.storage.PlaceRelocator.copyInto(context, from, target)
+            android.util.Log.i(
+                "LR",
+                "migrateCrossScriptPlaces: copied ${from.first}/${from.second}/${from.third} -> " +
+                    "${target.first}/${target.second}/${target.third} " +
+                    "(internal ${copied.internal}, visible ${copied.visible})",
+            )
+            moved.add(from)
+        }
+
+        // ---- phase 2: database. Paths first, then surveys, then the survivor's own names.
+        for (p in group) {
+            val from = Triple(p.district, p.taluka, p.village)
+            if (from == target) continue
+            for (s in db.surveyDao().observeForProperty(p.id).first()) {
+                for (r in db.recordDao().observeForSurvey(s.id).first()) {
+                    val fixed = r.copy(
+                        pdfPath = rewritePlacePath(r.pdfPath, from, target),
+                        sourcePath = rewritePlacePath(r.sourcePath, from, target),
+                    )
+                    if (fixed != r) {
+                        db.recordDao().upsert(fixed)
+                        android.util.Log.i("LR", "migrateCrossScriptPlaces: record ${r.id} path -> ${fixed.pdfPath}")
+                    }
+                }
+            }
+        }
+        for (p in group) {
+            if (p.id == survivor.id) continue
+            db.surveyDao().observeForProperty(p.id).first()
+                .forEach { s -> db.surveyDao().upsert(s.copy(propertyId = survivor.id)) }
+        }
+        if (!sameNames(survivor, target)) {
+            db.propertyDao().upsert(
+                survivor.copy(district = target.first, taluka = target.second, village = target.third),
+            )
+        }
+        for (p in group) {
+            if (p.id == survivor.id) continue
+            db.propertyDao().deleteById(p.id)
+            android.util.Log.i("LR", "migrateCrossScriptPlaces: merged property ${p.id} -> ${survivor.id}")
+        }
+        collapseIdenticalSurveys(survivor.id)
+
+        // ---- phase 3: the copied-from files are now unreferenced — drop them.
+        for (from in moved) com.landrecords.app.data.storage.PlaceRelocator.dropSource(context, from, target)
+        true
+    }.getOrElse {
+        android.util.Log.w(
+            "LR",
+            "migrateCrossScriptPlaces: ABORTED group ${target.first}/${target.second}/${target.third} " +
+                "— nothing deleted (${it.message})",
+        )
+        false
+    }
+
+    /**
+     * After a cross-script merge the survivor can hold the SAME survey number twice — once from
+     * each of the old village cards — which would show as two identical parcel tiles. Collapse them,
+     * but only where it is provably lossless:
+     *
+     *  · a record whose type the keeper doesn't have at all is simply re-parented onto the keeper;
+     *  · a record that duplicates one the keeper already has AND now resolves to the exact same
+     *    file path is dropped (the file itself is untouched — the keeper still points at it);
+     *  · an empty placeholder row (no path, nothing fetched) is dropped;
+     *  · anything else — a second record of the same type pointing somewhere ELSE — is left alone,
+     *    and its survey survives as a separate tile rather than risk losing a document.
+     *
+     * A duplicate survey row is deleted only once it holds no records at all.
+     */
+    private suspend fun collapseIdenticalSurveys(propertyId: Long) {
+        val surveys = db.surveyDao().observeForProperty(propertyId).first()
+        for ((_, sameNo) in surveys.groupBy { it.normalized }) {
+            if (sameNo.size <= 1) continue
+            val keeper = sameNo.minByOrNull { it.id } ?: continue
+            for (dup in sameNo) {
+                if (dup.id == keeper.id) continue
+                for (r in db.recordDao().observeForSurvey(dup.id).first()) {
+                    val mine = db.recordDao().find(keeper.id, r.type.name)
+                    when {
+                        mine == null -> db.recordDao().upsert(r.copy(surveyId = keeper.id))
+                        r.pdfPath != null && r.pdfPath == mine.pdfPath -> {
+                            db.recordDao().deleteById(r.id)
+                            android.util.Log.i("LR", "collapseIdenticalSurveys: dropped duplicate record ${r.id} (${r.type}) — same file as ${mine.id}")
+                        }
+                        r.pdfPath == null && r.sourcePath == null && r.fetchedAt == null ->
+                            db.recordDao().deleteById(r.id)
+                        else -> android.util.Log.w("LR", "collapseIdenticalSurveys: kept record ${r.id} (${r.type}) — differs from ${mine.id}")
+                    }
+                }
+                if (db.recordDao().countForSurvey(dup.id) == 0) {
+                    db.surveyDao().deleteById(dup.id)
+                    android.util.Log.i("LR", "collapseIdenticalSurveys: removed drained duplicate survey ${dup.id} (${dup.surveyNo}) — kept ${keeper.id}")
+                }
+            }
+        }
+    }
+
+    /**
+     * Swap the three place segments inside a stored path, leaving every other segment (and the
+     * absolute/relative prefix) alone. Matching is script-exact but case-insensitive, so
+     * "Documents/LandRecords/આણંદ/ઉમરેઠ/ભરોડા/Survey 221_p/Integrated Record.pdf" becomes
+     * "Documents/LandRecords/Anand/Umreth/Bharoda/Survey 221_p/Integrated Record.pdf".
+     * A path that doesn't contain the old triple is returned unchanged — which is what makes a
+     * second run a no-op.
+     */
+    private fun rewritePlacePath(
+        path: String?,
+        from: Triple<String, String, String>,
+        to: Triple<String, String, String>,
+    ): String? {
+        if (path.isNullOrBlank()) return path
+        val n = com.landrecords.app.data.place.PlaceNames::normalize
+        val segs = path.split('/').toMutableList()
+        for (i in 0..segs.size - 3) {
+            if (n(segs[i]) == n(from.first) && n(segs[i + 1]) == n(from.second) && n(segs[i + 2]) == n(from.third)) {
+                segs[i] = to.first; segs[i + 1] = to.second; segs[i + 2] = to.third
+                return segs.joinToString("/")
+            }
+        }
+        return path
     }
 }

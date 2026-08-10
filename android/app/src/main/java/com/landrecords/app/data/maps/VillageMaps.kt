@@ -65,6 +65,8 @@ object VillageMaps {
                 }
             }
         }
+        // The Gujarati↔English crosswalk [find] leans on; cheap, and cached the same way.
+        com.landrecords.app.data.place.PlaceNames.load(context)
     }
 
     fun districts(): List<String> = districts.map { it.name }
@@ -103,6 +105,15 @@ object VillageMaps {
      * or a district-wide fallback is ambiguous — showing no map beats showing the wrong one.
      */
     fun find(district: String, taluka: String, village: String): VillageMapEntry? {
+        // villages.json is English-only, so a village stored in Gujarati would never match. Run the
+        // name through the cascade crosswalk first and retry with its English triple; the crosswalk
+        // returns null rather than guess, in which case we're no worse off than before.
+        directFind(district, taluka, village)?.let { return it }
+        val c = com.landrecords.app.data.place.PlaceNames.canonical(district, taluka, village) ?: return null
+        return directFind(c.first, c.second, c.third)
+    }
+
+    private fun directFind(district: String, taluka: String, village: String): VillageMapEntry? {
         val d = districts.firstOrNull { normalize(it.name) == normalize(district) } ?: return null
         val nv = normalize(village)
         val t = d.talukas.firstOrNull { normalize(it.name) == normalize(taluka) }

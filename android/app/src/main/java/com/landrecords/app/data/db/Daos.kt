@@ -102,6 +102,9 @@ interface RecordDao {
     @Query("DELETE FROM records WHERE surveyId = :surveyId")
     suspend fun deleteForSurvey(surveyId: Long)
 
+    @Query("DELETE FROM records WHERE id = :id")
+    suspend fun deleteById(id: Long)
+
     /** Every marked record that actually has a PDF, joined to its survey + village, grouped by colour. */
     @Query(
         "SELECT r.id AS recordId, r.type AS type, r.mark AS mark, r.pdfPath AS pdfPath, " +
