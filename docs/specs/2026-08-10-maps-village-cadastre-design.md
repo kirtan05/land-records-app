@@ -165,13 +165,21 @@ shipping a map that lies. The failing reason is recorded in the manifest.
 
 ### 3.3 App
 
-**`data/maps/`**
-- Room `MapSheetEntity` — one row per catalogue sheet, plus `cachedPdfPath`,
-  `indexState`, `lastFetchedAt`.
-- Room `ParcelMarkEntity` — `villageId`, `surveyNo`, `colour`, `note`,
-  `source ∈ {AUTO, CONFIRMED, MANUAL}`, `updatedAt`.
-- `MapsRepository` — mirrors `LandRecordsRepository`: catalogue queries, index
-  fetch + checksum verify + cache, PDF download, mark CRUD.
+**`data/maps/`** — follows the app's existing split: Room holds only
+Property/Survey/Record; **per-item marks live in JSON manifests under
+`filesDir`** (`CasesStore`, `VfScansStore`). Maps follows that convention, so
+**no Room entities and no database migration are added.**
+
+- `MapCatalog` — reads the bundled `assets/maps/catalog.json` once, exposes
+  district → taluka → village queries in memory.
+- `MapIndexStore` — fetch + SHA-256 verify + cache of `village-<id>.index.json`
+  under `Documents/LandRecords/maps/`; PDF download/cache under
+  `.../maps/sheets/`.
+- `MapMarksStore` — the `VfScansStore` analogue. One manifest per village at
+  `filesDir/maps/<villageId>/marks.json`, rows of
+  `{surveyNo, mark, note, source ∈ {AUTO, CONFIRMED, MANUAL}, updatedAt}`.
+  `mark` is a `MarkColor` id, so map marks reuse the existing 6-colour palette
+  and `MarkDot` control unchanged.
 
 **`ui/maps/geometry/`** — pure Kotlin, no Compose imports, JVM-testable:
 `MapIndex` model, `GeoTransform` (page ↔ lat/long), `HitTest` (point in polygon),
@@ -270,8 +278,11 @@ No land data is invented anywhere in the pipeline or the UI.
   district id spaces stay separate.
 
 **Android**
-- Room migration test for `MapSheetEntity` and `ParcelMarkEntity`.
-- Repository test: checksum verification, cache hit, corrupt-cache recovery.
+- The module currently has **no test source set at all**. The first Android task
+  creates `app/src/test/java/` and adds the JUnit `testImplementation`
+  dependency; all Kotlin tests below are plain JVM tests (no emulator).
+- `MapCatalog` parse test over a checked-in catalogue fixture.
+- `MapMarksStore` round-trip and corrupt-manifest recovery, using a temp dir.
 
 ---
 
@@ -282,7 +293,7 @@ No land data is invented anywhere in the pipeline or the UI.
 2. `build-index.mjs` geometry and text extraction → indexes for one village,
    verified by hand against the printed sheet.
 3. `qa-index.mjs`, then a full Kheda + Anand run; publish the manifest.
-4. Room entities, migration, `MapsRepository`.
+4. `data/maps/` — `MapCatalog`, `MapIndexStore`, `MapMarksStore` (no Room work).
 5. `ui/maps/geometry/` with its unit tests.
 6. `MapsBrowseScreen` + `SheetLinkScreen` — link-only value lands here, whole
    feature is already useful.
