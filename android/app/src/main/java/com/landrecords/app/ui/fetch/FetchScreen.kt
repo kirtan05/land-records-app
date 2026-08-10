@@ -328,7 +328,7 @@ fun FetchScreen(
     when {
         phase != FetchPhase.SOLVING -> {
             val isError = phase == FetchPhase.ERROR
-            InputBlocker(active = !isError) {
+            InputBlocker(active = !isError, onBack = onBack) {
                 SavingOverlay(
                     surveyNo = info?.surveyNo ?: "",
                     village = info?.village ?: "",
@@ -352,13 +352,13 @@ fun FetchScreen(
         }
         // Post-tap fetch: full "Fetching the record…" overlay (the one that reads well).
         working && awaitingDetail -> {
-            InputBlocker(active = true) { PreparingOverlay(fetching = true) }
+            InputBlocker(active = true, onBack = onBack) { PreparingOverlay(fetching = true) }
         }
         // Auto-fill: keep the form VISIBLE (don't cover it) but swallow stray taps/Back so
         // the cascade can't be derailed. Only show the "Filling…" chip once the form has
         // actually loaded — before that it'd sit over a blank page, which read as premature.
         working -> {
-            InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
+            InputBlocker(active = true, onBack = onBack) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
     }
 

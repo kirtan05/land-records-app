@@ -179,8 +179,8 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
                     onRetry = { error = null; creating = false; chooser = null; busy = true; webRef?.reload() },
                 )
             }
-            creating -> InputBlocker(active = true) { PreparingOverlay(fetching = true) }
-            busy && chooser == null -> InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
+            creating -> InputBlocker(active = true, onBack = onBack) { PreparingOverlay(fetching = true) }
+            busy && chooser == null -> InputBlocker(active = true, onBack = onBack) { if (pageLoaded >= 1) FillingIndicator() else OpeningOverlay() }
         }
 
         chooser?.let { gc ->

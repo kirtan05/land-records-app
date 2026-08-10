@@ -1,8 +1,10 @@
 package com.landrecords.app.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +38,7 @@ import com.landrecords.app.ui.theme.Lr
  * helper), tenure, then the stamp strip. Queued surveys show "No records yet" and an
  * all-hollow strip; unknown metadata renders "—" and never invents a tenure line.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ParcelTile(
     surveyNo: String,
@@ -46,6 +49,7 @@ fun ParcelTile(
     queued: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null,
 ) {
     val interaction = remember { MutableInteractionSource() }
     val pressed by interaction.collectIsPressedAsState()
@@ -56,7 +60,7 @@ fun ParcelTile(
             .background(if (pressed) Land.colors.surfaceAlt else Land.colors.surface)
             .border(1.dp, Land.colors.line, LandShape.tile)
             .dashedInset(Land.colors.hair)
-            .clickable(interactionSource = interaction, indication = null, onClick = onClick)
+            .combinedClickable(interactionSource = interaction, indication = null, onClick = onClick, onLongClick = onLongClick)
             .padding(15.dp),
     ) {
         Column {

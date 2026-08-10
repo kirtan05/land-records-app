@@ -112,8 +112,10 @@ fun SavingOverlay(
  * active it's an inert pass-through (used for the error state, where Back should still work).
  */
 @Composable
-fun InputBlocker(active: Boolean, content: @Composable BoxScope.() -> Unit) {
-    if (active) BackHandler(enabled = true) { /* swallow — the run owns the screen */ }
+fun InputBlocker(active: Boolean, onBack: (() -> Unit)? = null, content: @Composable BoxScope.() -> Unit) {
+    // Back either exits (if the caller allows an escape hatch — so a stuck run isn't a force-close)
+    // or is swallowed so a stray press can't derail the machine.
+    if (active) BackHandler(enabled = true) { onBack?.invoke() }
     Box(
         Modifier
             .fillMaxSize()

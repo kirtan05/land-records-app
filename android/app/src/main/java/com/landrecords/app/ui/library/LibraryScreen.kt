@@ -85,6 +85,8 @@ fun LibraryScreen(
     var confirmBatchProp by remember { mutableStateOf<Long?>(null) }
     // Village (id → display name) whose long-press is awaiting a delete confirmation.
     var confirmDeleteProp by remember { mutableStateOf<Pair<Long, String>?>(null) }
+    // Survey (id → survey number) whose long-press is awaiting a delete confirmation.
+    var confirmDeleteSurvey by remember { mutableStateOf<Pair<Long, String>?>(null) }
 
     val subline = when (lang) {
         Lang.GU -> "${state.totalCount.numerals(Lang.GU)} સર્વે"
@@ -186,6 +188,7 @@ fun LibraryScreen(
                         if (queued) onFetch(card.survey.id, RecordType.INTEGRATED)
                         else onOpenSurvey(card.survey.id)
                     },
+                    onLongClick = { confirmDeleteSurvey = card.survey.id to card.survey.surveyNo },
                 )
             }
             item { Spacer(Modifier.height(2.dp)) }
@@ -239,6 +242,33 @@ fun LibraryScreen(
             },
             dismissButton = {
                 TextButton(onClick = { confirmDeleteProp = null }) {
+                    Text(lang.join("રદ કરો", "Cancel"), color = Land.colors.ink3)
+                }
+            },
+            containerColor = Land.colors.surface,
+        )
+    }
+
+    confirmDeleteSurvey?.let { (sid, no) ->
+        AlertDialog(
+            onDismissRequest = { confirmDeleteSurvey = null },
+            title = { Text(lang.join("સર્વે કાઢી નાખવો?", "Remove survey?"), style = LandType.bodyStrong, color = Land.colors.ink) },
+            text = {
+                Text(
+                    lang.join(
+                        "સર્વે નંબર “$no” અને તેના રેકોર્ડ એપમાંથી કાઢી નાખશે. Documents/LandRecords માંની PDF ફાઈલો રહેશે.",
+                        "Removes survey \"$no\" and its records from the app. The PDF files in Documents/LandRecords are kept.",
+                    ),
+                    style = LandType.body, color = Land.colors.ink2,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { confirmDeleteSurvey = null; vm.deleteSurvey(sid) }) {
+                    Text(lang.join("કાઢી નાખો", "Remove"), color = Land.colors.accent)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmDeleteSurvey = null }) {
                     Text(lang.join("રદ કરો", "Cancel"), color = Land.colors.ink3)
                 }
             },

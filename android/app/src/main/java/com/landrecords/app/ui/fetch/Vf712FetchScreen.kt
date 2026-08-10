@@ -301,7 +301,7 @@ fun Vf712FetchScreen(
         when {
             phase != FetchPhase.SOLVING -> {
                 val isError = phase == FetchPhase.ERROR
-                InputBlocker(active = !isError) {
+                InputBlocker(active = !isError, onBack = onBack) {
                     SavingOverlay(
                         surveyNo = info?.surveyNo ?: "",
                         village = info?.village ?: "",
@@ -322,8 +322,8 @@ fun Vf712FetchScreen(
                     )
                 }
             }
-            working && awaitingDetail -> InputBlocker(active = true) { PreparingOverlay(fetching = true) }
-            working -> InputBlocker(active = true) { if (pageLoaded >= 1) FillingIndicator() }
+            working && awaitingDetail -> InputBlocker(active = true, onBack = onBack) { PreparingOverlay(fetching = true) }
+            working -> InputBlocker(active = true, onBack = onBack) { if (pageLoaded >= 1) FillingIndicator() }
         }
 
         surveyChoices?.let { choices ->

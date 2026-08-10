@@ -92,6 +92,11 @@ class LibraryViewModel(private val repo: LandRecordsRepository) : ViewModel() {
         }
     }
 
+    /** Remove a single survey number (its records) from the library. */
+    fun deleteSurvey(surveyId: Long) {
+        viewModelScope.launch { repo.deleteSurvey(surveyId) }
+    }
+
     fun setQuery(value: String) {
         query.value = value
     }

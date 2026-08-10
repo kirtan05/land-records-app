@@ -39,6 +39,14 @@ class LandRecordsRepository(private val db: AppDatabase) {
 
     suspend fun propertyById(id: Long) = db.propertyDao().byId(id)
 
+    /** Delete a single survey number (its records) — the saved PDF files are left in Documents. */
+    suspend fun deleteSurvey(surveyId: Long) {
+        runCatching {
+            db.recordDao().deleteForSurvey(surveyId)
+            db.surveyDao().deleteById(surveyId)
+        }.onFailure { android.util.Log.w("LR", "deleteSurvey failed: ${it.message}") }
+    }
+
     /**
      * Delete a property (village card) and everything under it — its surveys + their records — from
      * the database. The saved PDF files in Documents/LandRecords are left in place (the app just

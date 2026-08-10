@@ -65,6 +65,9 @@ interface SurveyDao {
 
     @Query("DELETE FROM surveys WHERE propertyId = :propertyId")
     suspend fun deleteForProperty(propertyId: Long)
+
+    @Query("DELETE FROM surveys WHERE id = :id")
+    suspend fun deleteById(id: Long)
 }
 
 @Dao
@@ -95,6 +98,9 @@ interface RecordDao {
 
     @Query("DELETE FROM records WHERE surveyId IN (SELECT id FROM surveys WHERE propertyId = :propertyId)")
     suspend fun deleteForProperty(propertyId: Long)
+
+    @Query("DELETE FROM records WHERE surveyId = :surveyId")
+    suspend fun deleteForSurvey(surveyId: Long)
 
     /** Every marked record that actually has a PDF, joined to its survey + village, grouped by colour. */
     @Query(
