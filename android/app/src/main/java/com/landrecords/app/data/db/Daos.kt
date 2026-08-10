@@ -19,6 +19,9 @@ interface PropertyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(property: PropertyEntity): Long
 
+    @Query("DELETE FROM properties WHERE id = :id")
+    suspend fun deleteById(id: Long)
+
     @Query("SELECT COUNT(*) FROM properties")
     suspend fun count(): Int
 }
@@ -59,6 +62,9 @@ interface SurveyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(survey: SurveyEntity): Long
+
+    @Query("DELETE FROM surveys WHERE propertyId = :propertyId")
+    suspend fun deleteForProperty(propertyId: Long)
 }
 
 @Dao
@@ -86,6 +92,9 @@ interface RecordDao {
     /** Set (or clear, with null) the export colour mark on one record. */
     @Query("UPDATE records SET mark = :mark WHERE id = :id")
     suspend fun setMark(id: Long, mark: String?)
+
+    @Query("DELETE FROM records WHERE surveyId IN (SELECT id FROM surveys WHERE propertyId = :propertyId)")
+    suspend fun deleteForProperty(propertyId: Long)
 
     /** Every marked record that actually has a PDF, joined to its survey + village, grouped by colour. */
     @Query(

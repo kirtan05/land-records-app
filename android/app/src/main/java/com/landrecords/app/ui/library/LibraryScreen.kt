@@ -83,6 +83,8 @@ fun LibraryScreen(
     val lang = LocalLang.current
     // Property whose "All cases · 1 code" tap is awaiting a re-fetch confirmation (cases already exist).
     var confirmBatchProp by remember { mutableStateOf<Long?>(null) }
+    // Village (id → display name) whose long-press is awaiting a delete confirmation.
+    var confirmDeleteProp by remember { mutableStateOf<Pair<Long, String>?>(null) }
 
     val subline = when (lang) {
         Lang.GU -> "${state.totalCount.numerals(Lang.GU)} સર્વે"
@@ -157,6 +159,7 @@ fun LibraryScreen(
                             VillageCard(
                                 name = v.name, helper = v.helper, selected = v.selected,
                                 onClick = { vm.selectVillage(v.propertyId) },
+                                onLongClick = { confirmDeleteProp = v.propertyId to v.name },
                                 modifier = Modifier.width(150.dp),
                             )
                         }
@@ -209,6 +212,33 @@ fun LibraryScreen(
             },
             dismissButton = {
                 TextButton(onClick = { confirmBatchProp = null }) {
+                    Text(lang.join("રદ કરો", "Cancel"), color = Land.colors.ink3)
+                }
+            },
+            containerColor = Land.colors.surface,
+        )
+    }
+
+    confirmDeleteProp?.let { (pid, vname) ->
+        AlertDialog(
+            onDismissRequest = { confirmDeleteProp = null },
+            title = { Text(lang.join("ગામ કાઢી નાખવું?", "Remove village?"), style = LandType.bodyStrong, color = Land.colors.ink) },
+            text = {
+                Text(
+                    lang.join(
+                        "“$vname” અને તેના બધા સર્વે એપમાંથી કાઢી નાખશે. Documents/LandRecords માંની PDF ફાઈલો રહેશે.",
+                        "Removes \"$vname\" and all its surveys from the app. The PDF files in Documents/LandRecords are kept.",
+                    ),
+                    style = LandType.body, color = Land.colors.ink2,
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = { confirmDeleteProp = null; vm.deleteProperty(pid) }) {
+                    Text(lang.join("કાઢી નાખો", "Remove"), color = Land.colors.accent)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { confirmDeleteProp = null }) {
                     Text(lang.join("રદ કરો", "Cancel"), color = Land.colors.ink3)
                 }
             },

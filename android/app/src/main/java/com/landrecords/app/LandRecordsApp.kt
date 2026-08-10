@@ -40,6 +40,8 @@ class LandRecordsApp : Application() {
             repository.seedIfEmpty()
             // Backfill the already-generated desktop records (pushed to the app's files dir).
             com.landrecords.app.data.storage.SeedImporter.run(this@LandRecordsApp, repository, libraryWriter)
+            // Collapse any duplicate village cards (same place stored under different casing).
+            repository.mergeDuplicateProperties()
         }
     }
 }

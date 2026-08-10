@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 data class VillageChip(
     val propertyId: Long,
@@ -81,6 +82,14 @@ class LibraryViewModel(private val repo: LandRecordsRepository) : ViewModel() {
     fun selectVillage(propertyId: Long) {
         selectedId.value = propertyId
         query.value = ""
+    }
+
+    /** Remove a village card and all its surveys/records from the library. */
+    fun deleteProperty(propertyId: Long) {
+        viewModelScope.launch {
+            repo.deleteProperty(propertyId)
+            if (selectedId.value == propertyId) selectedId.value = null
+        }
     }
 
     fun setQuery(value: String) {

@@ -39,6 +39,19 @@ class LandRecordsRepository(private val db: AppDatabase) {
 
     suspend fun propertyById(id: Long) = db.propertyDao().byId(id)
 
+    /**
+     * Delete a property (village card) and everything under it — its surveys + their records — from
+     * the database. The saved PDF files in Documents/LandRecords are left in place (the app just
+     * "forgets" the village); they can be removed from the file manager if wanted.
+     */
+    suspend fun deleteProperty(propertyId: Long) {
+        runCatching {
+            db.recordDao().deleteForProperty(propertyId)
+            db.surveyDao().deleteForProperty(propertyId)
+            db.propertyDao().deleteById(propertyId)
+        }.onFailure { android.util.Log.w("LR", "deleteProperty failed: ${it.message}") }
+    }
+
     /** Survey row id for a full-place (district/taluka/village) + survey number, or null — links seeded records. */
     suspend fun findSurveyId(district: String, taluka: String, village: String, surveyNo: String): Long? =
         db.surveyDao().findByVillageAndNo(district, taluka, village, surveyNo)?.id
@@ -57,8 +70,11 @@ class LandRecordsRepository(private val db: AppDatabase) {
         village: String, villageGu: String,
         surveyNos: List<String>,
     ): Long {
+        // Match case-INSENSITIVELY: the cascade gives district/village en in inconsistent case
+        // (e.g. "ANAND", "KARAMSAD") so an exact-case compare would make a *second* property for a
+        // village that already exists → a duplicate village card. Reuse the existing one instead.
         val existing = db.propertyDao().observeAll().first()
-            .firstOrNull { it.district == district && it.taluka == taluka && it.village == village }
+            .firstOrNull { placeKey(it.district, it.taluka, it.village) == placeKey(district, taluka, village) }
         val propId = existing?.id ?: db.propertyDao().upsert(
             PropertyEntity(
                 state = "Gujarat", district = district, taluka = taluka, village = village,
@@ -178,4 +194,33 @@ class LandRecordsRepository(private val db: AppDatabase) {
 
     private fun tokenOf(surveyNo: String): String =
         surveyNo.trim().uppercase().replace('/', '_').replace(" ", "")
+
+    /** Case/space-insensitive identity of a place (its English District/Taluka/Village keys). */
+    private fun placeKey(district: String, taluka: String, village: String): String =
+        "${district.trim().lowercase()}|${taluka.trim().lowercase()}|${village.trim().lowercase()}"
+
+    /**
+     * Collapse duplicate village cards: properties that are the same place (case-insensitively) but
+     * got stored as separate rows — e.g. seeded "Anand/…/Bharoda" vs a user-added "ANAND/…/Bharoda".
+     * Keeps the lowest-id property and RE-PARENTS every survey of the duplicates onto it (survey ids
+     * are preserved, so their records follow untouched — nothing is deleted, so no data can be lost),
+     * then removes the now-empty duplicate property. Idempotent; safe to run every launch.
+     */
+    suspend fun mergeDuplicateProperties() {
+        runCatching {
+            val props = db.propertyDao().observeAll().first()
+            val groups = props.groupBy { placeKey(it.district, it.taluka, it.village) }
+            for ((_, group) in groups) {
+                if (group.size <= 1) continue
+                val canonical = group.minByOrNull { it.id } ?: continue
+                for (dup in group) {
+                    if (dup.id == canonical.id) continue
+                    db.surveyDao().observeForProperty(dup.id).first()
+                        .forEach { s -> db.surveyDao().upsert(s.copy(propertyId = canonical.id)) }
+                    db.propertyDao().deleteById(dup.id)
+                    android.util.Log.i("LR", "mergeDuplicateProperties: merged property ${dup.id} -> ${canonical.id} (${canonical.village})")
+                }
+            }
+        }.onFailure { android.util.Log.w("LR", "mergeDuplicateProperties failed: ${it.message}") }
+    }
 }

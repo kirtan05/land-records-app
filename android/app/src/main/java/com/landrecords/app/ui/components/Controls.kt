@@ -1,8 +1,10 @@
 package com.landrecords.app.ui.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -100,7 +102,9 @@ fun RemovableChip(text: String, onRemove: () -> Unit, modifier: Modifier = Modif
     }
 }
 
-/** A village switcher card: name + "Latin · count" helper; selected = accentSoft/accent. */
+/** A village switcher card: name + "Latin · count" helper; selected = accentSoft/accent. Long-press
+ *  fires [onLongClick] (used to offer "remove this village"). */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VillageCard(
     name: String,
@@ -108,13 +112,17 @@ fun VillageCard(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onLongClick: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
             .clip(LandShape.field)
             .background(if (selected) Land.colors.accentSoft else Land.colors.surface)
             .border(1.dp, if (selected) Land.colors.accent else Land.colors.line, LandShape.field)
-            .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onClick)
+            .combinedClickable(
+                interactionSource = remember { MutableInteractionSource() }, indication = null,
+                onClick = onClick, onLongClick = onLongClick,
+            )
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {

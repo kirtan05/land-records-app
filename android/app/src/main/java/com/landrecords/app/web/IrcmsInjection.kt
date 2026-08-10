@@ -43,14 +43,20 @@ object IrcmsInjection {
           opts.forEach(function(o){ if(best) return; if(o.value && oldTok(o.text)===w) best=o; });
           if(best){ sel.value=best.value; sel.dispatchEvent(new Event('change',{bubbles:true})); return true; } return false; }
 
+        // On a miss, report WHICH level failed + the site's option texts (logged as the prefill
+        // step, capturable via Settings→"Report a problem") so an unmatched place — e.g. a Gujarati
+        // spelling drift like "તડપદ"/"તલપદ" or "નડીઆદ"/"નડિયાદ" — can be diagnosed without a device.
+        function optList(sel){ return Array.prototype.slice.call(sel.options)
+          .filter(function(o){ return o.value && o.value!=='-1' && o.value!=='0'; })
+          .slice(0,30).map(function(o){ return (o.text||'').replace(/\s+/g,' ').trim(); }).join(' · '); }
         var d=document.getElementById('${Ircms.Ids.DISTRICT}');
-        if(d && unset(d)){ return selText(d,'$district')?'DIST':'WAIT'; }
+        if(d && unset(d)){ if(selText(d,'$district')) return 'DIST'; return 'WAIT|dist|want=$district|opts='+optList(d); }
         var t=document.getElementById('${Ircms.Ids.TALUKA}');
-        if(t && unset(t)){ return (t.options.length>1 && selText(t,'$taluka'))?'TAL':'WAIT'; }
+        if(t && unset(t)){ if(t.options.length>1 && selText(t,'$taluka')) return 'TAL'; return 'WAIT|tal|want=$taluka|opts='+(t.options.length>1?optList(t):'(empty)'); }
         var v=document.getElementById('${Ircms.Ids.VILLAGE}');
-        if(v && unset(v)){ return (v.options.length>1 && selText(v,'$village'))?'VIL':'WAIT'; }
+        if(v && unset(v)){ if(v.options.length>1 && selText(v,'$village')) return 'VIL'; return 'WAIT|vil|want=$village|opts='+(v.options.length>1?optList(v):'(empty)'); }
         var s=document.getElementById('${Ircms.Ids.SURVEY}');
-        if(s && unset(s)){ return (s.options.length>1 && selSurvey(s,'$surveyNorm'))?'SUR':'WAIT'; }
+        if(s && unset(s)){ if(s.options.length>1 && selSurvey(s,'$surveyNorm')) return 'SUR'; return 'WAIT|sur|want=$surveyNorm'; }
         return 'READY';
       } catch(e){ return 'WAIT'; }
     })();
