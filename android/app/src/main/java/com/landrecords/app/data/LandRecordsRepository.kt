@@ -64,6 +64,15 @@ class LandRecordsRepository(private val db: AppDatabase) {
     suspend fun findSurveyId(district: String, taluka: String, village: String, surveyNo: String): Long? =
         db.surveyDao().findByVillageAndNo(district, taluka, village, surveyNo)?.id
 
+    /**
+     * The survey id for [surveyNo] inside a property we already know the id of. Name-independent,
+     * so it still resolves when the row is stored under a different script or spelling than the
+     * caller holds — which [findSurveyId] cannot do, since it matches the place names literally.
+     */
+    suspend fun findSurveyIdIn(propertyId: Long, surveyNo: String): Long? =
+        db.surveyDao().observeForProperty(propertyId).first()
+            .firstOrNull { it.normalized == tokenOf(surveyNo) }?.id
+
     /** Outcome of an add: which survey numbers were freshly created vs already present (skipped). */
     data class AddResult(val propertyId: Long, val added: List<String>, val duplicates: List<String>)
 
