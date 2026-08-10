@@ -1,3 +1,17 @@
+> ## ⚠️ SUPERSEDED — do not build from this
+>
+> This design assumes village-map PDFs are vector GeoPDFs with a text layer. That was
+> generalised from **one** sheet (Badarkha, Ahmedabad), which turned out to be the
+> exception. Measured 2026-08-10: **all 881 Kheda + Anand village sheets are rasterized
+> exports** — no text, no parcel paths, no georeferencing. Survey-number search and
+> shared-edge adjacency cannot be built from them. Statewide only ~5% are vector.
+>
+> Current state and measured facts: `docs/MAPS.md`.
+> Options from here: `docs/plans/2026-08-11-maps-future-possibilities.md`.
+>
+> Still valid: the eJamin endpoint research (§1.1) and the geometry/adjacency approach,
+> which would work for the ~5% of sheets that are vector.
+
 # Maps: village cadastre sheets from eJamin Gujarat
 
 Design, 2026-08-10. Adds a **Maps** feature to the Land Records Android app:

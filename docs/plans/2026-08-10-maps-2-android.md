@@ -1,3 +1,18 @@
+> ## ⚠️ SUPERSEDED — never started, do not execute
+>
+> This plan builds a vector parcel canvas with survey-number search and adjoining
+> detection, all of which depend on a per-village parcel index that **cannot be produced
+> for Kheda or Anand**: all 881 of their sheets are rasterized exports (measured
+> 2026-08-10).
+>
+> What actually shipped instead (v0.9.0): a bundled 788 KB catalogue of all 16,044
+> Gujarat villages, a Maps browse screen, and a map glyph on each village card that opens
+> the official sheet. See `docs/MAPS.md`.
+>
+> Parts still worth reusing: Task 1's `SurveyNo` cross-script identity, Task 3's geometry,
+> and Task 6's marks-as-JSON-manifest convention. The next real step is an in-app sheet
+> viewer — option 1 in `docs/plans/2026-08-11-maps-future-possibilities.md`.
+
 # Maps, Plan 2 of 2: the Android Maps feature
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

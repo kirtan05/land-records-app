@@ -84,3 +84,17 @@ creates the release, rewrites `update.json` and prunes to the newest 3.
 Direction already decided, not yet built: `docs/plans/2026-08-11-unified-place-identity.md`
 (a place is an id, not a name — deletes the dedupe machinery) and
 `docs/plans/2026-08-11-whatsapp-problem-reports.md`.
+
+## Village maps
+
+Read `docs/MAPS.md` before any map work. The short version: village-map PDFs come from
+eJamin (a **private** site — the AnyRoR politeness rules don't apply, crawl it wide), and
+**all 881 Kheda + Anand sheets are rasterized exports** — no text layer, no parcel
+geometry, no georeferencing, so survey-number search and adjoining detection are *not*
+buildable from them. Only ~5% of sheets statewide are vector. The three
+`2026-08-10-maps-*` docs predate that discovery and carry SUPERSEDED banners.
+
+Shipped: `assets/maps/villages.json` (788 KB, 16,044 villages) + a map glyph on the
+village card that opens the official sheet. Regenerate with
+`node tools/ejamin/scrape-catalog.mjs && node tools/ejamin/build-app-catalog.mjs`.
+Next steps: `docs/plans/2026-08-11-maps-future-possibilities.md`.

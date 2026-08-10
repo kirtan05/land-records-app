@@ -1,3 +1,23 @@
+> ## ⚠️ PARTIALLY SUPERSEDED
+>
+> **Tasks 1–3 shipped** (session, Drive links, catalogue scraper) and are live in
+> `tools/ejamin/` — though the scraper has since been rewritten for concurrency
+> (~12 min statewide vs ~14 h serial), because ejamingujarat.com is a private
+> commercial site, not a `gujarat.gov.in` host, so the AnyRoR politeness rules in the
+> Global Constraints below do **not** apply to it.
+>
+> **Tasks 4–10 are vector-only and dead for Kheda/Anand.** Measured 2026-08-10: all 881
+> Kheda + Anand sheets are rasterized — no text layer, no parcel paths, no
+> georeferencing. `lib/content.mjs` and `lib/geo.mjs` were written from these tasks and
+> only ever worked on the one Ahmedabad sample. Keep them for the ~5% of statewide
+> sheets that are vector.
+>
+> Two errors in this document, for anyone reusing it: the Task 7 test expects
+> `pageToLatLng` on the identity matrix to give `[4,3]` — the correct value is `[3,3]`.
+> And GDCR scrapes 0 rows because the `selectClass` in Task 3's `TYPES` table is wrong.
+>
+> Current state: `docs/MAPS.md`. Options: `docs/plans/2026-08-11-maps-future-possibilities.md`.
+
 # Maps, Plan 1 of 2: eJamin catalogue + parcel index pipeline
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
