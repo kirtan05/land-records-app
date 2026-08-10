@@ -54,6 +54,8 @@ fun RecordCard(
     onCases: (() -> Unit)? = null,
     /** VF-7/12 only: opens the per-scan Scans view. Shown as a pill when held (docCount>0). */
     onScans: (() -> Unit)? = null,
+    /** Integrated only: opens the per-entry (નોંધ) Entries view. Non-null only when entries exist. */
+    onEntries: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val lang = LocalLang.current
@@ -117,6 +119,9 @@ fun RecordCard(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 PillButton(Lr(R.string.action_view_gu, R.string.action_view_en), onView, filled = true)
+                if (type == RecordType.INTEGRATED && onEntries != null) {
+                    PillButton(lang.join("નોંધ", "Entries"), onEntries)
+                }
                 if (type == RecordType.IRCMS && onCases != null) {
                     PillButton(lang.join("કેસ", "Cases"), onCases)
                 }

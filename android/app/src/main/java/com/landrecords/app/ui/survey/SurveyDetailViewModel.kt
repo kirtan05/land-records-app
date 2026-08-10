@@ -17,6 +17,10 @@ data class SurveyDetailUiState(
     val breadcrumb: List<String> = emptyList(),
     val villageGu: String = "",
     val villageLatin: String = "",
+    // Stable English storage keys (the .../source/<D>/<T>/<V>/ path) — used to look up per-item stores.
+    val district: String = "",
+    val taluka: String = "",
+    val village: String = "",
     val records: Map<RecordType, RecordEntity?> = emptyMap(),
     val loaded: Boolean = false,
 )
@@ -44,6 +48,9 @@ class SurveyDetailViewModel(
             } ?: emptyList(),
             villageGu = prop?.let { it.villageGu.ifBlank { it.village } } ?: "",
             villageLatin = prop?.let { "${it.village} · ${it.taluka}" } ?: "",
+            district = prop?.district ?: "",
+            taluka = prop?.taluka ?: "",
+            village = prop?.village ?: "",
             records = RecordType.entries.associateWith { t -> records.firstOrNull { it.type == t } },
             loaded = true,
         )

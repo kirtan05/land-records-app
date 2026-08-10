@@ -20,6 +20,7 @@ import androidx.compose.material.icons.outlined.ChevronLeft
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +58,7 @@ fun SurveyDetailScreen(
     onRegenerate: (Long, RecordType) -> Unit,
     onCases: (Long) -> Unit,
     onScans: (Long) -> Unit,
+    onEntries: (Long) -> Unit,
 ) {
     val app = landApp()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -65,6 +67,17 @@ fun SurveyDetailScreen(
     )
     val state by vm.uiState.collectAsStateWithLifecycle()
     val survey = state.survey
+
+    // How many entry (નોંધ) scans are on record — gates the "Entries" pill on the Integrated card.
+    // Re-reads when the integrated record's doc count changes (i.e. after a re-fetch).
+    var entriesCount by androidx.compose.runtime.remember { androidx.compose.runtime.mutableIntStateOf(0) }
+    val integratedDocs = state.records[RecordType.INTEGRATED]?.docCount ?: 0
+    androidx.compose.runtime.LaunchedEffect(state.village, survey?.surveyNo, integratedDocs) {
+        val sn = survey?.surveyNo
+        entriesCount = if (sn != null && state.village.isNotBlank())
+            com.landrecords.app.data.storage.EntriesStore.count(app, state.district, state.taluka, state.village, sn)
+        else 0
+    }
 
     Column(Modifier.fillMaxSize().background(Land.colors.bg)) {
         BlueprintHeader(modifier = Modifier.statusBarsPadding()) {
@@ -149,6 +162,7 @@ fun SurveyDetailScreen(
                     onGet = { onFetch(surveyId, type) },
                     onCases = if (type == RecordType.IRCMS) ({ onCases(surveyId) }) else null,
                     onScans = if (type == RecordType.VF712) ({ onScans(surveyId) }) else null,
+                    onEntries = if (type == RecordType.INTEGRATED && entriesCount > 0) ({ onEntries(surveyId) }) else null,
                 )
             }
             item {

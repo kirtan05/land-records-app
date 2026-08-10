@@ -61,6 +61,8 @@ fun SavingOverlay(
     destinationPath: String,
     step: Int,
     error: String?,
+    /** Optional live sub-status (e.g. the entry-scan progress) shown under the steps. */
+    note: String? = null,
     onRetry: () -> Unit,
 ) {
     Column(
@@ -108,6 +110,11 @@ fun SavingOverlay(
                 }
             }
         }
+        if (note != null) {
+            Spacer(Modifier.height(14.dp))
+            Text(note, style = LandType.metaMono, color = Land.colors.accent, textAlign = TextAlign.Center)
+        }
+
         Spacer(Modifier.height(20.dp))
         Text(destinationPath, style = LandType.stamp, color = Land.colors.ink3)
     }

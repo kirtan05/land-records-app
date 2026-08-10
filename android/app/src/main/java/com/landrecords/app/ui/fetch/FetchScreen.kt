@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +39,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.R
 import com.landrecords.app.data.model.RecordType
+import com.landrecords.app.data.storage.EntriesStore
 import com.landrecords.app.ui.components.SquareIconButton
 import com.landrecords.app.ui.landApp
 import com.landrecords.app.ui.theme.Land
@@ -46,8 +48,14 @@ import com.landrecords.app.ui.theme.LandType
 import com.landrecords.app.ui.theme.Lr
 import com.landrecords.app.web.AnyRor
 import com.landrecords.app.web.AnyRorInjection
+import com.landrecords.app.web.EntriesDownloader
+import com.landrecords.app.web.EntriesInjection
 import com.landrecords.app.web.WebViewCapture
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import org.json.JSONObject
 
 /**
  * The one human step: solve the CAPTCHA on the real AnyRoR page. The app prefills and
@@ -72,11 +80,16 @@ fun FetchScreen(
     val info by vm.info.collectAsStateWithLifecycle()
     val phase by vm.phase.collectAsStateWithLifecycle()
 
+    val scope = rememberCoroutineScope()
     var webRef by remember { mutableStateOf<WebView?>(null) }
     var pageLoaded by remember { mutableIntStateOf(0) }
+    // Completed on each onPageFinished — lets the entries loop await a Select$N postback's reload.
+    var pageSignal by remember { mutableStateOf<CompletableDeferred<Unit>?>(null) }
     var awaitingDetail by remember { mutableStateOf(false) }
     var submitPageLoaded by remember { mutableIntStateOf(-1) }
     var captureRunning by remember { mutableStateOf(false) }
+    // Small status line under the save steps while the red entry (નોંધ) scans are being pulled.
+    var entryStatus by remember { mutableStateOf<String?>(null) }
     // Non-error notice shown after a Deeds fetch (table saved, but the scanned documents are
     // usually dead server-side) — a dialog the user dismisses, then we leave the screen.
     var deedNotice by remember { mutableStateOf<String?>(null) }
@@ -173,6 +186,10 @@ fun FetchScreen(
                             }
                         }
                     } else {
+                        // INTEGRATED: read the entry (નોંધ) grid from the PRISTINE DOM before cleanupJs
+                        // restyles it, so we know which entries are RED (have a scan to download).
+                        val entries = if (recordType == RecordType.INTEGRATED)
+                            parseEntryRows(WebViewCapture.eval(wv, EntriesInjection.entryListJs())) else emptyList()
                         WebViewCapture.eval(wv, AnyRorInjection.cleanupJs(
                             districtEn = i.district, talukaEn = i.taluka, villageEn = i.village, surveyNo = i.surveyNo,
                         ))
@@ -182,6 +199,40 @@ fun FetchScreen(
                         vm.setPhase(FetchPhase.FILING)
                         val ok = vm.fileCapture(recordType, pdf, html)
                         if (ok) {
+                            val reds = entries.filter { it.red }
+                            if (recordType == RecordType.INTEGRATED && reds.isNotEmpty()) {
+                                // Hand the per-entry capture to a SEPARATE coroutine: each Select$N is a
+                                // full-page postback that bumps pageLoaded, which would cancel THIS
+                                // (pageLoaded-keyed) effect mid-loop. captureRunning stays true (we skip
+                                // the reset below via return@LaunchedEffect) so the re-triggered main
+                                // effect no-ops until the entries finish. The integrated PDF is already
+                                // filed, so an entries failure is non-fatal.
+                                scope.launch {
+                                    val caps = ArrayList<EntriesStore.EntryCapture>(reds.size)
+                                    for ((k, e) in reds.withIndex()) {
+                                        entryStatus = "નોંધ ${k + 1}/${reds.size}  ·  Entry ${k + 1}/${reds.size}"
+                                        val sig = CompletableDeferred<Unit>()
+                                        pageSignal = sig
+                                        WebViewCapture.eval(wv, EntriesInjection.selectEntryJs(e.index))
+                                        withTimeoutOrNull(30_000) { sig.await() }
+                                        delay(450) // let gvImages render + its <img> resolve
+                                        val srcs = parseEntryImages(WebViewCapture.eval(wv, EntriesInjection.entryImagesJs()))
+                                        val bytes = srcs.mapNotNull { EntriesDownloader.fetchImage(it) }
+                                        val entryPdf = EntriesDownloader.imagesToPdf(bytes, e.number)
+                                        caps.add(EntriesStore.EntryCapture(number = e.number, red = true, pdf = entryPdf))
+                                        android.util.Log.i("LR", "entry ${e.number}: ${srcs.size} img(s) -> pdf=${entryPdf?.size ?: 0}")
+                                    }
+                                    runCatching {
+                                        EntriesStore.save(app, i.district, i.taluka, i.village, i.surveyNo, caps)
+                                    }.onFailure { android.util.Log.w("LR", "entries save failed: ${it.message}") }
+                                    entryStatus = null
+                                    captureRunning = false
+                                    vm.setPhase(FetchPhase.DONE)
+                                    delay(450)
+                                    onDone()
+                                }
+                                return@LaunchedEffect // entries coroutine owns DONE/onDone; keep captureRunning
+                            }
                             vm.setPhase(FetchPhase.DONE)
                             delay(450)
                             onDone()
@@ -311,6 +362,7 @@ fun FetchScreen(
                     webViewClient = object : WebViewClient() {
                         override fun onPageFinished(view: WebView, url: String?) {
                             pageLoaded += 1
+                            pageSignal?.takeIf { !it.isCompleted }?.complete(Unit)
                             android.util.Log.i("LR", "onPageFinished #$pageLoaded url=${url?.take(60)}")
                         }
                     }
@@ -339,6 +391,7 @@ fun FetchScreen(
                         else -> 2
                     },
                     error = if (isError) vm.errorMessage else null,
+                    note = entryStatus,
                     onRetry = {
                         vm.setPhase(FetchPhase.SOLVING)
                         awaitingDetail = false
@@ -377,4 +430,27 @@ fun FetchScreen(
         )
     }
     }
+}
+
+/** One entry (નોંધ) from the AnyRoR entry grid — its Select$N index, number, and red-vs-blue. */
+internal data class EntryRow(val index: Int, val number: String, val red: Boolean)
+
+/** Parse [EntriesInjection.entryListJs] output → the entry rows (in table order). */
+internal fun parseEntryRows(json: String): List<EntryRow> = try {
+    val arr = JSONObject(json).optJSONArray("rows") ?: return emptyList()
+    (0 until arr.length()).mapNotNull { k ->
+        val o = arr.getJSONObject(k)
+        val idx = o.optInt("index", -1)
+        if (idx < 0) null else EntryRow(index = idx, number = o.optString("number"), red = o.optBoolean("red", false))
+    }
+} catch (e: Exception) {
+    android.util.Log.w("LR", "parseEntryRows failed: ${e.message}"); emptyList()
+}
+
+/** Parse [EntriesInjection.entryImagesJs] output → the scanned-page image URLs for one entry. */
+internal fun parseEntryImages(json: String): List<String> = try {
+    val arr = JSONObject(json).optJSONArray("imgs") ?: return emptyList()
+    (0 until arr.length()).mapNotNull { k -> arr.optString(k).takeIf { it.isNotBlank() } }
+} catch (e: Exception) {
+    android.util.Log.w("LR", "parseEntryImages failed: ${e.message}"); emptyList()
 }
