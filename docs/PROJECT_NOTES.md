@@ -12,6 +12,7 @@ an Excel index, with optional WhatsApp delivery. Built incrementally; this file 
 | **AnyRoR — Old Scanned VF-7/12** (record type 11) | Historical scanned 7/12 by period | `anyror/run-vf712.mjs`, `build_vf712_combined.py` |
 | **Reports** | Per-survey combined PDF (clickable index), master Excel, zip | `build_reports.py`, `build_anyror_pdf.py`, `build-zip.mjs` |
 | **Delivery** | WhatsApp (Baileys) — group or self | `wa/login.mjs`, `wa/send*.mjs`, `wa/check.mjs` |
+| **Jantri (ASR-2011)** (garvi.gujarat.gov.in) | Government land rate per survey number, all 26 districts | `tools/jantri/*` → `data/jantri/README.md` |
 
 Delivered so far for **Bharoda (Anand / Umreth), 9 surveys**: iRCMS cases + orders, AnyRoR integrated
 records (redone clean), VF-7/12 (132 scans), all folded into `Bharoda_iRCMS_Cases.zip` + master Excel.
@@ -50,6 +51,35 @@ output/iRCMS_Bharoda_Master.xlsx    Summary (iRCMS + AnyRoR + VF-7/12 columns) +
    Capture bytes via `ctx.route(...)` + `route.fetch()` instead of `response.body()`.
 7. **Mixed Gujarati+Latin text** in fpdf2: set `guj` as primary font + `noto` fallback (`set_fallback_fonts`),
    or Latin glyphs render as boxes.
+
+## The Android app (now the main product)
+
+Lives in `android/`. Build + release facts are in `CLAUDE.md`; the design source of truth is
+`design_handoff_land_records_ui/`.
+
+- **Shipping a public update is one command:** `tools/release/release.sh "<notes>"`
+  (`--dry-run` to build and verify only). It builds slim (`-Pslim` drops the 125 MB personal
+  seed), refuses to publish an APK containing any seed file, **verifies the signing certificate
+  against the currently published APK**, then creates the release, rewrites `update.json` and
+  prunes to the newest 3. See [`app-release-update-pipeline`] in memory for the why.
+- **The signing key is load-bearing.** Every release is signed with `~/.android/debug.keystore`
+  (pinned in `app/build.gradle.kts`). Android only allows an in-place update when the
+  certificate matches — lose that keystore and **no existing install can ever update again**.
+  Backup: `~/Desktop/projects/land-records-signing-key-BACKUP.jks`.
+- Verifying a publish: `raw.githubusercontent.com` and `releases/latest/download` are
+  **CDN-cached** and serve the previous release for minutes. Check via `gh api` instead.
+
+## Planned
+
+- **[One place identity](plans/2026-08-11-unified-place-identity.md)** — store a stable
+  `place_id` instead of a place's *name*, so the same village can never become two cards.
+  Deletes the dedupe machinery (`PlaceNames`, `PlaceRelocator`, per-source crosswalks)
+  rather than adding to it. This is the highest-leverage cleanup on the list.
+- **[WhatsApp problem reports](plans/2026-08-11-whatsapp-problem-reports.md)** — a report
+  should arrive by itself instead of needing the user to compose an email.
+- **Jantri: remaining 24 districts** (parsed and on disk; needs their crosswalks) and
+  **town/urban rates** (a separate document set, filenames not yet discovered). See
+  [the jantri spec](specs/2026-08-11-jantri-land-rates.md).
 
 ## Pending
 

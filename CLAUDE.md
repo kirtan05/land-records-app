@@ -48,3 +48,39 @@ Build stack is pinned to this machine's cached toolchain — **do not bump blind
 Foundation that is NOT UI (leave working): `data/` (Room + repository, seeded with the
 real Bharoda/Sundalpura/Valetva data), `data/storage/` (the visible `Documents/LandRecords`
 tree), and `web/AnyRor.kt` (the fetch contract the WebView engine ports from `anyror/*.mjs`).
+
+## Releasing (`tools/release/release.sh`)
+
+```bash
+tools/release/release.sh --dry-run "notes"   # build + verify, publish nothing
+tools/release/release.sh "notes"             # build → verify → publish → prune
+```
+
+Bump `versionCode`/`versionName` in `app/build.gradle.kts` first. The script builds with
+`-Pslim` (drops the 125 MB personal seed), refuses to publish an APK containing any seed
+file, **compares the built APK's signing certificate against the published one**, then
+creates the release, rewrites `update.json` and prunes to the newest 3.
+
+- **Never bypass the signature check.** Every release is signed with
+  `~/.android/debug.keystore` (pinned in `build.gradle.kts`). Android only permits an
+  in-place update when the certificate matches — a mismatch strands every existing install
+  (uninstall + data loss). Backup: `~/Desktop/projects/land-records-signing-key-BACKUP.jks`.
+- Don't verify a publish through `raw.githubusercontent.com` or `releases/latest/download`
+  — both are CDN-cached and serve the previous release for minutes. Use `gh api`.
+- AGP packages incrementally, so the script removes the APK output dir first; otherwise a
+  slim build over a seeded one leaves the old bytes as dead space (34 MB inside 162 MB).
+
+## Land data rules beyond the UI
+
+- **Jantri rates** (`data/jantri/`, `tools/jantri/`) are the ASR-2011 government rate with
+  the 15/04/2023 doubling applied — a **stamp-duty floor, never a market valuation**, and
+  labelled that way. Read `data/jantri/README.md` before touching the parser; three source
+  quirks in it each caused silent data loss.
+- Unknown stays unknown: a survey number with no jantri entry renders nothing, and
+  `area × rate` appears only when the area is actually known.
+- Where a unit is customary rather than official (the vigha varies by region), print its
+  basis beside the number (`16.4 vigha (@20 guntha)`).
+
+Direction already decided, not yet built: `docs/plans/2026-08-11-unified-place-identity.md`
+(a place is an id, not a name — deletes the dedupe machinery) and
+`docs/plans/2026-08-11-whatsapp-problem-reports.md`.

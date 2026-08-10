@@ -156,3 +156,17 @@ The user explicitly wants an initial **Claude-made design** to react to and buil
 - Already-generated PDFs under `output/<TOKEN>/` — perfect **seed data** for the library so save/browse is
   demoable on day one.
 - Memory files (`~/.claude/projects/.../memory/`) and `docs/PROJECT_NOTES.md` for every gotcha.
+- **Jantri rates** — `data/jantri/README.md` (the data) and
+  `docs/specs/2026-08-11-jantri-land-rates.md` (the feature). All 26 districts are parsed and
+  verified on disk; Anand + Kheda ship in the APK.
+- **Releasing** — `tools/release/release.sh`, one command, with a signing-certificate check
+  that must never be bypassed.
+
+## 13. Decided direction (not yet built)
+
+- **A place is an id, not a name** — `docs/plans/2026-08-11-unified-place-identity.md`.
+  Every source spells a village differently, so identity-by-name keeps producing duplicate
+  cards and duplicate folder trees. Store the iRCMS district+taluka+village code triple and
+  resolve at the one point the user picks a place. Dedupe then has nothing to do.
+- **Problem reports over WhatsApp** — `docs/plans/2026-08-11-whatsapp-problem-reports.md`.
+  Diagnostics must never carry land data.
