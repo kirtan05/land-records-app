@@ -62,6 +62,31 @@ object EntriesInjection {
     """.trimIndent()
 
     /**
+     * Before rendering the integrated PDF: make the RED entry numbers stand out so they survive a
+     * black-&-white print — keep them red (for colour prints) AND add bold + underline (so a mono
+     * print still distinguishes them from the blue text entries). Returns 'RED:<n>'.
+     */
+    fun markRedEntriesForPdfJs(): String = """
+    (function(){
+      try {
+        var grid = document.getElementById('$GRID_ID');
+        if (!grid) return 'NOGRID';
+        var n = 0;
+        Array.prototype.slice.call(grid.querySelectorAll('a')).forEach(function(a){
+          var st = (a.getAttribute('style') || '').replace(/\s/g,'');
+          if (/color:Red/i.test(st)) {
+            a.style.setProperty('color', '#C41E1E', 'important');
+            a.style.setProperty('font-weight', '900', 'important');
+            a.style.setProperty('text-decoration', 'underline', 'important');
+            n++;
+          }
+        });
+        return 'RED:' + n;
+      } catch(e) { return 'ERR:' + e.message; }
+    })();
+    """.trimIndent()
+
+    /**
      * After a Select postback: the selected entry's number + every scanned-page image URL.
      * {number:"<num>", imgs:["https://…Info6oldImage.ashx?…", …]}. imgs is empty if none rendered.
      */

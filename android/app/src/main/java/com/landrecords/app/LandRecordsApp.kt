@@ -44,6 +44,9 @@ class LandRecordsApp : Application() {
             com.landrecords.app.data.storage.SeedImporter.run(this@LandRecordsApp, repository, libraryWriter)
             // Clean AnyRoR "- <code>" suffixes off village names, then collapse duplicate cards.
             repository.stripPlaceCodeSuffixes()
+            // Collapse a village saved twice in two scripts (Bharoda vs ભરોડા) — moves its files
+            // and rewrites its stored paths — before the plain same-script duplicate merge.
+            repository.migrateCrossScriptPlaces(this@LandRecordsApp)
             repository.mergeDuplicateProperties()
         }
     }

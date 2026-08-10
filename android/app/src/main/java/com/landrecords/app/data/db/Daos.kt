@@ -63,6 +63,31 @@ interface SurveyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(survey: SurveyEntity): Long
 
+    /**
+     * Fill in the AnyRoR header metadata read off a fetched (or re-rendered) record.
+     * Each field only overwrites when the incoming value is non-empty, so a page that
+     * happens not to carry one of them never blanks a value we already hold.
+     */
+    @Query(
+        """
+        UPDATE surveys SET
+          area       = CASE WHEN :area       != '' THEN :area       ELSE area       END,
+          assessment = CASE WHEN :assessment != '' THEN :assessment ELSE assessment END,
+          tenure     = CASE WHEN :tenure     != '' THEN :tenure     ELSE tenure     END,
+          landUse    = CASE WHEN :landUse    != '' THEN :landUse    ELSE landUse    END,
+          asOf       = CASE WHEN :asOf       != '' THEN :asOf       ELSE asOf       END
+        WHERE id = :id
+        """,
+    )
+    suspend fun updateMeta(
+        id: Long,
+        area: String,
+        assessment: String,
+        tenure: String,
+        landUse: String,
+        asOf: String,
+    )
+
     @Query("DELETE FROM surveys WHERE propertyId = :propertyId")
     suspend fun deleteForProperty(propertyId: Long)
 
@@ -101,6 +126,9 @@ interface RecordDao {
 
     @Query("DELETE FROM records WHERE surveyId = :surveyId")
     suspend fun deleteForSurvey(surveyId: Long)
+
+    @Query("DELETE FROM records WHERE id = :id")
+    suspend fun deleteById(id: Long)
 
     /** Every marked record that actually has a PDF, joined to its survey + village, grouped by colour. */
     @Query(

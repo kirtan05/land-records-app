@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -105,7 +106,10 @@ fun RemovableChip(text: String, onRemove: () -> Unit, modifier: Modifier = Modif
 }
 
 /** A village switcher card: name + "Latin · count" helper; selected = accentSoft/accent. Long-press
- *  fires [onLongClick] (used to offer "remove this village"). */
+ *  fires [onLongClick] (used to offer "remove this village"). When [onOpenMap] is non-null (the
+ *  village has a known official map), a small map glyph appears next to the name; it carries its
+ *  own [clickable] — exactly [MarkDot]'s pattern — so tapping it opens the map without also
+ *  selecting the card. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VillageCard(
@@ -115,6 +119,7 @@ fun VillageCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     onLongClick: (() -> Unit)? = null,
+    onOpenMap: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier
@@ -128,7 +133,23 @@ fun VillageCard(
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        Text(name, style = LandType.bodyStrong, color = if (selected) Land.colors.accent else Land.colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
+        val nameColor = if (selected) Land.colors.accent else Land.colors.ink
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                name, style = LandType.bodyStrong, color = nameColor, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            if (onOpenMap != null) {
+                Icon(
+                    Icons.Outlined.Map,
+                    contentDescription = "Village map",
+                    tint = nameColor,
+                    modifier = Modifier
+                        .size(14.dp)
+                        .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null, onClick = onOpenMap),
+                )
+            }
+        }
         // Split "Latin · count" so the count stays visible when the card is narrow (portrait);
         // only the name ellipsizes.
         val helperColor = if (selected) Land.colors.accent else Land.colors.ink3

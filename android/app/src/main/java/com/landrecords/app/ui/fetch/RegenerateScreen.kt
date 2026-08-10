@@ -76,6 +76,12 @@ fun RegenerateScreen(
         if (loaded == 0 || html == null || done) return@LaunchedEffect
         val wv = webRef ?: return@LaunchedEffect
         done = true
+        // Back-fill the survey's header metadata from the saved page. Older records were
+        // filed before this was captured, so re-rendering one fills in its area / આકાર
+        // without needing a network re-fetch (the values survive in the stored HTML).
+        if (recordType == RecordType.INTEGRATED) {
+            vm.saveSummary(WebViewCapture.eval(wv, AnyRorInjection.summaryJs()))
+        }
         vm.setPhase(FetchPhase.BUILDING)
         val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
         vm.setPhase(FetchPhase.FILING)

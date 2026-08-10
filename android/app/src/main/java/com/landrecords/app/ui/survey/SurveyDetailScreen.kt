@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,7 +33,14 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.landrecords.app.R
 import com.landrecords.app.data.db.RecordEntity
 import com.landrecords.app.data.model.RecordType
+import com.landrecords.app.data.storage.EntriesStore
 import com.landrecords.app.data.storage.LibraryAccess
+import com.landrecords.app.web.PdfMerge
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
 import com.landrecords.app.ui.components.BlueprintHeader
 import com.landrecords.app.ui.components.DashedButton
 import com.landrecords.app.ui.components.MetaChip
@@ -67,6 +75,31 @@ fun SurveyDetailScreen(
     )
     val state by vm.uiState.collectAsStateWithLifecycle()
     val survey = state.survey
+    val scope = rememberCoroutineScope()
+
+    // Merge every captured entry scan into one PDF and open it — the "View all entries" action.
+    fun viewAllEntries() {
+        val sn = survey?.surveyNo ?: return
+        scope.launch {
+            val merged = withContext(Dispatchers.IO) {
+                val items = EntriesStore.read(app, state.district, state.taluka, state.village, sn)
+                    .filter { it.file.isNotBlank() }
+                val parts = items.mapNotNull { e ->
+                    EntriesStore.filePath(app, state.district, state.taluka, state.village, sn, e.file)
+                        ?.let { runCatching { File(it).readBytes() }.getOrNull() }
+                }
+                val bytes = PdfMerge.merge(parts, app.cacheDir) ?: return@withContext null
+                File(app.cacheDir, "AllEntries_${sn.replace('/', '_')}.pdf").apply { writeBytes(bytes) }
+            }
+            if (merged == null) {
+                android.widget.Toast.makeText(context, "Nothing to view", android.widget.Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+            if (!LibraryAccess.view(context, merged.absolutePath, "${state.villageLatin.ifBlank { "Land" }} $sn Entries.pdf")) {
+                android.widget.Toast.makeText(context, "Can't open this file", android.widget.Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     // How many entry (નોંધ) scans are on record — gates the "Entries" pill on the Integrated card.
     // Re-reads when the integrated record's doc count changes (i.e. after a re-fetch).
@@ -77,6 +110,22 @@ fun SurveyDetailScreen(
         entriesCount = if (sn != null && state.village.isNotBlank())
             com.landrecords.app.data.storage.EntriesStore.count(app, state.district, state.taluka, state.village, sn)
         else 0
+    }
+
+    // Unit shown on the area chip; tapping it cycles through the four.
+    var areaUnit by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf(com.landrecords.app.data.jantri.LandArea.Unit.HA_A_M)
+    }
+
+    // Jantri (ASR-2011) rate for this survey number, if the village is covered.
+    var jantri by androidx.compose.runtime.remember {
+        androidx.compose.runtime.mutableStateOf<com.landrecords.app.data.jantri.JantriResult?>(null)
+    }
+    androidx.compose.runtime.LaunchedEffect(state.village, state.villageGu, survey?.surveyNo) {
+        val sn = survey?.surveyNo
+        jantri = if (sn != null) com.landrecords.app.data.jantri.JantriRates.lookup(
+            app, state.village, state.villageGu, state.taluka, sn,
+        ) else null
     }
 
     Column(Modifier.fillMaxSize().background(Land.colors.bg)) {
@@ -114,12 +163,22 @@ fun SurveyDetailScreen(
         ) {
             item {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(Dp4.chipGap), verticalArrangement = Arrangement.spacedBy(Dp4.chipGap)) {
-                    MetaChip(Lr(R.string.meta_area_gu, R.string.meta_area_en), survey.area, areaLatinHelper(survey.area))
+                    // Tap the area chip to cycle ha-a-m² → acre → guntha → m².
+                    MetaChip(
+                        Lr(R.string.meta_area_gu, R.string.meta_area_en),
+                        survey.area,
+                        com.landrecords.app.data.jantri.LandArea.format(survey.area, areaUnit)
+                            .ifBlank { areaLatinHelper(survey.area) },
+                        modifier = if (survey.area.isBlank()) Modifier
+                        else Modifier.clickable { areaUnit = areaUnit.next() },
+                    )
                     MetaChip(Lr(R.string.meta_assessment_gu, R.string.meta_assessment_en), survey.assessment, survey.assessment.guToLatinDigits())
                     MetaChip(Lr(R.string.meta_tenure_gu, R.string.meta_tenure_en), survey.tenure, tenureLatin(survey.tenure))
                     MetaChip(Lr(R.string.meta_landuse_gu, R.string.meta_landuse_en), survey.landUse, landUseLatin(survey.landUse))
-                    MetaChip(Lr(R.string.as_of_gu, R.string.as_of_en), survey.asOf, survey.asOf.guToLatinDigits())
                 }
+            }
+            jantri?.let { j ->
+                item { JantriCard(j, com.landrecords.app.data.jantri.LandArea.toSqm(survey.area)) }
             }
             items(RecordType.entries.toList()) { type ->
                 val record = state.records[type]
@@ -163,6 +222,7 @@ fun SurveyDetailScreen(
                     onCases = if (type == RecordType.IRCMS) ({ onCases(surveyId) }) else null,
                     onScans = if (type == RecordType.VF712) ({ onScans(surveyId) }) else null,
                     onEntries = if (type == RecordType.INTEGRATED && entriesCount > 0) ({ onEntries(surveyId) }) else null,
+                    onViewAllEntries = if (type == RecordType.INTEGRATED && entriesCount > 0) ({ viewAllEntries() }) else null,
                 )
             }
             item {

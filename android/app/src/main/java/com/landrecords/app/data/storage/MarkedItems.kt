@@ -19,7 +19,7 @@ import java.io.File
  */
 object MarkedItems {
 
-    enum class Kind { CASE, SCAN }
+    enum class Kind { CASE, SCAN, ENTRY }
 
     /** One marked case or scan, with everything needed to name, export and later unmark it. */
     data class Extra(
@@ -81,6 +81,19 @@ object MarkedItems {
                     district = district, taluka = taluka, village = village, surveyNo = surveyNo,
                     itemId = sc.index.toString(),
                     detail = sc.period.ifBlank { "—" }, pdfPath = pdf,
+                ),
+            )
+        }
+        // Integrated entry (નોંધ) scans.
+        for (en in EntriesStore.read(context, district, taluka, village, surveyNo)) {
+            val mark = en.mark ?: continue
+            val pdf = EntriesStore.filePath(context, district, taluka, village, surveyNo, en.file) ?: continue
+            out.add(
+                Extra(
+                    kind = Kind.ENTRY, mark = mark,
+                    district = district, taluka = taluka, village = village, surveyNo = surveyNo,
+                    itemId = en.number,
+                    detail = en.number, pdfPath = pdf,
                 ),
             )
         }

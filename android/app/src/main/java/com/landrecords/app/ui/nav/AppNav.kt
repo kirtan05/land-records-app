@@ -23,6 +23,7 @@ import com.landrecords.app.ui.fetch.Vf712FetchScreen
 import com.landrecords.app.ui.fetch.VfScansScreen
 import com.landrecords.app.ui.fetch.RegenerateScreen
 import com.landrecords.app.ui.library.LibraryScreen
+import com.landrecords.app.ui.maps.MapsScreen
 import com.landrecords.app.ui.marked.MarkedScreen
 import com.landrecords.app.ui.property.AddPropertyScreen
 import com.landrecords.app.ui.settings.SettingsScreen
@@ -38,6 +39,7 @@ private object Routes {
     const val ANYROR_ADD = "anyror_add"
     const val SETTINGS = "settings"
     const val MARKED = "marked"
+    const val MAPS = "maps"
     const val IRCMS_BATCH = "ircms_batch/{propertyId}?refetch={refetch}"
     const val IRCMS_CASES = "ircms_cases/{surveyId}"
     const val VF_SCANS = "vf_scans/{surveyId}"
@@ -73,6 +75,7 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
                 onAddProperty = { navController.navigate(Routes.ADD) },
                 onSettings = { navController.navigate(Routes.SETTINGS) },
                 onMarked = { navController.navigate(Routes.MARKED) },
+                onMaps = { navController.navigate(Routes.MAPS) },
             )
         }
         composable(
@@ -187,6 +190,9 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
         }
         composable(Routes.MARKED) {
             MarkedScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.MAPS) {
+            MapsScreen(onBack = { navController.popBackStack() })
         }
     }
 }

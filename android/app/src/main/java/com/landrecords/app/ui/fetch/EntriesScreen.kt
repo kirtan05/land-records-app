@@ -165,6 +165,32 @@ fun EntriesScreen(
         }
     }
 
+    fun viewAll() {
+        val u = ui ?: return
+        val withScan = u.entries.filter { it.file.isNotBlank() }
+        if (withScan.isEmpty()) {
+            Toast.makeText(context, "Nothing to view", Toast.LENGTH_SHORT).show()
+            return
+        }
+        scope.launch {
+            val merged = withContext(Dispatchers.IO) {
+                val parts = withScan.mapNotNull { e ->
+                    EntriesStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, e.file)
+                        ?.let { runCatching { File(it).readBytes() }.getOrNull() }
+                }
+                val bytes = PdfMerge.merge(parts, app.cacheDir) ?: return@withContext null
+                File(app.cacheDir, "AllEntries_${u.surveyNo.replace('/', '_')}.pdf").apply { writeBytes(bytes) }
+            }
+            if (merged == null) {
+                Toast.makeText(context, "Couldn't open", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+            if (!LibraryAccess.view(context, merged.absolutePath, "${u.villageLatin.ifBlank { "Land" }} ${u.surveyNo} Entries.pdf")) {
+                Toast.makeText(context, "Can't open this file", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     fun viewEntryFile(entry: EntriesStore.EntryItem) {
         val u = ui ?: return
         val path = EntriesStore.filePath(app, u.district, u.taluka, u.village, u.surveyNo, entry.file)
@@ -218,6 +244,10 @@ fun EntriesScreen(
                     )
                 }
                 Spacer(Modifier.weight(1f))
+                if (entries.any { it.file.isNotBlank() }) {
+                    PillButton(L("બધા જુઓ", "View all"), onClick = { viewAll() })
+                    Spacer(Modifier.width(10.dp))
+                }
                 Text("$chosenCount / $total", style = LandType.metaMono, color = Land.colors.ink3)
             }
             HorizontalDivider(thickness = 1.dp, color = Land.colors.line)

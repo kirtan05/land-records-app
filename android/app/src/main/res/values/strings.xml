@@ -19,6 +19,22 @@
     <string name="no_records_yet_gu">રેકોર્ડ બાકી</string>
     <string name="no_records_yet_en">No records yet</string>
 
+    <!-- Maps -->
+    <string name="maps_title_gu">નકશા</string>
+    <string name="maps_title_en">Maps</string>
+    <string name="maps_district_label_gu">જિલ્લો</string>
+    <string name="maps_district_label_en">District</string>
+    <string name="maps_taluka_label_gu">તાલુકો</string>
+    <string name="maps_taluka_label_en">Taluka</string>
+    <string name="maps_search_hint_gu">ગામ શોધો</string>
+    <string name="maps_search_hint_en">Search village</string>
+    <string name="maps_pick_district_gu">જિલ્લો પસંદ કરો</string>
+    <string name="maps_pick_district_en">Pick a district</string>
+    <string name="maps_pick_taluka_gu">તાલુકો પસંદ કરો</string>
+    <string name="maps_pick_taluka_en">Pick a taluka</string>
+    <string name="maps_no_villages_gu">કોઈ ગામ મળ્યું નથી</string>
+    <string name="maps_no_villages_en">No villages found</string>
+
     <!-- Survey detail -->
     <string name="survey_gu">સર્વે</string>
     <string name="survey_en">Survey</string>
@@ -50,6 +66,32 @@
     <string name="meta_tenure_en">Tenure</string>
     <string name="meta_landuse_gu">જમીનનો ઉપયોગ</string>
     <string name="meta_landuse_en">Land use</string>
+
+    <!-- Jantri (ASR-2011) government rate; rates shown already include the 15/04/2023 doubling -->
+    <string name="jantri_title_gu">જંત્રી દર</string>
+    <string name="jantri_title_en">Jantri rate</string>
+    <string name="jantri_per_sqm_gu">પ્રતિ ચો.મી.</string>
+    <string name="jantri_per_sqm_en">per sq.m</string>
+    <string name="jantri_per_acre_gu">પ્રતિ એકર</string>
+    <string name="jantri_per_acre_en">per acre</string>
+    <string name="jantri_basis_gu">ASR-2011 × 2</string>
+    <string name="jantri_basis_en">ASR-2011 × 2</string>
+    <string name="jantri_multiple_gu">આ સર્વે નંબર માટે એકથી વધુ દર લાગુ પડે છે</string>
+    <string name="jantri_multiple_en">More than one rate applies to this survey number</string>
+    <string name="jantri_land_dry_gu">બિનપિયત</string>
+    <string name="jantri_land_dry_en">Non-irrigated</string>
+    <string name="jantri_land_irrigated_gu">પિયત</string>
+    <string name="jantri_land_irrigated_en">Irrigated</string>
+    <string name="jantri_land_waste_gu">બિનખેડાણપાત્ર ખરાબા</string>
+    <string name="jantri_land_waste_en">Uncultivable waste</string>
+    <string name="jantri_land_mineral_gu">ખનિજ તત્વોવાળી</string>
+    <string name="jantri_land_mineral_en">Mineral-bearing</string>
+    <string name="jantri_road_general_gu">સામાન્ય</string>
+    <string name="jantri_road_general_en">General</string>
+    <string name="jantri_road_district_gu">જીલ્લા માર્ગ ઉપર</string>
+    <string name="jantri_road_district_en">On district road</string>
+    <string name="jantri_road_highway_gu">ધોરીમાર્ગ ઉપર</string>
+    <string name="jantri_road_highway_en">On highway</string>
 
     <!-- Record types (mirror data/model/RecordType.kt) -->
     <string name="rt_integrated_gu">સંકલિત સર્વે રેકોર્ડ</string>

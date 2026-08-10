@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.landrecords.app.data.LandRecordsRepository
 import com.landrecords.app.data.model.RecordType
 import com.landrecords.app.data.storage.CasesStore
+import com.landrecords.app.data.storage.EntriesStore
 import com.landrecords.app.data.storage.MarkedItems
 import com.landrecords.app.data.storage.VfScansStore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +37,10 @@ class MarkedViewModel(
             val surveyNo: String, val itemId: String,
         ) : Handle
         data class Scan(
+            val district: String, val taluka: String, val village: String,
+            val surveyNo: String, val itemId: String,
+        ) : Handle
+        data class Entry(
             val district: String, val taluka: String, val village: String,
             val surveyNo: String, val itemId: String,
         ) : Handle
@@ -101,6 +106,13 @@ class MarkedViewModel(
                         exportName = "${e.village} ${e.surveyNo} scan ${e.detail}.pdf",
                         handle = Handle.Scan(e.district, e.taluka, e.village, e.surveyNo, e.itemId),
                     )
+                    MarkedItems.Kind.ENTRY -> Row(
+                        mark = e.mark, villageGu = villageGu, villageEn = e.village, surveyNo = e.surveyNo,
+                        line2Gu = "નોંધ · ${e.detail}", line2En = "Entry · ${e.detail}",
+                        pdfPath = e.pdfPath,
+                        exportName = "${e.village} ${e.surveyNo} entry ${e.detail}.pdf",
+                        handle = Handle.Entry(e.district, e.taluka, e.village, e.surveyNo, e.itemId),
+                    )
                 }
             }
         }
@@ -117,6 +129,10 @@ class MarkedViewModel(
                 }
                 is Handle.Scan -> {
                     VfScansStore.setMark(context, h.district, h.taluka, h.village, h.surveyNo, h.itemId, null)
+                    reload()
+                }
+                is Handle.Entry -> {
+                    EntriesStore.setMark(context, h.district, h.taluka, h.village, h.surveyNo, h.itemId, null)
                     reload()
                 }
             }

@@ -110,11 +110,25 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
                     if (d.isBlank() || t.isBlank() || v.isBlank() || s.isBlank()) {
                         error = "Couldn't read the selection — please try again."; creating = false; return@launch
                     }
-                    // Gujarati names off AnyRoR fill both the display + the (English) storage key.
+                    // AnyRoR's cascade is Gujarati-only. Writing that text into BOTH the English key
+                    // columns and the Gujarati label columns is what produced a second "ભરોડા" card
+                    // beside the iRCMS-added "Bharoda" — the two never compared equal. Resolve the
+                    // catalogue's English spelling for the key and keep the Gujarati as the label;
+                    // when the village isn't in the catalogue we fall back to the Gujarati text,
+                    // i.e. exactly the old behaviour.
+                    com.landrecords.app.data.place.PlaceNames.load(app)
+                    val canon = com.landrecords.app.data.place.PlaceNames.canonical(d, t, v)
                     // Dedup: if this survey is already saved it is kept (not duplicated/overwritten);
                     // we still hand off to the fetch so the user gets a fresh record.
-                    val addRes = app.repository.addPropertyDetailed(d, d, t, t, v, v, listOf(s))
-                    val sid = app.repository.findSurveyId(d, t, v, s)
+                    val addRes = app.repository.addPropertyDetailed(
+                        canon?.first ?: d, d,
+                        canon?.second ?: t, t,
+                        canon?.third ?: v, v,
+                        listOf(s),
+                    )
+                    // Look the survey up by the property we just got back, not by name: an existing
+                    // row may be stored under either script, and a name lookup would miss it.
+                    val sid = app.repository.findSurveyIdIn(addRes.propertyId, s)
                     if (sid == null) { error = "Couldn't save the village — please try again."; creating = false; return@launch }
                     if (addRes.duplicates.isNotEmpty()) {
                         android.widget.Toast.makeText(

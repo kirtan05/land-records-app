@@ -43,7 +43,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -81,8 +83,8 @@ fun MarkedScreen(onBack: () -> Unit) {
     // screen appears so a colour just set on the Cases/Scans screen shows here on return.
     LaunchedEffect(Unit) { vm.reload() }
 
-    // Colour → its rows, only the colours that actually have marks (in palette order).
-    val groups = MarkColor.ordered.mapNotNull { c ->
+    // Colour → its rows, only the colours that actually have marks (built-ins + custom, in order).
+    val groups = Marks.all().mapNotNull { c ->
         rows.filter { it.mark == c.id }.takeIf { it.isNotEmpty() }?.let { c to it }
     }
 
@@ -148,7 +150,7 @@ fun MarkedScreen(onBack: () -> Unit) {
                 item(key = color.id) {
                     val cname = color.label()
                     GroupCard(
-                        color = color,
+                        swatch = color.color,
                         name = cname,
                         rows = list,
                         sendMenuOpen = sendMenuFor == color.id,
@@ -176,7 +178,7 @@ fun MarkedScreen(onBack: () -> Unit) {
 
 @Composable
 private fun GroupCard(
-    color: MarkColor,
+    swatch: Color,
     name: String,
     rows: List<MarkedViewModel.Row>,
     sendMenuOpen: Boolean,
@@ -198,7 +200,7 @@ private fun GroupCard(
     ) {
         // Colour + count.
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            Box(Modifier.size(14.dp).clip(CircleShape).background(color.swatch))
+            Box(Modifier.size(14.dp).clip(CircleShape).background(swatch))
             Text(name, style = LandType.bodyStrong, color = Land.colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
             Text("${rows.size}", style = LandType.count, color = Land.colors.ink3)
         }
@@ -268,12 +270,13 @@ private fun EmptyMarked() {
     }
 }
 
-/** Bottom sheet to give each of the 6 mark colours a custom name (persisted, ≤20 chars). */
+/** Bottom sheet to name each mark colour (built-in or custom, persisted ≤20 chars) + add colours. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RenameColoursSheet(onDismiss: () -> Unit) {
     val appState = landApp().appState
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showAdd by remember { mutableStateOf(false) }
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState, containerColor = Land.colors.surface) {
         Column(
             Modifier.fillMaxWidth().padding(horizontal = 20.dp).padding(bottom = 28.dp),
@@ -288,15 +291,23 @@ private fun RenameColoursSheet(onDismiss: () -> Unit) {
                 style = LandType.stamp, color = Land.colors.ink3,
             )
             Spacer(Modifier.height(2.dp))
-            MarkColor.ordered.forEach { c -> RenameRow(c, appState) }
+            Marks.all().forEach { c -> RenameRow(c, appState) }
+            Spacer(Modifier.height(4.dp))
+            PillButton(L("રંગ ઉમેરો", "Add colour"), onClick = { showAdd = true })
         }
+    }
+    if (showAdd) {
+        AddColourDialog(
+            onPick = { color -> appState.addCustomMark(color.toArgb()); showAdd = false },
+            onDismiss = { showAdd = false },
+        )
     }
 }
 
 @Composable
-private fun RenameRow(c: MarkColor, appState: AppState) {
+private fun RenameRow(c: MarkSwatch, appState: AppState) {
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Box(Modifier.size(16.dp).clip(CircleShape).background(c.swatch))
+        Box(Modifier.size(16.dp).clip(CircleShape).background(c.color))
         val current = appState.markName(c.id) ?: ""
         Box(
             Modifier.weight(1f).height(46.dp).clip(LandShape.field)
@@ -313,6 +324,16 @@ private fun RenameRow(c: MarkColor, appState: AppState) {
                 cursorBrush = SolidColor(Land.colors.accent),
                 modifier = Modifier.fillMaxWidth(),
             )
+        }
+        // Custom colours can be removed; built-ins can't.
+        if (c.custom) {
+            Box(
+                Modifier.size(28.dp).clip(CircleShape)
+                    .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) { appState.removeCustomMark(c.id) },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(Icons.Outlined.Close, contentDescription = "Remove colour", tint = Land.colors.ink3, modifier = Modifier.size(16.dp))
+            }
         }
     }
 }

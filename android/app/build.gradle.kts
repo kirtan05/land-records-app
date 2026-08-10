@@ -16,9 +16,27 @@ android {
         applicationId = "com.landrecords.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 18
-        versionName = "0.8.7"
+        versionCode = 22
+        versionName = "0.10.0"
         vectorDrawables { useSupportLibrary = true }
+    }
+
+    // Public update APKs ship WITHOUT the 125 MB personal data seed: build with
+    // `-Pslim` (see tools/release/release.sh). The private first-install APK is built
+    // without the flag and carries the seed.
+    val slimBuild = providers.gradleProperty("slim").isPresent
+
+    // Pin the signing key. Every published APK so far is signed with this debug
+    // keystore, and Android only allows an in-place update when the signature matches —
+    // so changing it would strand every existing install. release.sh verifies the
+    // built APK's certificate against the published one before it will publish.
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     buildTypes {
@@ -44,6 +62,8 @@ android {
     // (keeps build + install time sane, restore works either way).
     androidResources {
         noCompress += "pdf"
+        // `-Pslim` drops the seed directory at packaging time (aapt ignores it).
+        if (slimBuild) ignoreAssetsPatterns += "seed"
     }
 
     packaging {
