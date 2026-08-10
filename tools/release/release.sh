@@ -64,8 +64,6 @@ SEEDED=$(unzip -l "$APK" | grep -c 'assets/seed/' || true)
 SIZE=$(stat -c%s "$APK")
 [ "$SIZE" -lt 60000000 ] || die "APK is $((SIZE/1000000)) MB — too large for a slim build"
 
-APK_CODE=$(unzip -p "$APK" AndroidManifest.xml >/dev/null 2>&1 && echo "$VCODE" || echo "$VCODE")
-
 # THE check: the signing certificate must match what is already published.
 say "Checking the signing certificate against the published APK"
 PUB_APK=$(mktemp -t pubapk.XXXXXX.apk)
