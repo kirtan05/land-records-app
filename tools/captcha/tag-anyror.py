@@ -65,12 +65,17 @@ def read_labels():
     return out
 
 
+def numeric_files():
+    # Sort by the number, not the string — 1011.png must come after 999.png, not inside
+    # the 100s (string order interleaves 4-digit files and makes "next untagged" jump back).
+    return sorted((p.name for p in DIR.glob("*.png")), key=lambda n: int(n.split(".")[0]))
+
+
 def write_labels(labels):
-    files = sorted(p.name for p in DIR.glob("*.png"))
     with LABELS.open("w", newline="") as f:
         w = csv.writer(f)
         w.writerow(["file", "label"])
-        for name in files:
+        for name in numeric_files():
             if name in labels:
                 w.writerow([name, labels[name]])
 
@@ -97,7 +102,7 @@ class H(http.server.BaseHTTPRequestHandler):
         elif self.path.startswith("/state"):
             import json
             labels = read_labels()
-            files = sorted(p.name for p in DIR.glob("*.png"))
+            files = numeric_files()
             nxt = next((i for i, f in enumerate(files) if f not in labels), len(files))
             self._send(json.dumps({"files": files, "labels": labels, "next": nxt}), "application/json")
         else:
@@ -107,7 +112,11 @@ class H(http.server.BaseHTTPRequestHandler):
         if self.path.startswith("/save"):
             import json
             n = int(self.headers.get("Content-Length", 0))
-            labels = json.loads(self.rfile.read(n) or b"{}")
+            posted = json.loads(self.rfile.read(n) or b"{}")
+            # MERGE, never replace: a stale/duplicate tab posts its whole old dict —
+            # replacing would silently delete labels the other tab just made.
+            labels = read_labels()
+            labels.update({k: v for k, v in posted.items() if isinstance(v, str) and v.isdigit() and len(v) == 6})
             write_labels(labels)
             self._send("ok", "text/plain")
         else:
