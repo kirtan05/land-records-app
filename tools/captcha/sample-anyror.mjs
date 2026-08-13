@@ -7,11 +7,14 @@
 //
 //   node tools/captcha/sample-anyror.mjs [--n=100] [--delay=5000]
 import { chromium } from 'playwright-core';
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 const DIR = new URL('./samples/anyror/', import.meta.url).pathname;
 mkdirSync(DIR, { recursive: true });
+// Append, never overwrite: continue numbering after the highest existing NNN.png so
+// re-runs can't clobber already-tagged samples (labels.csv keys on the filename).
+const START = readdirSync(DIR).filter((f) => /^\d+\.png$/.test(f)).map((f) => parseInt(f)).reduce((a, b) => Math.max(a, b), 0);
 const N = +(process.argv.find((a) => a.startsWith('--n='))?.split('=')[1] || 100);
 const DELAY = +(process.argv.find((a) => a.startsWith('--delay='))?.split('=')[1] || 5000);
 const PAGE_URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
@@ -35,9 +38,9 @@ for (let i = 1; i <= N; i++) {
   const src = await grabSrc();
   const m = src.match(/^data:image\/png;base64,(.+)$/);
   if (m) {
-    writeFileSync(join(DIR, `${String(i).padStart(3, '0')}.png`), Buffer.from(m[1], 'base64'));
+    writeFileSync(join(DIR, `${String(START + i).padStart(3, '0')}.png`), Buffer.from(m[1], 'base64'));
     saved++;
-    if (i % 10 === 0) console.log(`${i}/${N}`);
+    if (i % 10 === 0) console.log(`${i}/${N} (file ${START + i})`);
   } else {
     console.log(`${i}: no captcha img (src len ${src.length}) — page may not have loaded; waiting longer`);
     await page.waitForTimeout(4000);

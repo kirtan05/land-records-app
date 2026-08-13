@@ -9,7 +9,7 @@
 import { chromium } from 'playwright-core';
 import { readFileSync } from 'node:fs';
 import { ensureOut, isDone, markSurvey } from '../../src/store.mjs';
-import { processSurvey } from '../../src/scrape.mjs';
+import { extractCaseList, openDetailByKey, processCases } from '../../src/scrape.mjs';
 import { searchWithAutoCaptcha } from './ircms-solve.mjs';
 
 const ANAND = '15', UMRETH = '03', BHARODA = '029';
@@ -64,7 +64,10 @@ for (let i = 0; i < targets.length; i++) {
     const outcome = await searchWithAutoCaptcha(page);
     if (outcome.kind === 'rows') {
       console.log(`${tag} ${outcome.rows} cases — scraping…`);
-      await processSurvey(ctx, page, key, (m) => console.log(m));
+      // Open details by KEY (form submit → new tab), not row clicks: the rebuilt
+      // table's click can stall under Playwright; the key path never touches the UI.
+      const cases = await extractCaseList(page);
+      await processCases(ctx, page, key, cases, (c) => openDetailByKey(ctx, page, c), (m) => console.log(m));
     } else if (outcome.kind === 'norecord') {
       console.log(`${tag} no cases`);
       markSurvey(key, { status: 'done', case_count: 0, orders: 0, note: 'no_cases', finished_at: new Date().toISOString() });

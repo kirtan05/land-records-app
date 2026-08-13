@@ -118,7 +118,18 @@ export async function extractOrderForms(detail) {
 }
 
 export async function downloadOrderBytes(ctx, form) {
-  const resp = await ctx.request.post(form.action, { form: form.fields, timeout: 90000 });
+  // Header set copied from the working app (OrderDownloader.kt) — the bare ctx.request.post
+  // gets a 500 "Server Error" page from iRCMS; Referer + desktop UA + identity encoding fix it.
+  const resp = await ctx.request.post(form.action, {
+    form: form.fields,
+    timeout: 90000,
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36',
+      'Accept': 'application/pdf,image/*,*/*',
+      'Accept-Encoding': 'identity',
+      'Referer': 'https://ircms.gujarat.gov.in/viewnewcasestatus',
+    },
+  });
   let buf = await resp.body();
   const i = buf.indexOf(Buffer.from('%PDF'));
   if (i > 0) buf = buf.subarray(i);
