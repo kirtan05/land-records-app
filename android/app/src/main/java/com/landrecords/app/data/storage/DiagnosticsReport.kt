@@ -89,9 +89,10 @@ object DiagnosticsReport {
         }
     }
 
-    /** Our own recent process logs — best effort. */
+    /** Our own recent process logs — LR tag only (an unfiltered dump is the app's own process
+     *  anyway on stock Android, but full of OEM/WebView chatter that helps nobody). */
     private fun recentLogcat(): String = try {
-        val p = Runtime.getRuntime().exec(arrayOf("logcat", "-d", "-v", "time", "-t", "800"))
+        val p = Runtime.getRuntime().exec(arrayOf("logcat", "-d", "-v", "time", "-t", "800", "LR:V", "*:S"))
         p.inputStream.bufferedReader().use { it.readText() }
     } catch (e: Exception) {
         "logcat unavailable: ${e.message}"

@@ -83,6 +83,44 @@ object IrcmsInjection {
     })();
     """.trimIndent()
 
+    /**
+     * Auto-solve the iRCMS CAPTCHA. iRCMS serves the code as an SVG data-URI whose answer
+     * sits in plain <text> nodes (sorted by x) — a deterministic read, not OCR. Fills
+     * #txt_captcha and returns the code, or '' when the SVG isn't there/parseable (caller
+     * then falls back to the human spotlight flow). See tools/captcha/ircms-solve.mjs.
+     */
+    fun autoSolveCaptchaJs(): String = """
+    (function(){
+      try {
+        var img=document.querySelector('#captcha img[src^="data:image/svg+xml"], img[id*="captcha" i][src^="data:image/svg+xml"], img[src^="data:image/svg+xml;base64"]');
+        if(!img) return '';
+        var b64=(img.getAttribute('src')||'').split(',')[1]||'';
+        if(!b64) return '';
+        var svg=atob(b64);
+        var doc=new DOMParser().parseFromString(svg,'image/svg+xml');
+        var ts=Array.prototype.slice.call(doc.querySelectorAll('text')).map(function(t){
+          return {x:parseFloat(t.getAttribute('x')||'0'), ch:t.textContent||''}; });
+        if(!ts.length) return '';
+        ts.sort(function(a,b){return a.x-b.x;});
+        var code=ts.map(function(t){return t.ch;}).join('').trim();
+        if(!/^[0-9a-f]{6}$/i.test(code)) return '';
+        var cap=document.getElementById('${Ircms.Ids.CAPTCHA}'); if(!cap) return '';
+        cap.value=code;
+        cap.dispatchEvent(new Event('input',{bubbles:true}));
+        return code;
+      } catch(e){ return ''; }
+    })();
+    """.trimIndent()
+
+    /**
+     * Asks the page for a FRESH captcha (its own get_captcha() swaps the img) — use before
+     * [autoSolveCaptchaJs] when a search failed with "invalid captcha" (the server rotated
+     * the code and the DOM img is stale). Caller delays ~1s, then solves the new img.
+     */
+    fun refreshCaptchaJs(): String = """
+    (function(){ try{ if(typeof get_captcha==='function'){ get_captcha(); return 'OK'; } return 'NOFN'; }catch(e){ return 'ERR'; } })();
+    """.trimIndent()
+
     /** Rings the CAPTCHA + View button and routes the View tap back to the app. Never auto-solves. */
     fun spotlightJs(): String = """
     (function(){

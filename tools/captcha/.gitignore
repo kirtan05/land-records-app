@@ -1,0 +1,6 @@
+.venv/
+synth/
+tessdata/
+*.pt
+*.onnx
+__pycache__/

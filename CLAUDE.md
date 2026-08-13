@@ -18,8 +18,10 @@ Rules for this app's UI:
   land data is never translated — Gujarati numerals stay, with a Latin helper line.
 - Never invent land data. Unknown metadata renders `—`.
 - Both themes are first-class. All motion collapses under reduced-motion.
-- The CAPTCHA is always human. Pre-fill and lock the cascade fields, dim the rest
-  of the page, spotlight only the code box and Get Record Detail.
+- iRCMS CAPTCHA is **auto-solved** (deterministic SVG `<text>`-node parse — see
+  `tools/captcha/`); the human spotlight is only the fallback. AnyRoR CAPTCHA stays human:
+  pre-fill and lock the cascade fields, dim the rest of the page, spotlight only the code
+  box and Get Record Detail.
 
 Drop-in starting points: `design_handoff_land_records_ui/compose/{Color,Type,Dimens}.kt`
 and `strings-additions.xml`. These are implemented in `android/app/src/main/java/com/landrecords/app/ui/`

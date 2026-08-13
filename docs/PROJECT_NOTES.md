@@ -13,6 +13,7 @@ an Excel index, with optional WhatsApp delivery. Built incrementally; this file 
 | **Reports** | Per-survey combined PDF (clickable index), master Excel, zip | `build_reports.py`, `build_anyror_pdf.py`, `build-zip.mjs` |
 | **Delivery** | WhatsApp (Baileys) — group or self | `wa/login.mjs`, `wa/send*.mjs`, `wa/check.mjs` |
 | **Jantri (ASR-2011)** (garvi.gujarat.gov.in) | Government land rate per survey number, all 26 districts | `tools/jantri/*` → `data/jantri/README.md` |
+| **CAPTCHA + full-village** | iRCMS auto-solve (SVG parse) + Bharoda all-1,535-surveys runner; AnyRoR CNN solver | `tools/captcha/` → `docs/CAPTCHA_AND_VILLAGE.md` |
 
 Delivered so far for **Bharoda (Anand / Umreth), 9 surveys**: iRCMS cases + orders, AnyRoR integrated
 records (redone clean), VF-7/12 (132 scans), all folded into `Bharoda_iRCMS_Cases.zip` + master Excel.
@@ -39,8 +40,12 @@ output/iRCMS_Bharoda_Master.xlsx    Summary (iRCMS + AnyRoR + VF-7/12 columns) +
    Surfshark specifically breaks Claude's connection to the machine (and don't guess why). iRCMS is fine.
 2. **Headed needs a display.** The Bash env often lacks one; launch Chrome with env copied from a running
    GUI process: `DISPLAY=:1 WAYLAND_DISPLAY=wayland-0 XDG_RUNTIME_DIR=/run/user/1000 XAUTHORITY=/run/user/1000/xauth_* DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus`.
-3. **CAPTCHA is human, always.** Only "Get Record Detail" needs it; the cascade doesn't. When headed +
-   user present, they solve it in the window. When remote, screenshot it to their WhatsApp (`wa/send-image-self.mjs`).
+3. **CAPTCHA: iRCMS is auto-solved, AnyRoR is human.** iRCMS serves its code as an SVG with the
+   answer in plain `<text>` nodes — parse, fill, submit (`tools/captcha/ircms-solve.mjs`; app:
+   `IrcmsInjection.autoSolveCaptchaJs`). AnyRoR's is a raster PNG on a patterned background —
+   the human solves it in the window (or via WhatsApp screenshot when remote); a small CNN
+   solver is being trained in `tools/captcha/` (see its README). Only the submit button needs
+   the code; the cascade doesn't.
 4. **Rebuild AnyRoR PDFs from the saved HTML, not the JSON.** The integrated page's mutation-entry cells
    contain nested sub-tables; flat text extraction turns them to gibberish. `render-anyror-offline.mjs`
    renders the real DOM (clean, faithful). The JSON is only for the Excel summary fields.

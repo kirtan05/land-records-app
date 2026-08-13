@@ -114,9 +114,10 @@ private enum class BatchPhase { SOLVING, RUNNING, DONE, ERROR }
 
 /**
  * One-CAPTCHA batch of iRCMS land cases for every survey in a village that still needs them.
- * The human solves ONE code; the app then loops the surveys — re-selecting the survey dropdown
- * and re-running the search with the same code — capturing each survey's cases in a hidden
- * WebView (so the search page never navigates away and the code stays valid).
+ * The SVG code is auto-solved (human spotlight is the fallback); the app then loops the
+ * surveys — re-selecting the survey dropdown and re-running the search with the same code —
+ * capturing each survey's cases in a hidden WebView (so the search page never navigates away
+ * and the code stays valid).
  */
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -158,12 +159,24 @@ fun IrcmsBatchScreen(
             if (step.contains("READY")) break
             delay(600); tries++
         }
-        WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs())
-        android.util.Log.i("LR", "iRCMS captcha diag: " + WebViewCapture.eval(wv, IrcmsInjection.captchaDiagJs()))
-        working = false
-        val firstTap = CompletableDeferred<Unit>(); tapSignal = firstTap
-        firstTap.await() // human typed the code + tapped View (its rotating handler is stripped)
-        working = true
+        // Auto-solve the SVG captcha (deterministic <text>-node parse — see tools/captcha).
+        // One code covers the whole batch (iRCMS reuse). Human spotlight stays the fallback.
+        var code = ""
+        for (a in 1..10) {
+            code = WebViewCapture.eval(wv, IrcmsInjection.autoSolveCaptchaJs()).trim()
+            if (code.length == 6) break
+            delay(700)
+        }
+        if (code.isNotEmpty()) {
+            android.util.Log.i("LR", "iRCMS batch: captcha auto-solved")
+        } else {
+            android.util.Log.i("LR", "iRCMS batch: auto-solve failed — human fallback")
+            WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs())
+            working = false
+            val firstTap = CompletableDeferred<Unit>(); tapSignal = firstTap
+            firstTap.await() // human typed the code + tapped View (its rotating handler is stripped)
+            working = true
+        }
         phase = BatchPhase.RUNNING
 
         for ((idx, t) in i.targets.withIndex()) {
@@ -232,10 +245,16 @@ fun IrcmsBatchScreen(
                 val wrongCode = st.startsWith("EMPTY") && Regex("captcha|invalid", RegexOption.IGNORE_CASE).containsMatchIn(st)
                 if (wrongCode && attempts < 4) {
                     attempts++
-                    working = false
-                    WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs())
-                    val again = CompletableDeferred<Unit>(); tapSignal = again
-                    again.await(); working = true
+                    // Refresh the rotated SVG and auto-solve once more; human only if that fails.
+                    WebViewCapture.eval(wv, IrcmsInjection.refreshCaptchaJs())
+                    var recode = ""
+                    for (a in 1..8) { delay(700); recode = WebViewCapture.eval(wv, IrcmsInjection.autoSolveCaptchaJs()).trim(); if (recode.length == 6) break }
+                    if (recode.isEmpty()) {
+                        working = false
+                        WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs())
+                        val again = CompletableDeferred<Unit>(); tapSignal = again
+                        again.await(); working = true
+                    }
                     continue
                 }
                 if (st.startsWith("EMPTY")) vm.markEmpty(t.surveyId) // checked, no cases → skip next time
@@ -298,7 +317,7 @@ fun IrcmsBatchScreen(
             }
             Column(Modifier.fillMaxWidth().background(Land.colors.accent).padding(horizontal = 16.dp, vertical = 12.dp)) {
                 Text("એક જ કોડ — બધા સર્વેના કેસ", style = LandType.body, color = Land.colors.onAccent)
-                Text("Solve the code once, then leave it — every survey's cases download", style = LandType.label, color = Land.colors.onAccent)
+                Text("The code is read automatically — every survey's cases download", style = LandType.label, color = Land.colors.onAccent)
             }
             AndroidView(
                 modifier = Modifier.fillMaxWidth().weight(1f),

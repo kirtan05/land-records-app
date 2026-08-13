@@ -55,10 +55,10 @@ import org.json.JSONObject
 
 /**
  * iRCMS land-cases capture. Unlike AnyRoR this is one AJAX page: the app polls the cascade
- * until it's filled, spotlights the CAPTCHA + View, and after the human taps View it reads the
- * case table, then POSTs each case's detail (viewnewcasestatus) into the same WebView (shared
- * session cookies), prints each, and merges them into one "iRCMS Cases.pdf". One CAPTCHA covers
- * every case (iRCMS reuse). Currently proven for Bharoda.
+ * until it's filled, auto-solves the SVG CAPTCHA (deterministic parse; human spotlight is the
+ * fallback), runs the search, then POSTs each case's detail (viewnewcasestatus) into the same
+ * WebView (shared session cookies), prints each, and merges them into one "iRCMS Cases.pdf".
+ * One CAPTCHA covers every case (iRCMS reuse). Currently proven for Bharoda.
  */
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -96,8 +96,23 @@ fun IrcmsFetchScreen(
             android.util.Log.i("LR", "iRCMS prefill step='$step' (try $tries)")
             if (step.contains("READY")) {
                 delay(400)
-                WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs())
-                working = false
+                // Auto-solve the SVG captcha (deterministic <text>-node parse — see
+                // tools/captcha). The human spotlight is only the fallback now.
+                var code = ""
+                for (a in 1..10) {
+                    code = WebViewCapture.eval(wv, IrcmsInjection.autoSolveCaptchaJs()).trim()
+                    if (code.length == 6) break
+                    delay(700)
+                }
+                if (code.length == 6) {
+                    android.util.Log.i("LR", "iRCMS captcha auto-solved — searching")
+                    awaitingList = true // the watcher effect runs the search from here
+                    working = true
+                } else {
+                    android.util.Log.i("LR", "iRCMS captcha auto-solve failed — human fallback")
+                    WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs())
+                    working = false
+                }
                 return@LaunchedEffect
             }
             delay(600)
@@ -186,9 +201,17 @@ fun IrcmsFetchScreen(
                 val ok = vm.fileCapture(RecordType.IRCMS, merged, listHtml, docCount = cases.size)
                 if (ok) { vm.setPhase(FetchPhase.DONE); delay(450); onDone() }
             }
-            wrongCode -> { awaitingList = false; working = false; WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs()) } // wrong code → re-solve
+            wrongCode -> {
+                // Code rotated under us — refresh the SVG and auto-solve once more; the human
+                // spotlight is the fallback if the parse fails.
+                WebViewCapture.eval(wv, IrcmsInjection.refreshCaptchaJs())
+                var code = ""
+                for (a in 1..8) { delay(700); code = WebViewCapture.eval(wv, IrcmsInjection.autoSolveCaptchaJs()).trim(); if (code.length == 6) break }
+                if (code.length == 6) { awaitingList = false; delay(60); awaitingList = true }
+                else { awaitingList = false; working = false; WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs()) }
+            }
             res.startsWith("EMPTY") -> { vm.markEmpty(RecordType.IRCMS); vm.setPhase(FetchPhase.DONE); delay(300); onDone() } // genuine empty
-            else -> { awaitingList = false; working = false; WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs()) } // error/timeout → re-solve
+            else -> { awaitingList = false; working = false; WebViewCapture.eval(wv, IrcmsInjection.spotlightBatchJs()) } // error/timeout → human re-solve
         }
     }
 
@@ -225,7 +248,7 @@ fun IrcmsFetchScreen(
 
             Column(Modifier.fillMaxWidth().background(Land.colors.accent).padding(horizontal = 16.dp, vertical = 12.dp)) {
                 Text("જમીન કેસ (iRCMS)", style = LandType.body, color = Land.colors.onAccent)
-                Text("Solve the code, tap View — one code covers every case", style = LandType.label, color = Land.colors.onAccent)
+                Text("The code is read automatically — one code covers every case", style = LandType.label, color = Land.colors.onAccent)
             }
 
             AndroidView(
