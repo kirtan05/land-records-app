@@ -93,6 +93,17 @@ object OldSurveyMatcher {
     fun leadingNumber(token: String): Int? =
         Regex("^(\\d+)").find(token)?.groupValues?.get(1)?.toIntOrNull()
 
+    /**
+     * Order old-survey values numerically by leading block number, then lexically by canonical
+     * token — the project's numeric-sort convention (commit f9ac862), so "2" precedes "10" and
+     * "99" precedes "100". A value with no leading number (e.g. the "—" placeholder) sorts last.
+     */
+    fun <T> byOldSurvey(selector: (T) -> String): Comparator<T> =
+        compareBy(
+            { leadingNumber(Identity.surveyToken(selector(it))) ?: Int.MAX_VALUE },
+            { Identity.surveyToken(selector(it)) },
+        )
+
     private fun distance(a: Int?, b: Int?): Int =
         if (a == null || b == null) Int.MAX_VALUE else kotlin.math.abs(a - b)
 

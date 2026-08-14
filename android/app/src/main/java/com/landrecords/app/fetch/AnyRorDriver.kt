@@ -80,20 +80,114 @@ class AnyRorDriver(
         /** The survey's uid — VF-7/12 needs it to skip old numbers the user removed (§2). */
         surveyUid: String = "",
     ): Result {
-        val surveyDropId = when (recordType) {
-            RecordType.VF712 -> AnyRor.Ids.SURVEY_VF712
-            else -> AnyRor.Ids.SURVEY_INTEGRATED
-        }
-        val recordValue = AnyRor.recordValue(recordType) ?: "8"
-
         val host = HeadlessWebView.create(context)
-        var captchaSolver: CaptchaCnn? = null
+        var solver: CaptchaCnn? = null
         try {
             if (!host.load(AnyRor.URL_DESKTOP)) return Result.Failed("page never loaded")
             if (FetchPacer.looksBlocked(host.lastHttpStatus, null)) {
                 return Result.Blocked("http ${host.lastHttpStatus} on load")
             }
+            val s = runCatching { CaptchaCnn(context) }.getOrNull()
+                ?: return Result.Failed("captcha model unavailable")
+            solver = s
+            return runPass(host, s, recordType, districtGu, talukaGu, villageGu, surveyNo, surveyUid)
+        } catch (e: Exception) {
+            android.util.Log.e("LR", "AnyRorDriver failed", e)
+            return Result.Failed(e.message ?: "unexpected error")
+        } finally {
+            runCatching { solver?.close() }
+            host.destroy()
+        }
+    }
 
+    /**
+     * Both AnyRoR record types for one survey from a SINGLE session: one WebView, one captcha model
+     * load, one warm session, and — when the form comes back after the first capture — a shared geo
+     * cascade. The two submits still take a captcha each (each submit navigates to its own result
+     * page and consumes the code), so this halves page loads and setup, not captchas. Each half is
+     * independent: a VF-7/12 failure never affects the INTEGRATED result.
+     */
+    data class BothResults(val integrated: Result, val vf712: Result)
+
+    suspend fun fetchBoth(
+        districtGu: String,
+        talukaGu: String,
+        villageGu: String,
+        surveyNo: String,
+        surveyUid: String,
+    ): BothResults {
+        val host = HeadlessWebView.create(context)
+        var solver: CaptchaCnn? = null
+        try {
+            if (!host.load(AnyRor.URL_DESKTOP)) {
+                val f = Result.Failed("page never loaded"); return BothResults(f, f)
+            }
+            if (FetchPacer.looksBlocked(host.lastHttpStatus, null)) {
+                val b = Result.Blocked("http ${host.lastHttpStatus} on load"); return BothResults(b, b)
+            }
+            val s = runCatching { CaptchaCnn(context) }.getOrNull()
+                ?: Result.Failed("captcha model unavailable").let { return BothResults(it, it) }
+            solver = s
+
+            val integrated = runPass(host, s, RecordType.INTEGRATED, districtGu, talukaGu, villageGu, surveyNo, surveyUid)
+            // A host block means AnyRoR is refusing us — don't push a second submit into it.
+            if (integrated is Result.Blocked) return BothResults(integrated, Result.Blocked(integrated.detail))
+
+            returnToForm(host)
+            pacer.awaitTurn()
+            val vf712 = runPass(host, s, RecordType.VF712, districtGu, talukaGu, villageGu, surveyNo, surveyUid)
+            return BothResults(integrated, vf712)
+        } catch (e: Exception) {
+            android.util.Log.e("LR", "AnyRorDriver.fetchBoth failed", e)
+            val f = Result.Failed(e.message ?: "unexpected error"); return BothResults(f, f)
+        } finally {
+            runCatching { solver?.close() }
+            host.destroy()
+        }
+    }
+
+    /**
+     * Bring the session back to a usable search form after a capture, so the next record type can
+     * reuse the geo cascade. Best-effort: `history.back()` usually restores the form with district/
+     * taluka/village still selected (so [runPass]'s cascade skips those postbacks); if it does not
+     * come back as the form, reload it — correct, just without cascade reuse.
+     */
+    private suspend fun returnToForm(host: HeadlessWebView) {
+        val before = host.loadCount
+        WebViewCapture.eval(host.webView, "try{history.back()}catch(e){};'OK'")
+        host.awaitLoadAfter(before, 15_000)
+        delay(500)
+        val onForm = WebViewCapture.eval(
+            host.webView,
+            "(document.getElementById('${AnyRor.Ids.GET_DETAIL_BUTTON}') ? 'YES' : 'NO')",
+        )
+        if (!onForm.contains("YES")) {
+            android.util.Log.i("LR", "AnyRorDriver.returnToForm: back() didn't restore the form — reloading")
+            host.load(AnyRor.URL_DESKTOP)
+        }
+    }
+
+    /**
+     * One record type against an already-open session whose captcha model is already loaded. Does
+     * NOT create or destroy [host] or [solver] — the caller owns both — so it can run twice in one
+     * session ([fetchBoth]). Assumes the page is on (or self-heals to) the search form.
+     */
+    private suspend fun runPass(
+        host: HeadlessWebView,
+        solver: CaptchaCnn,
+        recordType: RecordType,
+        districtGu: String,
+        talukaGu: String,
+        villageGu: String,
+        surveyNo: String,
+        surveyUid: String,
+    ): Result {
+        val surveyDropId = when (recordType) {
+            RecordType.VF712 -> AnyRor.Ids.SURVEY_VF712
+            else -> AnyRor.Ids.SURVEY_INTEGRATED
+        }
+        val recordValue = AnyRor.recordValue(recordType) ?: "8"
+        try {
             // ---- cascade: one step per postback -----------------------------------------
             var steps = 0
             var lastStep = ""
@@ -144,9 +238,6 @@ class AnyRorDriver(
             }
 
             // ---- captcha -----------------------------------------------------------------
-            val solver = runCatching { CaptchaCnn(context) }.getOrNull()
-                ?: return Result.Failed("captcha model unavailable")
-            captchaSolver = solver
 
             var attempt = 0
             var detailReady = false
@@ -209,8 +300,15 @@ class AnyRorDriver(
                 android.util.Log.i("LR", "AnyRorDriver[$recordType $surveyNo] resultReady='$ready'")
                 when {
                     ready.startsWith("READY") -> detailReady = true
-                    // VF-7/12 grid explicitly says "no record" — a real empty, not a bad captcha.
-                    ready.contains("EMPTY") || ready.contains("NOTFOUND") -> return Result.Empty
+                    // "No record" from the result page. For VF-7/12 an empty grid genuinely means
+                    // the survey has no scanned old surveys, so record it as empty. For INTEGRATED
+                    // the fetched survey is the family's own current survey and is ALWAYS present on
+                    // AnyRoR, so a NOTFOUND here is a transient/interstitial answer, never a real
+                    // absence: treat it as a retryable failure (the on-screen flow does the same),
+                    // so a flaky window can never persist a permanent "Not available".
+                    ready.contains("EMPTY") || ready.contains("NOTFOUND") ->
+                        return if (recordType == RecordType.VF712) Result.Empty
+                        else Result.Failed("result page returned NOTFOUND (transient) — will retry")
                     else -> {
                         // Almost always a rejected captcha: the page came back to the form.
                         pacer.onBlocked()
@@ -290,11 +388,8 @@ class AnyRorDriver(
                 ),
             )
         } catch (e: Exception) {
-            android.util.Log.e("LR", "AnyRorDriver failed", e)
+            android.util.Log.e("LR", "AnyRorDriver.runPass failed", e)
             return Result.Failed(e.message ?: "unexpected error")
-        } finally {
-            runCatching { captchaSolver?.close() }
-            host.destroy()
         }
     }
 

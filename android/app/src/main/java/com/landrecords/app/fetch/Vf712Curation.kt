@@ -47,6 +47,37 @@ object Vf712Curation {
         Identity.surveyToken(oldSurveyRaw) in rejected
 
     /**
+     * Propose the scanned old survey numbers as §2 `candidate` links, so the curation screen can
+     * show them survey-no-wise (VF-7/12 review #3 — the mapping recorded positively, not merely
+     * implied by which scans survive). Written as a SCRAPER (`fromScraper = true`): the merge
+     * engine guarantees a candidate can never overrule a curated state, so a rejected old survey
+     * stays rejected and is never re-proposed. Idempotent — safe to call on every fetch.
+     */
+    suspend fun proposeCandidates(
+        context: Context,
+        survey: SurveyEntity,
+        property: PropertyEntity,
+        oldSurveys: Collection<String>,
+    ) = withContext(Dispatchers.IO) {
+        val placeId = LegacyMigration.placeIdOf(context, property)
+        val surveyUid = Identity.surveyUid(placeId, survey.surveyNo)
+        val d = db(context)
+        SyncDb.createTables(d)
+        val rows = oldSurveys
+            .map { Identity.surveyToken(it) }
+            .filter { it.isNotEmpty() }
+            .distinct()
+            .map { tok ->
+                SyncDb.stamp(
+                    d, "survey_link",
+                    OldSurveyMatcher.linkRow(surveyUid, tok, OldSurveyMatcher.State.CANDIDATE, source = "scan"),
+                    origin = "app",
+                )
+            }
+        if (rows.isNotEmpty()) SyncDb.merge(d, "survey_link", rows, fromScraper = true)
+    }
+
+    /**
      * Record the user's decision on one old survey number and, on a delete, remove its scans from
      * the visible tree so the screen reflects it immediately. Written through the merge engine, so
      * the same decision syncs to the laptop as one row.

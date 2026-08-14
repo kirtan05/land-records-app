@@ -56,6 +56,17 @@ class FetchFiler(
         return null
     }
 
+    /**
+     * Ensure the place + survey PARENT sync rows exist before any child row is written (DB review
+     * B1). Idempotent and best-effort: a missing parent is a sync-completeness issue, never a
+     * reason to fail a fetch.
+     */
+    suspend fun ensureParents(survey: SurveyEntity, property: PropertyEntity) {
+        runCatching {
+            com.landrecords.app.data.sync.SyncParents.upsert(context, db, property, listOf(survey))
+        }.onFailure { android.util.Log.w("LR", "sync parents (fetch) failed: ${it.message}") }
+    }
+
     /** Delegates to the ONE resolver — see [LegacyMigration.placeIdOf]. */
     fun placeIdFor(property: PropertyEntity): String =
         com.landrecords.app.data.sync.LegacyMigration.placeIdOf(context, property)
@@ -266,6 +277,10 @@ class FetchFiler(
                 ),
             ),
         )
+
+        // Record the scanned old surveys as curation candidates (VF-7/12 review #3), so they show
+        // survey-no-wise on the old-survey screen. Never overrules a rejection (fromScraper).
+        Vf712Curation.proposeCandidates(context, survey, property, scans.map { it.oldSurvey })
         true
     }.onFailure { android.util.Log.e("LR", "fileVf712 failed", it) }.getOrDefault(false)
 
@@ -329,6 +344,13 @@ class FetchFiler(
 
     /** Record "checked, and there is nothing" so the card reads correctly and we don't re-queue. */
     suspend fun markEmpty(surveyUid: String, survey: SurveyEntity, type: RecordType) {
+        // Never let a "checked, nothing there" result erase a record we already hold: a transient
+        // empty/NOTFOUND from the site must not downgrade a held record to "Not available", and must
+        // not propagate doc_count=0 over the sync layer either. If we already have docs, keep them.
+        if (repo.heldDocCount(survey.id, type) > 0) {
+            android.util.Log.i("LR", "markEmpty skipped: ${type.name} already held for $surveyUid")
+            return
+        }
         repo.saveFetchedRecord(survey.id, type, docCount = 0, pdfPath = null, sourcePath = null)
         SyncDb.merge(
             db, "record_set",

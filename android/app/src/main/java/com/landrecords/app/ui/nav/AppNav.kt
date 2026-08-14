@@ -30,6 +30,7 @@ import com.landrecords.app.ui.maps.MapsScreen
 import com.landrecords.app.ui.marked.MarkedScreen
 import com.landrecords.app.ui.property.AddPropertyScreen
 import com.landrecords.app.ui.settings.SettingsScreen
+import com.landrecords.app.ui.site.SiteVisitScreen
 import com.landrecords.app.ui.survey.SurveyDetailScreen
 import com.landrecords.app.ui.theme.LandMotion
 
@@ -51,6 +52,8 @@ private object Routes {
     const val VF_SCANS = "vf_scans/{surveyId}"
     const val ENTRIES = "entries/{surveyId}"
     const val DEEDS = "deeds/{surveyId}"
+    /** On-site capture: GPS fixes + geo-tagged photos filed under a survey (local only). */
+    const val SITE = "site/{surveyId}"
 
     fun survey(id: Long, justAdded: String? = null) = "survey/$id?justAdded=${justAdded ?: ""}"
     fun fetch(id: Long, type: RecordType) = "fetch/$id/${type.name}"
@@ -60,6 +63,7 @@ private object Routes {
     fun vfScans(surveyId: Long) = "vf_scans/$surveyId"
     fun entries(surveyId: Long) = "entries/$surveyId"
     fun deeds(surveyId: Long) = "deeds/$surveyId"
+    fun site(surveyId: Long) = "site/$surveyId"
 
     /**
      * §2 old-survey curation. The screen is built and routed; where its entry point sits on the
@@ -114,6 +118,7 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
                 onScans = { sid -> navController.navigate(Routes.vfScans(sid)) },
                 onEntries = { sid -> navController.navigate(Routes.entries(sid)) },
                 onDeeds = { sid -> navController.navigate(Routes.deeds(sid)) },
+                onSiteVisit = { sid -> navController.navigate(Routes.site(sid)) },
             )
         }
         composable(
@@ -193,7 +198,11 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
             arguments = listOf(navArgument("surveyId") { type = NavType.LongType }),
         ) { entry ->
             val id = entry.arguments?.getLong("surveyId") ?: return@composable
-            VfScansScreen(surveyId = id, onBack = { navController.popBackStack() })
+            VfScansScreen(
+                surveyId = id,
+                onBack = { navController.popBackStack() },
+                onOldLinks = { navController.navigate(Routes.oldLinks(id)) },
+            )
         }
         composable(
             Routes.ENTRIES,
@@ -208,6 +217,13 @@ fun AppNav(navController: NavHostController = rememberNavController()) {
         ) { entry ->
             val id = entry.arguments?.getLong("surveyId") ?: return@composable
             DeedsScreen(surveyId = id, onBack = { navController.popBackStack() })
+        }
+        composable(
+            Routes.SITE,
+            arguments = listOf(navArgument("surveyId") { type = NavType.LongType }),
+        ) { entry ->
+            val id = entry.arguments?.getLong("surveyId") ?: return@composable
+            SiteVisitScreen(surveyId = id, onBack = { navController.popBackStack() })
         }
         composable(
             Routes.OLD_LINKS,

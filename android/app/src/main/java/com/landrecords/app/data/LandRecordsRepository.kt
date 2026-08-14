@@ -149,7 +149,23 @@ class LandRecordsRepository(
         // VF-6 entries + deeds (one AnyRoR page yields all three), VF-7/12, and iRCMS cases.
         // Only the NEWLY added surveys are queued: re-adding a village must not re-fetch every
         // survey already held. Enqueueing is idempotent, so a retry cannot duplicate work.
-        if (added.isNotEmpty()) queueAutoFetch(propId, added)
+        if (added.isNotEmpty()) {
+            queueAutoFetch(propId, added)
+            // DB review B1: record the place + survey PARENT sync rows now, so a later fetch's
+            // child rows never reference a survey/place absent from the sync graph. Best-effort —
+            // a missing parent must never fail the add.
+            appContext?.let { ctx ->
+                runCatching {
+                    val property = db.propertyDao().byId(propId)
+                    if (property != null) {
+                        val surveys = db.surveyDao().observeForProperty(propId).first()
+                        com.landrecords.app.data.sync.SyncParents.upsert(
+                            ctx, db.openHelper.writableDatabase, property, surveys,
+                        )
+                    }
+                }.onFailure { android.util.Log.w("LR", "sync parents (add) failed: ${it.message}") }
+            }
+        }
         return AddResult(propId, added, duplicates)
     }
 
@@ -183,7 +199,30 @@ class LandRecordsRepository(
     fun observeMarked(): Flow<List<com.landrecords.app.data.db.MarkedRecordRow>> = db.recordDao().observeMarked()
 
     /** Set or clear ([mark] = null) a record's export colour. */
-    suspend fun setMark(recordId: Long, mark: String?) = db.recordDao().setMark(recordId, mark)
+    suspend fun setMark(recordId: Long, mark: String?) {
+        db.recordDao().setMark(recordId, mark)
+        // B5: mirror the mark into the synced `mark` table so it survives a device sync.
+        val ctx = appContext ?: return
+        runCatching {
+            val rec = db.recordDao().findById(recordId)
+            val surveyUid = rec?.let { surveyUidOf(it.surveyId) }
+            if (rec != null && surveyUid != null) {
+                com.landrecords.app.data.sync.MarkSync.set(
+                    ctx,
+                    com.landrecords.app.data.identity.Identity.recordSetUid(surveyUid, rec.type.name),
+                    mark,
+                )
+            }
+        }.onFailure { android.util.Log.w("LR", "mark sync (record) failed: ${it.message}") }
+    }
+
+    /** The survey_uid (placeId + token) for a Room survey id, or null if it can't be resolved. */
+    suspend fun surveyUidOf(surveyId: Long): String? {
+        val ctx = appContext ?: return null
+        val (survey, property) = snapshot(surveyId) ?: return null
+        val placeId = com.landrecords.app.data.sync.LegacyMigration.placeIdOf(ctx, property)
+        return com.landrecords.app.data.identity.Identity.surveyUid(placeId, survey.surveyNo)
+    }
 
     /** A one-shot snapshot of a survey plus its owning property, for filing a capture. */
     suspend fun snapshot(surveyId: Long): Pair<SurveyEntity, PropertyEntity>? {
@@ -208,6 +247,35 @@ class LandRecordsRepository(
             sourcePath = sourcePath ?: existing?.sourcePath,
         )
         db.recordDao().upsert(row)
+    }
+
+    /**
+     * How many docs are currently held for this record type (0 if there is no row). Used to guard
+     * against a transient "empty" fetch erasing a record we already have.
+     */
+    suspend fun heldDocCount(surveyId: Long, type: RecordType): Int =
+        db.recordDao().find(surveyId, type.name)?.docCount ?: 0
+
+    /**
+     * One-time repair for records the old NOTFOUND→Empty bug wrongly flipped to docCount=0. An
+     * INTEGRATED record's real docCount is always 1 (a single merged page) and the bug kept its
+     * pdfPath, so any INTEGRATED row with docCount==0 but a still-readable pdfPath was clobbered,
+     * not genuinely empty — restore it to 1 with no network and no re-fetch. Returns how many were
+     * repaired. Runs on the caller's dispatcher (invoked from the IO scope in MainActivity).
+     */
+    suspend fun repairClobberedIntegratedRecords(): Int {
+        val ctx = appContext ?: return 0
+        var fixed = 0
+        for (r in db.recordDao().observeAll().first()) {
+            if (r.type == RecordType.INTEGRATED && r.docCount == 0 && !r.pdfPath.isNullOrBlank() &&
+                com.landrecords.app.data.storage.LibraryAccess.readBytes(ctx, r.pdfPath) != null
+            ) {
+                db.recordDao().update(r.copy(docCount = 1))
+                fixed++
+            }
+        }
+        if (fixed > 0) android.util.Log.i("LR", "repairClobberedIntegratedRecords: restored $fixed record(s)")
+        return fixed
     }
 
     suspend fun seedIfEmpty() {

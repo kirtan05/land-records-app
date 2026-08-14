@@ -124,4 +124,22 @@ class FetchViewModel(
             false
         }
     }
+
+    /**
+     * Old-survey tokens the user has REJECTED for this survey. The on-screen VF-7/12 fetch must
+     * skip them, exactly as the headless path does — otherwise a manual re-fetch resurrects an old
+     * survey the user deleted (DB review / VF-7/12 review #1).
+     */
+    suspend fun rejectedOldTokens(context: android.content.Context): Set<String> {
+        val (survey, property) = repo.snapshot(surveyId) ?: return emptySet()
+        val placeId = com.landrecords.app.data.sync.LegacyMigration.placeIdOf(context, property)
+        val surveyUid = com.landrecords.app.data.identity.Identity.surveyUid(placeId, survey.surveyNo)
+        return com.landrecords.app.fetch.Vf712Curation.rejectedTokens(context, surveyUid)
+    }
+
+    /** Record the scanned old surveys as curation candidates (mirrors the headless path). */
+    suspend fun proposeVf712Candidates(context: android.content.Context, oldSurveys: Collection<String>) {
+        val (survey, property) = repo.snapshot(surveyId) ?: return
+        com.landrecords.app.fetch.Vf712Curation.proposeCandidates(context, survey, property, oldSurveys)
+    }
 }

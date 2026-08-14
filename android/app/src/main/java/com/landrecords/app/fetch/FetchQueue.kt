@@ -232,6 +232,49 @@ object FetchQueue {
             item
         }
 
+    /**
+     * Atomically claim a SPECIFIC sibling ([recordType]) for [surveyUid] if it is pending and due,
+     * flipping it to running. Returns null when there is nothing to claim (already running/done, or
+     * not yet due). Lets one AnyRoR session fetch INTEGRATED + VF-7/12 for a survey together.
+     */
+    suspend fun claimSibling(context: Context, surveyUid: String, recordType: String): Item? =
+        withContext(Dispatchers.IO) {
+            val d = db(context)
+            val now = System.currentTimeMillis()
+            var item: Item? = null
+            d.beginTransaction()
+            try {
+                d.query(
+                    """
+                    SELECT uid, survey_uid, record_type, state, attempts, last_error, not_before
+                    FROM fetch_queue
+                    WHERE survey_uid = ? AND record_type = ? AND state = ? AND not_before <= ?
+                    LIMIT 1
+                    """.trimIndent(),
+                    arrayOf<Any?>(surveyUid, recordType, PENDING, now),
+                ).use { c ->
+                    if (c.moveToFirst()) {
+                        item = Item(
+                            uid = c.getString(0), surveyUid = c.getString(1), recordType = c.getString(2),
+                            state = c.getString(3), attempts = c.getInt(4),
+                            lastError = if (c.isNull(5)) null else c.getString(5),
+                            notBefore = c.getLong(6),
+                        )
+                    }
+                }
+                item?.let {
+                    d.execSQL(
+                        "UPDATE fetch_queue SET state = ?, updated_at = ? WHERE uid = ?",
+                        arrayOf<Any?>(RUNNING, now, it.uid),
+                    )
+                }
+                d.setTransactionSuccessful()
+            } finally {
+                d.endTransaction()
+            }
+            item
+        }
+
     suspend fun markDone(context: Context, uid: String) = withContext(Dispatchers.IO) {
         db(context).execSQL(
             "UPDATE fetch_queue SET state = ?, last_error = NULL, updated_at = ? WHERE uid = ?",

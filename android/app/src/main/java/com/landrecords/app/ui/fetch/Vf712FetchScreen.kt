@@ -183,9 +183,16 @@ fun Vf712FetchScreen(
                 if (rows.isEmpty()) { vm.fail("Couldn't read the VF-7/12 list. Please try again."); return@LaunchedEffect }
 
                 vm.setPhase(FetchPhase.BUILDING)
+                // Honour the user's deletions: an old survey he rejected must not come back on a
+                // manual re-fetch (the headless path already skips these). See Vf712Curation.
+                val rejected = vm.rejectedOldTokens(app)
                 val kept = ArrayList<Pair<Vf712Row, ByteArray>>() // grid row -> genuine scan bytes
                 for (r in rows) {
                     if (!r.status.contains("ok", ignoreCase = true)) continue
+                    if (com.landrecords.app.fetch.Vf712Curation.isRejected(r.oldSurvey, rejected)) {
+                        android.util.Log.i("LR", "vf712 row ${r.index} ${r.period}: skipped (rejected old survey ${r.oldSurvey})")
+                        continue
+                    }
                     val sig = CompletableDeferred<Unit>()
                     pageSignal = sig
                     WebViewCapture.eval(wv, Vf712Injection.selectRowJs(r.index)) // full-page postback
@@ -220,6 +227,7 @@ fun Vf712FetchScreen(
                         )
                     }
                     VfScansStore.save(app, i.district, i.taluka, i.village, i.surveyNo, scans)
+                    vm.proposeVf712Candidates(app, scans.map { it.oldSurvey })
                 }
 
                 val merged = PdfMerge.merge(ordered.map { it.second }, app.cacheDir)

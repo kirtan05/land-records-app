@@ -101,13 +101,16 @@ class VfScansViewModel(
         get() = ui.value?.scans.orEmpty()
             .groupBy { it.oldSurvey.ifBlank { "—" } }
             .map { (old, s) -> old to s.size }
-            .sortedBy { it.first }
+            .sortedWith(com.landrecords.app.data.sync.OldSurveyMatcher.byOldSurvey { it.first })
 
     /**
      * Remove an old survey number's scans and REMEMBER it (§2 rejected), so a re-fetch never drags
      * it back. Reloads the list in place.
      */
     fun deleteOldSurvey(oldSurvey: String) {
+        // "no old survey" (the "—" placeholder) isn't a rejectable thing — deleting it used to
+        // write a bogus rejected link that matched nothing. Ignore it.
+        if (oldSurvey.isBlank() || oldSurvey == "—") return
         val s = survey ?: return
         val p = property ?: return
         viewModelScope.launch {
@@ -156,6 +159,14 @@ class VfScansViewModel(
         val u = ui.value ?: return
         viewModelScope.launch {
             VfScansStore.setMark(app, u.district, u.taluka, u.village, u.surveyNo, scan.index.toString(), mark)
+            // B5: mirror the mark into the synced `mark` table.
+            app.repository.surveyUidOf(surveyId)?.let { su ->
+                com.landrecords.app.data.sync.MarkSync.set(
+                    app,
+                    com.landrecords.app.data.identity.Identity.vfScanUid(su, scan.period, scan.thok, scan.block, scan.oldSurvey),
+                    mark,
+                )
+            }
             ui.value = u.copy(
                 scans = u.scans.map { if (it.index == scan.index) it.copy(mark = mark) else it },
             )
@@ -173,6 +184,7 @@ class VfScansViewModel(
 fun VfScansScreen(
     surveyId: Long,
     onBack: () -> Unit,
+    onOldLinks: () -> Unit,
 ) {
     val app = landApp()
     val context = LocalContext.current
@@ -284,6 +296,9 @@ fun VfScansScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Spacer(Modifier.weight(1f))
+                // Manage the old survey numbers behind these scans (keep / remove / put back).
+                OutlinePill(text = L("જૂના સર્વે", "Old surveys"), enabled = true, onClick = onOldLinks)
+                Spacer(Modifier.width(8.dp))
                 val hasMerged = ui?.mergedPdfPath != null
                 OutlinePill(
                     text = L("બધા જુઓ", "View all"),

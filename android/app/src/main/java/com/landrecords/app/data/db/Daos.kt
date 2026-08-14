@@ -107,6 +107,9 @@ interface RecordDao {
     @Query("SELECT * FROM records WHERE surveyId = :surveyId AND type = :typeName LIMIT 1")
     suspend fun find(surveyId: Long, typeName: String): RecordEntity?
 
+    @Query("SELECT * FROM records WHERE id = :id")
+    suspend fun findById(id: Long): RecordEntity?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(record: RecordEntity): Long
 

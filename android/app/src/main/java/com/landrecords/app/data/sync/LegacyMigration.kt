@@ -149,29 +149,10 @@ object LegacyMigration {
                 placeOf[id] = placeId
                 places++
 
-                put("place", listOf(mapOf(
-                    "uid" to placeId,
-                    "district_code" to codes?.first,
-                    "taluka_code" to codes?.second,
-                    "village_code" to codes?.third,
-                )))
-
-                // Names become attributes, never keys — the Nadiad duplicate dies here.
-                val names = buildList {
-                    if (district.isNotBlank()) add(Triple("district", scriptOf(district), district))
-                    if (taluka.isNotBlank()) add(Triple("taluka", scriptOf(taluka), taluka))
-                    if (village.isNotBlank()) add(Triple("village", scriptOf(village), village))
-                    if (districtGu.isNotBlank()) add(Triple("district", "gu", districtGu))
-                    if (talukaGu.isNotBlank()) add(Triple("taluka", "gu", talukaGu))
-                    if (villageGu.isNotBlank()) add(Triple("village", "gu", villageGu))
-                }
-                placeNames += put("place_name", names.map { (level, script, name) ->
-                    mapOf(
-                        "uid" to Identity.uid("pn", placeId, level, script, name),
-                        "place_id" to placeId, "script" to script,
-                        "source" to "legacy:$level", "name" to name,
-                    )
-                })
+                put("place", listOf(SyncParents.placeRow(placeId, codes)))
+                placeNames += put("place_name", SyncParents.placeNameRows(
+                    placeId, district, taluka, village, districtGu, talukaGu, villageGu,
+                ))
             }
         }
 
@@ -203,24 +184,15 @@ object LegacyMigration {
                 surveyUidOf[id] = uid
                 surveys++
 
-                put("survey", listOf(mapOf(
-                    "uid" to uid, "place_id" to placeId, "token" to token, "survey_no" to surveyNo,
-                    "area" to c.getString(4), "assessment" to c.getString(5),
-                    "tenure" to c.getString(6), "land_use" to c.getString(7), "as_of" to c.getString(8),
+                put("survey", listOf(SyncParents.surveyRow(
+                    placeId, uid, token, surveyNo,
+                    c.getString(4), c.getString(5), c.getString(6), c.getString(7), c.getString(8),
                 )))
 
                 // Every original raw form is preserved, including the app's OLD token — which
                 // is how a folder written under the previous scheme is still findable, and how
                 // `selectOption` keeps the exact string AnyRoR needs.
-                val rawForms = linkedSetOf(surveyNo).apply {
-                    if (legacyToken.isNotBlank()) add(legacyToken)
-                }
-                aliases += put("survey_alias", rawForms.map { raw ->
-                    mapOf(
-                        "uid" to Identity.uid("sa", uid, raw),
-                        "survey_uid" to uid, "raw" to raw, "source" to "legacy",
-                    )
-                })
+                aliases += put("survey_alias", SyncParents.aliasRows(uid, surveyNo, legacyToken))
 
                 // §5 step 2 applies to the LEGACY column too, not just the new tables.
                 //
@@ -338,9 +310,6 @@ object LegacyMigration {
     }
 
     /** Gujarati if it contains any Gujarati codepoint, else Latin. Good enough to label a name. */
-    private fun scriptOf(s: String): String =
-        if (s.any { it.code in 0x0A80..0x0AFF }) "gu" else "en"
-
     /**
      * Resolve a place to its (district, taluka, village) cascade codes, or null when the
      * catalogue cannot do it unambiguously.

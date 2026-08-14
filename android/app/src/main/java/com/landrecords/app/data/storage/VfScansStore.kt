@@ -158,7 +158,7 @@ object VfScansStore {
         read(context, district, taluka, village, surveyNo)
             .groupBy { it.oldSurvey.ifBlank { "—" } }
             .map { (old, scans) -> old to scans.size }
-            .sortedBy { it.first }
+            .sortedWith(com.landrecords.app.data.sync.OldSurveyMatcher.byOldSurvey { it.first })
     }
 
     private fun toJson(entries: List<ScanEntry>): String {

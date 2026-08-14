@@ -108,6 +108,12 @@ class EntriesViewModel(
         val u = ui.value ?: return
         viewModelScope.launch {
             EntriesStore.setMark(app, u.district, u.taluka, u.village, u.surveyNo, entry.number, mark)
+            // B5: mirror the mark into the synced `mark` table.
+            app.repository.surveyUidOf(surveyId)?.let { su ->
+                com.landrecords.app.data.sync.MarkSync.set(
+                    app, com.landrecords.app.data.identity.Identity.entryUid(su, entry.number), mark,
+                )
+            }
             ui.value = u.copy(entries = u.entries.map { if (it.number == entry.number) it.copy(mark = mark) else it })
         }
     }

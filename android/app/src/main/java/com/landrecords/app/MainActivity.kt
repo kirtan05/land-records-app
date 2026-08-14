@@ -52,6 +52,18 @@ class MainActivity : ComponentActivity() {
                 }
             }.onFailure { android.util.Log.w("LR", "auto-migration failed: ${it.message}") }
 
+            // One-time repair for records an earlier build wrongly flipped to "not available"
+            // (INTEGRATED NOTFOUND→Empty clobber). Restores docCount from the PDF still on disk —
+            // no network, no re-fetch. Guarded like the migration so it runs a single time.
+            runCatching {
+                val prefs = app.getSharedPreferences("migration", android.content.Context.MODE_PRIVATE)
+                if (!prefs.getBoolean("record_repair_v1", false)) {
+                    val restored = app.repository.repairClobberedIntegratedRecords()
+                    prefs.edit().putBoolean("record_repair_v1", true).apply()
+                    android.util.Log.i("LR", "record repair done: restored=$restored")
+                }
+            }.onFailure { android.util.Log.w("LR", "record repair failed: ${it.message}") }
+
             // Resume the durable fetch queue (spec §6). Must run while the app is foreground.
             runCatching {
                 val n = com.landrecords.app.fetch.FetchQueue.pendingCount(app)

@@ -121,6 +121,15 @@ class IrcmsCasesViewModel(
         val id = CasesStore.identity(case.caseNo, case.parties, case.office, case.dtv)
         viewModelScope.launch {
             CasesStore.setMark(app, u.district, u.taluka, u.village, u.surveyNo, id, mark)
+            // B5: mirror the mark into the synced `mark` table (cases with no data_id have no
+            // synced row, so there is nothing to target — skip those).
+            if (case.dataId.isNotBlank()) {
+                app.repository.surveyUidOf(surveyId)?.let { su ->
+                    com.landrecords.app.data.sync.MarkSync.set(
+                        app, com.landrecords.app.data.identity.Identity.caseUid(su, case.dataId), mark,
+                    )
+                }
+            }
             ui.value = u.copy(
                 cases = u.cases.map {
                     if (CasesStore.identity(it.caseNo, it.parties, it.office, it.dtv) == id) it.copy(mark = mark) else it

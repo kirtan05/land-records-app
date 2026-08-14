@@ -109,7 +109,11 @@ class OldSurveyLinksViewModel(
                         source = it["source"] as? String ?: "",
                     )
                 }
-                .sortedWith(compareBy({ it.state != "candidate" }, { it.oldToken }))
+                .sortedWith(compareBy(
+                    { it.state != "candidate" },
+                    { com.landrecords.app.data.sync.OldSurveyMatcher.leadingNumber(it.oldToken) ?: Int.MAX_VALUE },
+                    { it.oldToken },
+                ))
         }
         ui.value = Ui(loaded = true, surveyNo = survey.surveyNo, surveyUid = surveyUid, links = links)
     }
@@ -119,13 +123,21 @@ class OldSurveyLinksViewModel(
      * choice made on two machines converges rather than duplicating.
      */
     fun decide(oldToken: String, state: OldSurveyMatcher.State) = viewModelScope.launch {
-        val surveyUid = ui.value.surveyUid
-        if (surveyUid.isEmpty()) return@launch
-        withContext(Dispatchers.IO) {
-            val row = OldSurveyMatcher.linkRow(surveyUid, oldToken, state, source = "user")
-            // NOT fromScraper: this is the user speaking, and only the user may set a
-            // curated state.
-            SyncDb.merge(db, "survey_link", listOf(SyncDb.stamp(db, "survey_link", row, origin = "app")))
+        if (state == OldSurveyMatcher.State.REJECTED) {
+            // Reject also pulls the scans, so the Scans screen reflects it immediately — exactly
+            // like the chip strip. One engine does link + scan removal + tombstone; no duplication.
+            val snap = app.repository.snapshot(surveyId) ?: return@launch
+            val (survey, prop) = snap
+            com.landrecords.app.fetch.Vf712Curation.decide(app, survey, prop, oldToken, keep = false)
+        } else {
+            val surveyUid = ui.value.surveyUid
+            if (surveyUid.isEmpty()) return@launch
+            withContext(Dispatchers.IO) {
+                val row = OldSurveyMatcher.linkRow(surveyUid, oldToken, state, source = "user")
+                // NOT fromScraper: this is the user speaking, and only the user may set a
+                // curated state.
+                SyncDb.merge(db, "survey_link", listOf(SyncDb.stamp(db, "survey_link", row, origin = "app")))
+            }
         }
         reload()
     }

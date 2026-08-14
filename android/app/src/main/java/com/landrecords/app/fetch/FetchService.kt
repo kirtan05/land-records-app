@@ -185,6 +185,50 @@ class FetchService : Service() {
     }
 
     /**
+     * File one AnyRoR result and return its [Outcome], THROWING on a per-item Failed exactly as the
+     * single-type path does (so drainAll's runCatching handles it). Does not touch the queue.
+     */
+    private suspend fun applyAnyRor(
+        item: FetchQueue.Item,
+        type: RecordType,
+        survey: com.landrecords.app.data.db.SurveyEntity,
+        property: com.landrecords.app.data.db.PropertyEntity,
+        r: AnyRorDriver.Result,
+    ): Outcome = when (r) {
+        is AnyRorDriver.Result.Ok ->
+            if (filer.fileAnyRor(item.surveyUid, type, survey, property, r.capture)) Outcome.OK
+            else throw IllegalStateException("could not file the ${type.name} record")
+        is AnyRorDriver.Result.Vf712Ok ->
+            if (filer.fileVf712(item.surveyUid, survey, property, r.scans, r.rawHtml)) Outcome.OK
+            else throw IllegalStateException("could not file the VF-7/12 scans")
+        is AnyRorDriver.Result.Empty -> { filer.markEmpty(item.surveyUid, survey, type); Outcome.EMPTY }
+        is AnyRorDriver.Result.Blocked -> { android.util.Log.w("LR", "FetchService: blocked — ${r.detail}"); Outcome.BLOCKED }
+        is AnyRorDriver.Result.Failed -> throw IllegalStateException(r.detail)
+    }
+
+    /**
+     * File + mark the VF-7/12 SIBLING processed inside an INTEGRATED session — drainAll marks only
+     * the primary item, so its sibling is marked here. Mirrors drainAll's per-item rule: a per-item
+     * failure never touches the pacer, and a session block is escalated by the primary item (not
+     * double-counted here).
+     */
+    private suspend fun markSibling(
+        sibling: FetchQueue.Item,
+        r: AnyRorDriver.Result,
+        survey: com.landrecords.app.data.db.SurveyEntity,
+        property: com.landrecords.app.data.db.PropertyEntity,
+    ) {
+        val outcome = runCatching { applyAnyRor(sibling, RecordType.VF712, survey, property, r) }
+        when {
+            outcome.getOrNull() == Outcome.BLOCKED ->
+                FetchQueue.markFailed(this, sibling, "blocked — backing off", anyrorPacer.penaltyMs())
+            outcome.isFailure ->
+                FetchQueue.markFailed(this, sibling, outcome.exceptionOrNull()?.message ?: "error", 60_000)
+            else -> { anyrorPacer.onSuccess(); FetchQueue.markDone(this, sibling.uid) }
+        }
+    }
+
+    /**
      * Fetch one queue item, headlessly.
      *
      * DEEDS and ENTRIES are never fetched on their own: one AnyRoR type-8 page yields the
@@ -200,6 +244,8 @@ class FetchService : Service() {
             return Outcome.EMPTY
         }
         val (survey, property) = resolved
+        // DB review B1: guarantee the place + survey parent sync rows exist before any child.
+        filer.ensureParents(survey, property)
 
         return when (item.recordType) {
             "DEEDS", "ENTRIES" -> {
@@ -209,32 +255,31 @@ class FetchService : Service() {
 
             "INTEGRATED", "VF712" -> {
                 val type = if (item.recordType == "VF712") RecordType.VF712 else RecordType.INTEGRATED
-                when (val r = AnyRorDriver(applicationContext, anyrorPacer).fetch(
-                    recordType = type,
-                    // The cascade matches on the GUJARATI names — that is what the site lists.
-                    districtGu = property.districtGu.ifBlank { property.district },
-                    talukaGu = property.talukaGu.ifBlank { property.taluka },
-                    villageGu = property.villageGu.ifBlank { property.village },
-                    surveyNo = survey.surveyNo,
-                    surveyUid = item.surveyUid,
-                )) {
-                    is AnyRorDriver.Result.Ok -> {
-                        if (filer.fileAnyRor(item.surveyUid, type, survey, property, r.capture)) Outcome.OK
-                        else throw IllegalStateException("could not file the ${type.name} record")
-                    }
-                    is AnyRorDriver.Result.Vf712Ok -> {
-                        if (filer.fileVf712(item.surveyUid, survey, property, r.scans, r.rawHtml)) Outcome.OK
-                        else throw IllegalStateException("could not file the VF-7/12 scans")
-                    }
-                    is AnyRorDriver.Result.Empty -> {
-                        filer.markEmpty(item.surveyUid, survey, type)
-                        Outcome.EMPTY
-                    }
-                    is AnyRorDriver.Result.Blocked -> {
-                        android.util.Log.w("LR", "FetchService: blocked — ${r.detail}")
-                        Outcome.BLOCKED
-                    }
-                    is AnyRorDriver.Result.Failed -> throw IllegalStateException(r.detail)
+                val driver = AnyRorDriver(applicationContext, anyrorPacer)
+                // The cascade matches on the GUJARATI names — that is what the site lists.
+                val districtGu = property.districtGu.ifBlank { property.district }
+                val talukaGu = property.talukaGu.ifBlank { property.taluka }
+                val villageGu = property.villageGu.ifBlank { property.village }
+
+                // INTEGRATED pulls its VF-7/12 sibling into ONE session (one WebView + one captcha
+                // model + one warm session + a shared geo cascade). INTEGRATED is always drained
+                // first, so a lone VF-7/12 item means its sibling is already done — fetch it alone.
+                val sibling = if (type == RecordType.INTEGRATED)
+                    FetchQueue.claimSibling(this, item.surveyUid, "VF712") else null
+
+                if (sibling != null) {
+                    val both = driver.fetchBoth(districtGu, talukaGu, villageGu, survey.surveyNo, item.surveyUid)
+                    // drainAll marks only the primary row, so file + mark the sibling here…
+                    markSibling(sibling, both.vf712, survey, property)
+                    // …and hand the INTEGRATED half back as this item's outcome.
+                    applyAnyRor(item, RecordType.INTEGRATED, survey, property, both.integrated)
+                } else {
+                    val r = driver.fetch(
+                        recordType = type,
+                        districtGu = districtGu, talukaGu = talukaGu, villageGu = villageGu,
+                        surveyNo = survey.surveyNo, surveyUid = item.surveyUid,
+                    )
+                    applyAnyRor(item, type, survey, property, r)
                 }
             }
 

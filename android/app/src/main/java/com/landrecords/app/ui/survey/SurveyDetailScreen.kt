@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronLeft
+import androidx.compose.material.icons.outlined.MyLocation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,6 +47,7 @@ import com.landrecords.app.ui.components.DashedButton
 import com.landrecords.app.ui.components.MetaChip
 import com.landrecords.app.ui.components.ParcelPlate
 import com.landrecords.app.ui.components.PathBreadcrumb
+import com.landrecords.app.ui.components.PillButton
 import com.landrecords.app.ui.components.RecordCard
 import com.landrecords.app.ui.components.SquareIconButton
 import com.landrecords.app.ui.components.areaLatinHelper
@@ -68,6 +70,7 @@ fun SurveyDetailScreen(
     onScans: (Long) -> Unit,
     onEntries: (Long) -> Unit,
     onDeeds: (Long) -> Unit,
+    onSiteVisit: (Long) -> Unit,
 ) {
     val app = landApp()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -190,6 +193,16 @@ fun SurveyDetailScreen(
             }
             jantri?.let { j ->
                 item { JantriCard(j, com.landrecords.app.data.jantri.LandArea.toSqm(survey.area)) }
+            }
+            // On-site capture: dad taps this when standing on the plot (GPS fix + geo-tagged photo).
+            item {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    PillButton(
+                        com.landrecords.app.ui.theme.L("સાઇટ મુલાકાત", "Site visit"),
+                        onClick = { onSiteVisit(surveyId) },
+                        leadingIcon = Icons.Outlined.MyLocation,
+                    )
+                }
             }
             // DEEDS has no card of its own: it is a section of the Integrated page, captured in the
             // same pass, and surfaces as a pill on the Integrated card. Its record row still exists
