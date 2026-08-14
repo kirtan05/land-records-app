@@ -22,9 +22,16 @@ export function normalizeSurvey(raw) {
 }
 
 // Filesystem-safe token for a survey key:  "221/p" -> "221_P",  "222/3/p1" -> "222_3_P1"
-export function surveyToken(keyOrRaw) {
-  return normalizeSurvey(keyOrRaw).toUpperCase().replace(/\//g, '_').replace(/[^A-Z0-9_]/g, '');
-}
+//
+// Re-exported from the canonical identity layer rather than reimplemented here. This used
+// to be its own one-liner, and it disagreed with the Android app's version — which is
+// exactly why two scrapes of the same survey could never merge. There is now ONE tokenizer;
+// see src/identity.mjs and tools/identity/README.md.
+//
+// NOTE this is the *identity* of a survey. `normalizeSurvey` above is a different thing —
+// the lowercase slash-form key used to MATCH a handwritten number against a dropdown
+// option — and is deliberately left alone.
+export { surveyToken } from './identity.mjs';
 
 // Build a lookup map: normalizedKey -> { value, text } from dropdown options.
 export function buildCatalog(options) {

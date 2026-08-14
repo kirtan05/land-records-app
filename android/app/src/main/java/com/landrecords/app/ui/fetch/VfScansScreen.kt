@@ -92,6 +92,41 @@ class VfScansViewModel(
 
     val ui = MutableStateFlow<ScansUi?>(null)
 
+    /** Kept so a delete can record the §2 decision (survey_link) and skip on re-fetch. */
+    private var survey: com.landrecords.app.data.db.SurveyEntity? = null
+    private var property: com.landrecords.app.data.db.PropertyEntity? = null
+
+    /** Distinct old survey numbers in this survey's scans, each with its scan count. */
+    val oldSurveyGroups: List<Pair<String, Int>>
+        get() = ui.value?.scans.orEmpty()
+            .groupBy { it.oldSurvey.ifBlank { "—" } }
+            .map { (old, s) -> old to s.size }
+            .sortedBy { it.first }
+
+    /**
+     * Remove an old survey number's scans and REMEMBER it (§2 rejected), so a re-fetch never drags
+     * it back. Reloads the list in place.
+     */
+    fun deleteOldSurvey(oldSurvey: String) {
+        val s = survey ?: return
+        val p = property ?: return
+        viewModelScope.launch {
+            val removed = com.landrecords.app.fetch.Vf712Curation.decide(app, s, p, oldSurvey, keep = false)
+            android.util.Log.i("LR", "deleteOldSurvey $oldSurvey removed $removed scan(s)")
+            reload()
+        }
+    }
+
+    private fun reload() {
+        viewModelScope.launch {
+            val u = ui.value ?: return@launch
+            val scans = withContext(Dispatchers.IO) {
+                VfScansStore.read(app, u.district, u.taluka, u.village, u.surveyNo)
+            }
+            ui.value = u.copy(scans = scans)
+        }
+    }
+
     init {
         viewModelScope.launch {
             val snap = app.repository.snapshot(surveyId)
@@ -100,6 +135,8 @@ class VfScansViewModel(
                 return@launch
             }
             val (survey, prop) = snap
+            this@VfScansViewModel.survey = survey
+            this@VfScansViewModel.property = prop
             val scans = VfScansStore.read(app, prop.district, prop.taluka, prop.village, survey.surveyNo)
             val record = app.repository.recordFor(surveyId, RecordType.VF712)
             ui.value = ScansUi(
@@ -257,6 +294,41 @@ fun VfScansScreen(
                         if (!ok) Toast.makeText(context, "Can't open this file", Toast.LENGTH_SHORT).show()
                     },
                 )
+            }
+            // Old survey numbers present in these scans — tap ✕ to remove one you don't want.
+            // The removal is remembered (§2), so a re-fetch never drags it back.
+            val groups = vm.oldSurveyGroups
+            if (groups.size > 1) {
+                FlowRow(
+                    Modifier.fillMaxWidth().padding(start = 14.dp, end = 14.dp, top = 4.dp, bottom = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    for ((old, count) in groups) {
+                        var confirm by remember(old) { mutableStateOf(false) }
+                        Row(
+                            Modifier
+                                .clip(LandShape.pill)
+                                .border(1.dp, if (confirm) Land.colors.accent else Land.colors.line, LandShape.pill)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null,
+                                ) {
+                                    if (confirm) { vm.deleteOldSurvey(old); confirm = false } else confirm = true
+                                }
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                        ) {
+                            Text("$old · $count", style = LandType.metaMono, color = Land.colors.ink2)
+                            Text(
+                                if (confirm) L("કાઢી નાખું?", "remove?") else "✕",
+                                style = LandType.meta,
+                                color = if (confirm) Land.colors.accent else Land.colors.ink3,
+                            )
+                        }
+                    }
+                }
             }
             HorizontalDivider(thickness = 1.dp, color = Land.colors.line)
         }

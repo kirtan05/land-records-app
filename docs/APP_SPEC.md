@@ -96,7 +96,12 @@ always optional.
 - **Old Scanned VF-7/12** (type 11): JS-fetch each `PDFView1.aspx?detail=…` via the WebView's cookies →
   weed placeholders (real scans are images; a placeholder is a text PDF → drop any with a text layer) →
   combine newest→oldest with year-label pages.
-- **Deeds** (Sub-registrar "View Deed" on the detail page): fetch the **TIFF**, decode (TIFF lib) → PDF.
+- **Deeds** (Sub-registrar section of the SAME type-8 detail page): captured in the Integrated pass, not
+  fetched separately — the detail page must be reached through the **desktop** entry
+  (`LandRecordRural.aspx/1000`); the mobile entry omits the deed grid. The rows are read as data
+  (`deeds.json`) and surface as a pill on the Integrated card; the deed table also prints inside the
+  Integrated PDF. Each "View Deed" postback is still replayed for the scan — usually "Document Record
+  Not Found"; when one does arrive, a CCITT **TIFF** is embedded → PDF via pdfbox's `CCITTFactory`.
 - **iRCMS** (separate site): case + order PDFs; its CAPTCHA reuses across surveys, so batch-friendly.
 
 See `docs/PROJECT_NOTES.md` §"Hard-won lessons" and the memory files for the exact mechanisms and traps

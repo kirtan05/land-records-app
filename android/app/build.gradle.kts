@@ -16,9 +16,12 @@ android {
         applicationId = "com.landrecords.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 23
-        versionName = "0.11.0"
+        versionCode = 24
+        versionName = "0.12.0"
         vectorDrawables { useSupportLibrary = true }
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Every target device is arm64; keep other ABIs out of the APK.
+        ndk { abiFilters += "arm64-v8a" }
     }
 
     // Public update APKs ship WITHOUT the 125 MB personal data seed: build with
@@ -105,5 +108,31 @@ dependencies {
     // Streaming PDF merge (no rasterization) — avoids OOM when combining big scanned records.
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
+    // AnyRoR captcha CNN runs as a pure-Kotlin forward pass (captcha/CaptchaCnn.kt)
+    // over assets/anyror_cnn_real.weights — no ONNX Runtime, no native libs.
+
+    // Plain JVM unit tests. The identity layer (data/identity/Identity.kt) is pure Kotlin
+    // with no Android dependency, so it is held to tools/identity/vectors.json here rather
+    // than on a device — the same fixture the desktop's `node tools/identity/test.mjs` reads.
+    // org.json ships only as a throwing stub in the android.jar used for unit tests, so the
+    // real implementation is put on the test classpath explicitly.
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
+
+    androidTestImplementation("androidx.test:runner:1.6.2")
+    androidTestImplementation("androidx.test.ext:junit:1.2.1")
+
     debugImplementation(libs.androidx.compose.ui.tooling)
+}
+
+/**
+ * tools/identity/vectors.json is the shared cross-language fixture (see
+ * data/identity/Identity.kt). It lives outside this module, so Gradle cannot infer that the
+ * unit tests depend on it — without this, editing only the fixture leaves the test task
+ * UP-TO-DATE and the identity contract silently unverified.
+ */
+tasks.withType<Test>().configureEach {
+    inputs.file(rootProject.file("../tools/identity/vectors.json"))
+        .withPropertyName("identityVectors")
+        .withPathSensitivity(PathSensitivity.NONE)
 }

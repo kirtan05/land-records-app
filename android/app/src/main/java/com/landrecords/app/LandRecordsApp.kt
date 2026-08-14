@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class LandRecordsApp : Application() {
 
-    val repository: LandRecordsRepository by lazy { LandRecordsRepository(AppDatabase.get(this)) }
+    val repository: LandRecordsRepository by lazy { LandRecordsRepository(AppDatabase.get(this), this) }
 
     val appState: AppState by lazy { AppState(this) }
 
@@ -48,6 +48,9 @@ class LandRecordsApp : Application() {
             // and rewrites its stored paths — before the plain same-script duplicate merge.
             repository.migrateCrossScriptPlaces(this@LandRecordsApp)
             repository.mergeDuplicateProperties()
+            // NB: the fetch-queue resume lives in MainActivity.resumeFetchQueue(), not here — a
+            // foreground service can only be started while the app is foreground (Android 12+),
+            // which Application.onCreate cannot guarantee.
         }
     }
 }

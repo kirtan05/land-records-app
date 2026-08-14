@@ -27,6 +27,13 @@ object CasesStore {
     /** One case as recorded in cases.json (the manifest row). */
     data class CaseEntry(
         val sr: String,
+        /**
+         * iRCMS's own case id (the row button's `data-id`) — the case's identity under
+         * docs/specs/2026-08-14-unified-db-and-autofetch-design.md §1.3, and the value the
+         * desktop scraper dedupes on. Persisted so the migration can key existing cases
+         * without re-fetching them. Empty for manifests written before this shipped.
+         */
+        val dataId: String = "",
         val caseNo: String,
         val status: String,     // "PENDING" | "DISPOSED" | ""
         val office: String,
@@ -43,6 +50,7 @@ object CasesStore {
     /** A freshly captured case awaiting write: its scraped metadata + its raw per-case PDFs. */
     data class CaseCapture(
         val sr: String,
+        val dataId: String = "",
         val caseNo: String,
         val status: String,
         val office: String,
@@ -70,7 +78,11 @@ object CasesStore {
     ) = withContext(Dispatchers.IO) {
         val dir = dir(context, district, taluka, village, surveyNo).apply { mkdirs() }
         // Drop any prior per-case files + manifest — a stale sr set could otherwise linger.
-        dir.listFiles()?.forEach { if (it.name.startsWith("case_") || it.name == MANIFEST) it.delete() }
+        // §4: the manifest is rewritten, but the iRCMS cases themselves are NOT deleted.
+        // They are content-addressed in BlobStore and re-projected below, so a re-fetch
+        // tombstones LINKS, never bytes. Deleting here was a live data-loss risk: merging
+        // with an older database could lose a document only one machine ever had.
+        File(dir, MANIFEST).delete()
 
         val entries = ArrayList<CaseEntry>(captures.size)
         captures.forEachIndexed { idx, c ->
@@ -79,15 +91,15 @@ object CasesStore {
             var orderName = ""
             c.detailPdf?.takeIf { it.isNotEmpty() }?.let {
                 detailName = "case_$key.pdf"
-                File(dir, detailName).writeBytes(it)
+                BlobStore.ingest(context, it, File(dir, detailName))
             }
             c.orderPdf?.takeIf { it.isNotEmpty() }?.let {
                 orderName = "case_${key}_order.pdf"
-                File(dir, orderName).writeBytes(it)
+                BlobStore.ingest(context, it, File(dir, orderName))
             }
             entries.add(
                 CaseEntry(
-                    sr = c.sr, caseNo = c.caseNo, status = c.status, office = c.office,
+                    sr = c.sr, dataId = c.dataId, caseNo = c.caseNo, status = c.status, office = c.office,
                     dtv = c.dtv, parties = c.parties, survno = c.survno,
                     hasOrder = orderName.isNotEmpty(), detailFile = detailName, orderFile = orderName,
                 ),
@@ -161,6 +173,7 @@ object CasesStore {
                 JSONObject().apply {
                     put("sr", e.sr); put("caseNo", e.caseNo); put("status", e.status)
                     put("office", e.office); put("dtv", e.dtv); put("parties", e.parties)
+                    put("dataId", e.dataId)
                     put("survno", e.survno); put("hasOrder", e.hasOrder)
                     put("detailFile", e.detailFile); put("orderFile", e.orderFile)
                     // Only write the colour when set — a missing key reads back as unmarked (null),
@@ -181,6 +194,7 @@ object CasesStore {
                 CaseEntry(
                     sr = o.optString("sr"), caseNo = o.optString("caseNo"), status = o.optString("status"),
                     office = o.optString("office"), dtv = o.optString("dtv"), parties = o.optString("parties"),
+                    dataId = o.optString("dataId"),
                     survno = o.optString("survno"), hasOrder = o.optBoolean("hasOrder"),
                     detailFile = o.optString("detailFile"), orderFile = o.optString("orderFile"),
                     mark = o.optString("mark").ifBlank { null }, // absent/blank → unmarked

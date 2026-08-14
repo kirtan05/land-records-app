@@ -1,57 +1,71 @@
 package com.landrecords.app.web
 
+import com.tom_roush.pdfbox.pdmodel.PDDocument
+import com.tom_roush.pdfbox.pdmodel.PDPage
+import com.tom_roush.pdfbox.pdmodel.PDPageContentStream
+import com.tom_roush.pdfbox.pdmodel.common.PDRectangle
+import com.tom_roush.pdfbox.pdmodel.graphics.image.CCITTFactory
+import com.tom_roush.pdfbox.pdmodel.graphics.image.PDImageXObject
+import java.io.ByteArrayOutputStream
+
 /**
- * TIFF -> PDF, the one hard part of the deed capture.
+ * TIFF -> PDF for the scanned Sub-registrar deeds.
  *
- * Android has NO built-in TIFF decoder: BitmapFactory / ImageDecoder / WebView (Chromium) all
- * refuse TIFF, so a raw Sub-registrar TIFF can neither be BitmapFactory-decoded nor print-to-PDF'd
- * through a WebView. Something has to decode it.
+ * Android has NO built-in TIFF decoder (BitmapFactory / ImageDecoder / WebView all refuse it), so
+ * this used to be a no-op stub pointing at a native libtiff wrapper. It doesn't need one: the app
+ * already bundles pdfbox-android for [PdfMerge], and pdfbox's [CCITTFactory] EMBEDS a CCITT
+ * Group 3/4 TIFF's compressed data straight into a PDF image object — no decode, no raster, no new
+ * dependency, and the scan keeps its original bilevel quality. Garvi/SRO scans are fax-style
+ * bilevel images, which is exactly (and only) what CCITTFactory handles.
  *
- * IMPORTANT: no captured *.tif exists in the repo (the desktop Valetva/41 deed run was cut off by
- * the AnyRoR WAF before any deed downloaded — output/Valetva_41/ is empty). So the *format* is only
- * asserted by the AnyRorFetch.kt contract ("Sub-registrar 'View Deed' TIFF"). [DeedsDownloader]
- * therefore sniffs magic bytes first and only lands here when the response really is TIFF
- * (II*.../MM*...). Garvi/SRO scans are bilevel fax images -> almost always multi-page CCITT Group 4.
- *
- * Pick ONE decoder (default is a no-op so the module compiles clean on the pinned toolchain):
- *
- *  OPTION A — pragmatic, native (recommended IF the response is genuinely TIFF):
- *    Gradle:  repositories { maven { url = uri("https://jitpack.io") } }
- *             implementation("com.github.beyka:Android-TiffBitmapFactory:0.9.9.0")
- *    A prebuilt-.so JNI wrapper around libtiff (handles CCITT G3/G4, multi-page). Returns
- *    android.graphics.Bitmap, so it plugs straight into DeedsDownloader.imageToPdf.
- *      val opt = TiffBitmapFactory.Options().apply { inJustDecodeBounds = false }
- *      val dir = TiffBitmapFactory.getDirectoryCount(bytes)           // page count
- *      val pages = (0 until dir).mapNotNull { p ->
- *          opt.inDirectoryNumber = p
- *          TiffBitmapFactory.decodeByteArray(bytes, opt)
- *      }
- *      return DeedsDownloader.imageToPdf(pages)
- *    RISK (flag to user): native .so shipped in the AAR must be repackaged by AGP 9's jniLibs
- *    step (untested against this pinned Gradle 9.5 / AGP 9.1.1 chain); the lib last shipped ~2017;
- *    adds ~1-2 MB per ABI. It touches neither kapt nor Room, so it won't break the Kotlin-2.3.21
- *    metadata constraint — the only risk is packaging/ABI, verifiable with one assembleDebug.
- *
- *  OPTION B — zero dependency, more work: a focused pure-Kotlin TIFF + CCITT-G4 (ITU T.6) decoder
- *    (parse IFD tags: ImageWidth/Length, StripOffsets/ByteCounts, Compression==4, Photometric,
- *    Fill/T4/T6 options -> decode each strip to a 1-bpp raster -> Bitmap). ~400-600 lines, but no
- *    toolchain risk at all. Best if deeds turn out to be strictly bilevel G4 (they usually are).
- *
- * Whichever is chosen, the output feeds [DeedsDownloader.imageToPdf] (one PDF page per TIFF page),
- * and the per-deed PDFs are merged by [PdfMerge].
+ * Limits, deliberately not worked around:
+ *  - Non-CCITT TIFFs (LZW, JPEG-in-TIFF, uncompressed) throw inside CCITTFactory; we return null
+ *    and the caller logs + skips, exactly as before. No deed TIFF has ever been captured from the
+ *    live site ("Document Record Not Found"), so guessing at other encodings would be untestable
+ *    speculation — the magic-byte log in [DeedsDownloader] is what will tell us if one shows up.
+ *  - Multi-page is handled by asking for page 0, 1, 2 … until the factory refuses.
  */
 object TiffToPdf {
 
+    /** Hard stop so a malformed IFD chain can't spin forever. Real deeds are a few pages. */
+    private const val MAX_PAGES = 60
+
     /**
-     * Decode a TIFF (possibly multi-page) to a single PDF's bytes, or null if no decoder is wired.
-     * Default: no-op (returns null) so the app builds without any new dependency. Wire OPTION A or
-     * B above once a real deed TIFF has been captured on-device and its exact encoding confirmed.
+     * Convert a (possibly multi-page) CCITT TIFF into PDF bytes, one PDF page per TIFF page at the
+     * image's own aspect, or null when nothing could be embedded.
      */
-    fun convert(@Suppress("UNUSED_PARAMETER") tiffBytes: ByteArray): ByteArray? {
-        android.util.Log.w(
-            "LR",
-            "TiffToPdf: TIFF deed received but no decoder wired — see TiffToPdf.kt OPTION A/B",
-        )
-        return null
+    fun convert(tiffBytes: ByteArray): ByteArray? {
+        val doc = PDDocument()
+        var pages = 0
+        try {
+            for (p in 0 until MAX_PAGES) {
+                val img: PDImageXObject = try {
+                    CCITTFactory.createFromByteArray(doc, tiffBytes, p)
+                } catch (e: Exception) {
+                    // Page 0 failing = not a CCITT TIFF at all; a later page failing = end of file.
+                    if (p == 0) {
+                        android.util.Log.w("LR", "TiffToPdf: not embeddable (${e.javaClass.simpleName}: ${e.message})")
+                    }
+                    break
+                }
+                // Page box = the scan's own pixel size at 72dpi, so nothing is cropped or stretched.
+                val page = PDPage(PDRectangle(img.width.toFloat(), img.height.toFloat()))
+                doc.addPage(page)
+                PDPageContentStream(doc, page).use { cs ->
+                    cs.drawImage(img, 0f, 0f, img.width.toFloat(), img.height.toFloat())
+                }
+                pages++
+            }
+            if (pages == 0) return null
+            val out = ByteArrayOutputStream()
+            doc.save(out)
+            android.util.Log.i("LR", "TiffToPdf: embedded $pages TIFF page(s) -> ${out.size()} bytes")
+            return out.toByteArray()
+        } catch (e: Throwable) {
+            android.util.Log.w("LR", "TiffToPdf failed: ${e.javaClass.simpleName}: ${e.message}")
+            return null
+        } finally {
+            runCatching { doc.close() }
+        }
     }
 }

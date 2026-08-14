@@ -62,14 +62,18 @@ object EntriesStore {
     ) = withContext(Dispatchers.IO) {
         val dir = dir(context, district, taluka, village, surveyNo).apply { mkdirs() }
         // Drop any prior per-entry files + manifest — a stale entry set could otherwise linger.
-        dir.listFiles()?.forEach { if (it.name.startsWith("entry_") || it.name == MANIFEST) it.delete() }
+        // §4: the manifest is rewritten, but the entries themselves are NOT deleted.
+        // They are content-addressed in BlobStore and re-projected below, so a re-fetch
+        // tombstones LINKS, never bytes. Deleting here was a live data-loss risk: merging
+        // with an older database could lose a document only one machine ever had.
+        File(dir, MANIFEST).delete()
 
         val items = ArrayList<EntryItem>(captures.size)
         captures.forEach { c ->
             var fileName = ""
             c.pdf?.takeIf { it.isNotEmpty() }?.let {
                 fileName = "entry_${safeNumber(c.number)}.pdf"
-                File(dir, fileName).writeBytes(it)
+                BlobStore.ingest(context, it, File(dir, fileName))
             }
             items.add(EntryItem(number = c.number, red = c.red, file = fileName))
         }

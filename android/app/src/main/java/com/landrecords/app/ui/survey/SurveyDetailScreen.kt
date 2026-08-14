@@ -67,6 +67,7 @@ fun SurveyDetailScreen(
     onCases: (Long) -> Unit,
     onScans: (Long) -> Unit,
     onEntries: (Long) -> Unit,
+    onDeeds: (Long) -> Unit,
 ) {
     val app = landApp()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -109,6 +110,16 @@ fun SurveyDetailScreen(
         val sn = survey?.surveyNo
         entriesCount = if (sn != null && state.village.isNotBlank())
             com.landrecords.app.data.storage.EntriesStore.count(app, state.district, state.taluka, state.village, sn)
+        else 0
+    }
+
+    // Registered deeds ride the Integrated card (same AnyRoR page, captured in the same pass), so
+    // this count gates its pill. Re-read whenever the integrated record changes.
+    var deedCount by androidx.compose.runtime.remember { androidx.compose.runtime.mutableIntStateOf(0) }
+    androidx.compose.runtime.LaunchedEffect(state.village, survey?.surveyNo, integratedDocs) {
+        val sn = survey?.surveyNo
+        deedCount = if (sn != null && state.village.isNotBlank())
+            com.landrecords.app.data.storage.DeedsStore.count(app, state.district, state.taluka, state.village, sn)
         else 0
     }
 
@@ -180,7 +191,10 @@ fun SurveyDetailScreen(
             jantri?.let { j ->
                 item { JantriCard(j, com.landrecords.app.data.jantri.LandArea.toSqm(survey.area)) }
             }
-            items(RecordType.entries.toList()) { type ->
+            // DEEDS has no card of its own: it is a section of the Integrated page, captured in the
+            // same pass, and surfaces as a pill on the Integrated card. Its record row still exists
+            // (so the I·V·D·C stamp strip keeps working) — it just isn't separately fetchable.
+            items(RecordType.entries.filter { it != RecordType.DEEDS }) { type ->
                 val record = state.records[type]
                 RecordCard(
                     type = type,
@@ -223,6 +237,11 @@ fun SurveyDetailScreen(
                     onScans = if (type == RecordType.VF712) ({ onScans(surveyId) }) else null,
                     onEntries = if (type == RecordType.INTEGRATED && entriesCount > 0) ({ onEntries(surveyId) }) else null,
                     onViewAllEntries = if (type == RecordType.INTEGRATED && entriesCount > 0) ({ viewAllEntries() }) else null,
+                    // Only once the integrated record has actually been fetched — before that we
+                    // don't know whether this survey has deeds, and "No deeds" would be a lie.
+                    onDeeds = if (type == RecordType.INTEGRATED && state.records[RecordType.DEEDS] != null)
+                        ({ onDeeds(surveyId) }) else null,
+                    deedCount = deedCount,
                 )
             }
             item {

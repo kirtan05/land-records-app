@@ -72,6 +72,25 @@ class FetchViewModel(
         )
     }
 
+    /** Path of the PDF the last successful [fileCapture] wrote — reused for the deeds row. */
+    var lastFiledPdfPath: String? = null
+        private set
+
+    /**
+     * Record the deeds found during the INTEGRATED pass. Deeds are not fetched separately: they are
+     * a section of the same type-8 page, and the deed table is inside the integrated PDF — so the
+     * DEEDS row points at that same PDF (keeping the D stamp meaningful) while the per-deed detail
+     * lives in DeedsStore. [count] = 0 records "checked, none found" rather than "not fetched".
+     */
+    suspend fun recordDeeds(count: Int, pdfPath: String?) {
+        repo.saveFetchedRecord(
+            surveyId, RecordType.DEEDS,
+            docCount = count,
+            pdfPath = if (count > 0) pdfPath else null,
+            sourcePath = null,
+        )
+    }
+
     suspend fun markEmpty(type: RecordType) {
         repo.saveFetchedRecord(surveyId, type, docCount = 0, pdfPath = null, sourcePath = null)
     }
@@ -95,6 +114,7 @@ class FetchViewModel(
                 surveyNo = survey.surveyNo, type = type, pdfBytes = pdfBytes, rawHtml = rawHtml,
             )
             repo.saveFetchedRecord(surveyId, type, docCount = docCount, pdfPath = filed.pdfPath, sourcePath = filed.sourcePath)
+            lastFiledPdfPath = filed.pdfPath
             android.util.Log.i("LR", "fileCapture OK: pdf='${filed.pdfPath}' source='${filed.sourcePath}' (${pdfBytes.size} bytes)")
             true
         } catch (e: Exception) {

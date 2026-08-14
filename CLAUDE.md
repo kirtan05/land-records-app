@@ -18,10 +18,15 @@ Rules for this app's UI:
   land data is never translated — Gujarati numerals stay, with a Latin helper line.
 - Never invent land data. Unknown metadata renders `—`.
 - Both themes are first-class. All motion collapses under reduced-motion.
-- iRCMS CAPTCHA is **auto-solved** (deterministic SVG `<text>`-node parse — see
-  `tools/captcha/`); the human spotlight is only the fallback. AnyRoR CAPTCHA stays human:
+- **Both CAPTCHAs are auto-solved; the human spotlight is only the fallback.**
+  iRCMS: deterministic SVG `<text>`-node parse. AnyRoR: a CNN over the captcha PNG
+  (`tools/captcha/anyror_cnn_real.onnx`, 98.7% on a held-out test split, 14/14 accepted live
+  on 2026-08-14) — see `tools/captcha/README.md`. The captcha is baked into the page as a
+  data URI, so read `img#ContentPlaceHolder1_i_captcha_1`; never re-fetch it (that rotates it
+  and invalidates the one on screen). After 2 rejections, fall back to the human spotlight:
   pre-fill and lock the cascade fields, dim the rest of the page, spotlight only the code
   box and Get Record Detail.
+  (Until 2026-08-14 the AnyRoR captcha was human-only — the model did not exist yet.)
 
 Drop-in starting points: `design_handoff_land_records_ui/compose/{Color,Type,Dimens}.kt`
 and `strings-additions.xml`. These are implemented in `android/app/src/main/java/com/landrecords/app/ui/`
@@ -71,6 +76,34 @@ creates the release, rewrites `update.json` and prunes to the newest 3.
   — both are CDN-cached and serve the previous release for minutes. Use `gh api`.
 - AGP packages incrementally, so the script removes the APK output dir first; otherwise a
   slim build over a seeded one leaves the old bytes as dead space (34 MB inside 162 MB).
+
+## One database everywhere (`docs/specs/2026-08-14-unified-db-and-autofetch-design.md`)
+
+The laptop and the app share an identity layer so the same record scraped twice is one row.
+**Every rule is implemented twice — `src/identity.mjs` and `data/identity/Identity.kt` — and
+both are held to one fixture, `tools/identity/vectors.json`.** Change a rule in one place and
+you must change it in the other, add a vector, and run both:
+
+```bash
+node tools/identity/test.mjs          # tokenizer, uids, merge engine, §2 old-survey rules
+node tools/identity/test-sync.mjs     # export/import round-trip on real SQLite
+node tools/identity/convert-output.mjs --check   # converter idempotence over output/
+node tools/identity/probe-tokenizer.mjs          # tokenizer vs 15,293 real survey values
+cd android && ./gradlew :app:testDebugUnitTest   # the Kotlin half of the same fixture
+```
+
+- **Never strip characters out of a survey number.** The spec originally said to strip
+  `[^A-Z0-9_]`; measured, that fused 250 different surveys (eight Bharoda parcels onto `40_1`).
+  Gujarati letters are transliterated (`845/અ` → `845_A`) and `+`/`-` are kept. `probe-tokenizer`
+  must print **0 fused** — treat any other number as a data-corruption bug.
+- **Nothing that varies between two scrapes may enter a uid** — no timestamps, file paths, DOM
+  ordinals, `sr_no`, `case_index`, `selectIndex`. Those are payload columns.
+- **`mark` and `survey_link` are user-authored**: scrapers may never write them (auto-matching
+  may only propose `survey_link` *candidates*). A rejection is knowledge — it is stored, so
+  auto-matching cannot re-propose the same wrong link forever.
+- **Deletions are tombstones**, never physical: a physical delete resurrects on the next merge.
+- **Files are content-addressed** in `BlobStore`; `Documents/LandRecords/…` is a *projection*
+  with the same names dad already knows. A re-fetch tombstones links, never bytes.
 
 ## Land data rules beyond the UI
 

@@ -174,10 +174,18 @@ object IrcmsInjection {
 
     /**
      * Reads the cases + the viewnewcasestatus form token as JSON:
-     *   {token, cases:[{casekey, sr, caseNo, status, office, dtv, parties, survno}]}.
+     *   {token, cases:[{casekey, dataId, offcode, sr, caseNo, status, office, dtv, parties, survno}]}.
      * Columns (see [searchSurveyDirectJs] trHTML): 0 sr · 1 case_str · 2 office · 3 date ·
      * 4 survey · 5 parties · 6 view. `status` is parsed from the "(PENDING)/(DISPOSED)" suffix
      * in case_str; `caseNo` keeps the full case_str (lossless) so the UI can strip it for display.
+     *
+     * `dataId` is iRCMS's OWN case id, and it is the case's identity
+     * (docs/specs/2026-08-14-unified-db-and-autofetch-design.md §1.3, §5). It was already
+     * being read here to build `casekey`, but was never surfaced — so the app keyed cases on
+     * `caseNo|parties|office|dtv`, a string of display text that drifts with spacing and
+     * spelling, while the desktop scraper deduped on `data_id` (src/scrape.mjs:144). The two
+     * therefore could not collide, and the same case scraped on both machines would
+     * duplicate on merge. Surfacing it is what makes `caseUid()` agree across machines.
      */
     fun readCasesJs(): String = """
     (function(){
@@ -196,7 +204,8 @@ object IrcmsInjection {
           var skey=id?btoa(unescape(encodeURIComponent(str))):'';
           var cstr=tds[1]||'';
           var m=cstr.match(/\((PENDING|DISPOSED)\)/i);
-          return { casekey: skey, sr: tds[0]||'', caseNo: cstr, status: m?m[1].toUpperCase():'',
+          return { casekey: skey, dataId: id, offcode: off,
+                   sr: tds[0]||'', caseNo: cstr, status: m?m[1].toUpperCase():'',
                    office: tds[2]||'', dtv: tds[3]||'', parties: tds[5]||'', survno: tds[4]||'' };
         }).filter(function(c){ return c.casekey; });
         return JSON.stringify({ token: token, cases: cases });
@@ -356,6 +365,58 @@ object IrcmsInjection {
       var cs=getComputedStyle(c);
       return 'dir='+cs.direction+' align='+cs.textAlign+' bidi='+cs.unicodeBidi+' attr='+(c.getAttribute('dir')||'')+' type='+c.type+' cls='+(c.className||'');
     }catch(e){ return 'ERR:'+e.message; } })();
+    """.trimIndent()
+
+    /**
+     * Why did the server reject a code we read straight out of its own SVG?
+     *
+     * The iRCMS captcha is not an OCR problem: the image is a `data:image/svg+xml;base64` URI
+     * and the digits are the `<text>` node contents, so [autoSolveCaptchaJs] reads the exact
+     * characters the server rendered. A rejection therefore means one of two things, and this
+     * tells them apart:
+     *
+     *  1. **Stale code** — the server rotated the captcha after we read it (the cascade is AJAX
+     *     and the page's own `get_captcha()` swaps the img). Signature: `src` hash CHANGES
+     *     between the solve and the rejection, while `xs` look sane.
+     *  2. **Ordering** — glyphs positioned by `transform="translate(…)"` rather than an `x`
+     *     attribute make `parseFloat(null)` → 0 for every node, so the sort is a no-op and we
+     *     join in DOM order. Signature: `xs` are all `0` (or duplicated), and the SAME captcha
+     *     fails every time rather than intermittently.
+     *
+     * `srcHash` is a cheap rolling hash of the data URI — enough to say "the image changed",
+     * which is the whole question, without logging a base64 blob.
+     */
+    fun captchaParseDiagJs(): String = """
+    (function(){
+      try {
+        var img=document.querySelector('#captcha img[src^="data:image/svg+xml"], img[id*="captcha" i][src^="data:image/svg+xml"], img[src^="data:image/svg+xml;base64"]');
+        if(!img) return JSON.stringify({err:'no-img'});
+        var src=img.getAttribute('src')||'';
+        var h=0; for(var i=0;i<src.length;i++){ h=((h<<5)-h+src.charCodeAt(i))|0; }
+        var b64=src.split(',')[1]||'';
+        if(!b64) return JSON.stringify({err:'no-b64', srcHash:h});
+        var svg=atob(b64);
+        var doc=new DOMParser().parseFromString(svg,'image/svg+xml');
+        var nodes=Array.prototype.slice.call(doc.querySelectorAll('text'));
+        var ts=nodes.map(function(t){
+          return { x:parseFloat(t.getAttribute('x')||'0'),
+                   hasX:t.getAttribute('x')!==null,
+                   tr:t.getAttribute('transform')||'',
+                   ch:t.textContent||'' }; });
+        var domOrder=ts.map(function(t){return t.ch;}).join('');
+        var sorted=ts.slice().sort(function(a,b){return a.x-b.x;}).map(function(t){return t.ch;}).join('');
+        return JSON.stringify({
+          srcHash:h, n:nodes.length,
+          xs:ts.map(function(t){return t.x;}),
+          missingX:ts.filter(function(t){return !t.hasX;}).length,
+          transforms:ts.filter(function(t){return t.tr;}).length,
+          domOrder:domOrder, sorted:sorted,
+          // If these differ, the x-sort is doing real work and DOM order would have been wrong.
+          orderMatters:(domOrder!==sorted),
+          input:(document.getElementById('${Ircms.Ids.CAPTCHA}')||{}).value||''
+        });
+      } catch(e){ return JSON.stringify({err:String(e&&e.message||e)}); }
+    })();
     """.trimIndent()
 
     /** Poll target for [searchSurveyDirectJs]: 'READY' | 'EMPTY:<msg>' | 'ERROR' | 'WAIT'. */

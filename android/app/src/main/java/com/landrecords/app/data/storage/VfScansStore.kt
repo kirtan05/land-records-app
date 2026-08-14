@@ -64,14 +64,18 @@ object VfScansStore {
     ) = withContext(Dispatchers.IO) {
         val dir = dir(context, district, taluka, village, surveyNo).apply { mkdirs() }
         // Drop any prior per-scan files + manifest — a stale year set could otherwise linger.
-        dir.listFiles()?.forEach { if (it.name.startsWith("scan_") || it.name == MANIFEST) it.delete() }
+        // §4: the manifest is rewritten, but the VF-7/12 scans themselves are NOT deleted.
+        // They are content-addressed in BlobStore and re-projected below, so a re-fetch
+        // tombstones LINKS, never bytes. Deleting here was a live data-loss risk: merging
+        // with an older database could lose a document only one machine ever had.
+        File(dir, MANIFEST).delete()
 
         val entries = ArrayList<ScanEntry>(captures.size)
         captures.forEach { c ->
             var fileName = ""
             c.pdf?.takeIf { it.isNotEmpty() }?.let {
                 fileName = "scan_${c.index}.pdf"
-                File(dir, fileName).writeBytes(it)
+                BlobStore.ingest(context, it, File(dir, fileName))
             }
             entries.add(
                 ScanEntry(
@@ -120,6 +124,41 @@ object VfScansStore {
         val all = runCatching { fromJson(f.readText()) }.getOrDefault(emptyList())
         val updated = all.map { if (it.index.toString() == itemId) it.copy(mark = mark) else it }
         f.writeText(toJson(updated))
+    }
+
+    /**
+     * Remove every scan whose old-survey number matches [oldToken] (compared by canonical token,
+     * so `174/1` and `174/૧` are the same) from the manifest and delete its file. Returns how many
+     * were removed. The blob-store bytes are NOT touched — they are content-addressed, so if the
+     * user changes his mind the scan is re-projected for free.
+     */
+    suspend fun removeByOldSurvey(
+        context: Context,
+        district: String, taluka: String, village: String, surveyNo: String,
+        oldToken: String,
+    ): Int = withContext(Dispatchers.IO) {
+        val d = dir(context, district, taluka, village, surveyNo)
+        val f = File(d, MANIFEST)
+        if (!f.exists()) return@withContext 0
+        val all = runCatching { fromJson(f.readText()) }.getOrDefault(emptyList())
+        val (drop, keep) = all.partition {
+            com.landrecords.app.data.identity.Identity.surveyToken(it.oldSurvey) == oldToken
+        }
+        if (drop.isEmpty()) return@withContext 0
+        for (s in drop) if (s.file.isNotBlank()) runCatching { File(d, s.file).delete() }
+        f.writeText(toJson(keep))
+        drop.size
+    }
+
+    /** Distinct old-survey numbers in this survey's manifest, each with its scan count. */
+    suspend fun oldSurveyGroups(
+        context: Context,
+        district: String, taluka: String, village: String, surveyNo: String,
+    ): List<Pair<String, Int>> = withContext(Dispatchers.IO) {
+        read(context, district, taluka, village, surveyNo)
+            .groupBy { it.oldSurvey.ifBlank { "—" } }
+            .map { (old, scans) -> old to scans.size }
+            .sortedBy { it.first }
     }
 
     private fun toJson(entries: List<ScanEntry>): String {

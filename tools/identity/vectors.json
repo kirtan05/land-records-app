@@ -1,0 +1,963 @@
+{
+  "_readme": [
+    "Golden vectors for the canonical identity layer (docs/specs/2026-08-14-unified-db-and-autofetch-design.md §1).",
+    "This file is the CONTRACT between the two implementations:",
+    "  desktop  src/identity.mjs           — tested by  node tools/identity/test.mjs",
+    "  app      data/identity/Identity.kt  — tested by  cd android && ./gradlew :app:testDebugUnitTest",
+    "Both tests read THIS file. Neither has its own copy. If they disagree, the merge is broken.",
+    "Add a case here FIRST, then make both sides pass it.",
+    "Escapes: \\u0000 is the NULL-cell sentinel, \\u001f is the unit separator.",
+    "syncedCols/merge/nextUpdatedAt cover the §3 merge engine (src/merge.mjs and data/sync/MergeEngine.kt). A merge case with \"tiebreak\": true has no fixed expected action: the rule is only that BOTH implementations pick the same side, so each test asserts its own result equals greater-content-hash-wins.",
+    "oldSurveyMatch covers §2 (src/old-survey-match.mjs and data/sync/OldSurveyMatcher.kt)."
+  ],
+  "surveyToken": [
+    {
+      "in": "221/p",
+      "out": "221_P",
+      "why": "baseline"
+    },
+    {
+      "in": "221/પ",
+      "out": "221_P",
+      "why": "paiki letter folds to p"
+    },
+    {
+      "in": "૮૪૫",
+      "out": "845",
+      "why": "gujarati digits fold to ascii"
+    },
+    {
+      "in": "226/p૧ ~~ ",
+      "out": "226_P1",
+      "why": "exact <option value> form: ~~ marker + trailing space"
+    },
+    {
+      "in": "221 p",
+      "out": "221_P",
+      "why": "space is a separator, same as slash"
+    },
+    {
+      "in": "221|p",
+      "out": "221_P",
+      "why": "handwritten bar is a separator"
+    },
+    {
+      "in": "221\\p",
+      "out": "221_P",
+      "why": "backslash is a separator"
+    },
+    {
+      "in": "  /221/p/  ",
+      "out": "221_P",
+      "why": "leading/trailing slashes trimmed"
+    },
+    {
+      "in": "174/પૈકી1",
+      "out": "174_P1",
+      "why": "the full word paiki folds to p, not to 'pૈકી'"
+    },
+    {
+      "in": "174/પૈકી૧",
+      "out": "174_P1",
+      "why": "paiki word + gujarati digit"
+    },
+    {
+      "in": "2/પ",
+      "out": "2_P",
+      "why": "bare paiki with no number"
+    },
+    {
+      "in": "100/1/",
+      "out": "100_1",
+      "why": "the real output/ dir '100_1_' collapses"
+    },
+    {
+      "in": "101//3",
+      "out": "101_3",
+      "why": "the real output/ dir '101__3' collapses"
+    },
+    {
+      "in": "100_1_",
+      "out": "100_1",
+      "why": "re-tokenizing an existing dir name lands on the collapsed form"
+    },
+    {
+      "in": "101__3",
+      "out": "101_3",
+      "why": "same"
+    },
+    {
+      "in": "221_P",
+      "out": "221_P",
+      "why": "tokenizer is idempotent on its own output"
+    },
+    {
+      "in": "",
+      "out": "",
+      "why": "empty in, empty out"
+    },
+    {
+      "in": "   ",
+      "out": "",
+      "why": "whitespace only"
+    },
+    {
+      "in": "~~",
+      "out": "",
+      "why": "marker only"
+    },
+    {
+      "in": "p/1",
+      "out": "P1",
+      "why": "p/(?=digit) attaches before the underscore swap"
+    },
+    {
+      "in": "11/p૩ ~~ ",
+      "out": "11_P3",
+      "why": "real dropdown value"
+    },
+    {
+      "in": "21/૧ ~~ ",
+      "out": "21_1",
+      "why": "real dropdown value"
+    },
+    {
+      "in": "6/૧/અ",
+      "out": "6_1_A",
+      "why": "TRANSLITERATED, not stripped"
+    },
+    {
+      "in": "845/અ",
+      "out": "845_A",
+      "why": "the case the spec got wrong"
+    },
+    {
+      "in": "845/બ",
+      "out": "845_B",
+      "why": "...and its sibling, which must NOT share a token"
+    },
+    {
+      "in": "1678",
+      "out": "1678",
+      "why": "a bare survey"
+    },
+    {
+      "in": "1678/અ",
+      "out": "1678_A",
+      "why": "...must not fuse with its own sub-parcel (real Bharoda pair)"
+    },
+    {
+      "in": "40/1/હ",
+      "out": "40_1_H",
+      "why": "one of eight real 40/1 sub-parcels in Bharoda"
+    },
+    {
+      "in": "40/1ગ",
+      "out": "40_1G",
+      "why": "another, with no separator before the letter"
+    },
+    {
+      "in": "602/૨/p૨/એ",
+      "out": "602_2_P2_E",
+      "why": "independent vowel suffix"
+    },
+    {
+      "in": "602/૨/p૧/બી",
+      "out": "602_2_P1_BII",
+      "why": "consonant + dependent vowel sign"
+    },
+    {
+      "in": "4-અ",
+      "out": "4_A",
+      "why": "a dash before a letter is a suffix delimiter, like /"
+    },
+    {
+      "in": "4-બ",
+      "out": "4_B",
+      "why": "...so 4, 4-અ and 4-બ stay three surveys"
+    },
+    {
+      "in": "4",
+      "out": "4",
+      "why": "the bare one"
+    },
+    {
+      "in": "15-અ-P",
+      "out": "15_A_P",
+      "why": "two suffix dashes"
+    },
+    {
+      "in": "690-૬૯૬/p૧",
+      "out": "690-696_P1",
+      "why": "a dash BETWEEN DIGITS is a range and survives"
+    },
+    {
+      "in": "690/696/p1",
+      "out": "690_696_P1",
+      "why": "...and is not the same survey as the slashed form"
+    },
+    {
+      "in": "364+૩૬૫+૩૬૬",
+      "out": "364+365+366",
+      "why": "'+' means combined; not the same parcel as 364"
+    },
+    {
+      "in": "364",
+      "out": "364",
+      "why": "the component on its own"
+    },
+    {
+      "in": "99",
+      "out": "99",
+      "why": "a bare survey"
+    },
+    {
+      "in": "99.",
+      "out": "99U002E",
+      "why": "both are real options in one village; kept distinct on purpose (README)"
+    },
+    {
+      "in": "658થી ૬૬૩",
+      "out": "658THII_663",
+      "why": "the range word 'થી' transliterates like any other letters"
+    }
+  ],
+  "placeId": [
+    {
+      "district": "15",
+      "taluka": "03",
+      "village": "029",
+      "out": "gj:15:03:029",
+      "why": "coded place"
+    },
+    {
+      "district": "15",
+      "taluka": "3",
+      "village": "29",
+      "out": "gj:15:03:029",
+      "why": "zero-padding is normalized in, never trusted from the caller"
+    },
+    {
+      "district": "7",
+      "taluka": "12",
+      "village": "1",
+      "out": "gj:07:12:001",
+      "why": "each level pads to its own width"
+    }
+  ],
+  "provisionalPlaceId": [
+    {
+      "district": "Anand",
+      "taluka": "Umreth",
+      "village": "Bharoda",
+      "out": "gj?:d50293105648",
+      "why": "legacy name-derived id"
+    },
+    {
+      "district": "  ANAND ",
+      "taluka": "umreth",
+      "village": "BhaRoda",
+      "out": "gj?:d50293105648",
+      "why": "case- and whitespace-insensitive: two machines must land on the same id"
+    },
+    {
+      "district": "Anand",
+      "taluka": "Umreth",
+      "village": "Bharoda  Extra",
+      "out": "gj?:09a895b8fb4d",
+      "why": "internal whitespace runs collapse to one space but are not removed"
+    },
+    {
+      "district": "ખેડા",
+      "taluka": "નડિયાદ",
+      "village": "નડિયાદ ગ્રામ્ય",
+      "out": "gj?:2dbf8fe74f3d",
+      "why": "gujarati names are NOT transliterated — a provisional id is per-spelling by design"
+    }
+  ],
+  "surveyUid": [
+    {
+      "placeId": "gj:15:03:029",
+      "survey": "221/p",
+      "out": "gj:15:03:029/221_P",
+      "why": "readable, not hashed"
+    },
+    {
+      "placeId": "gj:15:03:029",
+      "survey": "226/p૧ ~~ ",
+      "out": "gj:15:03:029/226_P1",
+      "why": "raw dropdown value tokenizes on the way in"
+    }
+  ],
+  "uid": [
+    {
+      "kind": "rs",
+      "parts": [
+        "gj:15:03:029/221_P",
+        "INTEGRATED"
+      ],
+      "out": "rs_9ae5adde56dd6b2cf2446eef",
+      "why": "record set"
+    },
+    {
+      "kind": "ic",
+      "parts": [
+        "gj:15:03:029/221_P",
+        "ircms",
+        "1234567"
+      ],
+      "out": "ic_81630b7c88d634580eebca98",
+      "why": "iRCMS case keyed on data_id, never on display text"
+    },
+    {
+      "kind": "io",
+      "parts": [
+        "ic_81630b7c88d634580eebca98",
+        "0"
+      ],
+      "out": "io_45d46c69a55e1e61103a9d8b",
+      "why": "order, by ordinal within its case"
+    },
+    {
+      "kind": "vs",
+      "parts": [
+        "gj:15:03:029/221_P",
+        "vf712",
+        "1951-1960",
+        "1",
+        "",
+        ""
+      ],
+      "out": "vs_e0781ea69eaf5fe4173d2d09",
+      "why": "empty parts stay significant and are still separated"
+    },
+    {
+      "kind": "en",
+      "parts": [
+        "gj:15:03:029/221_P",
+        "entry",
+        "4521"
+      ],
+      "out": "en_025967ee46f89f66777613fb",
+      "why": "VF-6 entry"
+    },
+    {
+      "kind": "dd",
+      "parts": [
+        "gj:15:03:029",
+        "deed",
+        "Anand",
+        "2022",
+        "438"
+      ],
+      "out": "dd_e528ee7c65a68aa2e074f5ed",
+      "why": "a deed is keyed on place+office+year+no, NOT on survey"
+    },
+    {
+      "kind": "sl",
+      "parts": [
+        "gj:15:03:029/221_P",
+        "221_1"
+      ],
+      "out": "sl_ac5235479f74185efadd6af3",
+      "why": "survey_link uid is the pair, so a rejection merges across machines"
+    }
+  ],
+  "canonicalCell": [
+    {
+      "in": null,
+      "out": "\u0000",
+      "why": "NULL is a distinct value, not the empty string"
+    },
+    {
+      "in": "",
+      "out": "",
+      "why": "empty string"
+    },
+    {
+      "in": "abc",
+      "out": "abc",
+      "why": "string passthrough"
+    },
+    {
+      "in": 0,
+      "out": "0",
+      "why": "integer"
+    },
+    {
+      "in": -12,
+      "out": "-12",
+      "why": "negative integer"
+    },
+    {
+      "in": 1755100000000,
+      "out": "1755100000000",
+      "why": "epoch millis stays exact — no float notation"
+    },
+    {
+      "in": true,
+      "out": "1",
+      "why": "bool true"
+    },
+    {
+      "in": false,
+      "out": "0",
+      "why": "bool false"
+    }
+  ],
+  "contentHash": [
+    {
+      "cols": [
+        "a",
+        "b"
+      ],
+      "out": "f04cdced9736a69da6103f08a4daaf8c485dd481217d218a1b4993c8c3968e13",
+      "why": "two plain strings"
+    },
+    {
+      "cols": [
+        "a",
+        null,
+        "b"
+      ],
+      "out": "d921a532282d5a7310bd01db6322020933a6307b733c665043b9023eb0b6e6c5",
+      "why": "NULL cell"
+    },
+    {
+      "cols": [
+        "a",
+        "",
+        "b"
+      ],
+      "out": "3aa8909cac0696919c2cc255ee0dbcc632b90ddcdc8a7fd54836d34d61dd645c",
+      "why": "empty cell — MUST differ from the NULL row above"
+    },
+    {
+      "cols": [],
+      "out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "why": "no columns = sha256 of the empty string"
+    },
+    {
+      "cols": [
+        "221_P",
+        1755100000000,
+        true,
+        null
+      ],
+      "out": "0a73546e92d1504474ca9d4c1a5ad6d82331c582a0a563685e141a8f01881e71",
+      "why": "mixed types exercise canonicalCell"
+    }
+  ],
+  "syncedCols": {
+    "tables": [
+      "place",
+      "place_name",
+      "place_merge",
+      "survey",
+      "survey_alias",
+      "survey_link",
+      "record_set",
+      "ircms_case",
+      "ircms_order",
+      "vf_scan",
+      "entry",
+      "deed",
+      "deed_party",
+      "deed_link",
+      "blob",
+      "mark"
+    ],
+    "cols": {
+      "place": [
+        "district_code",
+        "taluka_code",
+        "village_code",
+        "deleted"
+      ],
+      "place_name": [
+        "place_id",
+        "script",
+        "source",
+        "name",
+        "deleted"
+      ],
+      "place_merge": [
+        "from_place_id",
+        "to_place_id",
+        "deleted"
+      ],
+      "survey": [
+        "place_id",
+        "token",
+        "survey_no",
+        "area",
+        "assessment",
+        "tenure",
+        "land_use",
+        "as_of",
+        "deleted"
+      ],
+      "survey_alias": [
+        "survey_uid",
+        "raw",
+        "source",
+        "deleted"
+      ],
+      "survey_link": [
+        "current_survey_uid",
+        "old_token",
+        "state",
+        "source",
+        "deleted"
+      ],
+      "record_set": [
+        "survey_uid",
+        "record_type",
+        "doc_count",
+        "as_of",
+        "deleted"
+      ],
+      "ircms_case": [
+        "survey_uid",
+        "data_id",
+        "case_no",
+        "case_status",
+        "office",
+        "dtv",
+        "parties",
+        "survno",
+        "disposal_date",
+        "disposal_type",
+        "no_appellant",
+        "court_no",
+        "deleted"
+      ],
+      "ircms_order": [
+        "case_uid",
+        "ordinal",
+        "blob_sha",
+        "deleted"
+      ],
+      "vf_scan": [
+        "survey_uid",
+        "period",
+        "thok",
+        "block",
+        "old_survey",
+        "blob_sha",
+        "deleted"
+      ],
+      "entry": [
+        "survey_uid",
+        "entry_number",
+        "entry_date",
+        "entry_type",
+        "detail",
+        "blob_sha",
+        "deleted"
+      ],
+      "deed": [
+        "place_id",
+        "office",
+        "doc_year",
+        "doc_no",
+        "doc_date",
+        "doc_type",
+        "detail",
+        "deleted"
+      ],
+      "deed_party": [
+        "deed_uid",
+        "party_type",
+        "party_name",
+        "ordinal",
+        "deleted"
+      ],
+      "deed_link": [
+        "deed_uid",
+        "survey_uid",
+        "deleted"
+      ],
+      "blob": [
+        "size",
+        "mime",
+        "deleted"
+      ],
+      "mark": [
+        "target_uid",
+        "color",
+        "deleted"
+      ]
+    },
+    "meta": [
+      "uid",
+      "content_hash",
+      "updated_at",
+      "origin",
+      "deleted"
+    ],
+    "userAuthored": [
+      "mark",
+      "survey_link"
+    ],
+    "linkStates": [
+      "candidate",
+      "confirmed",
+      "rejected",
+      "manual"
+    ]
+  },
+  "merge": [
+    {
+      "table": "survey",
+      "local": null,
+      "incoming": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "updated_at": 100
+      },
+      "out": "INSERT",
+      "why": "absent locally"
+    },
+    {
+      "table": "survey",
+      "local": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "updated_at": 100
+      },
+      "incoming": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "updated_at": 999
+      },
+      "out": "NOOP",
+      "why": "IDEMPOTENCE: same content wins over a newer clock — re-importing the same export changes nothing"
+    },
+    {
+      "table": "survey",
+      "local": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "area": "1-2-3",
+        "updated_at": 100
+      },
+      "incoming": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "area": "9-9-9",
+        "updated_at": 200
+      },
+      "out": "UPDATE",
+      "why": "newer content wins"
+    },
+    {
+      "table": "survey",
+      "local": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "area": "9-9-9",
+        "updated_at": 200
+      },
+      "incoming": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "area": "1-2-3",
+        "updated_at": 100
+      },
+      "out": "KEEP_LOCAL",
+      "why": "older content loses"
+    },
+    {
+      "table": "survey",
+      "local": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "area": "aaa",
+        "updated_at": 500
+      },
+      "incoming": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "area": "bbb",
+        "updated_at": 500
+      },
+      "out": null,
+      "tiebreak": true,
+      "why": "TIEBREAK: equal timestamps -> greater content_hash wins; both machines must pick the SAME side"
+    },
+    {
+      "table": "survey",
+      "local": {
+        "uid": "x1",
+        "deleted": 0,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "updated_at": 100
+      },
+      "incoming": {
+        "uid": "x1",
+        "deleted": 1,
+        "place_id": "gj:15:03:029",
+        "token": "221_P",
+        "updated_at": 200
+      },
+      "out": "UPDATE",
+      "why": "a tombstone is content: `deleted` is inside the hash, so it merges like any change"
+    },
+    {
+      "table": "survey_link",
+      "local": {
+        "uid": "x1",
+        "deleted": 0,
+        "current_survey_uid": "gj:15:03:029/174_P1",
+        "old_token": "174_1",
+        "state": "rejected",
+        "updated_at": 100
+      },
+      "incoming": {
+        "uid": "x1",
+        "deleted": 0,
+        "current_survey_uid": "gj:15:03:029/174_P1",
+        "old_token": "174_1",
+        "state": "candidate",
+        "updated_at": 900
+      },
+      "out": "REJECTED",
+      "why": "a candidate may NEVER overwrite a rejection, however new — else auto-matching re-proposes the same wrong link forever"
+    },
+    {
+      "table": "survey_link",
+      "local": {
+        "uid": "x1",
+        "deleted": 0,
+        "current_survey_uid": "gj:15:03:029/174_P1",
+        "old_token": "174_1",
+        "state": "candidate",
+        "updated_at": 100
+      },
+      "incoming": {
+        "uid": "x1",
+        "deleted": 0,
+        "current_survey_uid": "gj:15:03:029/174_P1",
+        "old_token": "174_1",
+        "state": "confirmed",
+        "updated_at": 200
+      },
+      "out": "UPDATE",
+      "why": "the user curating a candidate is a normal write"
+    },
+    {
+      "table": "survey_link",
+      "local": {
+        "uid": "x1",
+        "deleted": 0,
+        "current_survey_uid": "gj:15:03:029/174_P1",
+        "old_token": "174_1",
+        "state": "confirmed",
+        "updated_at": 100
+      },
+      "incoming": {
+        "uid": "x1",
+        "deleted": 0,
+        "current_survey_uid": "gj:15:03:029/174_P1",
+        "old_token": "174_1",
+        "state": "confirmed",
+        "updated_at": 100
+      },
+      "out": "NOOP",
+      "why": "the same decision made on the laptop and the phone is ONE row that merges to one row"
+    },
+    {
+      "table": "survey_link",
+      "local": null,
+      "incoming": {
+        "uid": "x1",
+        "deleted": 0,
+        "current_survey_uid": "gj:15:03:029/174_P1",
+        "old_token": "174_2",
+        "state": "candidate",
+        "updated_at": 100
+      },
+      "out": "INSERT",
+      "why": "auto-matching may propose a brand-new candidate"
+    }
+  ],
+  "nextUpdatedAt": [
+    {
+      "now": 1000,
+      "localMax": 500,
+      "out": 1000,
+      "why": "a healthy clock is used as-is"
+    },
+    {
+      "now": 100,
+      "localMax": 500,
+      "out": 501,
+      "why": "SLOW CLOCK: local_max+1, so a behind device does not lose every write"
+    },
+    {
+      "now": 500,
+      "localMax": 500,
+      "out": 501,
+      "why": "same millisecond still advances, so two writes never tie"
+    }
+  ],
+  "oldSurveyMatch": {
+    "fetchWithoutAsking": 5,
+    "cases": [
+      {
+        "current": "174/p1",
+        "options": [
+          "174",
+          "174/1",
+          "174/2"
+        ],
+        "rankedTokens": [
+          "174",
+          "174_1",
+          "174_2"
+        ],
+        "fetchNow": 3,
+        "mustAsk": false,
+        "why": "<=5 candidates: fetch all of them, then ask"
+      },
+      {
+        "current": "174/p1",
+        "options": [
+          "174/પૈકી1",
+          "174",
+          "174/1"
+        ],
+        "rankedTokens": [
+          "174_P1",
+          "174",
+          "174_1"
+        ],
+        "fetchNow": 3,
+        "mustAsk": false,
+        "why": "an EXACT token match ranks first however the site spelled it"
+      },
+      {
+        "current": "174/p1",
+        "options": [
+          "999",
+          "174",
+          "180",
+          "174/1",
+          "174/2",
+          "176",
+          "175"
+        ],
+        "rankedTokens": [
+          "174",
+          "174_1",
+          "174_2",
+          "175",
+          "176",
+          "180",
+          "999"
+        ],
+        "fetchNow": 5,
+        "mustAsk": true,
+        "why": ">5: fetch the first 5, then ask before the rest — a wide match must not become 20 captchas"
+      },
+      {
+        "current": "174/p1",
+        "options": [
+          "174",
+          "174 ~~ ",
+          "174/1"
+        ],
+        "rankedTokens": [
+          "174",
+          "174_1"
+        ],
+        "fetchNow": 2,
+        "mustAsk": false,
+        "why": "the same old number spelled twice is ONE candidate, not two fetches"
+      },
+      {
+        "current": "174/p1",
+        "options": [
+          "abc",
+          "174"
+        ],
+        "rankedTokens": [
+          "174",
+          "ABC"
+        ],
+        "fetchNow": 2,
+        "mustAsk": false,
+        "why": "a non-numeric option sorts last rather than pretending to be near anything"
+      },
+      {
+        "current": "174/p1",
+        "options": [],
+        "rankedTokens": [],
+        "fetchNow": 0,
+        "mustAsk": false,
+        "why": "no options at all"
+      }
+    ],
+    "needsDecision": [
+      {
+        "ranked": [
+          "174",
+          "174_1",
+          "174_2"
+        ],
+        "existing": {
+          "174_1": "rejected",
+          "174_2": "confirmed"
+        },
+        "out": [
+          "174"
+        ],
+        "why": "RULE 1: a rejected candidate is never re-offered — else auto-matching re-proposes it forever"
+      },
+      {
+        "ranked": [
+          "174",
+          "174_1"
+        ],
+        "existing": {},
+        "out": [
+          "174",
+          "174_1"
+        ],
+        "why": "nothing curated yet, so everything needs a decision"
+      },
+      {
+        "ranked": [
+          "174"
+        ],
+        "existing": {
+          "174": "candidate"
+        },
+        "out": [
+          "174"
+        ],
+        "why": "a stale candidate still needs a decision"
+      }
+    ]
+  }
+}

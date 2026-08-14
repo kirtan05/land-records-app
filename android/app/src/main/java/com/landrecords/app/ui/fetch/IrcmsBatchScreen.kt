@@ -223,7 +223,7 @@ fun IrcmsBatchScreen(
                             }
                             captures.add(
                                 CasesStore.CaseCapture(
-                                    sr = c.sr, caseNo = c.caseNo, status = c.status, office = c.office,
+                                    sr = c.sr, dataId = c.dataId, caseNo = c.caseNo, status = c.status, office = c.office,
                                     dtv = c.dtv, parties = c.parties, survno = c.survno,
                                     detailPdf = pdf.takeIf { it.isNotEmpty() }, orderPdf = orderPdf,
                                 ),

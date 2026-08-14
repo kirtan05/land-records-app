@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Label
 import androidx.compose.material.icons.outlined.Map
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.Sync
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -80,6 +81,7 @@ fun LibraryScreen(
     onSettings: () -> Unit,
     onMarked: () -> Unit,
     onMaps: () -> Unit,
+    onFetchStatus: () -> Unit,
 ) {
     val app = landApp()
     val appState = app.appState
@@ -122,7 +124,9 @@ fun LibraryScreen(
                         Text(Lr(R.string.library_title_gu, R.string.library_title_en), style = LandType.screenTitle, color = Land.colors.ink)
                         Text(subline, style = LandType.label, color = Land.colors.ink3)
                     }
-                    LanguagePill(badge = lang.badge(), onClick = { appState.cycleLang() })
+                    // Language moved into Settings; Fetch status lives here in the top bar so
+                    // background-fetch progress is one tap away from the library.
+                    SquareIconButton(Icons.Outlined.Sync, onFetchStatus, contentDescription = "Fetch status")
                     Spacer(Modifier.width(8.dp))
                     SquareIconButton(Icons.AutoMirrored.Outlined.Label, onMarked, contentDescription = "Marked records")
                     Spacer(Modifier.width(8.dp))

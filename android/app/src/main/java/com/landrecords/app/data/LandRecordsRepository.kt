@@ -20,7 +20,15 @@ data class SurveyWithCounts(
  * records for (Bharoda) plus the queued ones (Sundalpura, Valetva) so browse works with zero network.
  * Real fetched records replace/augment these rows as the WebView engine files them.
  */
-class LandRecordsRepository(private val db: AppDatabase) {
+class LandRecordsRepository(
+    private val db: AppDatabase,
+    /**
+     * Application context, used only to queue background fetches (§6). Nullable so the
+     * repository stays constructible in tests and previews without an Android context —
+     * when it is absent, adding a property simply does not auto-fetch.
+     */
+    private val appContext: android.content.Context? = null,
+) {
 
     fun observeProperties(): Flow<List<PropertyEntity>> = db.propertyDao().observeAll()
     fun observeSurveys(propertyId: Long): Flow<List<SurveyEntity>> = db.surveyDao().observeForProperty(propertyId)
@@ -137,7 +145,35 @@ class LandRecordsRepository(private val db: AppDatabase) {
             db.surveyDao().upsert(SurveyEntity(propertyId = propId, surveyNo = no, normalized = tok))
             added.add(no)
         }
+        // §6: when a property is added, everything is fetched automatically — integrated +
+        // VF-6 entries + deeds (one AnyRoR page yields all three), VF-7/12, and iRCMS cases.
+        // Only the NEWLY added surveys are queued: re-adding a village must not re-fetch every
+        // survey already held. Enqueueing is idempotent, so a retry cannot duplicate work.
+        if (added.isNotEmpty()) queueAutoFetch(propId, added)
         return AddResult(propId, added, duplicates)
+    }
+
+    /**
+     * Queue every record type for the newly added surveys and wake the fetch service (§6).
+     *
+     * Best-effort by design: if the service cannot start (no notification permission, or the
+     * OS refuses a foreground service right now) the QUEUE ROWS ARE STILL WRITTEN, so the work
+     * is picked up on the next start rather than lost. Failing to queue must never fail the
+     * add — the user's property is saved either way.
+     */
+    private suspend fun queueAutoFetch(propertyId: Long, surveyNos: List<String>) {
+        val context = appContext ?: return
+        runCatching {
+            val property = db.propertyDao().byId(propertyId) ?: return
+            val placeId = com.landrecords.app.data.sync.LegacyMigration.placeIdOf(context, property)
+            for (no in surveyNos) {
+                val surveyUid = com.landrecords.app.data.identity.Identity.surveyUid(placeId, no)
+                com.landrecords.app.fetch.FetchQueue.enqueue(
+                    context, surveyUid, com.landrecords.app.fetch.FetchService.ALL_TYPES,
+                )
+            }
+            com.landrecords.app.fetch.FetchService.start(context)
+        }.onFailure { android.util.Log.w("LR", "auto-fetch queueing failed: ${it.message}") }
     }
 
     suspend fun recordFor(surveyId: Long, type: RecordType): RecordEntity? =
@@ -243,8 +279,16 @@ class LandRecordsRepository(private val db: AppDatabase) {
         }
     }
 
+    /**
+     * The canonical survey token — docs/specs/2026-08-14-unified-db-and-autofetch-design.md §1.2.
+     *
+     * This used to be its own one-liner (uppercase, `/`→`_`) which disagreed with the desktop
+     * scraper's tokenizer: `૮૪૫/અ` produced two different strings, so the same survey scraped on
+     * the phone and on the laptop could never merge. Both sides now call one implementation,
+     * held to `tools/identity/vectors.json`.
+     */
     private fun tokenOf(surveyNo: String): String =
-        surveyNo.trim().uppercase().replace('/', '_').replace(" ", "")
+        com.landrecords.app.data.identity.Identity.surveyToken(surveyNo)
 
     /**
      * Case/space-insensitive identity of a place. When the shipped cascade catalogue can resolve

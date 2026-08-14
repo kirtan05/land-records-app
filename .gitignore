@@ -80,3 +80,10 @@ backups/
 # ejamin generated catalogues (15 MB, regenerable via scrape-catalog.mjs)
 tools/ejamin/out/
 anyrorintegrated.html
+
+# ============ Captcha training data + models (large, local, regenerable) ============
+tools/captcha/samples/
+tools/captcha/kaggle/
+*.weights
+*.onnx
+android/app/src/androidTest/assets/captcha_samples/

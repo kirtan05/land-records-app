@@ -35,8 +35,12 @@ object DeedsDownloader {
     private const val DESKTOP_UA =
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
 
-    /** One captured deed: the PDF bytes + the row metadata (for logging / future naming). */
-    data class Deed(val index: Int, val label: String, val pdf: ByteArray)
+    /**
+     * One captured deed: the PDF bytes + the row metadata.
+     * [id] matches [com.landrecords.app.data.storage.DeedsStore.Deed.id] (office|year|no) so a
+     * downloaded scan can be attached to the right row of the deeds manifest.
+     */
+    data class Deed(val index: Int, val id: String, val label: String, val pdf: ByteArray)
 
     /**
      * Fetch every deed described by [deedFormJson] (the output of [DeedsInjection.deedFormJs]),
@@ -51,10 +55,17 @@ object DeedsDownloader {
             val baseFields = o.getJSONObject("fields")
             val deeds = o.getJSONArray("deeds")
             val cookie = CookieManager.getInstance().getCookie(action) ?: ""
+            // The grid prints one ROW PER PARTY, so the same document carries several "View Deed"
+            // links. Fetch each document once — three POSTs for one scan is pure waste on a site
+            // we're deliberately gentle with.
+            val fetched = HashSet<String>()
             for (i in 0 until deeds.length()) {
                 val d = deeds.getJSONObject(i)
                 val target = d.optString("eventTarget")
                 if (target.isBlank()) continue
+                val docKey = listOf(d.optString("office").trim(), d.optString("docYear").trim(), d.optString("docNo").trim())
+                    .joinToString("|")
+                if (!fetched.add(docKey)) continue
                 val arg = d.optString("eventArgument", "")
                 val label = listOf(d.optString("docNo"), d.optString("docYear"))
                     .filter { it.isNotBlank() }.joinToString("/").ifBlank { "deed_${i + 1}" }
@@ -68,7 +79,7 @@ object DeedsDownloader {
                 if (pdf == null) {
                     android.util.Log.w("LR", "deed[$i] '$label' could not convert (${magic(bytes)}) — skipped"); continue
                 }
-                out.add(Deed(i, label, pdf))
+                out.add(Deed(i, docKey, label, pdf))
             }
         } catch (e: Exception) {
             android.util.Log.w("LR", "deed fetchAll failed: ${e.message}")

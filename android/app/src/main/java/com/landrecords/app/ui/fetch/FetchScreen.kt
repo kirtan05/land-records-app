@@ -60,6 +60,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import org.json.JSONObject
 
@@ -103,6 +104,52 @@ fun FetchScreen(
     // for the post-submit postback) — a blocking buffer covers the WebView so a stray tap or
     // Back can't derail the machine. Cleared only when the CAPTCHA spotlight is up for the user.
     var working by remember { mutableStateOf(true) }
+
+    // ── On-device CAPTCHA solver ──────────────────────────────────────────────────────
+    // Built ONCE (it loads a ~3 MB weights asset) and closed with the screen. A wrong read is
+    // self-correcting — the site just rejects it — so we never gate on confidence, we submit
+    // and retry. After MAX_CAPTCHA_ATTEMPTS the human spotlight takes over unchanged.
+    val solver = remember {
+        runCatching { com.landrecords.app.captcha.CaptchaCnn(app) }
+            .onFailure { android.util.Log.w("LR", "captcha solver unavailable: ${it.message}") }
+            .getOrNull()
+    }
+    androidx.compose.runtime.DisposableEffect(Unit) { onDispose { solver?.close() } }
+    var captchaAttempts by remember { mutableIntStateOf(0) }
+
+    /**
+     * Reads the CAPTCHA straight out of the DOM (never re-fetches its URL — that would rotate
+     * the code), solves it on-device and submits. Returns true if a submit was fired.
+     */
+    suspend fun autoSolveCaptcha(wv: WebView): Boolean {
+        val cnn = solver ?: return false
+        if (captchaAttempts >= MAX_CAPTCHA_ATTEMPTS) return false
+        val b64 = WebViewCapture.eval(wv, AnyRorInjection.captchaImageJs()).trim()
+        if (b64.isBlank() || b64 == "NONE" || b64 == "null") {
+            android.util.Log.i("LR", "captcha: no data-URI image on the page — human fallback")
+            return false
+        }
+        val png = runCatching { android.util.Base64.decode(b64, android.util.Base64.DEFAULT) }.getOrNull()
+        if (png == null || png.isEmpty()) return false
+        val t0 = System.currentTimeMillis()
+        val (code, conf) = withContext(Dispatchers.Default) { cnn.solve(png) }
+        val clean = code.filter { it.isDigit() }
+        android.util.Log.i("LR", "captcha solved '$clean' conf=$conf in ${System.currentTimeMillis() - t0} ms " +
+            "(attempt ${captchaAttempts + 1}/$MAX_CAPTCHA_ATTEMPTS)")
+        if (clean.length < 4) return false
+        captchaAttempts++
+        submitPageLoaded = pageLoaded
+        awaitingDetail = true
+        working = true
+        val r = WebViewCapture.eval(wv, AnyRorInjection.solveAndSubmitJs(clean))
+        if (r != "OK") {
+            android.util.Log.w("LR", "captcha submit failed: $r")
+            awaitingDetail = false
+            submitPageLoaded = -1
+            return false
+        }
+        return true
+    }
 
     val surveyDropId = when (recordType) {
         RecordType.VF712 -> AnyRor.Ids.SURVEY_VF712
@@ -196,6 +243,19 @@ fun FetchScreen(
                         // restyles it, so we know which entries are RED (have a scan to download).
                         val entries = if (recordType == RecordType.INTEGRATED)
                             parseEntryRows(WebViewCapture.eval(wv, EntriesInjection.entryListJs())) else emptyList()
+                        // Deeds are a SECTION of this same type-8 page (Sub registrar Deed Details),
+                        // so read them here too — as DATA, from the pristine DOM. It must stay a pure
+                        // read: DeedsInjection.deedCaptureJs replaces document.body, which would
+                        // destroy the __doPostBack form the per-entry capture below needs.
+                        val deeds = if (recordType == RecordType.INTEGRATED)
+                            com.landrecords.app.data.storage.DeedsStore.parse(
+                                WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedRowsJs()),
+                            ) else emptyList()
+                        // The "View Deed" postback form, read while the DOM is still intact. The
+                        // download itself is replayed from Kotlin with the session cookies, so it
+                        // never touches the page (safe to run alongside the entry postbacks).
+                        val deedForm = if (deeds.isNotEmpty())
+                            WebViewCapture.eval(wv, com.landrecords.app.web.DeedsInjection.deedFormJs()) else "NONE"
                         WebViewCapture.eval(wv, AnyRorInjection.cleanupJs(
                             districtEn = i.district, talukaEn = i.taluka, villageEn = i.village, surveyNo = i.surveyNo,
                         ))
@@ -213,6 +273,26 @@ fun FetchScreen(
                         val pdf = WebViewCapture.renderPdf(wv, app.cacheDir)
                         vm.setPhase(FetchPhase.FILING)
                         val ok = vm.fileCapture(recordType, pdf, html)
+                        if (ok && recordType == RecordType.INTEGRATED) {
+                            // Same page, same pass: persist the deed rows and record the DEEDS
+                            // row (0 = checked-and-none, so the card reads "No deeds" instead of
+                            // "not fetched"). Never fatal — the integrated PDF is already filed.
+                            runCatching {
+                                // Try the scanned deed files too. Usually the GARVI server answers
+                                // "Document Record Not Found" (and a TIFF still needs a decoder —
+                                // see TiffToPdf.kt), so an empty result here is the normal case and
+                                // must never cost us the deed DETAILS.
+                                val scans = if (deeds.isNotEmpty() && deedForm != "NONE")
+                                    com.landrecords.app.web.DeedsDownloader.fetchAll(deedForm, app.cacheDir)
+                                        .associate { it.id to it.pdf }
+                                else emptyMap()
+                                com.landrecords.app.data.storage.DeedsStore.save(
+                                    app, i.district, i.taluka, i.village, i.surveyNo, deeds, scans,
+                                )
+                                vm.recordDeeds(deeds.size, vm.lastFiledPdfPath)
+                                android.util.Log.i("LR", "deeds: ${deeds.size} document(s), ${scans.size} scan(s)")
+                            }.onFailure { android.util.Log.w("LR", "deeds save failed: ${it.message}") }
+                        }
                         if (ok) {
                             val reds = entries.filter { it.red }
                             if (recordType == RecordType.INTEGRATED && reds.isNotEmpty()) {
@@ -282,10 +362,19 @@ fun FetchScreen(
                 }
                 else -> {
                     // Postback returned the form again (usually a wrong CAPTCHA) — re-arm for retry.
-                    awaitingDetail = false
-                    submitPageLoaded = -1
-                    WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
-                    working = false // hand the CAPTCHA back to the user
+                    if (solver != null && captchaAttempts < MAX_CAPTCHA_ATTEMPTS) {
+                        // Ask AnyRoR for a FRESH code (the rejected one is burnt), then let the
+                        // postback's page load re-enter the prefill branch, which auto-solves again.
+                        android.util.Log.i("LR", "captcha rejected — refreshing for attempt ${captchaAttempts + 1}")
+                        WebViewCapture.eval(wv, AnyRorInjection.refreshCaptchaJs())
+                        awaitingDetail = false
+                        submitPageLoaded = -1
+                    } else {
+                        awaitingDetail = false
+                        submitPageLoaded = -1
+                        WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
+                        working = false // hand the CAPTCHA back to the user
+                    }
                 }
             }
         } else {
@@ -307,10 +396,14 @@ fun FetchScreen(
             // set ('READY'). dimSpotlight is idempotent, so a following postback re-spotlight is harmless.
             val code = step.substringBefore('|').trim()
             if (code == "READY" || code == "SUR") {
-                android.util.Log.i("LR", "cascade complete ($code) — spotlighting the CAPTCHA")
+                android.util.Log.i("LR", "cascade complete ($code) — solving the CAPTCHA on-device")
                 delay(600)
-                WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
-                working = false // cascade is filled + spotlit — the user solves the CAPTCHA now
+                // Auto-solve first; only if that can't run (no solver / no image / attempts spent)
+                // do we fall back to the human spotlight, which is unchanged.
+                if (!autoSolveCaptcha(wv)) {
+                    WebViewCapture.eval(wv, AnyRorInjection.dimSpotlightJs())
+                    working = false // cascade is filled + spotlit — the user solves the CAPTCHA now
+                }
             }
         }
     }
@@ -377,8 +470,9 @@ fun FetchScreen(
                     settings.domStorageEnabled = true
                     settings.useWideViewPort = true
                     settings.loadWithOverviewMode = true
-                    // Deeds live in a desktop-only section of the page — render as desktop for them.
-                    if (recordType == RecordType.DEEDS) {
+                    // The Sub-registrar deed grid only renders on the DESKTOP page, and INTEGRATED
+                    // now harvests deeds in the same pass — so both types load as desktop.
+                    if (recordType == RecordType.DEEDS || recordType == RecordType.INTEGRATED) {
                         settings.userAgentString =
                             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0 Safari/537.36"
                     }
@@ -403,7 +497,10 @@ fun FetchScreen(
                         }
                     }
                     webRef = this
-                    loadUrl(if (recordType == RecordType.DEEDS) AnyRor.URL_DESKTOP else AnyRor.URL)
+                    loadUrl(
+                        if (recordType == RecordType.DEEDS || recordType == RecordType.INTEGRATED)
+                            AnyRor.URL_DESKTOP else AnyRor.URL,
+                    )
                 }
             },
         )
@@ -490,3 +587,10 @@ internal fun parseEntryImages(json: String): List<String> = try {
 } catch (e: Exception) {
     android.util.Log.w("LR", "parseEntryImages failed: ${e.message}"); emptyList()
 }
+
+/**
+ * How many times the on-device solver may submit before the human spotlight takes over.
+ * A wrong CAPTCHA only costs a round-trip (the site rejects it and we ask for a fresh one),
+ * so two tries is the right trade between speed and hammering a government server.
+ */
+private const val MAX_CAPTCHA_ATTEMPTS = 2

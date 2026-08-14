@@ -167,6 +167,9 @@ fun SettingsScreen(onBack: () -> Unit) {
                     }
                 },
             )
+            // Migration now runs automatically on first launch (MainActivity.resumeFetchQueue),
+            // and fetch controls live on the Fetch-status screen reached from the top bar — so
+            // Settings no longer carries those rows.
             NavRow(label = Lr(R.string.about_gu, R.string.about_en), onClick = { showAbout = true })
 
             Spacer(Modifier.height(4.dp))

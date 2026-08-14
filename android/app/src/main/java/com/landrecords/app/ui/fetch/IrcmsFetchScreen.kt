@@ -182,7 +182,7 @@ fun IrcmsFetchScreen(
                     val orderPdf = if (orderForm.startsWith("{")) OrderDownloader.fetch(orderForm) else null
                     captures.add(
                         CasesStore.CaseCapture(
-                            sr = c.sr, caseNo = c.caseNo, status = c.status, office = c.office,
+                            sr = c.sr, dataId = c.dataId, caseNo = c.caseNo, status = c.status, office = c.office,
                             dtv = c.dtv, parties = c.parties, survno = c.survno,
                             detailPdf = pdf.takeIf { it.isNotEmpty() }, orderPdf = orderPdf,
                         ),
@@ -317,6 +317,14 @@ fun IrcmsFetchScreen(
 /** A case row scraped from the iRCMS list — metadata only; each PDF is captured separately. */
 internal data class ScrapedCase(
     val casekey: String,
+    /**
+     * iRCMS's own case id, off the row button's `data-id`. This is the case's IDENTITY
+     * (spec §1.3: `uid("ic", survey_uid, "ircms", data_id)`) and the same value the desktop
+     * scraper dedupes on, so a case fetched on the phone and on the laptop collides instead
+     * of duplicating. Blank only if the site ever stops emitting the attribute.
+     */
+    val dataId: String,
+    val offcode: String,
     val sr: String,
     val caseNo: String,
     val status: String,
@@ -334,7 +342,8 @@ internal fun parseCaseList(json: String): Pair<String, List<ScrapedCase>> {
         val arr = o.optJSONArray("cases") ?: return token to emptyList()
         val out = ArrayList<ScrapedCase>(arr.length())
         val seen = HashSet<String>()       // by iRCMS key (data-id:offcode:survno)
-        val seenIdent = HashSet<String>()  // by visible identity — collapses one case cross-listed under many survnos
+        val seenIdent = HashSet<String>()  // by visible identity — fallback when data-id is missing
+        val seenDataId = HashSet<String>() // by iRCMS's own case id — the real identity
         for (i in 0 until arr.length()) {
             val c = arr.getJSONObject(i)
             val key = c.optString("casekey", "")
@@ -343,12 +352,23 @@ internal fun parseCaseList(json: String): Pair<String, List<ScrapedCase>> {
             val office = c.optString("office", "")
             val dtv = c.optString("dtv", "")
             val parties = c.optString("parties", "")
-            // The key includes the survey number, so the SAME case listed under two survey numbers has
-            // two different keys; collapse those here so it isn't captured/shown/merged twice.
-            if (!seenIdent.add(CasesStore.identity(caseNo, parties, office, dtv))) continue
+            val dataId = c.optString("dataId", "")
+            // The casekey includes the survey number, so the SAME case listed under two survey
+            // numbers has two different keys. Collapse on data-id — iRCMS's own case id, and
+            // what the desktop scraper dedupes on (src/scrape.mjs:144) — so both machines drop
+            // exactly the same rows. Only when the attribute is missing do we fall back to the
+            // old comparison of display text, which drifts with spacing and spelling.
+            val fresh = if (dataId.isNotBlank()) {
+                seenDataId.add(dataId)
+            } else {
+                seenIdent.add(CasesStore.identity(caseNo, parties, office, dtv))
+            }
+            if (!fresh) continue
             out.add(
                 ScrapedCase(
                     casekey = key,
+                    dataId = dataId,
+                    offcode = c.optString("offcode", ""),
                     sr = c.optString("sr", "").ifBlank { (out.size + 1).toString() },
                     caseNo = caseNo,
                     status = c.optString("status", ""),

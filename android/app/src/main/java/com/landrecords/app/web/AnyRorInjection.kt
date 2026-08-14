@@ -184,11 +184,27 @@ object AnyRorInjection {
     """.trimIndent()
 
     /** Read the currently-selected option TEXTS of the cascade — the place/survey to save. */
+    /**
+     * The visible text AND the `<option value>` of each selected cascade level.
+     *
+     * Those values are the government's own district/taluka/village CODES — exactly what
+     * `place_id` is defined as (spec §1.1: `gj:15:03:029`). Capturing them while the site has
+     * them selected is strictly better than deriving them later by matching names against the
+     * bundled catalogue: it needs no catalogue at all, so a village in a district we don't ship
+     * still gets a real coded id instead of a provisional `gj?:` one.
+     */
     fun selectedTextsJs(surveyDropId: String): String = """
     (function(){
       try {
-        function txt(id){ var s=document.getElementById(id); if(!s) return ''; var o=s.options[s.selectedIndex]; return o?(o.text||'').replace(/\s+/g,' ').trim():''; }
-        return JSON.stringify({ district:txt('${AnyRor.Ids.DISTRICT}'), taluka:txt('${AnyRor.Ids.TALUKA}'), village:txt('${AnyRor.Ids.VILLAGE}'), survey:txt('$surveyDropId') });
+        function sel(id){ var s=document.getElementById(id); if(!s) return null; return s.options[s.selectedIndex]||null; }
+        function txt(id){ var o=sel(id); return o?(o.text||'').replace(/\s+/g,' ').trim():''; }
+        function val(id){ var o=sel(id); var v=o?(o.value||'').trim():''; return (v==='-1'||v==='0')?'':v; }
+        return JSON.stringify({
+          district:txt('${AnyRor.Ids.DISTRICT}'), taluka:txt('${AnyRor.Ids.TALUKA}'),
+          village:txt('${AnyRor.Ids.VILLAGE}'), survey:txt('$surveyDropId'),
+          districtCode:val('${AnyRor.Ids.DISTRICT}'), talukaCode:val('${AnyRor.Ids.TALUKA}'),
+          villageCode:val('${AnyRor.Ids.VILLAGE}')
+        });
       } catch(e){ return '{}'; }
     })();
     """.trimIndent()
@@ -441,8 +457,84 @@ object AnyRorInjection {
     """.trimIndent()
 
     /**
+     * Reads the CAPTCHA image out of the page as base64 — WITHOUT re-fetching its URL
+     * (a re-fetch rotates the code server-side and invalidates the one on screen). AnyRoR
+     * bakes the PNG in as a data URI on the img, so this is a pure DOM read. Returns the raw
+     * base64 payload, or 'NONE' when the image (or its data URI) isn't there.
+     */
+    fun captchaImageJs(): String = """
+    (function(){
+      try {
+        var img = document.getElementById('$CAPTCHA_IMG_ID')
+          || document.querySelector('img[src*="captcha" i]');
+        if (!img) return 'NONE';
+        var src = img.getAttribute('src') || '';
+        var k = src.indexOf('base64,');
+        if (k < 0) return 'NONE';           // NOT a data URI: refuse rather than re-fetch
+        return src.substring(k + 7).replace(/\s+/g,'');
+      } catch(e) { return 'NONE'; }
+    })();
+    """.trimIndent()
+
+    /**
+     * Types [code] into the CAPTCHA box and clicks Get Record Detail. Same element lookup and
+     * the same Land_Record_Validation() wrap as [dimSpotlightJs] (that handler throws and would
+     * otherwise swallow the click). Returns 'OK' when it clicked, else why not.
+     */
+    fun solveAndSubmitJs(code: String): String = """
+    (function(){
+      try {
+        if (typeof window.Land_Record_Validation === 'function' && !window.__lr_valwrap) {
+          window.__lr_valwrap = 1;
+          var _v = window.Land_Record_Validation;
+          window.Land_Record_Validation = function(){ try { return _v.apply(this, arguments); } catch(e){ return true; } };
+        }
+        var btn = document.getElementById('${AnyRor.Ids.GET_DETAIL_BUTTON}');
+        var capImg = document.getElementById('$CAPTCHA_IMG_ID')
+          || document.querySelector('img[src*="captcha" i]');
+        var inp = document.querySelector('input[id*="captcha" i][type=text]')
+          || document.querySelector('input[id*="captcha" i]')
+          || document.querySelector('input[id*="txtCaptcha" i]')
+          || (capImg && capImg.closest('div,td,table,form') || document).querySelector('input[type=text]');
+        if (!inp) return 'NOINPUT';
+        inp.focus();
+        inp.value = ${'"'}$code${'"'};
+        inp.dispatchEvent(new Event('input',{bubbles:true}));
+        inp.dispatchEvent(new Event('change',{bubbles:true}));
+        if (!btn) return 'NOBUTTON';
+        btn.click();
+        return 'OK';
+      } catch(e) { return 'ERR:'+e; }
+    })();
+    """.trimIndent()
+
+    /** Asks AnyRoR for a fresh CAPTCHA (its own refresh link's postback). */
+    fun refreshCaptchaJs(): String = """
+    (function(){
+      try {
+        if (typeof __doPostBack !== 'function') return 'NOPOSTBACK';
+        __doPostBack('ctl00${'$'}ContentPlaceHolder1${'$'}lb_refresh_1','');
+        return 'OK';
+      } catch(e) { return 'ERR:'+e; }
+    })();
+    """.trimIndent()
+
+    /** True while we're still sitting on the form (i.e. the last submit was rejected). */
+    fun onFormJs(): String = """
+    (function(){
+      try {
+        return document.getElementById('${AnyRor.Ids.GET_DETAIL_BUTTON}') != null ? 'FORM' : 'GONE';
+      } catch(e) { return 'FORM'; }
+    })();
+    """.trimIndent()
+
+    /** The baked-in CAPTCHA image on the AnyRoR record form. */
+    const val CAPTCHA_IMG_ID = "ContentPlaceHolder1_i_captcha_1"
+
+    /**
      * Dims the whole page and spotlights the CAPTCHA image/input + Get Record Detail
-     * button, and routes that button's click back to the app. Never auto-solves.
+     * button, and routes that button's click back to the app. The human backstop for
+     * when the on-device solver has used up its attempts.
      */
     fun dimSpotlightJs(): String = """
     (function(){

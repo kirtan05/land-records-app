@@ -58,6 +58,14 @@ fun RecordCard(
     onEntries: (() -> Unit)? = null,
     /** Integrated only: opens the combined all-entries PDF straight away. */
     onViewAllEntries: (() -> Unit)? = null,
+    /**
+     * Integrated only: opens the registered-deeds list. Deeds are a section of the SAME AnyRoR
+     * page as the integrated record, so they have no card of their own — they ride here.
+     * null while the record has never been fetched.
+     */
+    onDeeds: (() -> Unit)? = null,
+    /** Integrated only: how many registered deeds were found on the page (0 = none). */
+    deedCount: Int = 0,
     modifier: Modifier = Modifier,
 ) {
     val lang = LocalLang.current
@@ -126,6 +134,16 @@ fun RecordCard(
                 }
                 if (type == RecordType.INTEGRATED && onViewAllEntries != null) {
                     PillButton(lang.join("બધી નોંધ જુઓ", "View all entries"), onViewAllEntries)
+                }
+                if (type == RecordType.INTEGRATED && onDeeds != null) {
+                    // Deeds ride the integrated card: a count pill when the SRO listed any,
+                    // an explicit "no deeds" pill when the page was checked and carried none —
+                    // "checked and empty" must never look the same as "never fetched".
+                    if (deedCount > 0) {
+                        PillButton("${lang.join("દસ્તાવેજ", "Deeds")} ${deedCount.numerals(lang)}", onDeeds)
+                    } else {
+                        PillButton(lang.join("દસ્તાવેજ નથી", "No deeds"), onDeeds)
+                    }
                 }
                 if (type == RecordType.IRCMS && onCases != null) {
                     PillButton(lang.join("કેસ", "Cases"), onCases)

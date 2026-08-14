@@ -7,7 +7,10 @@ import com.landrecords.app.data.model.RecordType
  * `anyror/run-anyror.mjs`, `run-vf712.mjs`, `render-anyror-offline.mjs`, and `format.mjs`.
  *
  * Design-agnostic: this drives an embedded WebView; the UI that hosts it comes from the approved
- * design. The one human step is always the CAPTCHA + "Get Record Detail" tap (never auto-solved).
+ * design. The CAPTCHA is auto-solved by the CNN in `tools/captcha/anyror_cnn_real.onnx` (read the
+ * data-URI PNG out of img#ContentPlaceHolder1_i_captcha_1 — never re-fetch it, that rotates it);
+ * the human spotlight is the fallback after 2 rejections. Superseded 2026-08-14: this contract
+ * previously said the CAPTCHA was never auto-solved, which was true only because no model existed.
  *
  * Key facts carried over from the desktop work (see docs/PROJECT_NOTES.md and the memory files):
  *  - AnyRoR is an ASP.NET WebForms page; the cascade is server round-tripped dropdowns.

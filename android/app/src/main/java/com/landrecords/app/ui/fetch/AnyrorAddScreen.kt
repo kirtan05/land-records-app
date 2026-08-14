@@ -69,7 +69,11 @@ import kotlinx.coroutines.launch
  * exactly), and hands off to the normal integrated [FetchScreen] to solve the CAPTCHA + capture.
  */
 private data class GuidedChoice(val level: String, val options: List<Pair<String, String>>)
-private data class Sel(val district: String, val taluka: String, val village: String, val survey: String)
+private data class Sel(
+    val district: String, val taluka: String, val village: String, val survey: String,
+    /** The `<option value>`s — AnyRoR's own cascade CODES, i.e. what place_id is made of. */
+    val districtCode: String = "", val talukaCode: String = "", val villageCode: String = "",
+)
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -118,6 +122,17 @@ fun AnyrorAddScreen(onBack: () -> Unit, onCreated: (Long) -> Unit) {
                     // i.e. exactly the old behaviour.
                     com.landrecords.app.data.place.PlaceNames.load(app)
                     val canon = com.landrecords.app.data.place.PlaceNames.canonical(d, t, v)
+                    // AnyRoR just told us this place's OWN codes (the option values). Remember
+                    // them: that is precisely what place_id is (spec §1.1), so every later
+                    // resolve is a lookup instead of a name match — and a village in a district
+                    // we don't bundle still gets a real "gj:" id rather than a provisional one.
+                    com.landrecords.app.data.place.PlaceCodes.remember(
+                        app, sel.districtCode, sel.talukaCode, sel.villageCode,
+                        names = buildList {
+                            add(Triple(d, t, v))                                     // Gujarati, as shown
+                            canon?.let { add(Triple(it.first, it.second, it.third)) } // catalogue English
+                        },
+                    )
                     // Dedup: if this survey is already saved it is kept (not duplicated/overwritten);
                     // we still hand off to the fetch so the user gets a fresh record.
                     val addRes = app.repository.addPropertyDetailed(
@@ -247,7 +262,10 @@ private fun parseGuidedChoice(json: String): GuidedChoice? = try {
 
 private fun parseSelectedTexts(json: String): Sel = try {
     val o = org.json.JSONObject(json)
-    Sel(o.optString("district"), o.optString("taluka"), o.optString("village"), o.optString("survey"))
+    Sel(
+        o.optString("district"), o.optString("taluka"), o.optString("village"), o.optString("survey"),
+        o.optString("districtCode"), o.optString("talukaCode"), o.optString("villageCode"),
+    )
 } catch (e: Exception) { Sel("", "", "", "") }
 
 /** Searchable sheet listing a cascade level's live AnyRoR options for the user to pick. */

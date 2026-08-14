@@ -15,6 +15,15 @@
     <!-- In-app self-update: hand the downloaded APK to the system installer. -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
+    <!-- Background auto-fetch (spec §6). A FOREGROUND service is required: Android kills a
+         background process mid-fetch, and a half-written record set is exactly what the queue
+         and the blob store exist to avoid. WAKE_LOCK keeps the CPU up while a fetch is in
+         flight; the lock is bounded and released in onDestroy. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".LandRecordsApp"
         android:allowBackup="true"
@@ -49,5 +58,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- Not exported: nothing outside the app may start a fetch. -->
+        <service
+            android:name=".fetch.FetchService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
     </application>
 </manifest>

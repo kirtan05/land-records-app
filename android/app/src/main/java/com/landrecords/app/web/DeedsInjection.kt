@@ -90,6 +90,44 @@ object DeedsInjection {
     })();
     """.trimIndent()
 
+    /**
+     * Reads the Sub-registrar deed grid as DATA (no DOM rewrite), for the INTEGRATED pass.
+     *
+     * Deeds live on the very same type-8 detail page as the integrated record, so the integrated
+     * fetch reads them here — from the PRISTINE DOM, before cleanupJs restyles it and before the
+     * per-entry Select postbacks run. It must not touch the DOM: [deedCaptureJs] replaces
+     * document.body, which would destroy the __doPostBack form the entry capture needs.
+     *
+     * Returns a JSON array of one object per grid ROW (the site prints one row per party, so a
+     * single registered document appears as several rows — grouping is [DeedRows.parse]'s job):
+     *   [{office, survey, docYear, docNo, docDate, partyType, partyName, amount}, …]
+     * '[]' when the survey has no registered deeds.
+     */
+    fun deedRowsJs(): String = """
+    (function(){
+      try{
+        var tbl=document.getElementById('$GARVI_TABLE_ID');
+        if(!tbl){
+          tbl=Array.prototype.slice.call(document.querySelectorAll('table'))
+            .filter(function(t){ return /View Deed|lbDownload/i.test(t.innerHTML||''); })[0];
+        }
+        if(!tbl) return '[]';
+        var txt=function(td){ return (td.innerText||td.textContent||'').replace(/\s+/g,' ').trim(); };
+        var out=[];
+        Array.prototype.slice.call(tbl.querySelectorAll('tr')).forEach(function(r){
+          if(r.querySelector('th')) return;                 // header row
+          var tds=Array.prototype.slice.call(r.cells);
+          if(tds.length<8) return;                          // not a data row
+          var c=tds.map(txt);
+          if(!(c[2]||c[3])) return;                         // no doc year AND no doc no -> junk row
+          out.push({ office:c[0], survey:c[1], docYear:c[2], docNo:c[3], docDate:c[4],
+                     partyType:c[5], partyName:c[6], amount:c[7] });
+        });
+        return JSON.stringify(out);
+      }catch(e){ return '[]'; }
+    })();
+    """.trimIndent()
+
     fun deedFormJs(): String = """
     (function(){
       try {
