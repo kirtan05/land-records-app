@@ -16,8 +16,8 @@ android {
         applicationId = "com.landrecords.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 24
-        versionName = "0.12.0"
+        versionCode = 25
+        versionName = "0.12.1"
         vectorDrawables { useSupportLibrary = true }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // Every target device is arm64; keep other ABIs out of the APK.

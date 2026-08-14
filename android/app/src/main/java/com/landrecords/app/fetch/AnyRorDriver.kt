@@ -126,11 +126,19 @@ class AnyRorDriver(
 
             if (!lastStep.startsWith("READY")) {
                 // The survey dropdown loaded a real option list but our number isn't in it
-                // (e.g. "WAIT|sur|want=1257p|...|n=3059|near="). For VF-7/12 that is normal —
-                // the old-scanned dropdown lists OLD survey numbers, which don't map 1:1 to the
-                // current one — so it means "no VF-7/12 for this survey", a real EMPTY, not a
-                // failure to retry 4×. Only treat it as a failure when the dropdown never filled.
-                val surveyAbsent = Regex("\\|sur\\|.*\\|n=([1-9]\\d*)").find(lastStep) != null
+                // (e.g. "WAIT|sur|want=1257p|...|n=3059|near=").
+                //
+                // For VF-7/12 ONLY this is normal and means "no scans for this survey": the
+                // old-scanned dropdown lists OLD survey numbers, which don't map 1:1 onto the
+                // current one, so a miss is a real EMPTY, not something to retry 4×.
+                //
+                // For INTEGRATED it is NEVER a real absence — the current survey is always in
+                // ddlSurveyNo (it came from that very list). A miss there is a token-match or
+                // timing hiccup, so it must FAIL (and retry), not report "not available". An
+                // earlier build wrongly returned Empty here for every type, which made dad's own
+                // integrated surveys show as unavailable — the regression this fixes.
+                val surveyAbsent = recordType == RecordType.VF712 &&
+                    Regex("\\|sur\\|.*\\|n=([1-9]\\d*)").find(lastStep) != null
                 return if (surveyAbsent) Result.Empty
                 else Result.Failed("cascade unresolved: $lastStep")
             }
