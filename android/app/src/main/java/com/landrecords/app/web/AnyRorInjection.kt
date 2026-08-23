@@ -248,6 +248,14 @@ object AnyRorInjection {
         .panel-heading { padding:3px 6px !important; }
         br { line-height:0.6 !important; }
         a { text-decoration:none !important; color:#000 !important; }
+        /* …except the RED entry numbers. bootstrap.min.css carries a print-media rule that forces
+           color:#000 !important on EVERY element — that is why they came out black on paper. */
+        a[style*="Red"], a[style*="red"], .lr-old-entry { color:#C41E1E !important; font-weight:900 !important; text-decoration:underline !important; }
+        @media print {
+          html, body { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+          a[style*="Red"], a[style*="red"], .lr-old-entry, .lr-old-entry * { color:#C41E1E !important; }
+          th { background:#e8eef6 !important; }
+        }
         img[src*="image"] { display:none; }
         .breadcrumb, #myBtn, .alert-danger, header, nav, .navbar, footer, #__bot_banner { display:none !important; }
     """
@@ -377,10 +385,28 @@ object AnyRorInjection {
           if(vals.reduce(function(a,s){ return a+s.length; },0)/vals.length>14) return;
           var head=t.querySelector('th');
           if(head){ var h=document.createElement('div'); h.style.cssText='font-weight:700;background:#e8eef6;padding:2px 6px;border:.4pt solid #aab;font-size:8.5pt;'; h.textContent=(head.textContent||'').replace(/\s+/g,' ').trim(); t.parentNode.insertBefore(h,t); }
+          // Carry each row's colour across. AnyRoR draws OLD hand-written entries as red anchors;
+          // rebuilding this index from textContent threw that away, so every entry number printed
+          // black. The inline !important is load-bearing: bootstrap.min.css ships a print-media
+          // rule forcing color:#000 !important on every element, and only an INLINE !important
+          // declaration outranks it.
+          var reds=Array.from(t.rows).filter(function(r){ return !r.querySelector('th'); }).map(function(r){
+            var a=r.querySelector('a');
+            return !!a && /color:Red/i.test((a.getAttribute('style')||'').replace(/\s/g,''));
+          });
           var wrap=document.createElement('div');
           wrap.style.cssText='column-count:10;column-gap:8px;font-size:8pt;border:.4pt solid #aab;border-top:none;padding:3px 6px;margin:0 0 6px 0;';
-          wrap.innerHTML=vals.map(function(v){ return '<div style="break-inside:avoid;">'+v+'</div>'; }).join('');
-          t.parentNode.insertBefore(wrap,t); t.style.display='none';
+          wrap.innerHTML=vals.map(function(v,i){ return reds[i]
+            ? '<div class="lr-old-entry" style="break-inside:avoid;color:#C41E1E !important;font-weight:900 !important;text-decoration:underline !important;">'+v+'</div>'
+            : '<div style="break-inside:avoid;">'+v+'</div>'; }).join('');
+          t.parentNode.insertBefore(wrap,t);
+          if(reds.some(function(x){ return x; })){
+            var key=document.createElement('div');
+            key.style.cssText='font-size:7.6pt;margin:-4px 0 6px 0;padding:1px 6px;color:#333;';
+            key.innerHTML='<b class="lr-old-entry" style="color:#C41E1E !important;">\u0AB2\u0ABE\u0AB2 \u0AA8\u0A82\u0AAC\u0AB0</b> = \u0A9C\u0AC2\u0AA8\u0AC0 \u0AB9\u0ABE\u0AA5\u0AC7 \u0AB2\u0A96\u0AC7\u0AB2\u0AC0 \u0AA8\u0ACB\u0A82\u0AA7 (\u0AB8\u0ACD\u0A95\u0AC5\u0AA8 \u0AB9\u0ACB\u0AAF \u0A9B\u0AC7) &nbsp;\u00b7&nbsp; RED = old hand-written entry (has a scan)';
+            t.parentNode.insertBefore(key,t);
+          }
+          t.style.display='none';
         });
         // 5) balance column widths by average content length (colgroup) so long-text columns
         //    wrap less and short columns stay narrow — fewer, cleaner pages

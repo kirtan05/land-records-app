@@ -1,8 +1,9 @@
 // Read-only WhatsApp auth validity check: connect, report status, exit. Sends nothing.
 import makeWASocket, { useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
 import pino from 'pino';
+import { REPO } from '../src/repo-root.mjs';
 
-const BASE = '/home/kirtan/Desktop/projects/irmsc/wa';
+const BASE = REPO+'/wa';
 const { state, saveCreds } = await useMultiFileAuthState(BASE + '/auth');
 const { version } = await fetchLatestBaileysVersion();
 

@@ -4,6 +4,7 @@ import { chromium } from 'playwright-core';
 import { ensureOut, markSurvey } from './src/store.mjs';
 import { processSurvey } from './src/scrape.mjs';
 import { normalizeSurvey } from './src/normalize.mjs';
+import { REPO } from '../../src/repo-root.mjs';
 
 const DIST = '16', TAL = '08', VIL = '072';
 const URL = 'https://ircms.gujarat.gov.in/ViewSurveyList';
@@ -14,7 +15,7 @@ const keys = only.split(',').map((s) => normalizeSurvey(s.trim()));
 const norm = (s) => { const GU = { '૦': '0', '૧': '1', '૨': '2', '૩': '3', '૪': '4', '૫': '5', '૬': '6', '૭': '7', '૮': '8', '૯': '9' }; return String(s).replace(/[૦-૯]/g, (c) => GU[c] || c).replace(/પ/g, 'p').toLowerCase().replace(/~~/g, '').replace(/[\s/|\\]+/g, '/').replace(/^\/+|\/+$/g, '').replace(/p\/(?=\d)/g, 'p').trim(); };
 
 ensureOut();
-const ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-ircms', {
+const ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-ircms', {
   channel: 'chrome', headless: false, viewport: null,
   args: ['--window-size=1500,1000', '--window-position=0,0', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
 });

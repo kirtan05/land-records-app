@@ -5,12 +5,13 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { surveyToken } from '../src/normalize.mjs';
 import { applyCleanFormat, PDF_OPTS } from './format.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
-const OUT = '/home/kirtan/Desktop/projects/irmsc/output';
+const OUT = REPO+'/output';
 const STATE = join(OUT, '_anyror_state.json');
 const LAND = '8', DIST = '15', TAL = '03', VIL = '029';
-const targets = JSON.parse(readFileSync('/home/kirtan/Desktop/projects/irmsc/survey-input.json', 'utf8')).filter((r) => r.matched);
+const targets = JSON.parse(readFileSync(REPO+'/survey-input.json', 'utf8')).filter((r) => r.matched);
 
 const readState = () => (existsSync(STATE) ? JSON.parse(readFileSync(STATE, 'utf8')) : {});
 const writeState = (s) => writeFileSync(STATE, JSON.stringify(s, null, 2));
@@ -19,7 +20,7 @@ const LAUNCH = process.argv.includes('--launch');
 let browser, ctx, page;
 if (LAUNCH) {
   // launch a FRESH Chrome (picks up current network = VPN); own profile to avoid lock clashes
-  ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-anyror', {
+  ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-anyror', {
     channel: 'chrome', headless: false, viewport: null,
     args: ['--window-size=1500,1000', '--window-position=0,0', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
   });

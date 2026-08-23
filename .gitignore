@@ -38,10 +38,11 @@ output/
 dist/
 *.zip
 
-# ============ Unrelated files that happen to live here ============
+# ============ Unrelated / personal files that must never land here ============
+# (the historical ones now live in ../irmsc-personal-archive/)
 *.pptx
-quiz_assets/
-quiz_draft.md
+Invoice-*.pdf
+Receipt-*.pdf
 .~lock.*#
 *.kate-swp
 *.kate-swp.*
@@ -62,6 +63,12 @@ test-order*.pdf
 # Regenerable via scratchpad/stage_seed.py from a device snapshot; ships in the APK from
 # the working tree, so it never needs to be in git (and must not be, especially publicly).
 android/app/src/main/assets/seed/
+
+# ================= IDE =================
+.settings/
+.project
+.classpath
+.vscode/
 
 # ================= OS =================
 .DS_Store
@@ -87,3 +94,13 @@ tools/captcha/kaggle/
 *.weights
 *.onnx
 android/app/src/androidTest/assets/captcha_samples/
+
+# ============ WhatsApp: personal group/contact data (never commit) ============
+wa/groups.json
+wa/participants.json
+wa/qr*.png
+
+# ============ Local scratch captures ============
+anyror/*.png
+anyror/captcha-ans.txt
+anyror/deed-stop.txt

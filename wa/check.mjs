@@ -1,8 +1,9 @@
 // Quick WhatsApp auth check: connects with saved creds and reports AUTHED / NEEDS_SCAN.
 import makeWASocket, { useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason } from '@whiskeysockets/baileys';
 import pino from 'pino';
+import { REPO } from '../src/repo-root.mjs';
 
-const { state, saveCreds } = await useMultiFileAuthState('/home/kirtan/Desktop/projects/irmsc/wa/auth');
+const { state, saveCreds } = await useMultiFileAuthState(REPO+'/wa/auth');
 const { version } = await fetchLatestBaileysVersion();
 const sock = makeWASocket({ version, auth: state, logger: pino({ level: 'silent' }), browser: ['Bharoda Records', 'Chrome', '1.0'] });
 sock.ev.on('creds.update', saveCreds);

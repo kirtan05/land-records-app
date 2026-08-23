@@ -3,15 +3,16 @@
 import { chromium } from 'playwright-core';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { normalizeSurvey } from '../src/normalize.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
-const OUT = '/home/kirtan/Desktop/projects/irmsc/anyror/vf712-blocks.json';
-const MATCH = '/home/kirtan/Desktop/projects/irmsc/anyror/vf712-match.json';
+const OUT = REPO+'/anyror/vf712-blocks.json';
+const MATCH = REPO+'/anyror/vf712-match.json';
 const DIST = '15', TAL = '03', VIL = '029';
-const targets = JSON.parse(readFileSync('/home/kirtan/Desktop/projects/irmsc/survey-input.json', 'utf8')).filter((r) => r.matched);
+const targets = JSON.parse(readFileSync(REPO+'/survey-input.json', 'utf8')).filter((r) => r.matched);
 const parentOf = (n) => normalizeSurvey(n).split('/')[0]; // leading block number
 
-const ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-anyror', {
+const ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-anyror', {
   channel: 'chrome', headless: false, viewport: null,
   args: ['--window-size=1500,1000', '--window-position=0,0', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
 });

@@ -4,8 +4,9 @@ import qrcodeTerminal from 'qrcode-terminal';
 import QRCode from 'qrcode';
 import pino from 'pino';
 import { writeFileSync } from 'node:fs';
+import { REPO } from '../src/repo-root.mjs';
 
-const BASE = '/home/kirtan/Desktop/projects/irmsc/wa';
+const BASE = REPO+'/wa';
 const { state, saveCreds } = await useMultiFileAuthState(BASE + '/auth');
 const { version } = await fetchLatestBaileysVersion();
 

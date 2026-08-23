@@ -1,14 +1,15 @@
 import { chromium } from 'playwright-core';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { applyCleanFormat, PDF_OPTS } from './format.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
-let html = readFileSync('/home/kirtan/Desktop/projects/irmsc/anyror/detail-page.html', 'utf8');
+let html = readFileSync(REPO+'/anyror/detail-page.html', 'utf8');
 if (!/<base /i.test(html)) html = html.replace(/<head([^>]*)>/i, '<head$1><base href="https://anyror.gujarat.gov.in/Information_pages/">');
-writeFileSync('/home/kirtan/Desktop/projects/irmsc/anyror/detail-local.html', html);
+writeFileSync(REPO+'/anyror/detail-local.html', html);
 
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const page = await browser.newPage();
-await page.goto('file:///home/kirtan/Desktop/projects/irmsc/anyror/detail-local.html', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
+await page.goto('file://'+REPO+'/anyror/detail-local.html', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
 await page.waitForTimeout(1500);
 
 const dump = (label) => page.evaluate((label) => {
@@ -23,6 +24,6 @@ console.log('BEFORE:', JSON.stringify(await dump('before'), null, 1));
 await applyCleanFormat(page, '221/p');
 await page.waitForTimeout(300);
 console.log('AFTER: ', JSON.stringify(await dump('after'), null, 1));
-await page.pdf({ path: '/home/kirtan/Desktop/projects/irmsc/anyror/diag_221P.pdf', ...PDF_OPTS });
+await page.pdf({ path: REPO+'/anyror/diag_221P.pdf', ...PDF_OPTS });
 console.log('rendered diag_221P.pdf');
 await browser.close();

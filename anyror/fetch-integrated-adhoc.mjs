@@ -6,11 +6,12 @@ import { chromium } from 'playwright-core';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { applyCleanFormat, PDF_OPTS } from './format.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
-const OUT = '/home/kirtan/Desktop/projects/irmsc/output';
+const OUT = REPO+'/output';
 const STATE = join(OUT, '_anyror_state.json');
-const STOP = '/home/kirtan/Desktop/projects/irmsc/anyror/deed-stop.txt';
+const STOP = REPO+'/anyror/deed-stop.txt';
 
 // ---- target ----
 const TYPE = '8';                      // Integrated Survey Details
@@ -26,7 +27,7 @@ const GU = { '૦': '0', '૧': '1', '૨': '2', '૩': '3', '૪': '4', '૫': 
 const deGu = (s) => String(s).replace(/[૦-૯]/g, (c) => GU[c] || c);
 const readState = () => (existsSync(STATE) ? JSON.parse(readFileSync(STATE, 'utf8')) : {});
 
-const ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-anyror', {
+const ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-anyror', {
   channel: 'chrome', headless: false, viewport: null, acceptDownloads: true,
   args: ['--remote-debugging-port=9222', '--window-size=1500,1000', '--window-position=0,0', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
 });

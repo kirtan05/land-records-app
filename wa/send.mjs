@@ -7,8 +7,9 @@ import pino from 'pino';
 import { readFileSync, existsSync, statSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { surveyToken } from '../src/normalize.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
-const ROOT = '/home/kirtan/Desktop/projects/irmsc';
+const ROOT = REPO;
 const OUT = join(ROOT, 'output');
 const ZIP = join(ROOT, 'Bharoda_iRCMS_Cases.zip');
 const DRY = process.argv.includes('--dry-run');

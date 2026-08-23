@@ -5,8 +5,10 @@ import json, os, re, sys
 from io import BytesIO
 from fpdf import FPDF
 from pypdf import PdfReader, PdfWriter
+import sys, os; sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../tools'))
+from repo_root import REPO
 
-OUT = "/home/kirtan/Desktop/projects/irmsc/output"
+OUT = str(REPO)+'/output'
 STATE = os.path.join(OUT, "_vf712_state.json")
 FONTS = "/usr/share/fonts/noto"
 

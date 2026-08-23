@@ -6,8 +6,9 @@ import { chromium } from 'playwright-core';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { applyCleanFormat, PDF_OPTS } from './format.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
-const OUT = '/home/kirtan/Desktop/projects/irmsc/output';
+const OUT = REPO+'/output';
 const STATE = join(OUT, '_anyror_state.json');
 const BASE = 'https://anyror.gujarat.gov.in/Information_pages/';
 const only = process.argv[2];

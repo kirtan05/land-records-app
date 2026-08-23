@@ -11,6 +11,7 @@ import { readFileSync } from 'node:fs';
 import { ensureOut, isDone, markSurvey } from '../../src/store.mjs';
 import { extractCaseList, openDetailByKey, processCases } from '../../src/scrape.mjs';
 import { searchWithAutoCaptcha } from './ircms-solve.mjs';
+import { REPO } from '../../src/repo-root.mjs';
 
 const ANAND = '15', UMRETH = '03', BHARODA = '029';
 const PAGE_URL = 'https://ircms.gujarat.gov.in/ViewSurveyList';
@@ -26,7 +27,7 @@ console.log(`${targets.length} surveys to process (${catalog.count} in village)`
 
 ensureOut();
 // Headed — iRCMS serves a FortiWeb block page to headless Chrome.
-const ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-ircms', {
+const ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-ircms', {
   channel: 'chrome', headless: false, viewport: null,
   args: ['--window-size=1300,900', '--window-position=60,30', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
 });

@@ -5,8 +5,9 @@ import makeWASocket, { useMultiFileAuthState, fetchLatestBaileysVersion, Disconn
 import pino from 'pino';
 import { readFileSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
+import { REPO } from '../src/repo-root.mjs';
 
-const ROOT = '/home/kirtan/Desktop/projects/irmsc';
+const ROOT = REPO;
 const OUT = join(ROOT, 'output');
 const DRY = process.argv.includes('--dry-run');
 const SEND_DELAY = process.argv.includes('--slow') ? 5000 : (parseInt((process.argv.find((a) => a.startsWith('--delay=')) || '').split('=')[1]) || 2300);

@@ -1,5 +1,6 @@
 import { chromium } from 'playwright-core';
-const ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-anyror2', {
+import { REPO } from '../src/repo-root.mjs';
+const ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-anyror2', {
   channel: 'chrome', headless: true, viewport: { width: 1400, height: 1000 },
   userAgent: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
   args: ['--no-first-run', '--no-default-browser-check', '--disable-blink-features=AutomationControlled', '--disable-session-crashed-bubble'],
@@ -15,5 +16,5 @@ const info = await page.evaluate(() => ({
   bodyStart: (document.body?.innerText || '').replace(/\s+/g, ' ').slice(0, 300),
 })).catch((e) => ({ err: e.message }));
 console.log(JSON.stringify(info, null, 1));
-await page.screenshot({ path: '/home/kirtan/Desktop/projects/irmsc/anyror/diag_headless.png' }).catch(() => {});
+await page.screenshot({ path: REPO+'/anyror/diag_headless.png' }).catch(() => {});
 await ctx.close();

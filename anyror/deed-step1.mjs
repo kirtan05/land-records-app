@@ -5,19 +5,20 @@
 import { chromium } from 'playwright-core';
 import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
+import { REPO } from '../src/repo-root.mjs';
 
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
-const DIR = '/home/kirtan/Desktop/projects/irmsc/output/Valetva_41';
-const ANS = '/home/kirtan/Desktop/projects/irmsc/anyror/captcha-ans.txt';
-const STOP = '/home/kirtan/Desktop/projects/irmsc/anyror/deed-stop.txt';
-const SHOT = '/home/kirtan/Desktop/valetva_captcha.png';
+const DIR = REPO+'/output/Valetva_41';
+const ANS = REPO+'/anyror/captcha-ans.txt';
+const STOP = REPO+'/anyror/deed-stop.txt';
+const SHOT = REPO+'/anyror/valetva_captcha.png';
 mkdirSync(DIR, { recursive: true });
 rmSync(ANS, { force: true }); rmSync(STOP, { force: true });
 
 const GU = { '૦': '0', '૧': '1', '૨': '2', '૩': '3', '૪': '4', '૫': '5', '૬': '6', '૭': '7', '૮': '8', '૯': '9' };
 const deGu = (s) => String(s).replace(/[૦-૯]/g, (c) => GU[c] || c);
 
-const ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-anyror', {
+const ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-anyror', {
   channel: 'chrome', headless: false, viewport: null, acceptDownloads: true,
   args: ['--remote-debugging-port=9222', '--window-size=1500,1000', '--window-position=0,0', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
 });

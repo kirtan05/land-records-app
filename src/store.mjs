@@ -1,8 +1,9 @@
 // Flat-file "database": per-case JSON, an index.csv, and a resume state file.
 import { mkdirSync, writeFileSync, readFileSync, existsSync, appendFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { REPO } from './repo-root.mjs';
 
-export const OUT = '/home/kirtan/Desktop/projects/irmsc/output';
+export const OUT = REPO+'/output';
 const STATE = join(OUT, '_state.json');
 const INDEX = join(OUT, 'index.csv');
 const INDEX_COLS = [

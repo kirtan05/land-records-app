@@ -4,8 +4,9 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, rmSync, copyFileSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { REPO } from '../src/repo-root.mjs';
 
-const OUT = '/home/kirtan/Desktop/projects/irmsc/output';
+const OUT = REPO+'/output';
 const STATE = join(OUT, '_vf712_state.json');
 const [srcTok, dstTok, dstKey] = process.argv.slice(2);
 if (!srcTok || !dstTok || !dstKey) { console.error('usage: clone-vf712.mjs <srcToken> <dstToken> <dstSurveyKey>'); process.exit(1); }

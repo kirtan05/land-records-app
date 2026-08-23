@@ -6,9 +6,10 @@
 import { chromium } from 'playwright-core';
 import { readFileSync } from 'node:fs';
 import { normalizeSurvey } from './src/normalize.mjs';
+import { REPO } from '../../src/repo-root.mjs';
 
 const URL = 'https://ircms.gujarat.gov.in/ViewSurveyList';
-const PROFILE = '/home/kirtan/Desktop/projects/irmsc/.chrome-profile';
+const PROFILE = REPO+'/.chrome-profile';
 const DEBUG_PORT = 9222;
 const ANAND = '15', UMRETH = '03', BHARODA = '029';
 

@@ -3,6 +3,7 @@
 import { chromium } from 'playwright-core';
 import { writeFileSync } from 'node:fs';
 import { normalizeSurvey } from '../src/normalize.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
 const browser = await chromium.connectOverCDP('http://127.0.0.1:9222');
@@ -49,7 +50,7 @@ try {
   });
   console.log('\nSURVEY dropdown:', surveySel?.id, '| count:', surveySel?.count);
   console.log('first 25 survey options:', JSON.stringify(surveySel?.options.slice(0, 25)));
-  writeFileSync('/home/kirtan/Desktop/projects/irmsc/anyror/survey-options.json', JSON.stringify(surveySel, null, 2));
+  writeFileSync(REPO+'/anyror/survey-options.json', JSON.stringify(surveySel, null, 2));
 
   // match 221/p
   if (surveySel) {
@@ -60,7 +61,7 @@ try {
       console.log('selected 221/p');
     }
   }
-  await page.screenshot({ path: '/home/kirtan/Desktop/projects/irmsc/anyror/cascade.png' });
+  await page.screenshot({ path: REPO+'/anyror/cascade.png' });
   console.log('saved cascade.png');
 } catch (e) { console.log('ERR', e.message); }
 await browser.close();

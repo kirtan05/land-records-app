@@ -16,9 +16,10 @@ import makeWASocket, {
 } from '@whiskeysockets/baileys';
 import pino from 'pino';
 import { readFileSync } from 'node:fs';
+import { REPO } from '../src/repo-root.mjs';
 
 const AUTH_DIR = process.env.WA_AUTH_DIR
-  || '/home/kirtan/Desktop/projects/irmsc/wa/auth-fam';
+  || REPO+'/wa/auth-fam';
 
 const argv = process.argv.slice(2);
 const textIdx = argv.indexOf('--text');

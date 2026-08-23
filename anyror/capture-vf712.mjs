@@ -6,14 +6,15 @@ import { chromium } from 'playwright-core';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { normalizeSurvey } from '../src/normalize.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
-const DIR = '/home/kirtan/Desktop/projects/irmsc/anyror/vf712-capture';
+const DIR = REPO+'/anyror/vf712-capture';
 const DIST = '15', TAL = '03', VIL = '029';
 const target = normalizeSurvey(process.argv[2] || '221/p');
 mkdirSync(DIR, { recursive: true });
 
-const ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-anyror', {
+const ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-anyror', {
   channel: 'chrome', headless: false, viewport: null, acceptDownloads: true,
   args: ['--window-size=1500,1000', '--window-position=0,0', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
 });

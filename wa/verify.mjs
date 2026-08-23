@@ -1,7 +1,8 @@
 // Read-only: check whether numbers are registered on WhatsApp. Sends nothing.
 import makeWASocket, { useMultiFileAuthState, fetchLatestBaileysVersion } from '@whiskeysockets/baileys';
 import pino from 'pino';
-const AUTH = process.env.WA_AUTH_DIR || '/home/kirtan/Desktop/projects/irmsc/wa/auth-fam';
+import { REPO } from '../src/repo-root.mjs';
+const AUTH = process.env.WA_AUTH_DIR || REPO+'/wa/auth-fam';
 const nums = process.argv.slice(2);
 const { state, saveCreds } = await useMultiFileAuthState(AUTH);
 const { version } = await fetchLatestBaileysVersion();

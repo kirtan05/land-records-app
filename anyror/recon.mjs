@@ -1,6 +1,7 @@
 // READ-ONLY recon of AnyRoR Rural Land Record (ASP.NET WebForms).
 import { chromium } from 'playwright-core';
 import { writeFileSync } from 'node:fs';
+import { REPO } from '../src/repo-root.mjs';
 
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
 const browser = await chromium.connectOverCDP('http://127.0.0.1:9222');
@@ -25,8 +26,8 @@ try {
     return { selects, imgs, inputs, hidden, btns };
   });
   console.log(JSON.stringify(info, null, 2));
-  writeFileSync('/home/kirtan/Desktop/projects/irmsc/anyror/recon-page.html', await page.content());
-  await page.screenshot({ path: '/home/kirtan/Desktop/projects/irmsc/anyror/recon-1.png' });
+  writeFileSync(REPO+'/anyror/recon-page.html', await page.content());
+  await page.screenshot({ path: REPO+'/anyror/recon-1.png' });
   console.log('saved recon-1.png + recon-page.html ; tab left open');
 } catch (e) { console.log('ERR', e.message); }
 await browser.close();

@@ -8,9 +8,10 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from 'node
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { surveyToken, normalizeSurvey } from '../src/normalize.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
-const OUT = '/home/kirtan/Desktop/projects/irmsc/output';
+const OUT = REPO+'/output';
 const STATE = join(OUT, '_vf712_state.json');
 const LAND = '11', DIST = '16', TAL = '08', VIL = '072';
 const NORM = `(s)=>{const GU={'૦':'0','૧':'1','૨':'2','૩':'3','૪':'4','૫':'5','૬':'6','૭':'7','૮':'8','૯':'9'};return String(s).replace(/[૦-૯]/g,c=>GU[c]||c).replace(/પ/g,'p').toLowerCase().replace(/[\\s/|\\\\]+/g,'/').replace(/^\\/+|\\/+$/g,'').replace(/p\\/(?=\\d)/g,'p');}`;
@@ -30,7 +31,7 @@ const startYear = (period) => { const m = String(period).match(/(\d{4})/); retur
 const LAUNCH = process.argv.includes('--launch');
 let browser, ctx, page;
 if (LAUNCH) {
-  ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-anyror', {
+  ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-anyror', {
     channel: 'chrome', headless: false, viewport: null,
     args: ['--window-size=1500,1000', '--window-position=0,0', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
   });

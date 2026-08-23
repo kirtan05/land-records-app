@@ -1,6 +1,7 @@
 // Saves a CLEAN PDF of the AnyRoR survey detail (watermark killed) + extracts data.
 import { chromium } from 'playwright-core';
 import { writeFileSync } from 'node:fs';
+import { REPO } from '../src/repo-root.mjs';
 
 const browser = await chromium.connectOverCDP('http://127.0.0.1:9222');
 const ctx = browser.contexts()[0];
@@ -15,7 +16,7 @@ await page.addStyleTag({ content: `
 ` });
 
 await page.pdf({
-  path: '/home/kirtan/Desktop/projects/irmsc/anyror/AnyRoR_SurveyNo_221_P_LandRecord.pdf',
+  path: REPO+'/anyror/AnyRoR_SurveyNo_221_P_LandRecord.pdf',
   format: 'A4', printBackground: true, margin: { top: '8mm', bottom: '8mm', left: '7mm', right: '7mm' },
 });
 
@@ -38,7 +39,7 @@ const data = await page.evaluate(() => {
     raw_text: clean(document.body.innerText),
   };
 });
-writeFileSync('/home/kirtan/Desktop/projects/irmsc/anyror/anyror-221p.json', JSON.stringify(data, null, 2));
+writeFileSync(REPO+'/anyror/anyror-221p.json', JSON.stringify(data, null, 2));
 console.log('saved AnyRoR_SurveyNo_221_P_LandRecord.pdf');
 console.log('extracted:', JSON.stringify({ as_of: data.as_of, total_area: data.total_area, total_assessment: data.total_assessment, tenure: data.tenure, land_use: data.land_use, sections: data.sections.length }, null, 2));
 console.log('section labels:', data.sections.map((s) => s.label).filter(Boolean).join(' | '));

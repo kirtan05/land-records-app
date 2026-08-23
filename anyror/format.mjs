@@ -2,7 +2,8 @@
 // watermark, hides chrome, stacks only the tall side-by-side sections, adds a title.
 // Used by the live runner AND the offline local-HTML renderer (identical output).
 
-export async function applyCleanFormat(page, survey) {
+export async function applyCleanFormat(page, survey, place = {}) {
+  const PLACE = { district: 'Anand', taluka: 'Umreth', village: 'Bharoda', ...place };
   const removed = await page.evaluate(() => {
     document.getElementById('__bot_banner')?.remove(); // never bake the progress banner into the PDF
     const blank = (s) => (s || '').replace(/[\s \-—_.]/g, '') === '';
@@ -47,10 +48,25 @@ export async function applyCleanFormat(page, survey) {
       if (vals.reduce((a, s) => a + s.length, 0) / vals.length > 14) return; // long text -> keep as table
       const head = t.querySelector('th');
       if (head) { const h = document.createElement('div'); h.style.cssText = 'font-weight:700;background:#e8eef6;padding:2px 6px;border:.4pt solid #aab;font-size:8.5pt;'; h.textContent = (head.textContent || '').replace(/\s+/g, ' ').trim(); t.parentNode.insertBefore(h, t); }
+      // Carry the row's colour across. AnyRoR draws OLD handwritten entries as red anchors and
+      // computerised ones as blue; rebuilding this list from textContent threw that away, so every
+      // entry number printed black and dad could not tell which ones have a scan.
+      const reds = Array.from(t.rows).filter((r) => !r.querySelector('th')).map((r) => {
+        const a = r.querySelector('a');
+        return !!a && /color:Red/i.test((a.getAttribute('style') || '').replace(/\s/g, ''));
+      });
       const wrap = document.createElement('div');
       wrap.style.cssText = 'column-count:10;column-gap:8px;font-size:8pt;border:.4pt solid #aab;border-top:none;padding:3px 6px;margin:0 0 6px 0;';
-      wrap.innerHTML = vals.map((v) => '<div style="break-inside:avoid;">' + v + '</div>').join('');
+      wrap.innerHTML = vals.map((v, i) => reds[i]
+        ? '<div class="lr-old-entry" style="break-inside:avoid;color:#C41E1E !important;font-weight:900 !important;text-decoration:underline !important;">' + v + '</div>'
+        : '<div style="break-inside:avoid;">' + v + '</div>').join('');
       t.parentNode.insertBefore(wrap, t);
+      if (reds.some(Boolean)) {
+        const key = document.createElement('div');
+        key.style.cssText = 'font-size:7.6pt;margin:-4px 0 6px 0;padding:1px 6px;color:#333;';
+        key.innerHTML = '<b class="lr-old-entry" style="color:#C41E1E !important;">\u0AB2\u0ABE\u0AB2 \u0AA8\u0A82\u0AAC\u0AB0</b> = \u0A9C\u0AC2\u0AA8\u0AC0 \u0AB9\u0ABE\u0AA5\u0AC7 \u0AB2\u0A96\u0AC7\u0AB2\u0AC0 \u0AA8\u0ACB\u0A82\u0AA7 \u2014 \u0AA4\u0AC7\u0AA8\u0AC0 \u0AB8\u0ACD\u0A95\u0AC5\u0AA8 \u0AA8\u0A95\u0AB2 \u0A86 \u0AAB\u0ABE\u0A87\u0AB2\u0AA8\u0ABE \u0A9B\u0AC7\u0AA1\u0AC7 \u2014 \u0A95\u0A88 \u0AA8\u0ACB\u0A82\u0AA7 \u0AAE\u0AB3\u0AC0 \u0AA4\u0AC7 \u0AAA\u0AB9\u0AC7\u0AB2\u0ABE \u0AAA\u0ABE\u0AA8\u0ABE \u0AAA\u0AB0 &nbsp;\u00b7&nbsp; RED = old hand-written entry \u2014 scans at the end; page 1 lists which ones exist';
+        t.parentNode.insertBefore(key, t);
+      }
       t.style.display = 'none'; compacted++;
     });
     // 5) balance column widths by content length so long-text columns wrap less (shorter rows,
@@ -75,17 +91,21 @@ export async function applyCleanFormat(page, survey) {
   });
 
   await page.addStyleTag({ content: `
-    html, body { background:#fff !important; }
+    @page { size: A4 landscape; margin: 6mm; }
+    html, body { background:#fff !important; width:100% !important; max-width:100% !important; margin:0 !important; }
     * { background-image:none !important; }
     .imgwatermark { background:#fff !important; }
-    [class*="col-md-4"],[class*="col-lg-4"],[class*="col-md-5"],[class*="col-lg-5"],
-    [class*="col-md-6"],[class*="col-lg-6"],[class*="col-md-7"],[class*="col-lg-7"],
-    [class*="col-md-8"],[class*="col-lg-8"],[class*="col-md-9"],[class*="col-lg-9"]{
+    /* Bootstrap's fixed-width .container caps the record on a wide print surface. */
+    .container, .container-fluid, [class*="container"] { width:100% !important; max-width:100% !important; margin:0 auto !important; padding:0 !important; }
+    /* EVERY grid column goes full width, not just col-*-4..9. The entry-number index lives in a
+       col-md-1 (a 1/12 sliver): left narrow, its 10-column block collapses into unreadable mush. */
+    [class*="col-md-"],[class*="col-lg-"],[class*="col-sm-"],[class*="col-xs-"]{
        width:100% !important; max-width:100% !important; float:none !important; display:block !important; }
-    table { width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; margin:2px 0 5px 0 !important; }
+    table, .table, .table-bordered, table[border] { width:100% !important; table-layout:fixed !important;
+       border-collapse:collapse !important; margin:2px 0 5px 0 !important; border:none !important; }
     td, th { border:.5pt solid #445 !important; padding:1.3px 3.5px !important; font-size:9.4pt !important;
              line-height:1.16 !important; white-space:normal !important; word-break:break-word !important;
-             overflow-wrap:anywhere !important; vertical-align:top !important; }
+             overflow-wrap:anywhere !important; vertical-align:top !important; color:#111 !important; }
     th { background:#e8eef6 !important; font-weight:700 !important; }
     tr { page-break-inside:avoid !important; }
     .panel, .panel-body, .Div-Border-Side-New, .form-group, .form-horizontal, .bs-example, .card, .container, .row
@@ -96,6 +116,15 @@ export async function applyCleanFormat(page, survey) {
     .panel-heading { padding:3px 6px !important; }
     br { line-height:0.6 !important; }
     a { text-decoration:none !important; color:#000 !important; }
+    /* …but never flatten the RED entry numbers: red = old hand-written notes with a scan.
+       bootstrap.min.css ships a print-media rule that forces color:#000 !important on every
+       element — that is why the entry numbers came out black on paper. Override it below. */
+    a[style*="Red"], a[style*="red"], .lr-old-entry { color:#C41E1E !important; font-weight:900 !important; text-decoration:underline !important; }
+    @media print {
+      html, body { -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; }
+      a[style*="Red"], a[style*="red"], .lr-old-entry, .lr-old-entry * { color:#C41E1E !important; }
+      th { background:#e8eef6 !important; }
+    }
     img[src*="image"] { display:none; }
     .breadcrumb, #myBtn, .alert-danger, header, nav, .navbar, footer, #__bot_banner { display:none !important; }
   ` });
@@ -108,7 +137,7 @@ export async function applyCleanFormat(page, survey) {
       asOf: (document.body.innerText.match(/તા\.\s*([0-9/]+ [0-9:]+)\s*ની સ્થિતિએ/) || [, ''])[1] || '',
     };
   });
-  await page.evaluate(({ survey, s }) => {
+  await page.evaluate(({ survey, s, P }) => {
     // drop the native stacked summary (District/Taluka/Village + Land Details) — replaced by a compact header
     document.querySelectorAll('.Div-Border-Side-New').forEach((p) => {
       const h = (p.querySelector('.text-success')?.textContent || '').replace(/\s+/g, ' ');
@@ -124,14 +153,14 @@ export async function applyCleanFormat(page, survey) {
     const chip = (label, val) => val ? '<span style="margin-right:16px;white-space:nowrap;">' + label + ': <b>' + val + '</b></span>' : '';
     d.innerHTML =
       '<div style="font-size:15pt;font-weight:800;color:#1f4e78;line-height:1.1;">AnyRoR — Integrated Survey Record</div>' +
-      '<div style="font-size:10pt;color:#222;margin-top:3px;">Village <b>Bharoda</b> &middot; Taluka <b>Umreth</b> &middot; District <b>Anand</b>' +
+      '<div style="font-size:10pt;color:#222;margin-top:3px;">Village <b>' + P.village + '</b> &middot; Taluka <b>' + P.taluka + '</b> &middot; District <b>' + P.district + '</b>' +
       ' &nbsp;|&nbsp; Survey / Block No <b>' + survey + '</b>' + (s.asOf ? ' &nbsp;|&nbsp; As of ' + s.asOf : '') + '</div>' +
       '<div style="font-size:9.5pt;color:#111;margin-top:4px;line-height:1.5;">' +
         chip('કુલ ક્ષેત્રફળ / Area', s.area) + chip('આકાર / Assessment', s.assessment) +
         chip('સત્તાપ્રકાર / Tenure', s.tenure) + chip('ઉપયોગ / Land Use', s.landUse) + '</div>';
     const anchor = document.querySelector('.panel.panel-primary') || document.querySelector('.panel-primary') || document.body.firstElementChild;
     anchor.parentNode.insertBefore(d, anchor);
-  }, { survey, s: summary });
+  }, { survey, s: summary, P: PLACE });
 
   return { removed, asOf: summary.asOf };
 }

@@ -1,6 +1,7 @@
 // Inspect InfoSurveyNoDetail.aspx: find the watermark layer + structure; baseline PDF.
 import { chromium } from 'playwright-core';
 import { writeFileSync } from 'node:fs';
+import { REPO } from '../src/repo-root.mjs';
 
 const browser = await chromium.connectOverCDP('http://127.0.0.1:9222');
 const ctx = browser.contexts()[0];
@@ -32,9 +33,9 @@ const info = await page.evaluate(() => {
 });
 console.log(JSON.stringify(info, null, 2));
 
-writeFileSync('/home/kirtan/Desktop/projects/irmsc/anyror/detail-page.html', await page.content());
-await page.screenshot({ path: '/home/kirtan/Desktop/projects/irmsc/anyror/detail-full.png', fullPage: true });
-try { await page.pdf({ path: '/home/kirtan/Desktop/projects/irmsc/anyror/detail-baseline.pdf', format: 'A4', printBackground: true }); console.log('baseline pdf OK'); }
+writeFileSync(REPO+'/anyror/detail-page.html', await page.content());
+await page.screenshot({ path: REPO+'/anyror/detail-full.png', fullPage: true });
+try { await page.pdf({ path: REPO+'/anyror/detail-baseline.pdf', format: 'A4', printBackground: true }); console.log('baseline pdf OK'); }
 catch (e) { console.log('pdf err', e.message); }
 console.log('saved detail-page.html, detail-full.png, detail-baseline.pdf');
 await browser.close();

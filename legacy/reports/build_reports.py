@@ -7,8 +7,10 @@ from pypdf import PdfReader, PdfWriter
 from pypdf.annotations import Link
 from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Alignment, Border, Side
+import sys, os; sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../tools'))
+from repo_root import REPO
 
-BASE = "/home/kirtan/Desktop/projects/irmsc"
+BASE = str(REPO)
 OUT = os.path.join(BASE, "output")
 FONTS = "/usr/share/fonts/noto"
 K = 72 / 25.4                      # mm -> pt

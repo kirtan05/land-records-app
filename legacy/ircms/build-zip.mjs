@@ -4,8 +4,9 @@ import { readFileSync, existsSync, mkdirSync, copyFileSync, rmSync, readdirSync 
 import { join, basename } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { OUT, readState } from './src/store.mjs';
+import { REPO } from '../../src/repo-root.mjs';
 
-const DIST = '/home/kirtan/Desktop/projects/irmsc/dist';
+const DIST = REPO+'/dist';
 const ROOT = join(DIST, 'Bharoda_iRCMS_Cases');
 rmSync(DIST, { recursive: true, force: true });
 mkdirSync(ROOT, { recursive: true });

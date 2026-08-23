@@ -8,9 +8,10 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync, rmSync } from 'node
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { surveyToken, normalizeSurvey } from '../src/normalize.mjs';
+import { REPO } from '../src/repo-root.mjs';
 
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
-const OUT = '/home/kirtan/Desktop/projects/irmsc/output';
+const OUT = REPO+'/output';
 const STATE = join(OUT, '_vf712_state.json');
 const LAND = '11', DIST = '15', TAL = '03', VIL = '029';
 const NORM = `(s)=>{const GU={'૦':'0','૧':'1','૨':'2','૩':'3','૪':'4','૫':'5','૬':'6','૭':'7','૮':'8','૯':'9'};return String(s).replace(/[૦-૯]/g,c=>GU[c]||c).replace(/પ/g,'p').toLowerCase().replace(/[\\s/|\\\\]+/g,'/').replace(/^\\/+|\\/+$/g,'').replace(/p\\/(?=\\d)/g,'p');}`;
@@ -21,7 +22,7 @@ const isPlaceholder = (file) => { try { const raw = execFileSync('pdftotext', ['
 
 const only = (process.argv.find((a) => a.startsWith('--only=')) || '').split('=')[1];
 const limit = parseInt((process.argv.find((a) => a.startsWith('--limit=')) || '').split('=')[1]) || 0;
-let targets = JSON.parse(readFileSync('/home/kirtan/Desktop/projects/irmsc/survey-input.json', 'utf8')).filter((r) => r.matched);
+let targets = JSON.parse(readFileSync(REPO+'/survey-input.json', 'utf8')).filter((r) => r.matched);
 if (only) targets = targets.filter((t) => normalizeSurvey(t.normalized) === normalizeSurvey(only));
 if (limit) targets = targets.slice(0, limit);
 
@@ -33,7 +34,7 @@ const startYear = (period) => { const m = String(period).match(/(\d{4})/); retur
 const LAUNCH = process.argv.includes('--launch');
 let browser, ctx, page;
 if (LAUNCH) {
-  ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-anyror', {
+  ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-anyror', {
     channel: 'chrome', headless: false, viewport: null,
     args: ['--window-size=1500,1000', '--window-position=0,0', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
   });

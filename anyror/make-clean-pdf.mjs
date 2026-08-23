@@ -3,8 +3,9 @@
 // side-by-side sections (Ownership/Boja/Crop) so it fits in far fewer pages.
 //   node make-clean-pdf.mjs <outPath> <surveyLabel>
 import { chromium } from 'playwright-core';
+import { REPO } from '../src/repo-root.mjs';
 
-const OUTPATH = process.argv[2] || '/home/kirtan/Desktop/projects/irmsc/anyror/AnyRoR_221_P_v6.pdf';
+const OUTPATH = process.argv[2] || REPO+'/anyror/AnyRoR_221_P_v6.pdf';
 const SURVEY = process.argv[3] || '221/p';
 
 const browser = await chromium.connectOverCDP('http://127.0.0.1:9222');

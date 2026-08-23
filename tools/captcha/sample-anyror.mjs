@@ -9,6 +9,7 @@
 import { chromium } from 'playwright-core';
 import { writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import { REPO } from '../../src/repo-root.mjs';
 
 const DIR = new URL('./samples/anyror/', import.meta.url).pathname;
 mkdirSync(DIR, { recursive: true });
@@ -20,7 +21,7 @@ const DELAY = +(process.argv.find((a) => a.startsWith('--delay='))?.split('=')[1
 const PAGE_URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
 const IMG = '#ContentPlaceHolder1_i_captcha_1';
 
-const ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-anyror', {
+const ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-anyror', {
   channel: 'chrome', headless: false, viewport: null,
   args: ['--window-size=1200,900', '--window-position=40,40', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
 });

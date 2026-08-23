@@ -17,8 +17,9 @@ import { spawn } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
+import { REPO } from '../../src/repo-root.mjs';
 
-const ROOT = '/home/kirtan/Desktop/projects/irmsc';
+const ROOT = REPO;
 const OUT = join(ROOT, 'output');
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
 const LAND = '8';                                        // Integrated Survey Details

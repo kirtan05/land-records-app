@@ -1,7 +1,8 @@
 import { chromium } from 'playwright-core';
 import { searchWithAutoCaptcha } from './ircms-solve.mjs';
 import { extractCaseList, openDetailByKey, extractOrderForms, downloadOrderBytes } from '../../src/scrape.mjs';
-const ctx = await chromium.launchPersistentContext('/home/kirtan/Desktop/projects/irmsc/.chrome-profile-ircms', {
+import { REPO } from '../../src/repo-root.mjs';
+const ctx = await chromium.launchPersistentContext(REPO+'/.chrome-profile-ircms', {
   channel: 'chrome', headless: false, viewport: null,
   args: ['--window-size=1300,900', '--window-position=60,30', '--no-first-run', '--no-default-browser-check', '--disable-session-crashed-bubble'],
 });

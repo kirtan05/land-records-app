@@ -3,9 +3,10 @@
 // Does NOT submit the form, solve a CAPTCHA, or save any case data.
 import { chromium } from 'playwright-core';
 import { writeFileSync } from 'node:fs';
+import { REPO } from '../../src/repo-root.mjs';
 
 const URL = 'https://ircms.gujarat.gov.in/ViewSurveyList';
-const OUT = '/home/kirtan/Desktop/projects/irmsc';
+const OUT = REPO;
 const HEADLESS = process.env.HEADED ? false : true;
 
 const log = (...a) => console.log(...a);

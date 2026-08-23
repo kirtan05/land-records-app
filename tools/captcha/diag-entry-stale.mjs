@@ -11,8 +11,9 @@ import { chromium } from 'playwright-core';
 import { spawn } from 'node:child_process';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
+import { REPO } from '../../src/repo-root.mjs';
 
-const ROOT = '/home/kirtan/Desktop/projects/irmsc';
+const ROOT = REPO;
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
 const arg = (k, d) => { const v = process.argv.find((a) => a.startsWith(`--${k}=`)); return v ? v.split('=')[1] : d; };
 const VILLAGE = arg('village', 'ભાલેજ'), SURVEY = arg('surveys', '174/p1');

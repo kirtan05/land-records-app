@@ -5,8 +5,9 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, rmSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { REPO } from '../src/repo-root.mjs';
 
-const OUT = '/home/kirtan/Desktop/projects/irmsc/output';
+const OUT = REPO+'/output';
 const STATE = join(OUT, '_vf712_state.json');
 const PLACEHOLDER = /શકેલ નથી|શકલ નથી|જર્જરીત|ઉપલબ્ધ નથી|does not exist|not available|record not found/i;
 const isPlaceholder = (file) => { try { const raw = execFileSync('pdftotext', ['-l', '3', file, '-'], { encoding: 'utf8' }); const compact = raw.replace(/\s+/g, ''); const plain = raw.replace(/\s+/g, ' ').trim(); return PLACEHOLDER.test(raw) || (compact.length >= 10 && plain.length < 300); } catch { return false; } };
