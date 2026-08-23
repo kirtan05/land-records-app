@@ -7,13 +7,13 @@ Three files, one contract:
 
 | file | what |
 |---|---|
-| `src/identity.mjs` | desktop implementation (node scrapers) |
-| `android/app/src/main/java/com/landrecords/app/data/identity/Identity.kt` | app implementation (pure Kotlin, no Android deps) |
+| `packages/core/identity.mjs` | desktop implementation (node scrapers) |
+| `apps/android/app/src/main/java/com/landrecords/app/data/identity/Identity.kt` | app implementation (pure Kotlin, no Android deps) |
 | `tools/identity/vectors.json` | **the fixture both are held to** |
 
 ```bash
 node tools/identity/test.mjs                      # desktop half
-cd android && ./gradlew :app:testDebugUnitTest    # app half
+cd apps/android && ./gradlew :app:testDebugUnitTest    # app half
 ```
 
 Neither test keeps its own copy of the expectations — that is the whole point. If the two
@@ -28,7 +28,7 @@ the Kotlin test. (Verified by breaking a vector and watching it fail.)
 ## Two deliberate deviations from the spec as written
 
 The spec's §1.2 tokenizer ends with *"strip `[^A-Z0-9_]`"*. Measured against the **15,293
-real AnyRoR dropdown values** bundled in `android/app/src/main/assets/surveys/`, that rule
+real AnyRoR dropdown values** bundled in `apps/android/app/src/main/assets/surveys/`, that rule
 **fused 250 genuinely different surveys onto shared tokens** — silently, and irreversibly
 once merged. Reproduce with:
 

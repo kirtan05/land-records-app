@@ -10,8 +10,8 @@
 
 import { readdirSync, readFileSync, existsSync, statSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import * as DB from '../../src/sync-db.mjs';
-import * as I from '../../src/identity.mjs';
+import * as DB from '../../packages/core/sync-db.mjs';
+import * as I from '../../packages/core/identity.mjs';
 
 const OUT = 'output';
 const ORIGIN = 'desktop-convert';
@@ -101,7 +101,7 @@ export function convert(db, { log = () => {} } = {}) {
           parties: obj.parties ?? null,
           survno: obj.survey ?? null,
           // §7: these five are corrupt at rest on the desktop (regex bleed,
-          // src/scrape.mjs:100-105). Re-derived on import rather than carried over, so the
+          // packages/core/scrape.mjs:100-105). Re-derived on import rather than carried over, so the
           // new schema does not inherit the bug with a nicer column type.
           disposal_date: cleanDate(obj.disposal_date),
           disposal_type: cleanShort(obj.disposal_type),

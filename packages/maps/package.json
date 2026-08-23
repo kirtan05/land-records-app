@@ -1,0 +1,7 @@
+{
+  "name": "@land-records/maps",
+  "version": "0.13.0",
+  "private": true,
+  "type": "module",
+  "description": "eJamin village-map catalogue pipeline"
+}

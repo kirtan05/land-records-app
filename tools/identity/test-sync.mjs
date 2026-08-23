@@ -4,9 +4,9 @@
 //
 //   node tools/identity/test-sync.mjs
 
-import * as DB from '../../src/sync-db.mjs';
-import { SYNC_TABLES } from '../../src/sync-schema.mjs';
-import * as I from '../../src/identity.mjs';
+import * as DB from '../../packages/core/sync-db.mjs';
+import { SYNC_TABLES } from '../../packages/core/sync-schema.mjs';
+import * as I from '../../packages/core/identity.mjs';
 
 let pass = 0;
 const failures = [];

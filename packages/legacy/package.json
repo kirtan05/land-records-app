@@ -1,0 +1,7 @@
+{
+  "name": "@land-records/legacy",
+  "version": "0.13.0",
+  "private": true,
+  "type": "module",
+  "description": "Historical iRCMS runners and PDF/Excel builders (reference only)"
+}

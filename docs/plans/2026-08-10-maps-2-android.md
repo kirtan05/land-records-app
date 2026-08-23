@@ -25,7 +25,7 @@
 
 ## Global Constraints
 
-- Spec: `docs/specs/2026-08-10-maps-village-cadastre-design.md`. Design source of truth: `design_handoff_land_records_ui/README.md` (read it before Task 6).
+- Spec: `docs/specs/2026-08-10-maps-village-cadastre-design.md`. Design source of truth: `design/README.md` (read it before Task 6).
 - Build stack is pinned — **do not bump anything**: Gradle 9.5 · AGP 9.1.1 · Kotlin 2.3.21 · Room 2.8.4 · compileSdk 37 · minSdk 26. `material-icons-extended` stays at 1.7.8.
 - Direction "Cadastre" at **comfy** density. Ochre accent `#B4531B` (dark `#E58A55`), **no elevation** — 1dp borders only. Use the existing `Land.colors.*`, `LandType.*`, `LandShape.*` tokens; never hardcode a hex.
 - Every survey is drawn as a **parcel tile**: 1dp border, radius 12dp, 1dp dashed inset at 5dp (`Modifier.dashedInset`).
@@ -33,12 +33,12 @@
 - App chrome respects the language setting via `Lr(R.string.x_gu, R.string.x_en)`. **Land data is never translated** — Gujarati numerals stay, with a Latin helper line.
 - **Never invent land data.** Unknown metadata renders `—`. A survey number absent from the index is reported as absent, never guessed.
 - Both themes are first-class. All motion collapses under reduced-motion.
-- Build: `cd android && ./gradlew :app:assembleDebug`. Unit tests: `cd android && ./gradlew :app:testDebugUnitTest`.
+- Build: `cd apps/android && ./gradlew :app:assembleDebug`. Unit tests: `cd apps/android && ./gradlew :app:testDebugUnitTest`.
 - Every new string needs **both** `_gu` and `_en` entries in `res/values/strings.xml`.
 
 ## Prerequisite
 
-Plan 1 (`docs/plans/2026-08-10-maps-1-pipeline.md`) must be complete, with `tools/ejamin/out/catalog.json`, `out/indexes/village-*.index.json` and `out/indexes/manifest.json` produced and the hand-verification in Plan 1 Task 10 Step 6 passed.
+Plan 1 (`docs/plans/2026-08-10-maps-1-pipeline.md`) must be complete, with `packages/maps/out/catalog.json`, `out/indexes/village-*.index.json` and `out/indexes/manifest.json` produced and the hand-verification in Plan 1 Task 10 Step 6 passed.
 
 ---
 
@@ -63,19 +63,19 @@ Plan 1 (`docs/plans/2026-08-10-maps-1-pipeline.md`) must be complete, with `tool
 
 ### Task 1: Create the test source set
 
-The module has **no `src/test/` at all**. Everything downstream depends on this existing.
+The module has **no `packages/core/test/` at all**. Everything downstream depends on this existing.
 
 **Files:**
-- Modify: `android/app/build.gradle.kts`
-- Create: `android/app/src/test/java/com/landrecords/app/ui/maps/geometry/SurveyNoTest.kt`
-- Create: `android/app/src/main/java/com/landrecords/app/ui/maps/geometry/SurveyNo.kt`
+- Modify: `apps/android/app/build.gradle.kts`
+- Create: `apps/android/app/src/test/java/com/landrecords/app/ui/maps/geometry/SurveyNoTest.kt`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/ui/maps/geometry/SurveyNo.kt`
 
 **Interfaces:**
 - Produces: `object SurveyNo { fun normalise(raw: String): String; fun matches(a: String, b: String): Boolean; fun display(raw: String): String }`
 
 - [ ] **Step 1: Add the test dependency**
 
-In `android/app/build.gradle.kts`, inside `dependencies { }`, after the `debugImplementation` line:
+In `apps/android/app/build.gradle.kts`, inside `dependencies { }`, after the `debugImplementation` line:
 
 ```kotlin
     testImplementation("junit:junit:4.13.2")
@@ -83,7 +83,7 @@ In `android/app/build.gradle.kts`, inside `dependencies { }`, after the `debugIm
 
 - [ ] **Step 2: Write the failing test**
 
-Create `android/app/src/test/java/com/landrecords/app/ui/maps/geometry/SurveyNoTest.kt`:
+Create `apps/android/app/src/test/java/com/landrecords/app/ui/maps/geometry/SurveyNoTest.kt`:
 
 ```kotlin
 package com.landrecords.app.ui.maps.geometry
@@ -119,12 +119,12 @@ class SurveyNoTest {
 
 - [ ] **Step 3: Run it and verify it fails**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*SurveyNoTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*SurveyNoTest*'`
 Expected: FAIL — `Unresolved reference: SurveyNo`.
 
 - [ ] **Step 4: Implement `SurveyNo.kt`**
 
-Create `android/app/src/main/java/com/landrecords/app/ui/maps/geometry/SurveyNo.kt`:
+Create `apps/android/app/src/main/java/com/landrecords/app/ui/maps/geometry/SurveyNo.kt`:
 
 ```kotlin
 package com.landrecords.app.ui.maps.geometry
@@ -163,13 +163,13 @@ object SurveyNo {
 
 - [ ] **Step 5: Run the tests**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*SurveyNoTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*SurveyNoTest*'`
 Expected: PASS, 4 tests.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add android/app/build.gradle.kts android/app/src/test android/app/src/main/java/com/landrecords/app/ui/maps
+git add apps/android/app/build.gradle.kts apps/android/app/src/test apps/android/app/src/main/java/com/landrecords/app/ui/maps
 git commit -m "feat(maps): add JVM test source set and survey-number identity"
 ```
 
@@ -178,9 +178,9 @@ git commit -m "feat(maps): add JVM test source set and survey-number identity"
 ### Task 2: Index model and parsing
 
 **Files:**
-- Create: `android/app/src/main/java/com/landrecords/app/ui/maps/geometry/MapIndex.kt`
-- Create: `android/app/src/test/java/com/landrecords/app/ui/maps/geometry/MapIndexTest.kt`
-- Create: `android/app/src/test/resources/village-fixture.index.json`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/ui/maps/geometry/MapIndex.kt`
+- Create: `apps/android/app/src/test/java/com/landrecords/app/ui/maps/geometry/MapIndexTest.kt`
+- Create: `apps/android/app/src/test/resources/village-fixture.index.json`
 
 **Interfaces:**
 - Consumes: `SurveyNo` (Task 1).
@@ -206,10 +206,10 @@ git commit -m "feat(maps): add JVM test source set and survey-number identity"
 Copy a small real index from Plan 1 (pick the one with the fewest parcels so the fixture stays readable):
 
 ```bash
-mkdir -p android/app/src/test/resources
+mkdir -p apps/android/app/src/test/resources
 node -e "const fs=require('fs');const m=require('./tools/ejamin/out/indexes/manifest.json');
 const s=m.villages.filter(v=>v.quality==='GOOD').sort((a,b)=>a.parcels-b.parcels)[0];
-fs.copyFileSync('tools/ejamin/out/indexes/'+s.file,'android/app/src/test/resources/village-fixture.index.json');
+fs.copyFileSync('packages/maps/out/indexes/'+s.file,'apps/android/app/src/test/resources/village-fixture.index.json');
 console.log(s.villageName, s.parcels, 'parcels');"
 ```
 
@@ -217,7 +217,7 @@ Note the printed parcel count — the test below asserts against it.
 
 - [ ] **Step 2: Write the failing test**
 
-Create `android/app/src/test/java/com/landrecords/app/ui/maps/geometry/MapIndexTest.kt`. Replace `EXPECTED_PARCELS` and `KNOWN_SURVEY` with values read from the fixture you just copied.
+Create `apps/android/app/src/test/java/com/landrecords/app/ui/maps/geometry/MapIndexTest.kt`. Replace `EXPECTED_PARCELS` and `KNOWN_SURVEY` with values read from the fixture you just copied.
 
 ```kotlin
 package com.landrecords.app.ui.maps.geometry
@@ -265,7 +265,7 @@ class MapIndexTest {
 
 - [ ] **Step 3: Run it and verify it fails**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*MapIndexTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*MapIndexTest*'`
 Expected: FAIL — `Unresolved reference: MapIndexParser`.
 
 - [ ] **Step 4: Implement `MapIndex.kt`**
@@ -288,7 +288,7 @@ data class Parcel(
 data class MapFeature(val kind: String, val label: String, val x: Float, val y: Float)
 
 /**
- * A whole village sheet, as produced by `tools/ejamin/build-index.mjs`. Page space is PDF points
+ * A whole village sheet, as produced by `packages/maps/build-index.mjs`. Page space is PDF points
  * with the origin bottom-left, exactly as the sheet was drawn; [geo] converts that to lat/long.
  */
 data class MapIndex(
@@ -376,13 +376,13 @@ object MapIndexParser {
 
 - [ ] **Step 5: Run the tests**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*MapIndexTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*MapIndexTest*'`
 Expected: PASS, 3 tests.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add android/app/src/main/java/com/landrecords/app/ui/maps/geometry/MapIndex.kt android/app/src/test
+git add apps/android/app/src/main/java/com/landrecords/app/ui/maps/geometry/MapIndex.kt apps/android/app/src/test
 git commit -m "feat(maps): parse the village parcel index"
 ```
 
@@ -391,8 +391,8 @@ git commit -m "feat(maps): parse the village parcel index"
 ### Task 3: Map geometry — hit testing and camera fitting
 
 **Files:**
-- Create: `android/app/src/main/java/com/landrecords/app/ui/maps/geometry/MapGeometry.kt`
-- Create: `android/app/src/test/java/com/landrecords/app/ui/maps/geometry/MapGeometryTest.kt`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/ui/maps/geometry/MapGeometry.kt`
+- Create: `apps/android/app/src/test/java/com/landrecords/app/ui/maps/geometry/MapGeometryTest.kt`
 
 **Interfaces:**
 - Consumes: `Parcel`, `MapIndex` (Task 2).
@@ -464,7 +464,7 @@ class MapGeometryTest {
 
 - [ ] **Step 2: Run it and verify it fails**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*MapGeometryTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*MapGeometryTest*'`
 Expected: FAIL — `Unresolved reference: MapGeometry`.
 
 - [ ] **Step 3: Implement `MapGeometry.kt`**
@@ -473,7 +473,7 @@ Expected: FAIL — `Unresolved reference: MapGeometry`.
 package com.landrecords.app.ui.maps.geometry
 
 /**
- * Plane geometry on the sheet's page space. Mirrors `tools/ejamin/lib/geom.mjs` deliberately: the
+ * Plane geometry on the sheet's page space. Mirrors `packages/maps/lib/geom.mjs` deliberately: the
  * pipeline decides adjacency, the app must agree about what "inside a parcel" means or a tap would
  * select a different plot than the one the index labelled.
  */
@@ -532,13 +532,13 @@ object MapGeometry {
 
 - [ ] **Step 4: Run the tests**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*MapGeometryTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*MapGeometryTest*'`
 Expected: PASS, 4 tests.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add android/app/src/main/java/com/landrecords/app/ui/maps/geometry/MapGeometry.kt android/app/src/test
+git add apps/android/app/src/main/java/com/landrecords/app/ui/maps/geometry/MapGeometry.kt apps/android/app/src/test
 git commit -m "feat(maps): parcel hit testing and lat/long projection"
 ```
 
@@ -547,10 +547,10 @@ git commit -m "feat(maps): parcel hit testing and lat/long projection"
 ### Task 4: The bundled catalogue
 
 **Files:**
-- Create: `android/app/src/main/assets/maps/catalog.json` (copied from Plan 1)
-- Create: `android/app/src/main/java/com/landrecords/app/data/maps/MapCatalog.kt`
-- Create: `android/app/src/test/java/com/landrecords/app/data/maps/MapCatalogTest.kt`
-- Create: `android/app/src/test/resources/catalog-fixture.json`
+- Create: `apps/android/app/src/main/assets/maps/catalog.json` (copied from Plan 1)
+- Create: `apps/android/app/src/main/java/com/landrecords/app/data/maps/MapCatalog.kt`
+- Create: `apps/android/app/src/test/java/com/landrecords/app/data/maps/MapCatalogTest.kt`
+- Create: `apps/android/app/src/test/resources/catalog-fixture.json`
 
 **Interfaces:**
 - Produces:
@@ -574,13 +574,13 @@ git commit -m "feat(maps): parcel hit testing and lat/long projection"
 - [ ] **Step 1: Copy the catalogue and make the fixture**
 
 ```bash
-mkdir -p android/app/src/main/assets/maps android/app/src/test/resources
-cp tools/ejamin/out/catalog.json android/app/src/main/assets/maps/catalog.json
+mkdir -p apps/android/app/src/main/assets/maps apps/android/app/src/test/resources
+cp packages/maps/out/catalog.json apps/android/app/src/main/assets/maps/catalog.json
 node -e "const c=require('./tools/ejamin/out/catalog.json');const fs=require('fs');
 const keep=c.sheets.filter(s=>['Kheda','Anand'].includes(s.districtName)).slice(0,200);
-fs.writeFileSync('android/app/src/test/resources/catalog-fixture.json',JSON.stringify({generatedAt:c.generatedAt,sheets:keep}));
+fs.writeFileSync('apps/android/app/src/test/resources/catalog-fixture.json',JSON.stringify({generatedAt:c.generatedAt,sheets:keep}));
 console.log('fixture sheets', keep.length);"
-ls -la android/app/src/main/assets/maps/catalog.json
+ls -la apps/android/app/src/main/assets/maps/catalog.json
 ```
 
 Note the asset's size. If it exceeds ~2 MB, drop `viewUrl`/`downloadUrl` from the asset and derive them in `MapCatalog.parse` from `driveFileId` (the same two templates `drive.mjs` uses).
@@ -623,7 +623,7 @@ class MapCatalogTest {
 
 - [ ] **Step 3: Run it and verify it fails**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*MapCatalogTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*MapCatalogTest*'`
 Expected: FAIL — `Unresolved reference: MapCatalog`.
 
 - [ ] **Step 4: Implement `MapCatalog.kt`**
@@ -712,13 +712,13 @@ class MapCatalog(val sheets: List<MapSheet>) {
 
 - [ ] **Step 5: Run the tests**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*MapCatalogTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*MapCatalogTest*'`
 Expected: PASS, 3 tests.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add android/app/src/main/assets/maps/catalog.json android/app/src/main/java/com/landrecords/app/data/maps android/app/src/test
+git add apps/android/app/src/main/assets/maps/catalog.json apps/android/app/src/main/java/com/landrecords/app/data/maps apps/android/app/src/test
 git commit -m "feat(maps): bundle and query the eJamin sheet catalogue"
 ```
 
@@ -727,7 +727,7 @@ git commit -m "feat(maps): bundle and query the eJamin sheet catalogue"
 ### Task 5: Index and sheet caching
 
 **Files:**
-- Create: `android/app/src/main/java/com/landrecords/app/data/maps/MapIndexStore.kt`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/data/maps/MapIndexStore.kt`
 
 **Interfaces:**
 - Consumes: `MapIndexParser` (Task 2), `MapSheet` (Task 4).
@@ -854,13 +854,13 @@ If `LandRecordsStorage.root(context)` is not the exact accessor name, use whatev
 
 - [ ] **Step 2: Build**
 
-Run: `cd android && ./gradlew :app:assembleDebug`
+Run: `cd apps/android && ./gradlew :app:assembleDebug`
 Expected: BUILD SUCCESSFUL.
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add android/app/src/main/java/com/landrecords/app/data/maps/MapIndexStore.kt
+git add apps/android/app/src/main/java/com/landrecords/app/data/maps/MapIndexStore.kt
 git commit -m "feat(maps): fetch, verify and cache indexes and sheet PDFs"
 ```
 
@@ -869,8 +869,8 @@ git commit -m "feat(maps): fetch, verify and cache indexes and sheet PDFs"
 ### Task 6: Marks manifest
 
 **Files:**
-- Create: `android/app/src/main/java/com/landrecords/app/data/maps/MapMarksStore.kt`
-- Create: `android/app/src/test/java/com/landrecords/app/data/maps/MapMarksStoreTest.kt`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/data/maps/MapMarksStore.kt`
+- Create: `apps/android/app/src/test/java/com/landrecords/app/data/maps/MapMarksStoreTest.kt`
 
 **Interfaces:**
 - Produces:
@@ -925,7 +925,7 @@ class MapMarksStoreTest {
 
 - [ ] **Step 2: Run it and verify it fails**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*MapMarksStoreTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*MapMarksStoreTest*'`
 Expected: FAIL — `Unresolved reference: MapMarksStore`.
 
 - [ ] **Step 3: Implement `MapMarksStore.kt`**
@@ -1021,13 +1021,13 @@ object MapMarksStore {
 
 - [ ] **Step 4: Run the tests**
 
-Run: `cd android && ./gradlew :app:testDebugUnitTest --tests '*MapMarksStoreTest*'`
+Run: `cd apps/android && ./gradlew :app:testDebugUnitTest --tests '*MapMarksStoreTest*'`
 Expected: PASS, 3 tests.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add android/app/src/main/java/com/landrecords/app/data/maps/MapMarksStore.kt android/app/src/test
+git add apps/android/app/src/main/java/com/landrecords/app/data/maps/MapMarksStore.kt apps/android/app/src/test
 git commit -m "feat(maps): persist parcel marks as a per-village manifest"
 ```
 
@@ -1036,12 +1036,12 @@ git commit -m "feat(maps): persist parcel marks as a per-village manifest"
 ### Task 7: Browse screen and navigation
 
 **Files:**
-- Create: `android/app/src/main/java/com/landrecords/app/ui/maps/MapsViewModel.kt`
-- Create: `android/app/src/main/java/com/landrecords/app/ui/maps/MapsBrowseScreen.kt`
-- Create: `android/app/src/main/java/com/landrecords/app/ui/maps/SheetScreen.kt`
-- Modify: `android/app/src/main/java/com/landrecords/app/ui/nav/AppNav.kt`
-- Modify: `android/app/src/main/java/com/landrecords/app/ui/library/LibraryScreen.kt` (add the entry point)
-- Modify: `android/app/src/main/res/values/strings.xml`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/ui/maps/MapsViewModel.kt`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/ui/maps/MapsBrowseScreen.kt`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/ui/maps/SheetScreen.kt`
+- Modify: `apps/android/app/src/main/java/com/landrecords/app/ui/nav/AppNav.kt`
+- Modify: `apps/android/app/src/main/java/com/landrecords/app/ui/library/LibraryScreen.kt` (add the entry point)
+- Modify: `apps/android/app/src/main/res/values/strings.xml`
 
 **Interfaces:**
 - Consumes: `MapCatalog`, `MapSheet`, `SheetType` (Task 4); `MapIndexStore` (Task 5).
@@ -1162,7 +1162,7 @@ object IndexedVillages {
 Copy the manifest into assets:
 
 ```bash
-cp tools/ejamin/out/indexes/manifest.json android/app/src/main/assets/maps/manifest.json
+cp packages/maps/out/indexes/manifest.json apps/android/app/src/main/assets/maps/manifest.json
 ```
 
 - [ ] **Step 4: Write `MapsBrowseScreen.kt`**
@@ -1401,7 +1401,7 @@ Add the destinations inside the `NavHost` block, following the existing `composa
 - [ ] **Step 7: Build and run on device**
 
 ```bash
-cd android && ./gradlew :app:assembleDebug
+cd apps/android && ./gradlew :app:assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
@@ -1414,7 +1414,7 @@ adb shell ls -la /sdcard/Documents/LandRecords/maps/sheets/ | head
 - [ ] **Step 8: Commit**
 
 ```bash
-git add android/app/src/main/java/com/landrecords/app/ui/maps android/app/src/main/java/com/landrecords/app/ui/nav/AppNav.kt android/app/src/main/java/com/landrecords/app/ui/library/LibraryScreen.kt android/app/src/main/res/values/strings.xml android/app/src/main/assets/maps/manifest.json
+git add apps/android/app/src/main/java/com/landrecords/app/ui/maps apps/android/app/src/main/java/com/landrecords/app/ui/nav/AppNav.kt apps/android/app/src/main/java/com/landrecords/app/ui/library/LibraryScreen.kt apps/android/app/src/main/res/values/strings.xml apps/android/app/src/main/assets/maps/manifest.json
 git commit -m "feat(maps): browse every eJamin sheet and view the full A0 map"
 ```
 
@@ -1425,7 +1425,7 @@ git commit -m "feat(maps): browse every eJamin sheet and view the full A0 map"
 ### Task 8: The parcel canvas
 
 **Files:**
-- Create: `android/app/src/main/java/com/landrecords/app/ui/maps/ParcelCanvas.kt`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/ui/maps/ParcelCanvas.kt`
 
 **Interfaces:**
 - Consumes: `MapIndex`, `Parcel`, `MapGeometry` (Tasks 2–3).
@@ -1566,13 +1566,13 @@ fun ParcelCanvas(
 
 - [ ] **Step 2: Build**
 
-Run: `cd android && ./gradlew :app:assembleDebug`
+Run: `cd apps/android && ./gradlew :app:assembleDebug`
 Expected: BUILD SUCCESSFUL.
 
 - [ ] **Step 3: Commit**
 
 ```bash
-git add android/app/src/main/java/com/landrecords/app/ui/maps/ParcelCanvas.kt
+git add apps/android/app/src/main/java/com/landrecords/app/ui/maps/ParcelCanvas.kt
 git commit -m "feat(maps): pan/zoom parcel canvas with tap selection"
 ```
 
@@ -1581,9 +1581,9 @@ git commit -m "feat(maps): pan/zoom parcel canvas with tap selection"
 ### Task 9: The village map screen — search and adjoining
 
 **Files:**
-- Create: `android/app/src/main/java/com/landrecords/app/ui/maps/VillageMapViewModel.kt`
-- Create: `android/app/src/main/java/com/landrecords/app/ui/maps/VillageMapScreen.kt`
-- Modify: `android/app/src/main/res/values/strings.xml`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/ui/maps/VillageMapViewModel.kt`
+- Create: `apps/android/app/src/main/java/com/landrecords/app/ui/maps/VillageMapScreen.kt`
+- Modify: `apps/android/app/src/main/res/values/strings.xml`
 
 **Interfaces:**
 - Consumes: everything from Tasks 2–8.
@@ -1714,7 +1714,7 @@ Rules this screen must honour, each already available as a primitive:
 - [ ] **Step 4: Build and check both themes**
 
 ```bash
-cd android && ./gradlew :app:assembleDebug
+cd apps/android && ./gradlew :app:assembleDebug
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
@@ -1729,7 +1729,7 @@ On device, open an indexed Anand village. Verify in order:
 - [ ] **Step 5: Commit**
 
 ```bash
-git add android/app/src/main/java/com/landrecords/app/ui/maps android/app/src/main/res/values/strings.xml
+git add apps/android/app/src/main/java/com/landrecords/app/ui/maps apps/android/app/src/main/res/values/strings.xml
 git commit -m "feat(maps): survey-number search and adjoining-parcel confirmation"
 ```
 
@@ -1742,7 +1742,7 @@ git commit -m "feat(maps): survey-number search and adjoining-parcel confirmatio
 
 - [ ] **Step 1: Publish**
 
-Copy every `village-*.index.json` from `tools/ejamin/out/indexes/` into `maps/` in the releases repo, alongside `manifest.json`, and push. `MapIndexStore.BASE_URL` already points at `.../main/maps/`.
+Copy every `village-*.index.json` from `packages/maps/out/indexes/` into `maps/` in the releases repo, alongside `manifest.json`, and push. `MapIndexStore.BASE_URL` already points at `.../main/maps/`.
 
 - [ ] **Step 2: Verify a cold fetch on device**
 
@@ -1769,26 +1769,26 @@ Expected: the app does not crash and does not draw a broken map — it refetches
 ### Task 11: Release
 
 **Files:**
-- Modify: `android/app/build.gradle.kts` (`versionCode`, `versionName`)
+- Modify: `apps/android/app/build.gradle.kts` (`versionCode`, `versionName`)
 - Modify: `kirtan05/land-records-releases` `update.json`
 
 - [ ] **Step 1: Run everything**
 
 ```bash
-node --test tools/ejamin/test/
-cd android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:assembleDebug
+node --test packages/maps/test/
+cd apps/android && ./gradlew :app:testDebugUnitTest && ./gradlew :app:assembleDebug
 ```
 
 Expected: all pipeline tests pass, all JVM unit tests pass, BUILD SUCCESSFUL. Do not proceed on any failure.
 
 - [ ] **Step 2: Bump the version**
 
-In `android/app/build.gradle.kts`: `versionCode = 19`, `versionName = "0.9.0"` — a new feature, so the minor version moves.
+In `apps/android/app/build.gradle.kts`: `versionCode = 19`, `versionName = "0.9.0"` — a new feature, so the minor version moves.
 
 - [ ] **Step 3: Commit and publish**
 
 ```bash
-git add android/app/build.gradle.kts
+git add apps/android/app/build.gradle.kts
 git commit -m "Release v0.9.0: Maps — eJamin sheets, searchable Kheda/Anand cadastre, adjoining + marking"
 ```
 

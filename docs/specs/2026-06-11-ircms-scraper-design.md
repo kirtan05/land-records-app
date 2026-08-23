@@ -26,7 +26,7 @@ DISPOSED case also download its order PDF — all named consistently, with a fla
   must be selected by the exact `value` string from the catalog.
 
 ## Encoding / matching (built)
-`src/normalize.mjs`: Gujarati digits ૦–૯→0–9, `પ`(paiki)→`p`, collapse spaces/slashes
+`packages/core/normalize.mjs`: Gujarati digits ૦–૯→0–9, `પ`(paiki)→`p`, collapse spaces/slashes
 to `/`, strip ` ~~`. Verified: `221 p` → `221/p` → dropdown `"221/p ~~ "`. No catalog
 collisions across 1,535 entries.
 
@@ -64,10 +64,10 @@ back to capturing session cookies and rendering each detail URL in a short-lived
 headless context for the PDF. Decided during the 221/p test.
 
 ## Components (files)
-- `src/normalize.mjs` — survey-number normalization + catalog lookup (done).
-- `src/ircms.mjs` — browser driver: navigate, cascade-select, captcha-wait, search,
+- `packages/core/normalize.mjs` — survey-number normalization + catalog lookup (done).
+- `packages/core/ircms.mjs` — browser driver: navigate, cascade-select, captcha-wait, search,
   list cases, open case, extract metadata, save PDF, download order.
-- `src/store.mjs` — CSV + JSON + state writers; resume check.
+- `packages/core/store.mjs` — CSV + JSON + state writers; resume check.
 - `run.mjs` — CLI: load matched survey list, loop, orchestrate, log progress.
 - `match-input.mjs` — transcribed JPG list → catalog matches + ambiguity report.
 

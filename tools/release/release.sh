@@ -12,7 +12,7 @@
 # certificate against the currently published one and refuses to publish on a
 # mismatch. Nothing else in this script matters as much as that check.
 #
-# Version comes from android/app/build.gradle.kts (bump it before running).
+# Version comes from apps/android/app/build.gradle.kts (bump it before running).
 set -euo pipefail
 
 cd "$(dirname "$0")/../.."
@@ -29,13 +29,13 @@ die() { printf '\n\033[31mERROR: %s\033[0m\n' "$*" >&2; exit 1; }
 [ -n "$NOTES" ] || die "give the release notes as the first argument"
 command -v gh >/dev/null || die "gh CLI not found"
 gh auth status >/dev/null 2>&1 || die "gh is not logged in"
-[ -z "$(git status --porcelain -- android/ tools/ data/)" ] \
+[ -z "$(git status --porcelain -- apps/android/ tools/ data/)" ] \
   || die "working tree is dirty — commit before releasing"
 
 APKSIGNER=$(ls "$HOME"/Android/Sdk/build-tools/*/apksigner 2>/dev/null | sort -V | tail -1)
 [ -x "$APKSIGNER" ] || die "apksigner not found in the Android SDK"
 
-GRADLE=android/app/build.gradle.kts
+GRADLE=apps/android/app/build.gradle.kts
 VCODE=$(grep -oP 'versionCode\s*=\s*\K\d+' $GRADLE)
 VNAME=$(grep -oP 'versionName\s*=\s*"\K[^"]+' $GRADLE)
 TAG="v$VNAME"
@@ -51,9 +51,9 @@ PUB_CODE=$(curl -fsSL "https://raw.githubusercontent.com/$REPO/main/update.json"
 # slim over a previous seeded APK leaves the old bytes as dead space (a 34 MB
 # payload in a 162 MB file).
 say "Building slim APK (no personal data seed)"
-rm -rf android/app/build/outputs/apk/debug
-(cd android && ./gradlew :app:assembleDebug -Pslim -q)
-APK=android/app/build/outputs/apk/debug/app-debug.apk
+rm -rf apps/android/app/build/outputs/apk/debug
+(cd apps/android && ./gradlew :app:assembleDebug -Pslim -q)
+APK=apps/android/app/build/outputs/apk/debug/app-debug.apk
 [ -f "$APK" ] || die "build produced no APK"
 
 # --- 2. verify what we are about to publish ----------------------------------

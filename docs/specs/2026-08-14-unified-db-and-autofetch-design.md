@@ -30,7 +30,7 @@ place_id = "gj:" + dist2 + ":" + tal2 + ":" + vil3        e.g. "gj:15:03:029"
 ```
 
 These are the AnyRoR/iRCMS cascade codes — the same codes on both sites (verified:
-`src/scrape.mjs:33` POST params vs the `ContentPlaceHolder1_ddlVillage` option values).
+`packages/core/scrape.mjs:33` POST params vs the `ContentPlaceHolder1_ddlVillage` option values).
 Zero-padding is part of the identity: `"029" != "29"`.
 
 Names become attributes, never keys:
@@ -233,7 +233,7 @@ alone is not enough — it cannot recover what the scrapers never wrote: cascade
 `data_id`.
 
 **`data_id` must be captured by the app.** It is iRCMS's own case id, read off the row
-button's `data-id` attribute (`src/scrape.mjs:17`), and the desktop already dedupes on it
+button's `data-id` attribute (`packages/core/scrape.mjs:17`), and the desktop already dedupes on it
 (`scrape.mjs:144`). The app currently keys cases on `caseNo|parties|office|dtv` — a string
 built from display text that drifts with spacing and spelling. Until the app reads
 `data-id`, app-scraped and desktop-scraped cases for the same survey will not collide and
@@ -324,7 +324,7 @@ Two things this does NOT prove, still open:
 - The canonical tokenizer changes existing app tokens and desktop directory names. Aliases
   preserve the originals; nothing is lost, but every stored key changes once.
 - `disposal_date` / `disposal_type` / `case_status` / `no_appellant` / `court_no` are
-  corrupt at rest on the desktop (regex bleed, `src/scrape.mjs:100-105`), in three places.
+  corrupt at rest on the desktop (regex bleed, `packages/core/scrape.mjs:100-105`), in three places.
   Fix the scraper *and* re-derive on import, or the new schema inherits the bug with a
   nicer column type.
 - Deed *files* are dead server-side ("Document Record Not Found"); deeds are metadata-only.

@@ -1,15 +1,15 @@
 // Desktop half of the cross-language identity contract.
 //   node tools/identity/test.mjs
-// The Kotlin half is android/app/src/test/java/com/landrecords/app/data/identity/IdentityVectorsTest.kt
+// The Kotlin half is apps/android/app/src/test/java/com/landrecords/app/data/identity/IdentityVectorsTest.kt
 // and reads the SAME tools/identity/vectors.json. Both must pass.
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import * as I from '../../src/identity.mjs';
-import * as S from '../../src/sync-schema.mjs';
-import * as M from '../../src/merge.mjs';
-import * as O from '../../src/old-survey-match.mjs';
+import * as I from '../../packages/core/identity.mjs';
+import * as S from '../../packages/core/sync-schema.mjs';
+import * as M from '../../packages/core/merge.mjs';
+import * as O from '../../packages/core/old-survey-match.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const V = JSON.parse(readFileSync(join(here, 'vectors.json'), 'utf8'));

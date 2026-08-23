@@ -1,0 +1,7 @@
+{
+  "name": "@land-records/anyror",
+  "version": "0.13.0",
+  "private": true,
+  "type": "module",
+  "description": "AnyRoR scrape + PDF render reference implementation (Playwright)"
+}

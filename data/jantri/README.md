@@ -50,7 +50,7 @@ data/jantri/
   pdf/               26 source PDFs                     [gitignored, 141 MB]
   out/               per-district CSVs                  [gitignored, 617 MB]
   jantri.sqlite      combined queryable database        [gitignored, 476 MB]
-tools/jantri/
+packages/jantri/
   fetch.sh           download the PDFs
   parse.py           PDF -> CSV
   build_db.py        CSV -> SQLite
@@ -60,10 +60,10 @@ tools/jantri/
 Everything except `villages.csv` is gitignored and fully regenerable:
 
 ```bash
-tools/jantri/fetch.sh          # ~141 MB download
-python3 tools/jantri/parse.py  # ~2 min
-python3 tools/jantri/build_db.py
-python3 tools/jantri/lookup.py KHEDA VALETVA 5
+packages/jantri/fetch.sh          # ~141 MB download
+python3 packages/jantri/parse.py  # ~2 min
+python3 packages/jantri/build_db.py
+python3 packages/jantri/lookup.py KHEDA VALETVA 5
 ```
 
 ---
@@ -110,7 +110,7 @@ SELECT r.land_type, r.road_class, r.rate_per_sqm_2023, r.rate_per_acre_2023
 
 ## Shipping it in the app (`data/jantri/app/`)
 
-`tools/jantri/build_app_db.py` emits one compact SQLite per district for offline,
+`packages/jantri/build_app_db.py` emits one compact SQLite per district for offline,
 in-app lookup. **476 MB → 124 MB raw / 49 MB gzipped for all 26 districts**, so a
 single district is 1–4 MB compressed:
 

@@ -1,0 +1,7 @@
+{
+  "name": "@land-records/whatsapp",
+  "version": "0.13.0",
+  "private": true,
+  "type": "module",
+  "description": "WhatsApp (Baileys) delivery of generated record PDFs"
+}

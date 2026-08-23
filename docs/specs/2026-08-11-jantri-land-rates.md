@@ -51,12 +51,12 @@ Summary: all 26 district PDFs from `garvi.gujarat.gov.in/PDF/RURAL/`, 39,864 pag
 1,074,451 rate cells, 7.5M survey entries, 17,865 villages.
 
 ```bash
-tools/jantri/fetch.sh              # 141 MB of PDFs
-python3 tools/jantri/parse.py      # -> CSV  (~2 min)
-python3 tools/jantri/build_db.py   # -> data/jantri/jantri.sqlite (full, 476 MB)
-python3 tools/jantri/build_crosswalk.py   # jantri <-> iRCMS villages
-python3 tools/jantri/build_asset.py       # -> the app asset (Anand + Kheda)
-python3 tools/jantri/lookup.py KHEDA VALETVA 5
+packages/jantri/fetch.sh              # 141 MB of PDFs
+python3 packages/jantri/parse.py      # -> CSV  (~2 min)
+python3 packages/jantri/build_db.py   # -> data/jantri/jantri.sqlite (full, 476 MB)
+python3 packages/jantri/build_crosswalk.py   # jantri <-> iRCMS villages
+python3 packages/jantri/build_asset.py       # -> the app asset (Anand + Kheda)
+python3 packages/jantri/lookup.py KHEDA VALETVA 5
 ```
 
 Everything except `villages.csv`, `crosswalk.csv` and the app asset is gitignored and

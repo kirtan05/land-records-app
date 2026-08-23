@@ -1,9 +1,27 @@
 {
-  "name": "ircms-scraper",
-  "version": "0.1.0",
+  "name": "land-records",
+  "version": "0.13.0",
   "private": true,
   "type": "module",
-  "description": "Recon + scraper for Gujarat iRCMS ViewSurveyList (Anand/Umreth/Bharoda)",
+  "description": "Gujarat land-records toolkit (AnyRoR + iRCMS) and the Android app it feeds",
+  "workspaces": [
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "npm run test:identity && npm run test:sync",
+    "test:identity": "node tools/identity/test.mjs",
+    "test:sync": "node tools/identity/test-sync.mjs",
+    "test:maps": "node --test packages/maps/test/*.test.mjs",
+    "check:convert": "node tools/identity/convert-output.mjs --check",
+    "check:tokenizer": "node tools/identity/probe-tokenizer.mjs",
+    "verify": "npm test && npm run check:convert && npm run check:tokenizer && npm run test:maps",
+    "app:build": "cd apps/android && ./gradlew :app:assembleDebug",
+    "app:test": "cd apps/android && ./gradlew :app:testDebugUnitTest",
+    "release:dry": "tools/release/release.sh --dry-run"
+  },
   "dependencies": {
     "@whiskeysockets/baileys": "^7.0.0-rc13",
     "pino": "^10.3.1",

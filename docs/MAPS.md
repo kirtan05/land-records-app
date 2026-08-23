@@ -16,7 +16,7 @@ Future options live in `docs/plans/2026-08-11-maps-future-possibilities.md`.
   (Google Drive) in the browser.
 - **Maps browse screen** (top bar): district → taluka → village across all of Gujarat.
   Kept deliberately as the future home of a real in-app map view.
-- **Bundled catalogue:** `android/app/src/main/assets/maps/villages.json`, 788 KB,
+- **Bundled catalogue:** `apps/android/app/src/main/assets/maps/villages.json`, 788 KB,
   33 districts / 261 talukas / **16,044 villages**. Grouped `district → taluka →
   [[villageName, driveFileId]]`; both Drive URLs are derived from the file id:
   - view: `https://drive.google.com/file/d/<id>/view`
@@ -32,7 +32,7 @@ Section 3 explains why.
 ## 2. The source: ejamingujarat.com
 
 A **private commercial site**, not a `gujarat.gov.in` host. The AnyRoR/iRCMS politeness
-rules do **not** apply to it — see `tools/ejamin/lib/session.mjs`.
+rules do **not** apply to it — see `packages/maps/lib/session.mjs`.
 
 ### Endpoints
 
@@ -61,7 +61,7 @@ no crawling needed for it.
 
 Each tab numbers its districts independently. **Kheda is `14` in one tab and `18` in
 another; Anand is `3` and `20`.** Ids are only meaningful within a type. Sharing one
-across types silently returns a different district's data. `tools/ejamin/test/catalog.test.mjs`
+across types silently returns a different district's data. `packages/maps/test/catalog.test.mjs`
 guards this.
 
 ### Crawl performance
@@ -86,7 +86,7 @@ tunes it; the gate halves itself whenever the server pushes back.
 Kheda: 524 village maps. Anand: 357.
 
 **Known bug:** GDCR returns zero rows. Near-certainly a wrong `selectClass` in the
-`TYPES` table of `tools/ejamin/scrape-catalog.mjs` — the tab's district `<select>` is not
+`TYPES` table of `packages/maps/scrape-catalog.mjs` — the tab's district `<select>` is not
 being found, so nothing is crawled. Village and TP maps are unaffected.
 
 ---
@@ -132,9 +132,9 @@ most of the value the interactive version would have.
 
 ---
 
-## 4. The pipeline (`tools/ejamin/`)
+## 4. The pipeline (`packages/maps/`)
 
-Plain Node ESM, no dependencies, Node 26. Tests: `node --test 'tools/ejamin/test/*.test.mjs'`
+Plain Node ESM, no dependencies, Node 26. Tests: `node --test 'packages/maps/test/*.test.mjs'`
 (the bare-directory form fails with MODULE_NOT_FOUND on this Node).
 
 | File | Does |
@@ -150,9 +150,9 @@ Plain Node ESM, no dependencies, Node 26. Tests: `node --test 'tools/ejamin/test
 ### Refreshing the catalogue
 
 ```bash
-node tools/ejamin/scrape-catalog.mjs                       # ~12 min, all districts
-EJAMIN_VILLAGE_DISTRICTS='Kheda,Anand' node tools/ejamin/scrape-catalog.mjs
-node tools/ejamin/build-app-catalog.mjs                    # rewrites the app asset
+node packages/maps/scrape-catalog.mjs                       # ~12 min, all districts
+EJAMIN_VILLAGE_DISTRICTS='Kheda,Anand' node packages/maps/scrape-catalog.mjs
+node packages/maps/build-app-catalog.mjs                    # rewrites the app asset
 ```
 
 `classify-format.mjs` takes `CLASSIFY_DISTRICTS` and writes `out/format-report.json`.

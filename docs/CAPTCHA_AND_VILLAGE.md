@@ -1,6 +1,6 @@
 # CAPTCHA automation + full-village scraping
 
-Status 2026-08-13. Code lives in `tools/captcha/` (see its README for the file-by-file map);
+Status 2026-08-13. Code lives in `packages/captcha/` (see its README for the file-by-file map);
 this page is the why + the numbers. App-side wiring: `IrcmsInjection.autoSolveCaptchaJs`.
 
 ## The two captchas are different species
@@ -21,7 +21,7 @@ Both sites serve a FortiWeb block page to **headless** Chrome — every runner i
 |---|---|
 | tesseract raw / otsu / blackhat / bg-diff / clean / psm8 | 0–16% |
 | ddddocr (generic captcha CRNN, CPU) | 44% |
-| 6-head CNN on 60k synthetic (this repo) | training curve in `train` log; see `tools/captcha/` |
+| 6-head CNN on 60k synthetic (this repo) | training curve in `train` log; see `packages/captcha/` |
 
 Preprocessing: **the CNN trains on plain data** — grayscale → resize 190×80→160×64 → ÷255.
 Nothing else. Thresholding/blackhat/median-bg-subtraction were evaluated *only for tesseract*
@@ -36,7 +36,7 @@ vast.ai is the fallback if CPU training stalls (same `train_cnn.py`, CUDA wheel)
 
 ## Full-village iRCMS run (Bharoda)
 
-`node tools/captcha/run-village-ircms.mjs [--only=S] [--from=N]` — loops all 1,535 catalog
+`node packages/captcha/run-village-ircms.mjs [--only=S] [--from=N]` — loops all 1,535 catalog
 surveys: cascade → auto-solve → direct search → the proven scrape (per-case PDFs + order
 PDFs + case JSON + index.csv). Resumable via `output/_state.json`; log `output/village-run.log`.
 WAF-aware (aborts on block page; re-run resumes).

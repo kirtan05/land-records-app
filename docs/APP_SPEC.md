@@ -35,7 +35,7 @@ The app loads AnyRoR inside an embedded **WebView**:
   scripts kept getting the home IP blocked);
 - a WebView **is a real browser** → no headless fingerprint to reject;
 - the user solves the **CAPTCHA right in the view** → exactly what the portal expects.
-The app injects the cascade automation (already proven in `anyror/*.mjs`) around that one human tap.
+The app injects the cascade automation (already proven in `packages/anyror/*.mjs`) around that one human tap.
 
 ## 4. Workflows (decide these — this is the product)
 
@@ -90,7 +90,7 @@ always optional.
 ## 7. Record types — capture & render (reuse the proven desktop logic)
 
 - **Integrated Survey Record** (AnyRoR record type 8): after the detail page loads, inject the
-  `anyror/format.mjs` cleanup CSS into the WebView and **print-to-PDF** (Android PrintManager/PdfDocument).
+  `packages/anyror/format.mjs` cleanup CSS into the WebView and **print-to-PDF** (Android PrintManager/PdfDocument).
   Save raw HTML for re-render. This reproduces the tuned layout (9.4pt, content-balanced columns, compact
   header, empty sections dropped, darker borders).
 - **Old Scanned VF-7/12** (type 11): JS-fetch each `PDFView1.aspx?detail=…` via the WebView's cookies →
@@ -156,8 +156,8 @@ The user explicitly wants an initial **Claude-made design** to react to and buil
 
 ## 12. What already exists to reuse
 
-- Proven automation & logic: `anyror/run-anyror.mjs`, `render-anyror-offline.mjs`, `format.mjs` (the PDF
-  CSS), `run-vf712.mjs`, `build_vf712_combined.py`, iRCMS `src/*.mjs`, `wa/*` (WhatsApp, optional).
+- Proven automation & logic: `packages/anyror/run-anyror.mjs`, `render-anyror-offline.mjs`, `format.mjs` (the PDF
+  CSS), `run-vf712.mjs`, `build_vf712_combined.py`, iRCMS `packages/core/*.mjs`, `packages/whatsapp/*` (WhatsApp, optional).
 - Already-generated PDFs under `output/<TOKEN>/` — perfect **seed data** for the library so save/browse is
   demoable on day one.
 - Memory files (`~/.claude/projects/.../memory/`) and `docs/PROJECT_NOTES.md` for every gotcha.

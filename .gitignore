@@ -1,5 +1,5 @@
 # ================= Android / Gradle =================
-android/local.properties
+apps/android/local.properties
 **/build/
 .gradle/
 *.iml
@@ -9,7 +9,7 @@ captures/
 *.aab
 *.keystore
 *.jks
-android/app/schemas/
+apps/android/app/schemas/
 
 # ================= Node =================
 node_modules/
@@ -25,10 +25,10 @@ __pycache__/
 .chrome-profile-*/
 
 # ============ SECRETS — WhatsApp/Baileys session creds + personal exports ============
-wa/auth/
-wa/auth-fam/
-wa/auth*/
-wa/export/
+packages/whatsapp/auth/
+packages/whatsapp/auth-fam/
+packages/whatsapp/auth*/
+packages/whatsapp/export/
 **/creds.json
 *.env
 .env*
@@ -62,7 +62,7 @@ test-order*.pdf
 # ===== Bundled data seed (125 MB of personal land records — NEVER commit) =====
 # Regenerable via scratchpad/stage_seed.py from a device snapshot; ships in the APK from
 # the working tree, so it never needs to be in git (and must not be, especially publicly).
-android/app/src/main/assets/seed/
+apps/android/app/src/main/assets/seed/
 
 # ================= IDE =================
 .settings/
@@ -73,7 +73,7 @@ android/app/src/main/assets/seed/
 # ================= OS =================
 .DS_Store
 
-tools/ejamin/out/pdf-cache/
+packages/maps/out/pdf-cache/
 
 # ===== Jantri (ASR-2011) bulk data: ~1.3 GB, fully regenerable =====
 # Rebuild with: tools/jantri/fetch.sh && tools/jantri/parse.py && tools/jantri/build_db.py
@@ -85,22 +85,31 @@ data/jantri/app/
 backups/
 
 # ejamin generated catalogues (15 MB, regenerable via scrape-catalog.mjs)
-tools/ejamin/out/
-anyrorintegrated.html
+packages/maps/out/
+packages/anyror/anyrorintegrated.html
 
 # ============ Captcha training data + models (large, local, regenerable) ============
-tools/captcha/samples/
-tools/captcha/kaggle/
+packages/captcha/samples/
+packages/captcha/kaggle/*
+!packages/captcha/kaggle/*.md
 *.weights
 *.onnx
-android/app/src/androidTest/assets/captcha_samples/
+apps/android/app/src/androidTest/assets/captcha_samples/
 
 # ============ WhatsApp: personal group/contact data (never commit) ============
-wa/groups.json
-wa/participants.json
-wa/qr*.png
+packages/whatsapp/groups.json
+packages/whatsapp/participants.json
+packages/whatsapp/qr*.png
 
 # ============ Local scratch captures ============
-anyror/*.png
-anyror/captcha-ans.txt
-anyror/deed-stop.txt
+packages/anyror/*.png
+packages/anyror/captcha-ans.txt
+packages/anyror/deed-stop.txt
+
+# ============ Monorepo: per-package build + venv output ============
+packages/*/.venv/
+packages/*/out/
+packages/captcha/*.onnx
+packages/captcha/*.pt
+packages/captcha/*.weights
+apps/android/app/build/

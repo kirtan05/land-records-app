@@ -110,9 +110,9 @@ editing or export, deep indexes for other districts.
 Three units with separate lifecycles and no shared state beyond a documented
 JSON contract.
 
-### 3.1 `tools/ejamin/` — the pipeline (Node, on the dev box)
+### 3.1 `packages/maps/` — the pipeline (Node, on the dev box)
 
-Sits beside `anyror/`, same idiom (plain `.mjs`, no framework).
+Sits beside `packages/anyror/`, same idiom (plain `.mjs`, no framework).
 
 **`scrape-catalog.mjs`**
 - One GET of the homepage → CSRF token, session cookie, `tpMapData` literal.
@@ -210,7 +210,7 @@ parses a PDF; the pipeline never knows about Android.
 
 ## 4. Screens
 
-All screens follow `design_handoff_land_records_ui/README.md`: Cadastre
+All screens follow `design/README.md`: Cadastre
 direction, comfy density, ochre accent `#B4531B` (dark `#E58A55`), no elevation,
 1dp borders only.
 
@@ -284,7 +284,7 @@ No land data is invented anywhere in the pipeline or the UI.
 - `SurveyNo` parsing: Gujarati numerals, Latin numerals, `/P` and `/A` parts,
   whitespace variants, equality across scripts.
 
-**Pipeline tests (`tools/ejamin/`)**
+**Pipeline tests (`packages/maps/`)**
 - Run against two checked-in real PDFs (one clean, one known-awkward); assert
   parcel count, that a specific survey number lands in a specific polygon, and
   that `qa-index.mjs` demotes a deliberately broken fixture.

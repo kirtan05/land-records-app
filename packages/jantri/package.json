@@ -1,0 +1,7 @@
+{
+  "name": "@land-records/jantri",
+  "version": "0.13.0",
+  "private": true,
+  "type": "module",
+  "description": "Jantri (ASR-2011) land-rate dataset pipeline"
+}

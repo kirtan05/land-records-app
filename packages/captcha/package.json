@@ -1,0 +1,7 @@
+{
+  "name": "@land-records/captcha",
+  "version": "0.13.0",
+  "private": true,
+  "type": "module",
+  "description": "iRCMS SVG captcha parse, AnyRoR CNN solver, and the live scrape runners"
+}

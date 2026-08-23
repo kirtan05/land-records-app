@@ -193,6 +193,6 @@ sending precisely because it costs so little; not worth waiting for.
 
 - **GDCR scrapes 0 rows** — wrong `selectClass` in `scrape-catalog.mjs`. Small fix,
   unrelated to any option above (`docs/MAPS.md` §2).
-- `tools/ejamin/` is committed but has never been code-reviewed.
+- `packages/maps/` is committed but has never been code-reviewed.
 - `lib/geo.mjs` carries a test whose expected value is wrong: `pageToLatLng` with the
   identity matrix yields `[3,3]`, not `[4,3]`. The code is right, the test is not.

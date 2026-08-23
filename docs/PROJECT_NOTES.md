@@ -7,13 +7,13 @@ an Excel index, with optional WhatsApp delivery. Built incrementally; this file 
 
 | Source | What we pull | Key scripts |
 |---|---|---|
-| **iRCMS** (ircms.gujarat.gov.in) | RTS/revenue **case** detail + **order** PDFs per survey | `run-fast.mjs`, `src/scrape.mjs`, `src/store.mjs` |
-| **AnyRoR — Integrated Survey Record** (record type 8) | Full 7/12: ownership, mutations, crop, area, SRO deeds, RTS cases | `anyror/run-anyror.mjs` → `anyror/render-anyror-offline.mjs` + `anyror/format.mjs` |
-| **AnyRoR — Old Scanned VF-7/12** (record type 11) | Historical scanned 7/12 by period | `anyror/run-vf712.mjs`, `build_vf712_combined.py` |
+| **iRCMS** (ircms.gujarat.gov.in) | RTS/revenue **case** detail + **order** PDFs per survey | `run-fast.mjs`, `packages/core/scrape.mjs`, `packages/core/store.mjs` |
+| **AnyRoR — Integrated Survey Record** (record type 8) | Full 7/12: ownership, mutations, crop, area, SRO deeds, RTS cases | `packages/anyror/run-anyror.mjs` → `packages/anyror/render-anyror-offline.mjs` + `packages/anyror/format.mjs` |
+| **AnyRoR — Old Scanned VF-7/12** (record type 11) | Historical scanned 7/12 by period | `packages/anyror/run-vf712.mjs`, `build_vf712_combined.py` |
 | **Reports** | Per-survey combined PDF (clickable index), master Excel, zip | `build_reports.py`, `build_anyror_pdf.py`, `build-zip.mjs` |
-| **Delivery** | WhatsApp (Baileys) — group or self | `wa/login.mjs`, `wa/send*.mjs`, `wa/check.mjs` |
-| **Jantri (ASR-2011)** (garvi.gujarat.gov.in) | Government land rate per survey number, all 26 districts | `tools/jantri/*` → `data/jantri/README.md` |
-| **CAPTCHA + full-village** | iRCMS auto-solve (SVG parse) + Bharoda all-1,535-surveys runner; AnyRoR CNN solver | `tools/captcha/` → `docs/CAPTCHA_AND_VILLAGE.md` |
+| **Delivery** | WhatsApp (Baileys) — group or self | `packages/whatsapp/login.mjs`, `packages/whatsapp/send*.mjs`, `packages/whatsapp/check.mjs` |
+| **Jantri (ASR-2011)** (garvi.gujarat.gov.in) | Government land rate per survey number, all 26 districts | `packages/jantri/*` → `data/jantri/README.md` |
+| **CAPTCHA + full-village** | iRCMS auto-solve (SVG parse) + Bharoda all-1,535-surveys runner; AnyRoR CNN solver | `packages/captcha/` → `docs/CAPTCHA_AND_VILLAGE.md` |
 
 Delivered so far for **Bharoda (Anand / Umreth), 9 surveys**: iRCMS cases + orders, AnyRoR integrated
 records (redone clean), VF-7/12 (132 scans), all folded into `Bharoda_iRCMS_Cases.zip` + master Excel.
@@ -41,10 +41,10 @@ output/iRCMS_Bharoda_Master.xlsx    Summary (iRCMS + AnyRoR + VF-7/12 columns) +
 2. **Headed needs a display.** The Bash env often lacks one; launch Chrome with env copied from a running
    GUI process: `DISPLAY=:1 WAYLAND_DISPLAY=wayland-0 XDG_RUNTIME_DIR=/run/user/1000 XAUTHORITY=/run/user/1000/xauth_* DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus`.
 3. **CAPTCHA: iRCMS is auto-solved, AnyRoR is human.** iRCMS serves its code as an SVG with the
-   answer in plain `<text>` nodes — parse, fill, submit (`tools/captcha/ircms-solve.mjs`; app:
+   answer in plain `<text>` nodes — parse, fill, submit (`packages/captcha/ircms-solve.mjs`; app:
    `IrcmsInjection.autoSolveCaptchaJs`). AnyRoR's is a raster PNG on a patterned background —
    the human solves it in the window (or via WhatsApp screenshot when remote); a small CNN
-   solver is being trained in `tools/captcha/` (see its README). Only the submit button needs
+   solver is being trained in `packages/captcha/` (see its README). Only the submit button needs
    the code; the cascade doesn't.
 4. **Rebuild AnyRoR PDFs from the saved HTML, not the JSON.** The integrated page's mutation-entry cells
    contain nested sub-tables; flat text extraction turns them to gibberish. `render-anyror-offline.mjs`
@@ -59,8 +59,8 @@ output/iRCMS_Bharoda_Master.xlsx    Summary (iRCMS + AnyRoR + VF-7/12 columns) +
 
 ## The Android app (now the main product)
 
-Lives in `android/`. Build + release facts are in `CLAUDE.md`; the design source of truth is
-`design_handoff_land_records_ui/`.
+Lives in `apps/android/`. Build + release facts are in `CLAUDE.md`; the design source of truth is
+`design/`.
 
 - **Shipping a public update is one command:** `tools/release/release.sh "<notes>"`
   (`--dry-run` to build and verify only). It builds slim (`-Pslim` drops the 125 MB personal
@@ -90,7 +90,7 @@ Lives in `android/`. Build + release facts are in `CLAUDE.md`; the design source
 
 **Registered deeds** (Integrated Details → Sub-registrar "View Deed" → TIFF → convert to PDF) for
 **Valetva / Survey 41 (Kheda / Nadiad Gramya)** and **Sundalpura (Anand / Umreth): 906, 845/અ, 851, 901/p, 902.**
-Blocked on the AnyRoR IP block. `anyror/deed-step1.mjs` (headed) reaches the detail page, dumps the
+Blocked on the AnyRoR IP block. `packages/anyror/deed-step1.mjs` (headed) reaches the detail page, dumps the
 "View Deed" links, and keeps the browser open on CDP `:9222` for a downloader. The deed→TIFF capture
 mechanism is not yet confirmed (recon needed on the live detail page, on a clean residential IP).
 

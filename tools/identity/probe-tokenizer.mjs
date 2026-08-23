@@ -3,9 +3,9 @@
 // the only failure mode that actually corrupts land records.
 //   node tools/identity/probe-tokenizer.mjs
 import { readdirSync, readFileSync } from 'node:fs';
-import { surveyToken } from '../../src/identity.mjs';
+import { surveyToken } from '../../packages/core/identity.mjs';
 
-const DIR = 'android/app/src/main/assets/surveys';
+const DIR = 'apps/android/app/src/main/assets/surveys';
 
 // Two raw strings are the SAME survey if they differ only in presentation: the ~~ marker,
 // Gujarati vs ASCII digits, whitespace, and the paiki spelling. Anything else is a real

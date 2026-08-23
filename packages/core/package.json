@@ -1,0 +1,7 @@
+{
+  "name": "@land-records/core",
+  "version": "0.13.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared identity, normalization, merge and sync-schema layer (mirrored in Kotlin)"
+}

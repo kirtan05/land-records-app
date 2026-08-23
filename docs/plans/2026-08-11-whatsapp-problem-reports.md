@@ -24,7 +24,7 @@ he will put the phone down instead.
 
 Tap once → the report is delivered → the app says "sent". Nothing else.
 
-The repo already has a working WhatsApp path: `wa/` (Baileys) with an authenticated
+The repo already has a working WhatsApp path: `packages/whatsapp/` (Baileys) with an authenticated
 session, used to deliver record bundles.
 
 ### Shape
@@ -37,7 +37,7 @@ The app must **not** hold WhatsApp credentials — Baileys is a full account ses
 phone that is both a security problem and a ban risk. So:
 
 - App posts the diagnostics bundle to a relay endpoint with a shared token.
-- Relay is the existing `wa/` session (or a WhatsApp Business API number, which is the
+- Relay is the existing `packages/whatsapp/` session (or a WhatsApp Business API number, which is the
   supportable version if this ever leaves the family).
 - Relay forwards to Kirtan's number with the version + a one-line summary as the caption.
 

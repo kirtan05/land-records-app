@@ -102,4 +102,4 @@ Gradle wrapper → debug APK → `adb install` to tab/Pixel. (No standalone `gra
 
 Reality: full on-device validation of steps 2–6 needs the **phone hotspot** (residential IP) since that's
 what makes AnyRoR load; the app engine reuses the exact cascade/weeding/format logic already proven in
-`anyror/*.mjs`.
+`packages/anyror/*.mjs`.

@@ -1,7 +1,7 @@
 > ## ⚠️ PARTIALLY SUPERSEDED
 >
 > **Tasks 1–3 shipped** (session, Drive links, catalogue scraper) and are live in
-> `tools/ejamin/` — though the scraper has since been rewritten for concurrency
+> `packages/maps/` — though the scraper has since been rewritten for concurrency
 > (~12 min statewide vs ~14 h serial), because ejamingujarat.com is a private
 > commercial site, not a `gujarat.gov.in` host, so the AnyRoR politeness rules in the
 > Global Constraints below do **not** apply to it.
@@ -22,9 +22,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build `tools/ejamin/` — a Node pipeline that catalogues every map sheet eJamin Gujarat publishes and, for Kheda + Anand village maps, extracts parcel polygons, survey-number labels and a lat/long transform into a compact per-village JSON index.
+**Goal:** Build `packages/maps/` — a Node pipeline that catalogues every map sheet eJamin Gujarat publishes and, for Kheda + Anand village maps, extracts parcel polygons, survey-number labels and a lat/long transform into a compact per-village JSON index.
 
-**Architecture:** Pure Node, no new dependencies. Small single-responsibility modules under `tools/ejamin/lib/` (PDF object/stream access, content-stream tokenising, geo registration, geometry, label classification), each covered by `node --test`. Three thin executables on top: `scrape-catalog.mjs`, `build-index.mjs`, `qa-index.mjs`. Nothing here knows about Android; the only contract with Plan 2 is the emitted JSON.
+**Architecture:** Pure Node, no new dependencies. Small single-responsibility modules under `packages/maps/lib/` (PDF object/stream access, content-stream tokenising, geo registration, geometry, label classification), each covered by `node --test`. Three thin executables on top: `scrape-catalog.mjs`, `build-index.mjs`, `qa-index.mjs`. Nothing here knows about Android; the only contract with Plan 2 is the emitted JSON.
 
 **Tech Stack:** Node 26 (`node --test` built-in runner), ES modules (`"type": "module"` already set in `package.json`), `node:zlib`, `node:fs`, global `fetch`. No new npm packages.
 
@@ -34,8 +34,8 @@
 - **The district id space is per map type.** Kheda is `14` in one tab and `18` in another; Anand is `3` and `20`. Ids MUST be stored and used keyed by type. Never share an id across types.
 - **Never invent land data.** If a label cannot be placed, it is omitted — never guessed. Unknown values are `null` in JSON, rendered `—` later.
 - Requests to ejamingujarat.com are **serial with a 400 ms delay**, one browser-like `User-Agent`, reusing one session cookie. No concurrency. This matches the project's standing politeness rules for government sites (see the AnyRoR WAF notes).
-- New code lives under `tools/ejamin/`. Do not modify `anyror/`, `src/`, or `android/`.
-- Style follows `anyror/*.mjs`: ES modules, top-level `await`, `//` comments explaining *why*, no framework.
+- New code lives under `packages/maps/`. Do not modify `packages/anyror/`, `packages/core/`, or `apps/android/`.
+- Style follows `packages/anyror/*.mjs`: ES modules, top-level `await`, `//` comments explaining *why*, no framework.
 - Deep indexes are built for **Kheda + Anand village maps only**. The catalogue covers **all seven types, all districts**.
 
 ---
@@ -44,29 +44,29 @@
 
 | File | Responsibility |
 |---|---|
-| `tools/ejamin/lib/session.mjs` | One eJamin session: CSRF token, cookie, throttled `post()` |
-| `tools/ejamin/lib/drive.mjs` | Normalise a Drive `link` → file id, view URL, download URL |
-| `tools/ejamin/lib/pdf.mjs` | Locate and inflate PDF streams; find dictionary objects by number |
-| `tools/ejamin/lib/content.mjs` | Tokenise a content stream → closed subpaths + placed text runs |
-| `tools/ejamin/lib/geo.mjs` | `/Viewport` `/Measure` `GPTS`+`LPTS` → page↔lat/long affine |
-| `tools/ejamin/lib/geom.mjs` | bbox, point-in-polygon, shared-edge adjacency |
-| `tools/ejamin/lib/labels.mjs` | Classify a text run: survey number vs feature vs chrome |
-| `tools/ejamin/scrape-catalog.mjs` | Executable → `tools/ejamin/out/catalog.json` |
-| `tools/ejamin/build-index.mjs` | Executable → `out/indexes/village-<id>.index.json` + `manifest.json` |
-| `tools/ejamin/qa-index.mjs` | Executable → demotes weak indexes to `LINK_ONLY` |
-| `tools/ejamin/test/*.test.mjs` | `node --test` suites |
-| `tools/ejamin/test/fixtures/` | Saved homepage snapshot + two real PDFs + one broken PDF |
+| `packages/maps/lib/session.mjs` | One eJamin session: CSRF token, cookie, throttled `post()` |
+| `packages/maps/lib/drive.mjs` | Normalise a Drive `link` → file id, view URL, download URL |
+| `packages/maps/lib/pdf.mjs` | Locate and inflate PDF streams; find dictionary objects by number |
+| `packages/maps/lib/content.mjs` | Tokenise a content stream → closed subpaths + placed text runs |
+| `packages/maps/lib/geo.mjs` | `/Viewport` `/Measure` `GPTS`+`LPTS` → page↔lat/long affine |
+| `packages/maps/lib/geom.mjs` | bbox, point-in-polygon, shared-edge adjacency |
+| `packages/maps/lib/labels.mjs` | Classify a text run: survey number vs feature vs chrome |
+| `packages/maps/scrape-catalog.mjs` | Executable → `packages/maps/out/catalog.json` |
+| `packages/maps/build-index.mjs` | Executable → `out/indexes/village-<id>.index.json` + `manifest.json` |
+| `packages/maps/qa-index.mjs` | Executable → demotes weak indexes to `LINK_ONLY` |
+| `packages/maps/test/*.test.mjs` | `node --test` suites |
+| `packages/maps/test/fixtures/` | Saved homepage snapshot + two real PDFs + one broken PDF |
 
-Run all tests with `node --test tools/ejamin/test/`.
+Run all tests with `node --test packages/maps/test/`.
 
 ---
 
 ### Task 1: Session — token, cookie, throttled POST
 
 **Files:**
-- Create: `tools/ejamin/lib/session.mjs`
-- Create: `tools/ejamin/test/session.test.mjs`
-- Create: `tools/ejamin/test/fixtures/homepage.html` (saved snapshot)
+- Create: `packages/maps/lib/session.mjs`
+- Create: `packages/maps/test/session.test.mjs`
+- Create: `packages/maps/test/fixtures/homepage.html` (saved snapshot)
 
 **Interfaces:**
 - Consumes: nothing.
@@ -75,22 +75,22 @@ Run all tests with `node --test tools/ejamin/test/`.
 - [ ] **Step 1: Save the fixture**
 
 ```bash
-mkdir -p tools/ejamin/test/fixtures tools/ejamin/out
-curl -s -m 30 https://ejamingujarat.com/ -o tools/ejamin/test/fixtures/homepage.html
+mkdir -p packages/maps/test/fixtures packages/maps/out
+curl -s -m 30 https://ejamingujarat.com/ -o packages/maps/test/fixtures/homepage.html
 ```
 
 Confirm it contains both markers:
 
 ```bash
-grep -c '_token", "' tools/ejamin/test/fixtures/homepage.html
-grep -c 'let tpMapData' tools/ejamin/test/fixtures/homepage.html
+grep -c '_token", "' packages/maps/test/fixtures/homepage.html
+grep -c 'let tpMapData' packages/maps/test/fixtures/homepage.html
 ```
 
 Expected: both print `1` or more.
 
 - [ ] **Step 2: Write the failing test**
 
-Create `tools/ejamin/test/session.test.mjs`:
+Create `packages/maps/test/session.test.mjs`:
 
 ```js
 import { test } from 'node:test';
@@ -117,7 +117,7 @@ test('extractTpMapData returns TP schemes keyed by district id', () => {
 
 - [ ] **Step 3: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/session.test.mjs`
+Run: `node --test packages/maps/test/session.test.mjs`
 Expected: FAIL — `Cannot find module '../lib/session.mjs'`.
 
 - [ ] **Step 4: Implement `session.mjs`**
@@ -196,7 +196,7 @@ export class Session {
 
 - [ ] **Step 5: Run the tests**
 
-Run: `node --test tools/ejamin/test/session.test.mjs`
+Run: `node --test packages/maps/test/session.test.mjs`
 Expected: PASS, 2 tests.
 
 - [ ] **Step 6: Smoke-test the live session once**
@@ -213,7 +213,7 @@ Expected: the Anand taluka list beginning `[{"id":29,"name":"Anand"}`.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add tools/ejamin/lib/session.mjs tools/ejamin/test/session.test.mjs tools/ejamin/test/fixtures/homepage.html
+git add packages/maps/lib/session.mjs packages/maps/test/session.test.mjs packages/maps/test/fixtures/homepage.html
 git commit -m "feat(ejamin): polite session with CSRF token and tpMapData extraction"
 ```
 
@@ -222,8 +222,8 @@ git commit -m "feat(ejamin): polite session with CSRF token and tpMapData extrac
 ### Task 2: Drive link normalisation
 
 **Files:**
-- Create: `tools/ejamin/lib/drive.mjs`
-- Create: `tools/ejamin/test/drive.test.mjs`
+- Create: `packages/maps/lib/drive.mjs`
+- Create: `packages/maps/test/drive.test.mjs`
 
 **Interfaces:**
 - Consumes: nothing.
@@ -256,7 +256,7 @@ test('returns null for a missing or non-Drive link', () => {
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/drive.test.mjs`
+Run: `node --test packages/maps/test/drive.test.mjs`
 Expected: FAIL — module not found.
 
 - [ ] **Step 3: Implement `drive.mjs`**
@@ -281,13 +281,13 @@ export function driveUrls(link) {
 
 - [ ] **Step 4: Run the tests**
 
-Run: `node --test tools/ejamin/test/drive.test.mjs`
+Run: `node --test packages/maps/test/drive.test.mjs`
 Expected: PASS, 3 tests.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tools/ejamin/lib/drive.mjs tools/ejamin/test/drive.test.mjs
+git add packages/maps/lib/drive.mjs packages/maps/test/drive.test.mjs
 git commit -m "feat(ejamin): normalise escaped Drive links to file id + download URL"
 ```
 
@@ -296,13 +296,13 @@ git commit -m "feat(ejamin): normalise escaped Drive links to file id + download
 ### Task 3: Catalogue scraper
 
 **Files:**
-- Create: `tools/ejamin/scrape-catalog.mjs`
-- Create: `tools/ejamin/test/catalog.test.mjs`
-- Modify: `.gitignore` (ignore `tools/ejamin/out/pdf-cache/`)
+- Create: `packages/maps/scrape-catalog.mjs`
+- Create: `packages/maps/test/catalog.test.mjs`
+- Modify: `.gitignore` (ignore `packages/maps/out/pdf-cache/`)
 
 **Interfaces:**
 - Consumes: `Session`, `extractTpMapData` (Task 1); `driveUrls` (Task 2).
-- Produces: `tools/ejamin/out/catalog.json` with shape
+- Produces: `packages/maps/out/catalog.json` with shape
   `{ generatedAt, sheets: [{ type, districtId, districtName, talukaId, talukaName, villageId, villageName, driveFileId, viewUrl, downloadUrl }] }`.
   `talukaId`/`talukaName`/`villageId`/`villageName` are `null` for types that resolve earlier.
   Also exports `districtOptions(html, selectClass) -> [{id, name}]` for the test.
@@ -335,7 +335,7 @@ test('districtOptions skips the placeholder option', () => {
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/catalog.test.mjs`
+Run: `node --test packages/maps/test/catalog.test.mjs`
 Expected: FAIL — module not found.
 
 - [ ] **Step 3: Implement `scrape-catalog.mjs`**
@@ -435,9 +435,9 @@ async function main() {
     }
   }
 
-  mkdirSync('tools/ejamin/out', { recursive: true });
+  mkdirSync('packages/maps/out', { recursive: true });
   const catalog = { generatedAt: new Date().toISOString().slice(0, 10), sheets };
-  writeFileSync('tools/ejamin/out/catalog.json', JSON.stringify(catalog, null, 1));
+  writeFileSync('packages/maps/out/catalog.json', JSON.stringify(catalog, null, 1));
   console.log(`catalog: ${sheets.length} sheets`);
 }
 
@@ -448,12 +448,12 @@ If a tab's `selectClass` in `TYPES` does not match the saved homepage, read the 
 
 - [ ] **Step 4: Run the tests**
 
-Run: `node --test tools/ejamin/test/catalog.test.mjs`
+Run: `node --test packages/maps/test/catalog.test.mjs`
 Expected: PASS, 2 tests. The first test is the guard against the per-type id-space bug.
 
 - [ ] **Step 5: Run the live scrape**
 
-Run: `node tools/ejamin/scrape-catalog.mjs`
+Run: `node packages/maps/scrape-catalog.mjs`
 Expected: progress lines per district, then `catalog: <N> sheets` with N in the thousands. It takes a while — serial by design.
 
 Sanity-check Kheda and Anand village coverage:
@@ -471,13 +471,13 @@ Expected: a non-zero count for each. If either is zero, stop and fix before cont
 Append to `.gitignore`:
 
 ```
-tools/ejamin/out/pdf-cache/
+packages/maps/out/pdf-cache/
 ```
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add tools/ejamin/scrape-catalog.mjs tools/ejamin/test/catalog.test.mjs tools/ejamin/out/catalog.json .gitignore
+git add packages/maps/scrape-catalog.mjs packages/maps/test/catalog.test.mjs packages/maps/out/catalog.json .gitignore
 git commit -m "feat(ejamin): catalogue every map sheet, keyed per map type"
 ```
 
@@ -486,9 +486,9 @@ git commit -m "feat(ejamin): catalogue every map sheet, keyed per map type"
 ### Task 4: PDF object + stream access
 
 **Files:**
-- Create: `tools/ejamin/lib/pdf.mjs`
-- Create: `tools/ejamin/test/pdf.test.mjs`
-- Create: `tools/ejamin/test/fixtures/badarkha.pdf`
+- Create: `packages/maps/lib/pdf.mjs`
+- Create: `packages/maps/test/pdf.test.mjs`
+- Create: `packages/maps/test/fixtures/badarkha.pdf`
 
 **Interfaces:**
 - Consumes: nothing.
@@ -498,8 +498,8 @@ git commit -m "feat(ejamin): catalogue every map sheet, keyed per map type"
 
 ```bash
 curl -sL -m 60 "https://drive.google.com/uc?export=download&id=1r-hkIUZHke5Ei4bi5hMlroBfLGbEU_cB" \
-  -o tools/ejamin/test/fixtures/badarkha.pdf
-pdfinfo tools/ejamin/test/fixtures/badarkha.pdf | head -3
+  -o packages/maps/test/fixtures/badarkha.pdf
+pdfinfo packages/maps/test/fixtures/badarkha.pdf | head -3
 ```
 
 Expected: `Creator: Esri ArcMap 10.4.0.5524`, `Pages: 1`.
@@ -534,7 +534,7 @@ test('findDicts locates the georeferencing viewports', () => {
 
 - [ ] **Step 3: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/pdf.test.mjs`
+Run: `node --test packages/maps/test/pdf.test.mjs`
 Expected: FAIL — module not found.
 
 - [ ] **Step 4: Implement `pdf.mjs`**
@@ -587,13 +587,13 @@ export function findDicts(buf, name) {
 
 - [ ] **Step 5: Run the tests**
 
-Run: `node --test tools/ejamin/test/pdf.test.mjs`
+Run: `node --test packages/maps/test/pdf.test.mjs`
 Expected: PASS, 3 tests.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add tools/ejamin/lib/pdf.mjs tools/ejamin/test/pdf.test.mjs tools/ejamin/test/fixtures/badarkha.pdf
+git add packages/maps/lib/pdf.mjs packages/maps/test/pdf.test.mjs packages/maps/test/fixtures/badarkha.pdf
 git commit -m "feat(ejamin): dependency-free PDF stream and dictionary access"
 ```
 
@@ -602,8 +602,8 @@ git commit -m "feat(ejamin): dependency-free PDF stream and dictionary access"
 ### Task 5: Content-stream tokeniser — polygons and placed text
 
 **Files:**
-- Create: `tools/ejamin/lib/content.mjs`
-- Create: `tools/ejamin/test/content.test.mjs`
+- Create: `packages/maps/lib/content.mjs`
+- Create: `packages/maps/test/content.test.mjs`
 
 **Interfaces:**
 - Consumes: `inflateStreams` (Task 4).
@@ -648,7 +648,7 @@ test('parseTexts decodes a simple Tm + Tj pair', () => {
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/content.test.mjs`
+Run: `node --test packages/maps/test/content.test.mjs`
 Expected: FAIL — module not found.
 
 - [ ] **Step 3: Implement `content.mjs`**
@@ -725,21 +725,21 @@ export function parseTexts(stream) {
 
 - [ ] **Step 4: Run the tests**
 
-Run: `node --test tools/ejamin/test/content.test.mjs`
+Run: `node --test packages/maps/test/content.test.mjs`
 Expected: PASS, 4 tests.
 
 If the real-PDF test finds no `221`/`74/P`, print the first 40 labels and pick two that genuinely appear on this sheet — the fixture's numbers are the authority, not this plan:
 
 ```bash
 node -e "import('./tools/ejamin/lib/pdf.mjs').then(async (p)=>{const {parseTexts}=await import('./tools/ejamin/lib/content.mjs');
-const fs=require('fs');const s=p.inflateStreams(fs.readFileSync('tools/ejamin/test/fixtures/badarkha.pdf'))[0];
+const fs=require('fs');const s=p.inflateStreams(fs.readFileSync('packages/maps/test/fixtures/badarkha.pdf'))[0];
 console.log(parseTexts(s).slice(0,40));})"
 ```
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tools/ejamin/lib/content.mjs tools/ejamin/test/content.test.mjs
+git add packages/maps/lib/content.mjs packages/maps/test/content.test.mjs
 git commit -m "feat(ejamin): extract parcel polygons and placed text from page content"
 ```
 
@@ -748,8 +748,8 @@ git commit -m "feat(ejamin): extract parcel polygons and placed text from page c
 ### Task 6: Geometry — bbox, point-in-polygon, shared-edge adjacency
 
 **Files:**
-- Create: `tools/ejamin/lib/geom.mjs`
-- Create: `tools/ejamin/test/geom.test.mjs`
+- Create: `packages/maps/lib/geom.mjs`
+- Create: `packages/maps/test/geom.test.mjs`
 
 **Interfaces:**
 - Consumes: nothing.
@@ -789,7 +789,7 @@ test('adjacency links only parcels sharing an edge', () => {
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/geom.test.mjs`
+Run: `node --test packages/maps/test/geom.test.mjs`
 Expected: FAIL — module not found.
 
 - [ ] **Step 3: Implement `geom.mjs`**
@@ -853,13 +853,13 @@ export function adjacency(polys, tol = 1.5) {
 
 - [ ] **Step 4: Run the tests**
 
-Run: `node --test tools/ejamin/test/geom.test.mjs`
+Run: `node --test packages/maps/test/geom.test.mjs`
 Expected: PASS, 3 tests.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tools/ejamin/lib/geom.mjs tools/ejamin/test/geom.test.mjs
+git add packages/maps/lib/geom.mjs packages/maps/test/geom.test.mjs
 git commit -m "feat(ejamin): shared-edge adjacency and point-in-polygon geometry"
 ```
 
@@ -868,8 +868,8 @@ git commit -m "feat(ejamin): shared-edge adjacency and point-in-polygon geometry
 ### Task 7: Georeferencing
 
 **Files:**
-- Create: `tools/ejamin/lib/geo.mjs`
-- Create: `tools/ejamin/test/geo.test.mjs`
+- Create: `packages/maps/lib/geo.mjs`
+- Create: `packages/maps/test/geo.test.mjs`
 
 **Interfaces:**
 - Consumes: `findDicts` (Task 4).
@@ -906,7 +906,7 @@ test('pageToLatLng is a plain affine application', () => {
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/geo.test.mjs`
+Run: `node --test packages/maps/test/geo.test.mjs`
 Expected: FAIL — module not found.
 
 - [ ] **Step 3: Implement `geo.mjs`**
@@ -983,7 +983,7 @@ export function pageToLatLng([a, b, c, d, e, f], [x, y]) {
 
 - [ ] **Step 4: Run the tests**
 
-Run: `node --test tools/ejamin/test/geo.test.mjs`
+Run: `node --test packages/maps/test/geo.test.mjs`
 Expected: PASS, 3 tests.
 
 If the Gujarat bounds test fails, print the raw `/GPTS` and `/LPTS` and check the pair order — some ArcMap builds emit lng-then-lat. Fix the ordering in `parseGeo` and note it in a comment; do not loosen the bounds assertion, which is the only thing proving the transform is real.
@@ -991,7 +991,7 @@ If the Gujarat bounds test fails, print the raw `/GPTS` and `/LPTS` and check th
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tools/ejamin/lib/geo.mjs tools/ejamin/test/geo.test.mjs
+git add packages/maps/lib/geo.mjs packages/maps/test/geo.test.mjs
 git commit -m "feat(ejamin): derive page-to-lat/long affine from GeoPDF viewports"
 ```
 
@@ -1000,8 +1000,8 @@ git commit -m "feat(ejamin): derive page-to-lat/long affine from GeoPDF viewport
 ### Task 8: Label classification
 
 **Files:**
-- Create: `tools/ejamin/lib/labels.mjs`
-- Create: `tools/ejamin/test/labels.test.mjs`
+- Create: `packages/maps/lib/labels.mjs`
+- Create: `packages/maps/test/labels.test.mjs`
 
 **Interfaces:**
 - Consumes: nothing.
@@ -1036,7 +1036,7 @@ test('features and chrome are not survey numbers', () => {
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/labels.test.mjs`
+Run: `node --test packages/maps/test/labels.test.mjs`
 Expected: FAIL — module not found.
 
 - [ ] **Step 3: Implement `labels.mjs`**
@@ -1085,13 +1085,13 @@ export function classify(text) {
 
 - [ ] **Step 4: Run the tests**
 
-Run: `node --test tools/ejamin/test/labels.test.mjs`
+Run: `node --test packages/maps/test/labels.test.mjs`
 Expected: PASS, 3 tests.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add tools/ejamin/lib/labels.mjs tools/ejamin/test/labels.test.mjs
+git add packages/maps/lib/labels.mjs packages/maps/test/labels.test.mjs
 git commit -m "feat(ejamin): classify sheet labels; normalise Gujarati survey numbers"
 ```
 
@@ -1100,13 +1100,13 @@ git commit -m "feat(ejamin): classify sheet labels; normalise Gujarati survey nu
 ### Task 9: Index builder
 
 **Files:**
-- Create: `tools/ejamin/build-index.mjs`
-- Create: `tools/ejamin/test/build-index.test.mjs`
+- Create: `packages/maps/build-index.mjs`
+- Create: `packages/maps/test/build-index.test.mjs`
 
 **Interfaces:**
 - Consumes: everything from Tasks 2 and 4–8; `catalog.json` from Task 3.
 - Produces: `buildIndex(buf, meta) -> indexObject` (pure, testable), and as an executable
-  `tools/ejamin/out/indexes/village-<id>.index.json` + `out/indexes/manifest.json`.
+  `packages/maps/out/indexes/village-<id>.index.json` + `out/indexes/manifest.json`.
 
   Index shape (the contract Plan 2 consumes):
   ```json
@@ -1160,7 +1160,7 @@ test('adjacency is symmetric and never self-referential', () => {
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/build-index.test.mjs`
+Run: `node --test packages/maps/test/build-index.test.mjs`
 Expected: FAIL — module not found.
 
 - [ ] **Step 3: Implement `build-index.mjs`**
@@ -1237,16 +1237,16 @@ const round = (n) => Math.round(n * 100) / 100;
 
 async function main() {
   const districts = ['Kheda', 'Anand'];
-  const catalog = JSON.parse(readFileSync('tools/ejamin/out/catalog.json', 'utf8'));
+  const catalog = JSON.parse(readFileSync('packages/maps/out/catalog.json', 'utf8'));
   const sheets = catalog.sheets.filter(
     (s) => s.type === 'VILLAGE_MAP' && districts.includes(s.districtName),
   );
-  mkdirSync('tools/ejamin/out/indexes', { recursive: true });
-  mkdirSync('tools/ejamin/out/pdf-cache', { recursive: true });
+  mkdirSync('packages/maps/out/indexes', { recursive: true });
+  mkdirSync('packages/maps/out/pdf-cache', { recursive: true });
 
   const manifest = [];
   for (const s of sheets) {
-    const cache = `tools/ejamin/out/pdf-cache/${s.driveFileId}.pdf`;
+    const cache = `packages/maps/out/pdf-cache/${s.driveFileId}.pdf`;
     if (!existsSync(cache)) {
       const res = await fetch(s.downloadUrl);
       if (!res.ok) { console.warn(`skip ${s.villageName}: HTTP ${res.status}`); continue; }
@@ -1266,7 +1266,7 @@ async function main() {
     }
     const file = `village-${s.villageId}.index.json`;
     const json = JSON.stringify(idx);
-    writeFileSync(`tools/ejamin/out/indexes/${file}`, json);
+    writeFileSync(`packages/maps/out/indexes/${file}`, json);
     manifest.push({
       villageId: s.villageId, villageName: s.villageName,
       districtName: s.districtName, talukaName: s.talukaName,
@@ -1279,7 +1279,7 @@ async function main() {
     });
     console.log(`${s.districtName}/${s.villageName}: ${idx.parcels.length} parcels`);
   }
-  writeFileSync('tools/ejamin/out/indexes/manifest.json', JSON.stringify({ villages: manifest }, null, 1));
+  writeFileSync('packages/maps/out/indexes/manifest.json', JSON.stringify({ villages: manifest }, null, 1));
   console.log(`indexes: ${manifest.length}`);
 }
 
@@ -1288,20 +1288,20 @@ if (import.meta.url === `file://${process.argv[1]}`) await main();
 
 - [ ] **Step 4: Run the tests**
 
-Run: `node --test tools/ejamin/test/build-index.test.mjs`
+Run: `node --test packages/maps/test/build-index.test.mjs`
 Expected: PASS, 4 tests.
 
 If the labelled-fraction test fails, do not lower the threshold. Print the unlabelled parcels' bounding boxes and the unplaced survey labels, and fix the cause (usually `MIN_PARCEL_AREA` or a text run split across two `Tj` operators).
 
 - [ ] **Step 5: Build the real indexes**
 
-Run: `node tools/ejamin/build-index.mjs`
+Run: `node packages/maps/build-index.mjs`
 Expected: one line per village, then `indexes: <N>`.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add tools/ejamin/build-index.mjs tools/ejamin/test/build-index.test.mjs
+git add packages/maps/build-index.mjs packages/maps/test/build-index.test.mjs
 git commit -m "feat(ejamin): build per-village parcel indexes from GeoPDF sheets"
 ```
 
@@ -1310,8 +1310,8 @@ git commit -m "feat(ejamin): build per-village parcel indexes from GeoPDF sheets
 ### Task 10: QA gate
 
 **Files:**
-- Create: `tools/ejamin/qa-index.mjs`
-- Create: `tools/ejamin/test/qa.test.mjs`
+- Create: `packages/maps/qa-index.mjs`
+- Create: `packages/maps/test/qa.test.mjs`
 
 **Interfaces:**
 - Consumes: `out/indexes/manifest.json` and the index files (Task 9).
@@ -1351,7 +1351,7 @@ test('more than 30% unlabelled demotes to LINK_ONLY', () => {
 
 - [ ] **Step 2: Run it and watch it fail**
 
-Run: `node --test tools/ejamin/test/qa.test.mjs`
+Run: `node --test packages/maps/test/qa.test.mjs`
 Expected: FAIL — module not found.
 
 - [ ] **Step 3: Implement `qa-index.mjs`**
@@ -1378,11 +1378,11 @@ export function assess(idx) {
 }
 
 function main() {
-  const path = 'tools/ejamin/out/indexes/manifest.json';
+  const path = 'packages/maps/out/indexes/manifest.json';
   const manifest = JSON.parse(readFileSync(path, 'utf8'));
   let demoted = 0;
   for (const row of manifest.villages) {
-    const file = `tools/ejamin/out/indexes/${row.file}`;
+    const file = `packages/maps/out/indexes/${row.file}`;
     const idx = JSON.parse(readFileSync(file, 'utf8'));
     const verdict = assess(idx);
     idx.quality = verdict.quality;
@@ -1403,12 +1403,12 @@ if (import.meta.url === `file://${process.argv[1]}`) main();
 
 - [ ] **Step 4: Run the tests**
 
-Run: `node --test tools/ejamin/test/qa.test.mjs`
+Run: `node --test packages/maps/test/qa.test.mjs`
 Expected: PASS, 4 tests.
 
 - [ ] **Step 5: Run the gate over the real output**
 
-Run: `node tools/ejamin/qa-index.mjs`
+Run: `node packages/maps/qa-index.mjs`
 Expected: a summary line. Note the GOOD/LINK_ONLY split — this number is the honest coverage figure for Kheda + Anand and belongs in the handoff to Plan 2.
 
 - [ ] **Step 6: Verify one village against the printed sheet by hand**
@@ -1428,8 +1428,8 @@ Expected: all three found, with a plausible neighbour count (2–8). This is the
 - [ ] **Step 7: Run the whole suite and commit**
 
 ```bash
-node --test tools/ejamin/test/
-git add tools/ejamin/qa-index.mjs tools/ejamin/test/qa.test.mjs tools/ejamin/out/indexes/manifest.json
+node --test packages/maps/test/
+git add packages/maps/qa-index.mjs packages/maps/test/qa.test.mjs packages/maps/out/indexes/manifest.json
 git commit -m "feat(ejamin): QA gate demotes weak extractions to LINK_ONLY"
 ```
 
@@ -1439,8 +1439,8 @@ git commit -m "feat(ejamin): QA gate demotes weak extractions to LINK_ONLY"
 
 Plan 2 consumes exactly three artefacts:
 
-1. `tools/ejamin/out/catalog.json` — copied to `android/app/src/main/assets/maps/catalog.json`.
-2. `tools/ejamin/out/indexes/village-*.index.json` — published to the releases repo.
-3. `tools/ejamin/out/indexes/manifest.json` — the checksum + quality list the app trusts.
+1. `packages/maps/out/catalog.json` — copied to `apps/android/app/src/main/assets/maps/catalog.json`.
+2. `packages/maps/out/indexes/village-*.index.json` — published to the releases repo.
+3. `packages/maps/out/indexes/manifest.json` — the checksum + quality list the app trusts.
 
 Record the GOOD/LINK_ONLY counts from Task 10 Step 5 in the Plan 2 kickoff, so the app's coverage copy is truthful.
