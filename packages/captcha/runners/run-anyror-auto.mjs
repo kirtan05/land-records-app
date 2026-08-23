@@ -6,9 +6,9 @@
 // It also scores itself: every solve is logged with its prediction, confidence and whether the
 // site accepted it, so this doubles as a live accuracy test of anyror_cnn_real.onnx.
 //
-//   node packages/captcha/run-anyror-auto.mjs --n=5              # 5 surveys that have iRCMS cases
-//   node packages/captcha/run-anyror-auto.mjs --surveys=23,28    # explicit list
-//   node packages/captcha/run-anyror-auto.mjs --n=3 --dry        # cascade + solve, never submit
+//   node packages/captcha/runners/run-anyror-auto.mjs --n=5              # 5 surveys that have iRCMS cases
+//   node packages/captcha/runners/run-anyror-auto.mjs --surveys=23,28    # explicit list
+//   node packages/captcha/runners/run-anyror-auto.mjs --n=3 --dry        # cascade + solve, never submit
 //
 // AnyRoR has a WAF that IP-blocks bursts ([[anyror-waf-ip-block]]): this runs HEADED, one gentle
 // page load per survey, jittered 8-14 s between surveys, and ABORTS on the first block page.
@@ -17,7 +17,7 @@ import { spawn } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
-import { REPO } from '../core/repo-root.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ROOT = REPO;
 const OUT = join(ROOT, 'output');
@@ -26,7 +26,7 @@ const LAND = '8';                                        // Integrated Survey De
 // Defaults are Anand / Umreth / Bharoda. --village takes a code ('029') or Gujarati text ('ભાલેજ').
 const DIST = '15', TAL = '03';
 const MAX_CAPTCHA_TRIES = 3;
-const LOG = join(ROOT, 'packages/captcha/anyror-auto-log.json');
+const LOG = join(ROOT, 'packages/captcha/runs/anyror-auto-log.json');
 
 const arg = (k, d) => { const v = process.argv.find((a) => a.startsWith(`--${k}=`)); return v ? v.split('=')[1] : d; };
 const DRY = process.argv.includes('--dry');
@@ -47,7 +47,7 @@ console.log(`targets (${targets.length}): ${targets.join(', ')}${DRY ? '   [DRY 
 
 // ---- captcha solver: one long-lived python process, ~0.6 ms per solve ----
 const py = spawn(join(ROOT, 'packages/captcha/.venv/bin/python'),
-  [join(ROOT, 'packages/captcha/infer_anyror.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
+  [join(ROOT, 'packages/captcha/pipeline/4-infer.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
 const pyLines = createInterface({ input: py.stdout });
 const pending = [];
 pyLines.on('line', (l) => pending.shift()?.(l));
@@ -254,7 +254,7 @@ async function captureEntries(dir) {
     // A RED anchor means "old handwritten entry" — it does NOT mean a scan exists. When the server
     // has no scan it renders nothing AND does not clear the previous entry's #lblEntryNo/#gvImages,
     // so the last entry's scan stays on screen. Proven by firing a known-bad entry first on a fresh
-    // detail page: no label, zero images (packages/captcha/diag-entry-stale.mjs). Re-firing never helps.
+    // detail page: no label, zero images (packages/captcha/probes/diag-entry-stale.mjs). Re-firing never helps.
     // So trust the server's own eno=/label: if it doesn't name the entry we asked for, there is no
     // scan — skip. A missing scan is recoverable; a mislabeled land record is not.
     const enoOf = (u) => (u.match(/[?&]eno=([^&]+)/i) || [, ''])[1];

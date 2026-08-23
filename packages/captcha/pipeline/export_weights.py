@@ -13,7 +13,7 @@ Layout is little-endian float32, weights then bias, in this exact order:
     fc    (384,1280)   head0..head5 (10,384)
 A tiny header records the shapes so the Kotlin loader can assert them.
 
-    packages/captcha/.venv/bin/python packages/captcha/export_weights.py
+    packages/captcha/.venv/bin/python packages/captcha/pipeline/5-export-weights.py
 """
 import struct
 import sys
@@ -22,10 +22,10 @@ from pathlib import Path
 import numpy as np
 import torch
 
-sys.path.insert(0, str(Path(__file__).parent))
-from train_cnn import CaptchaCNN, ROOT
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from train import CaptchaCNN, ROOT
 
-OUT = ROOT / "anyror_cnn_real.weights"
+OUT = ROOT / "model" / "anyror_cnn_real.weights"
 
 
 def fold(conv, bn):
@@ -43,7 +43,7 @@ def fold(conv, bn):
 
 def main():
     m = CaptchaCNN()
-    m.load_state_dict(torch.load(ROOT / "anyror_cnn_real.pt"))
+    m.load_state_dict(torch.load(ROOT / "model" / "anyror_cnn_real.pt"))
     m.eval()
 
     f = m.features

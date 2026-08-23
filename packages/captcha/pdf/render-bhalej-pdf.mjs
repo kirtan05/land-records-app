@@ -1,12 +1,12 @@
 // Re-render a survey's clean integrated PDF from its SAVED detail HTML — fully offline.
 // AnyRoR's own stylesheets are cached in assets/anyror-css/, so this never touches the site.
-//   node packages/captcha/render-bhalej-pdf.mjs                 # every output/Bhalej_*/
-//   node packages/captcha/render-bhalej-pdf.mjs Bhalej_174_P1
+//   node packages/captcha/pdf/render-bhalej-pdf.mjs                 # every output/Bhalej_*/
+//   node packages/captcha/pdf/render-bhalej-pdf.mjs Bhalej_174_P1
 import { chromium } from 'playwright-core';
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { applyCleanFormat, PDF_OPTS } from '../anyror/format.mjs';
-import { REPO } from '../core/repo-root.mjs';
+import { applyCleanFormat, PDF_OPTS } from '../../anyror/format.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ROOT = REPO;
 const OUT = join(ROOT, 'output');

@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
-"""Train a small multi-head CNN on AnyRoR captchas.
-Fixed length (6) × fixed charset (10 digits) → 6 softmax heads, no CTC needed
-(the captcha-break recipe, modernised to PyTorch).
+"""Train the AnyRoR captcha CNN on the hand-tagged real set.
 
-The synthetic generator turned out to be far off the real distribution — a
-synth-trained model scores ~14% on real captchas — so train on the hand-tagged
-real set (`--data real`), which reaches ~97%.
+Fixed length (6) x fixed charset (10 digits) -> 6 softmax heads, no CTC needed.
 
-  # real data, 80/10/10 train/val/test, augmented
-  packages/captcha/.venv/bin/python packages/captcha/train_cnn.py \
-      --data real --augment --epochs 60 --bs 64 --out anyror_cnn_real.pt
+Trains ONLY on real captchas harvested from the live site and tagged by hand:
+    pipeline/fetch-anyror.mjs -> pipeline/tag.py -> samples/anyror/labels.csv
 
-Model selection is on val; the test split is scored exactly once at the end.
-The chosen weights are written to --out (+ a matching .onnx and .split.json).
+A synthetic generator was tried first and abandoned. Its distribution was far
+enough from the real captchas that a synth-trained model scored ~14% on real
+input, against ~97% val / 98.99% test for the real-trained model. Do not
+reintroduce synthetic data without measuring it against samples/anyror first.
 
-  --data synth  keeps the original behaviour: train on synth/, score on the
-                whole real set every epoch.
+    packages/captcha/.venv/bin/python packages/captcha/pipeline/train.py \
+        --augment --epochs 60 --bs 64
+
+The real set is split 80/10/10 by filename. Model selection is on val; the test
+split is scored exactly once, at the end. Weights go to --out, alongside a
+matching .onnx and .split.json in model/.
 """
 import argparse
 import csv
@@ -28,8 +29,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-ROOT = Path(__file__).parent
-SYNTH = ROOT / "synth"
+ROOT = Path(__file__).resolve().parent.parent
 REAL = ROOT / "samples" / "anyror"
 IW, IH = 160, 64  # model input (downscaled from 190x80)
 
@@ -101,14 +101,11 @@ def exact_acc(model, imgs, labels, bs=256):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--epochs", type=int, default=25)
-    ap.add_argument("--limit", type=int, default=0, help="cap synth samples (0 = all)")
     ap.add_argument("--bs", type=int, default=128)
-    ap.add_argument("--data", choices=["synth", "real", "both"], default="synth",
-                    help="what to train on; real/both split the real set into train/val/test")
     ap.add_argument("--val", type=float, default=0.1, help="fraction of real held out for val (model selection)")
     ap.add_argument("--test", type=float, default=0.1, help="fraction of real held out for test (scored once, at the end)")
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--out", default="anyror_cnn_best.pt")
+    ap.add_argument("--out", default="model/anyror_cnn_real.pt")
     ap.add_argument("--augment", action="store_true", help="affine/brightness jitter on train batches")
     args = ap.parse_args()
 
@@ -117,36 +114,24 @@ def main():
 
     print("loading real…", flush=True)
     xr_all, yr_all, names = load(REAL, with_names=True)
-    empty = (np.empty((0, IH, IW), np.uint8), np.empty((0, 6), np.int64))
-    if args.data == "synth":
-        xv, yv = xr_all, yr_all          # whole real set is the val set, nothing held back
-        xte, yte = empty
-        xtr, ytr = empty
-    else:
-        perm = np.random.permutation(len(xr_all))
-        nv = max(1, int(len(perm) * args.val))
-        nt = max(1, int(len(perm) * args.test))
-        vi, ti, tri = perm[:nv], perm[nv:nv + nt], perm[nv + nt:]
-        xv, yv = xr_all[vi], yr_all[vi]
-        xte, yte = xr_all[ti], yr_all[ti]
-        xtr, ytr = xr_all[tri], yr_all[tri]
-        # the split is recorded by filename: labels.csv keeps growing as you tag,
-        # so a seed alone would silently reshuffle test images into train later.
-        split_path = ROOT / (Path(args.out).stem + ".split.json")
-        split_path.write_text(json.dumps(
-            {k: sorted(names[i] for i in idx) for k, idx in
-             (("train", tri), ("val", vi), ("test", ti))}, indent=1))
-        print(f"split recorded → {split_path}", flush=True)
+    perm = np.random.permutation(len(xr_all))
+    nv = max(1, int(len(perm) * args.val))
+    nt = max(1, int(len(perm) * args.test))
+    vi, ti, tri = perm[:nv], perm[nv:nv + nt], perm[nv + nt:]
+    xv, yv = xr_all[vi], yr_all[vi]
+    xte, yte = xr_all[ti], yr_all[ti]
+    xtr, ytr = xr_all[tri], yr_all[tri]
+    # the split is recorded by filename: labels.csv keeps growing as you tag,
+    # so a seed alone would silently reshuffle test images into train later.
+    split_path = ROOT / "model" / (Path(args.out).stem + ".split.json")
+    split_path.parent.mkdir(parents=True, exist_ok=True)
+    split_path.write_text(json.dumps(
+        {k: sorted(names[i] for i in idx) for k, idx in
+         (("train", tri), ("val", vi), ("test", ti))}, indent=1))
+    print(f"split recorded -> {split_path}", flush=True)
     print(f"real: {len(xr_all)} total → {len(xtr)} train / {len(xv)} val / {len(xte)} test", flush=True)
 
-    if args.data == "real":
-        xs, ys = xtr, ytr
-    else:
-        print("loading synth…", flush=True)
-        xsy, ysy = load(SYNTH, args.limit)
-        print(f"synth: {len(xsy)}", flush=True)
-        xs = np.concatenate([xsy, xtr]) if len(xtr) else xsy
-        ys = np.concatenate([ysy, ytr]) if len(ytr) else ysy
+    xs, ys = xtr, ytr
     print(f"train set: {len(xs)}", flush=True)
 
     model = CaptchaCNN()

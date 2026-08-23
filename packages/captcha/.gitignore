@@ -1,6 +1,19 @@
+# Python env
 .venv/
-synth/
-tessdata/
-*.pt
-*.onnx
 __pycache__/
+
+# Hand-tagged captcha samples. Kept on disk and distributed as samples.zip
+# (see README) — never committed: 3,175 images and personally-tagged labels.
+samples/
+samples.zip
+
+# Trained artefacts. Regenerable via pipeline/train.py; the .weights blob is
+# copied into the app under apps/android/.../assets/ and IS tracked there.
+model/*.pt
+model/*.onnx
+# the .weights blob is tracked once, in the app's assets/ — not duplicated here
+model/*.weights
+
+# Live-run artefacts
+runs/
+probes/deed-probe/

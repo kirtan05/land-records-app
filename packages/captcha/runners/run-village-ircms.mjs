@@ -3,15 +3,15 @@
 // (case PDFs + order PDFs + JSON/CSV via the proven packages/core/scrape.mjs machinery) → next.
 // Resumable via output/_state.json; gentle jittered pacing; WAF-aware (aborts on block).
 //
-//   node packages/captcha/run-village-ircms.mjs                # all 1535 surveys, resume
-//   node packages/captcha/run-village-ircms.mjs --only=221/p   # one survey (smoke test)
-//   node packages/captcha/run-village-ircms.mjs --from=400     # start at index 400
+//   node packages/captcha/runners/run-village-ircms.mjs                # all 1535 surveys, resume
+//   node packages/captcha/runners/run-village-ircms.mjs --only=221/p   # one survey (smoke test)
+//   node packages/captcha/runners/run-village-ircms.mjs --from=400     # start at index 400
 import { chromium } from 'playwright-core';
 import { readFileSync } from 'node:fs';
-import { ensureOut, isDone, markSurvey } from '../core/store.mjs';
-import { extractCaseList, openDetailByKey, processCases } from '../core/scrape.mjs';
-import { searchWithAutoCaptcha } from './ircms-solve.mjs';
-import { REPO } from '../core/repo-root.mjs';
+import { ensureOut, isDone, markSurvey } from '../../core/store.mjs';
+import { extractCaseList, openDetailByKey, processCases } from '../../core/scrape.mjs';
+import { searchWithAutoCaptcha } from '../solvers/ircms.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ANAND = '15', UMRETH = '03', BHARODA = '029';
 const PAGE_URL = 'https://ircms.gujarat.gov.in/ViewSurveyList';

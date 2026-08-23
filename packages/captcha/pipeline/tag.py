@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fast keyboard tagger for the AnyRoR captcha samples.
 
-  python packages/captcha/tag-anyror.py [--port 8765]
+  python packages/captcha/pipeline/2-tag.py [--port 8765]
 
 Opens a page: big captcha image, type the 6 chars, Enter saves + advances.
 Back = go back one. Writes packages/captcha/samples/anyror/labels.csv incrementally,
@@ -14,7 +14,7 @@ import sys
 import webbrowser
 from pathlib import Path
 
-DIR = Path(__file__).parent / "samples" / "anyror"
+DIR = Path(__file__).resolve().parent.parent / "samples" / "anyror"
 LABELS = DIR / "labels.csv"
 PORT = 8765
 for i, a in enumerate(sys.argv):

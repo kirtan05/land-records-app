@@ -15,12 +15,6 @@ Status: `[ ]` open · `[~]` in progress · `[x]` done
       unnoticed.
       <br>`npm run test:maps`
 
-- [ ] **`packages/captcha/solve-anyror.py` loads a model that does not exist.** It opens
-      `anyror_cnn.onnx` (the older synthetic-trained model); the shipped model is
-      `anyror_cnn_real.onnx`. The script fails immediately on any input. Either repoint it
-      at the real model or delete it — `infer_anyror.py` is the production path and already
-      defaults correctly.
-
 - [ ] **Re-verify the tokenizer after any survey-number change.** `npm run check:tokenizer`
       must print `0 fused`. This is not a style check: a fusion silently merges two
       different families' parcels into one row, and the merge is not reversible after sync.
@@ -43,11 +37,6 @@ The restructure and the CNN solver both landed after parts of the docs were writ
 - [ ] **`docs/PROJECT_NOTES.md` references moved files.** `run-fast.mjs` is now
       `packages/legacy/ircms/run-fast.mjs`; `build_vf712_combined.py` is now
       `packages/legacy/reports/build_vf712_combined.py`.
-
-- [ ] **`packages/captcha/README.md` accuracy table leaves the CNN row as `—`.** The
-      measured figures are 98.99% exact on the held-out real set, 0 wrong at
-      confidence > 0.9, ~1,270 img/s. Baselines already in the table: tesseract ≤ 16%,
-      ddddocr 44%.
 
 - [ ] **Confirm the SUPERSEDED banners are still accurate.** Three `2026-08-10-maps-*`
       documents predate the discovery that all 881 Kheda + Anand sheets are rasterized.
@@ -104,4 +93,12 @@ Direction already decided; see the linked documents before starting either.
       relative import remapped and verified to resolve.
 - [x] **Repository cleaned for sharing.** Quiz material, the personal WhatsApp archive
       project, invoices and scratch captures removed from the tree and purged from history.
-- [x] **Captcha dataset moved out of git** into a distributed zip.
+- [x] **Captcha dataset moved out of git** into `packages/captcha/samples.zip`.
+- [x] **Captcha package reorganized** into `pipeline/ solvers/ model/ runners/ pdf/ probes/`,
+      with the five stages named `fetch → tag → train → infer/eval → export_weights`.
+- [x] **Removed the abandoned synthetic-captcha route** — the 60k-image `synth/` corpus, the
+      generator, the synth-trained checkpoint, the dead `solve-anyror.py`, and all Kaggle
+      material. Docs no longer claim the shipped model was trained on synthetic data; it was
+      trained on 2,701 hand-tagged real captchas.
+- [x] **Recovered the full `labels.csv`** (2,701 rows) from a pre-rewrite backup after an
+      earlier restore had picked up a stale 99-row version.

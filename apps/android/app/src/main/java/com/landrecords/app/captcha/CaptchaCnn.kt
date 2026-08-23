@@ -10,7 +10,7 @@ import java.nio.ByteOrder
 /**
  * Pure-Kotlin forward pass of the AnyRoR captcha CNN — no native libs, no ONNX Runtime.
  *
- * Weights come from `tools/captcha/export_weights.py` (magic "LRCNN"), with
+ * Weights come from `packages/captcha/pipeline/export_weights.py` (magic "LRCNN"), with
  * BatchNorm already folded into each conv, so the pass is exactly:
  *
  *   conv3x3/pad1 → ReLU → maxpool2   [1→32]   64x160 → 32x80

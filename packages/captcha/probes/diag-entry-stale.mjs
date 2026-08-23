@@ -6,12 +6,12 @@
 // entry — which would look exactly like "the page didn't re-render".
 //
 // So: dump the index→number mapping before any postback, then again after each one, and compare.
-//   node packages/captcha/diag-entry-stale.mjs --village=ભાલેજ --surveys=174/p1
+//   node packages/captcha/probes/diag-entry-stale.mjs --village=ભાલેજ --surveys=174/p1
 import { chromium } from 'playwright-core';
 import { spawn } from 'node:child_process';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
-import { REPO } from '../core/repo-root.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ROOT = REPO;
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
@@ -20,7 +20,7 @@ const VILLAGE = arg('village', 'ભાલેજ'), SURVEY = arg('surveys', '174/
 const GU = { '૦': '0', '૧': '1', '૨': '2', '૩': '3', '૪': '4', '૫': '5', '૬': '6', '૭': '7', '૮': '8', '૯': '9' };
 
 const py = spawn(join(ROOT, 'packages/captcha/.venv/bin/python'),
-  [join(ROOT, 'packages/captcha/infer_anyror.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
+  [join(ROOT, 'packages/captcha/pipeline/4-infer.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
 const lines = createInterface({ input: py.stdout });
 const pending = [];
 lines.on('line', (l) => pending.shift()?.(l));

@@ -5,10 +5,10 @@
 // for Bhalej 174/p1 and 174/p2 have the same md5 for every shared entry. So a missing scan is
 // filled from the copy we already hold, and the row is marked `via:"village-copy"` so the
 // provenance is never lost.
-//   node packages/captcha/heal-entries.mjs
+//   node packages/captcha/runners/heal-entries.mjs
 import { readdirSync, readFileSync, writeFileSync, existsSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { REPO } from '../core/repo-root.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const OUT = REPO+'/output';
 const dirs = readdirSync(OUT).filter((d) => d.startsWith('Bhalej_') && existsSync(join(OUT, d, 'entries/entries.json')));

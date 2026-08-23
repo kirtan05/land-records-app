@@ -89,10 +89,10 @@ packages/maps/out/
 packages/anyror/anyrorintegrated.html
 
 # ============ Captcha training data + models (large, local, regenerable) ============
-packages/captcha/samples/
-packages/captcha/kaggle/*
-!packages/captcha/kaggle/*.md
-*.weights
+# packages/captcha/ carries its own .gitignore for samples, model artefacts and runs.
+# The one exception lives here: the .weights blob the APP loads is force-added,
+# because it cannot be rebuilt without the (uncommitted) sample set and the app's
+# CNN is dead without it.
 *.onnx
 apps/android/app/src/androidTest/assets/captcha_samples/
 
@@ -109,7 +109,4 @@ packages/anyror/deed-stop.txt
 # ============ Monorepo: per-package build + venv output ============
 packages/*/.venv/
 packages/*/out/
-packages/captcha/*.onnx
-packages/captcha/*.pt
-packages/captcha/*.weights
 apps/android/app/build/

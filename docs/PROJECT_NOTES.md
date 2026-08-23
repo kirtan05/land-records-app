@@ -41,7 +41,7 @@ output/iRCMS_Bharoda_Master.xlsx    Summary (iRCMS + AnyRoR + VF-7/12 columns) +
 2. **Headed needs a display.** The Bash env often lacks one; launch Chrome with env copied from a running
    GUI process: `DISPLAY=:1 WAYLAND_DISPLAY=wayland-0 XDG_RUNTIME_DIR=/run/user/1000 XAUTHORITY=/run/user/1000/xauth_* DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus`.
 3. **CAPTCHA: iRCMS is auto-solved, AnyRoR is human.** iRCMS serves its code as an SVG with the
-   answer in plain `<text>` nodes — parse, fill, submit (`packages/captcha/ircms-solve.mjs`; app:
+   answer in plain `<text>` nodes — parse, fill, submit (`packages/captcha/solvers/ircms.mjs`; app:
    `IrcmsInjection.autoSolveCaptchaJs`). AnyRoR's is a raster PNG on a patterned background —
    the human solves it in the window (or via WhatsApp screenshot when remote); a small CNN
    solver is being trained in `packages/captcha/` (see its README). Only the submit button needs

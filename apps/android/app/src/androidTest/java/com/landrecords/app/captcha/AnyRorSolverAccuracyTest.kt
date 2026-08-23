@@ -10,7 +10,7 @@ import java.io.File
 
 /**
  * Accuracy over EVERY labelled sample, broken down by cohort (cohorts.csv):
- *   train / val / test — from tools/captcha/anyror_cnn_real.split.json
+ *   train / val / test — from packages/captcha/anyror_cnn_real.split.json
  *   new                — labelled AFTER training, never seen by the model
  * `test` and `new` are the honest numbers; `train` is inflated by construction.
  */
@@ -110,7 +110,7 @@ class AnyRorSolverAccuracyTest {
     }
 
     /**
-     * Numerical parity against the Python reference (`tools/captcha/export_weights.py`
+     * Numerical parity against the Python reference (`packages/captcha/pipeline/export_weights.py`
      * → `forward_numpy`), whose logits are baked into `expected_logits.bin`.
      *
      * The Kotlin pass was verified once against ONNX Runtime on-device (max |logit diff|

@@ -163,9 +163,9 @@ Two mechanisms in that pipeline are load-bearing and easy to break:
 Full-village runs go through `packages/captcha`, which adds the automatic solver:
 
 ```bash
-node packages/captcha/run-village-ircms.mjs                              # whole village, resumable
-node packages/captcha/run-anyror-auto.mjs --n=5                          # 5 surveys, CNN-solved
-node packages/captcha/run-bhalej-full.mjs --surveys=174/p1,174/p3,239    # record + every entry scan
+node packages/captcha/runners/run-village-ircms.mjs                              # whole village, resumable
+node packages/captcha/runners/run-anyror-auto.mjs --n=5                          # 5 surveys, CNN-solved
+node packages/captcha/runners/run-bhalej-full.mjs --surveys=174/p1,174/p3,239    # record + every entry scan
 ```
 
 ---
@@ -210,16 +210,22 @@ Both portals are solved automatically. The human fallback is the exception, not 
 | | iRCMS | AnyRoR |
 |---|---|---|
 | Delivery | SVG with the answer in `<text>` nodes | 190×80 PNG baked into the page as a data URI |
-| Method | Deterministic parse — sort nodes by `x`, join | 6-head × 10-class CNN over the PNG |
-| Accuracy | Exact, no OCR | **98.99%** on the held-out real set |
+| Method | Deterministic parse — sort nodes by `x`, join | 6-head × 10-class CNN, trained on real hand-tagged captchas |
+| Accuracy | Exact, no OCR | **98.69%** on the held-out test split |
 | Fallback | — | After 2 rejections, hand off to the human spotlight |
 
 The AnyRoR model ships twice: `anyror_cnn_real.onnx` for the laptop, and a BN-folded flat
 float32 blob `anyror_cnn_real.weights` for the app's pure-Kotlin forward pass — no ONNX
 Runtime and no native libraries on the device.
 
+The model is trained **only on real captchas harvested from the live site and tagged by
+hand** — 2,701 of them. A synthetic-lookalike generator was tried first and scored ~14% on
+real input; it was abandoned and deleted. The five pipeline stages are
+`fetch → tag → train → eval → export`:
+
 ```bash
-packages/captcha/.venv/bin/python packages/captcha/infer_anyror.py --dir samples/anyror --eval
+cd packages/captcha && unzip samples.zip          # the tagged corpus is not in git
+.venv/bin/python pipeline/infer.py --dir samples/anyror --eval --split test
 ```
 
 Two constraints that cost real data when violated:
@@ -242,7 +248,7 @@ set is distributed as a zip rather than in git history.
 
 | Data | Size | How to get it |
 |---|---|---|
-| Captcha training samples | 15 MB | `captcha-dataset.zip` — unzip into `packages/captcha/samples/` |
+| Captcha samples (2,701 hand-tagged) | 9.6 MB zipped | `packages/captcha/samples.zip` — `unzip` it in place. **Not regenerable**: the tagging is manual. |
 | Jantri rate PDFs | ~141 MB | `packages/jantri/fetch.sh` |
 | Jantri parsed CSVs + SQLite | — | `python3 packages/jantri/parse.py && python3 packages/jantri/build_db.py` |
 | eJamin map catalogue | 15 MB | `node packages/maps/scrape-catalog.mjs` |

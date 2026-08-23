@@ -20,7 +20,8 @@ Rules for this app's UI:
 - Both themes are first-class. All motion collapses under reduced-motion.
 - **Both CAPTCHAs are auto-solved; the human spotlight is only the fallback.**
   iRCMS: deterministic SVG `<text>`-node parse. AnyRoR: a CNN over the captcha PNG
-  (`packages/captcha/anyror_cnn_real.onnx`, 98.7% on a held-out test split, 14/14 accepted live
+  (`packages/captcha/model/anyror_cnn_real.onnx`, trained on 2,701 hand-tagged REAL captchas —
+  never synthetic; 98.69% on a held-out test split, 14/14 accepted live
   on 2026-08-14) — see `packages/captcha/README.md`. The captcha is baked into the page as a
   data URI, so read `img#ContentPlaceHolder1_i_captcha_1`; never re-fetch it (that rotates it
   and invalidates the one on screen). After 2 rejections, fall back to the human spotlight:

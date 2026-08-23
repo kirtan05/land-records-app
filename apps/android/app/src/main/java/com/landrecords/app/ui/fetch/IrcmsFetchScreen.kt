@@ -97,7 +97,7 @@ fun IrcmsFetchScreen(
             if (step.contains("READY")) {
                 delay(400)
                 // Auto-solve the SVG captcha (deterministic <text>-node parse — see
-                // tools/captcha). The human spotlight is only the fallback now.
+                // packages/captcha). The human spotlight is only the fallback now.
                 var code = ""
                 for (a in 1..10) {
                     code = WebViewCapture.eval(wv, IrcmsInjection.autoSolveCaptchaJs()).trim()

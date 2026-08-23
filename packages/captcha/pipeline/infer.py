@@ -49,9 +49,9 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-ROOT = Path(__file__).parent
+ROOT = Path(__file__).resolve().parent.parent
 IW, IH = 160, 64
-DEFAULT_MODEL = ROOT / "anyror_cnn_real.onnx"
+DEFAULT_MODEL = ROOT / "model" / "anyror_cnn_real.onnx"
 
 
 class Solver:

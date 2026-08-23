@@ -1,11 +1,11 @@
 // PROBE: submit ONE entry number on AnyRoR record type 6 (Old Scanned VF-6) and dump what comes back.
-//   node packages/captcha/probe-vf6.mjs --entry=2536
+//   node packages/captcha/probes/probe-vf6.mjs --entry=2536
 import { chromium } from 'playwright-core';
 import { spawn } from 'node:child_process';
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
-import { REPO } from '../core/repo-root.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ROOT = REPO;
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
@@ -13,7 +13,7 @@ const arg = (k, d) => { const v = process.argv.find((a) => a.startsWith(`--${k}=
 const ENTRIES = arg('entry', '2536').split(',');
 
 const py = spawn(join(ROOT, 'packages/captcha/.venv/bin/python'),
-  [join(ROOT, 'packages/captcha/infer_anyror.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
+  [join(ROOT, 'packages/captcha/pipeline/4-infer.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
 const lines = createInterface({ input: py.stdout });
 const pending = [];
 lines.on('line', (l) => pending.shift()?.(l));

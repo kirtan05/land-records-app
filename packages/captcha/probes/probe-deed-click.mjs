@@ -1,23 +1,23 @@
 // PROBE: what actually happens when you CLICK "View Deed" in a real browser?
 // The blind form-POST replay just gets the page back, so watch the click: download event, popup,
 // navigation, or an alert.
-//   node packages/captcha/probe-deed-click.mjs --survey=174/p1
+//   node packages/captcha/probes/probe-deed-click.mjs --survey=174/p1
 import { chromium } from 'playwright-core';
 import { spawn } from 'node:child_process';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
-import { REPO } from '../core/repo-root.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ROOT = REPO;
 const FORM_URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
 const arg = (k, d) => { const v = process.argv.find((a) => a.startsWith(`--${k}=`)); return v ? v.split('=')[1] : d; };
 const SURVEY = arg('survey', '174/p1');
 const GU = { '૦': '0', '૧': '1', '૨': '2', '૩': '3', '૪': '4', '૫': '5', '૬': '6', '૭': '7', '૮': '8', '૯': '9' };
-const DUMP = join(ROOT, 'packages/captcha/deed-probe');
+const DUMP = join(ROOT, 'packages/captcha/probes/deed-probe');
 mkdirSync(DUMP, { recursive: true });
 
-const py = spawn(join(ROOT, 'packages/captcha/.venv/bin/python'), [join(ROOT, 'packages/captcha/infer_anyror.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
+const py = spawn(join(ROOT, 'packages/captcha/.venv/bin/python'), [join(ROOT, 'packages/captcha/pipeline/4-infer.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
 const rl = createInterface({ input: py.stdout });
 const q = [];
 rl.on('line', (l) => q.shift()?.(l));

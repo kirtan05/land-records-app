@@ -1,10 +1,10 @@
 // RECON: what does AnyRoR record type 6 (Old Scanned VF-6 / જુના હક્ક પત્રક) ask for?
 // Cascade to Anand/Umreth/Bhalej under type 6 and dump every visible form control.
-//   node packages/captcha/recon-vf6.mjs
+//   node packages/captcha/probes/recon-vf6.mjs
 import { chromium } from 'playwright-core';
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { REPO } from '../core/repo-root.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ROOT = REPO;
 const URL = 'https://anyror.gujarat.gov.in/LandRecordRural.aspx/1000';
@@ -50,7 +50,7 @@ await page.waitForTimeout(1200);
 await page.selectOption('#ContentPlaceHolder1_ddlVillage', '027');
 await page.waitForTimeout(3000);
 const d = await dump('after Anand/Umreth/Bhalej under type=6');
-writeFileSync(join(ROOT, 'packages/captcha/recon-vf6.json'), JSON.stringify(d, null, 1));
+writeFileSync(join(ROOT, 'packages/captcha/runs/recon-vf6.json'), JSON.stringify(d, null, 1));
 writeFileSync(join(ROOT, 'packages/captcha/recon-vf6.html'), await page.content());
 console.log('\nsaved recon-vf6.json / .html');
 await page.waitForTimeout(1000);

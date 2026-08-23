@@ -9,14 +9,14 @@
 // Everything is written under output/Bhalej_<TOKEN>/; packages/captcha/combine-survey-pdf.py then
 // staples integrated + every entry scan into one document.
 //
-//   node packages/captcha/run-bhalej-full.mjs --surveys=174/p1,174/p3,239
+//   node packages/captcha/runners/run-bhalej-full.mjs --surveys=174/p1,174/p3,239
 import { chromium } from 'playwright-core';
 import { spawn } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
-import { applyCleanFormat, PDF_OPTS } from '../anyror/format.mjs';
-import { REPO } from '../core/repo-root.mjs';
+import { applyCleanFormat, PDF_OPTS } from '../../anyror/format.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ROOT = REPO;
 const OUT = join(ROOT, 'output');
@@ -33,7 +33,7 @@ const log = (...a) => console.log(...a);
 
 // ---- CNN captcha solver (one long-lived process) ----
 const py = spawn(join(ROOT, 'packages/captcha/.venv/bin/python'),
-  [join(ROOT, 'packages/captcha/infer_anyror.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
+  [join(ROOT, 'packages/captcha/pipeline/4-infer.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
 const pyLines = createInterface({ input: py.stdout });
 const pending = [];
 pyLines.on('line', (l) => pending.shift()?.(l));
@@ -103,7 +103,7 @@ async function cascade(type, survey) {
 // The old-VF-6 form is keyed by village + entry number — the survey number is never sent. So an
 // answer for entry 2536 in Bhalej is the answer for EVERY Bhalej survey that lists 2536. Cache it:
 // re-asking costs a captcha submit and ~35 s each time, and 174/p1, /p2, /p3 share one entry index.
-const VF6_CACHE = join(ROOT, 'packages/captcha/vf6-cache.json');
+const VF6_CACHE = join(ROOT, 'packages/captcha/runs/vf6-cache.json');
 const vf6cache = existsSync(VF6_CACHE) ? JSON.parse(readFileSync(VF6_CACHE, 'utf8')) : {};
 const vf6key = (n) => `${DIST}/${TAL}/${VIL}/${n}`;
 const vf6remember = (n, v) => { vf6cache[vf6key(n)] = v; writeFileSync(VF6_CACHE, JSON.stringify(vf6cache, null, 1)); };
@@ -307,9 +307,9 @@ for (let i = 0; i < SURVEYS.length; i++) {
   if (i < SURVEYS.length - 1) await jitter(9000);
 }
 
-writeFileSync(join(ROOT, 'packages/captcha/bhalej-run.json'), JSON.stringify({ at: new Date().toISOString(), attempts, runReport }, null, 1));
+writeFileSync(join(ROOT, 'packages/captcha/runs/bhalej-run.json'), JSON.stringify({ at: new Date().toISOString(), attempts, runReport }, null, 1));
 const acc = attempts.filter((a) => a.accepted).length;
 log(`\ncaptcha: ${acc}/${attempts.length} accepted`);
-log(`report → packages/captcha/bhalej-run.json`);
+log(`report → packages/captcha/runs/bhalej-run.json`);
 py.stdin.end();
 await ctx.close();

@@ -5,13 +5,13 @@
 //
 // These PNGs have NO embedded answer → the user tags them with tag-anyror.py → labels.csv.
 //
-//   node packages/captcha/sample-anyror.mjs [--n=100] [--delay=5000]
+//   node packages/captcha/pipeline/1-fetch-anyror.mjs [--n=100] [--delay=5000]
 import { chromium } from 'playwright-core';
 import { writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { REPO } from '../core/repo-root.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
-const DIR = new URL('./samples/anyror', import.meta.url).pathname;
+const DIR = new URL('../samples/anyror', import.meta.url).pathname;
 mkdirSync(DIR, { recursive: true });
 // Append, never overwrite: continue numbering after the highest existing NNN.png so
 // re-runs can't clobber already-tagged samples (labels.csv keys on the filename).
@@ -56,5 +56,5 @@ for (let i = 1; i <= N; i++) {
   }
 }
 console.log(`DONE: ${saved}/${N} AnyRoR captchas in ${DIR}`);
-console.log('Next: python packages/captcha/tag-anyror.py   (tag them → labels.csv)');
+console.log('Next: python packages/captcha/pipeline/2-tag.py   (tag them → labels.csv)');
 await ctx.close();

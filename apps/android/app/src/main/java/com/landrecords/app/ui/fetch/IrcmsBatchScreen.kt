@@ -159,7 +159,7 @@ fun IrcmsBatchScreen(
             if (step.contains("READY")) break
             delay(600); tries++
         }
-        // Auto-solve the SVG captcha (deterministic <text>-node parse — see tools/captcha).
+        // Auto-solve the SVG captcha (deterministic <text>-node parse — see packages/captcha).
         // One code covers the whole batch (iRCMS reuse). Human spotlight stays the fallback.
         var code = ""
         for (a in 1..10) {

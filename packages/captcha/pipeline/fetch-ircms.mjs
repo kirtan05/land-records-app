@@ -4,12 +4,12 @@
 // and the production solver for iRCMS is a deterministic SVG parse, not OCR.
 //
 // Saves: samples/ircms/NNN.svg  samples/ircms/NNN.png  labels.csv (auto-filled)
-//   node packages/captcha/sample-ircms.mjs [--n=100] [--delay=400]
+//   node packages/captcha/pipeline/1-fetch-ircms.mjs [--n=100] [--delay=400]
 import { chromium } from 'playwright-core';
 import { writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-const DIR = new URL('./samples/ircms', import.meta.url).pathname;
+const DIR = new URL('../samples/ircms', import.meta.url).pathname;
 mkdirSync(DIR, { recursive: true });
 const N = +(process.argv.find((a) => a.startsWith('--n='))?.split('=')[1] || 100);
 const DELAY = +(process.argv.find((a) => a.startsWith('--delay='))?.split('=')[1] || 400);

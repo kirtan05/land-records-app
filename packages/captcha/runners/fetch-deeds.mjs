@@ -3,13 +3,13 @@
 // with __EVENTTARGET set to that row's control, which streams the deed file as an attachment.
 // We replay that POST with the live session cookies and sniff what comes back (TIFF / PDF / an
 // HTML error page — the site has been known to answer "Document Record Not Found").
-//   node packages/captcha/fetch-deeds.mjs --surveys=174/p1,174/p2,174/p3,239
+//   node packages/captcha/runners/fetch-deeds.mjs --surveys=174/p1,174/p2,174/p3,239
 import { chromium } from 'playwright-core';
 import { spawn, execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { createInterface } from 'node:readline';
-import { REPO } from '../core/repo-root.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ROOT = REPO;
 const OUT = join(ROOT, 'output');
@@ -22,7 +22,7 @@ const token = (s) => 'Bhalej_' + s.toUpperCase().replace(/[\/\\|\s]+/g, '_');
 const log = (...a) => console.log(...a);
 
 const py = spawn(join(ROOT, 'packages/captcha/.venv/bin/python'),
-  [join(ROOT, 'packages/captcha/infer_anyror.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
+  [join(ROOT, 'packages/captcha/pipeline/4-infer.py'), '--serve'], { stdio: ['pipe', 'pipe', 'inherit'] });
 const pyl = createInterface({ input: py.stdout });
 const pending = [];
 pyl.on('line', (l) => pending.shift()?.(l));

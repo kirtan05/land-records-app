@@ -2,14 +2,14 @@
 //     cover  →  integrated record  →  every old (red) નોંધ scan, one per page, labelled.
 // This is the thing dad asked for: "is it possible in old vf6 to enter all entry numbers together
 // and get one pdf". The site only answers one entry number at a time; this does the walking.
-//   node packages/captcha/combine-survey-pdf.mjs               # every output/Bhalej_*/
-//   node packages/captcha/combine-survey-pdf.mjs Bhalej_174_P1
+//   node packages/captcha/pdf/combine-survey-pdf.mjs               # every output/Bhalej_*/
+//   node packages/captcha/pdf/combine-survey-pdf.mjs Bhalej_174_P1
 import { chromium } from 'playwright-core';
 import { readFileSync, writeFileSync, existsSync, readdirSync, rmSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
-import { REPO } from '../core/repo-root.mjs';
+import { REPO } from '../../core/repo-root.mjs';
 
 const ROOT = REPO;
 const OUT = join(ROOT, 'output');
@@ -150,7 +150,7 @@ for (const tok of tokens) {
   }
 
   // ── scanned deed files, rasterised so they sit in the same labelled layout ──────────
-  //    (deeds/*.pdf comes from packages/captcha/fetch-deeds.mjs; TIFFs are already converted there)
+  //    (deeds/*.pdf comes from packages/captcha/runners/fetch-deeds.mjs; TIFFs are already converted there)
   if (deedPdfs.length) {
     const scratch = mkdtempSync(join(tmpdir(), 'deedpg-'));
     for (const f of deedPdfs) {

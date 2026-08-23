@@ -87,7 +87,7 @@ object IrcmsInjection {
      * Auto-solve the iRCMS CAPTCHA. iRCMS serves the code as an SVG data-URI whose answer
      * sits in plain <text> nodes (sorted by x) — a deterministic read, not OCR. Fills
      * #txt_captcha and returns the code, or '' when the SVG isn't there/parseable (caller
-     * then falls back to the human spotlight flow). See tools/captcha/ircms-solve.mjs.
+     * then falls back to the human spotlight flow). See packages/captcha/solvers/ircms.mjs.
      */
     fun autoSolveCaptchaJs(): String = """
     (function(){
