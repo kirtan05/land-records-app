@@ -16,7 +16,7 @@ await page.addStyleTag({ content: `
 ` });
 
 await page.pdf({
-  path: REPO+'/anyror/AnyRoR_SurveyNo_221_P_LandRecord.pdf',
+  path: REPO+'/packages/anyror/examples/AnyRoR_SurveyNo_221_P_LandRecord.pdf',
   format: 'A4', printBackground: true, margin: { top: '8mm', bottom: '8mm', left: '7mm', right: '7mm' },
 });
 
